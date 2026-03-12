@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { BookOpen, Gamepad2, Shield, Users, Star, TrendingUp } from 'lucide-react';
+import heroImg from '@/assets/hero-illustration.png';
 
 const features = [
   { icon: BookOpen, title: 'Bài học chất lượng', desc: '10+ bài học được biên soạn bởi chuyên gia', color: 'bg-pink/30 text-pink-foreground' },
