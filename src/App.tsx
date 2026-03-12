@@ -21,6 +21,8 @@ import LeaderboardPage from "./pages/LeaderboardPage";
 import CertificatePage from "./pages/CertificatePage";
 import SearchPage from "./pages/SearchPage";
 import ProfilePage from "./pages/ProfilePage";
+import AboutPage from "./pages/AboutPage";
+import CommunityPage from "./pages/CommunityPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +53,8 @@ const App = () => (
                 <Route path="/certificate" element={<CertificatePage />} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/community" element={<CommunityPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
