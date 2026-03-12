@@ -61,12 +61,22 @@ export default function HomePage() {
             </div>
           </motion.div>
 
+          {/* Hero Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mt-12 max-w-2xl mx-auto"
+          >
+            <img src={heroImg} alt="Học sinh EDUcare cùng nhau học tập" className="w-full h-auto" />
+          </motion.div>
+
           {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="grid grid-cols-3 gap-8 max-w-md mx-auto mt-16"
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="grid grid-cols-3 gap-8 max-w-md mx-auto mt-12"
           >
             {[
               { num: '10+', label: 'Bài học' },

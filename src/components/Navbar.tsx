@@ -9,8 +9,10 @@ const navLinks = [
   { label: 'Khóa học', to: '/courses' },
   { label: 'Blog', to: '/blog' },
   { label: 'Trò chơi', to: '/games' },
+  { label: 'Cộng đồng', to: '/community' },
   { label: 'Bảng xếp hạng', to: '/leaderboard' },
   { label: 'Bảng giá', to: '/pricing' },
+  { label: 'Giới thiệu', to: '/about' },
 ];
 
 export default function Navbar() {

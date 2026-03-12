@@ -53,6 +53,8 @@ const App = () => (
                 <Route path="/certificate" element={<CertificatePage />} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/community" element={<CommunityPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
