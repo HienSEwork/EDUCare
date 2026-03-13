@@ -6,55 +6,55 @@
 
 @layer base {
   :root {
-    --background: 300 20% 99%;
-    --foreground: 270 30% 15%;
+    --background: 300 15% 98%;
+    --foreground: 270 40% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 270 30% 15%;
+    --card-foreground: 270 40% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 270 30% 15%;
+    --popover-foreground: 270 40% 12%;
 
-    --primary: 280 60% 65%;
+    --primary: 280 65% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 340 60% 85%;
-    --secondary-foreground: 340 40% 30%;
+    --secondary: 340 65% 75%;
+    --secondary-foreground: 340 50% 22%;
 
-    --muted: 270 20% 95%;
-    --muted-foreground: 270 10% 45%;
+    --muted: 270 20% 93%;
+    --muted-foreground: 270 15% 38%;
 
-    --accent: 175 45% 75%;
-    --accent-foreground: 175 40% 20%;
+    --accent: 175 50% 65%;
+    --accent-foreground: 175 45% 15%;
 
-    --destructive: 0 72% 60%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 270 15% 90%;
-    --input: 270 15% 90%;
-    --ring: 280 60% 65%;
+    --border: 270 18% 86%;
+    --input: 270 18% 86%;
+    --ring: 280 65% 55%;
 
     --radius: 1rem;
 
-    --pink: 340 70% 80%;
-    --pink-foreground: 340 50% 25%;
-    --lavender: 270 50% 80%;
-    --lavender-foreground: 270 40% 20%;
-    --teal: 175 45% 75%;
-    --teal-foreground: 175 40% 20%;
-    --peach: 20 80% 85%;
-    --peach-foreground: 20 50% 25%;
-    --mint: 150 40% 80%;
-    --mint-foreground: 150 35% 20%;
+    --pink: 340 75% 68%;
+    --pink-foreground: 340 55% 18%;
+    --lavender: 270 55% 68%;
+    --lavender-foreground: 270 45% 15%;
+    --teal: 175 50% 60%;
+    --teal-foreground: 175 45% 15%;
+    --peach: 20 85% 72%;
+    --peach-foreground: 20 55% 18%;
+    --mint: 150 45% 65%;
+    --mint-foreground: 150 40% 15%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(340 70% 80% / 0.3), hsl(270 50% 80% / 0.3), hsl(175 45% 75% / 0.2));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(270 20% 97%));
-    --gradient-primary: linear-gradient(135deg, hsl(280 60% 65%), hsl(340 60% 70%));
-    --gradient-accent: linear-gradient(135deg, hsl(175 45% 65%), hsl(150 40% 70%));
+    --gradient-hero: linear-gradient(135deg, hsl(340 75% 68% / 0.25), hsl(270 55% 68% / 0.25), hsl(175 50% 60% / 0.15));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(270 20% 96%));
+    --gradient-primary: linear-gradient(135deg, hsl(280 65% 55%), hsl(340 65% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(175 50% 55%), hsl(150 45% 60%));
 
-    --shadow-soft: 0 4px 20px -4px hsl(270 30% 50% / 0.1);
-    --shadow-card: 0 8px 30px -8px hsl(270 30% 50% / 0.12);
-    --shadow-hover: 0 12px 40px -8px hsl(280 60% 65% / 0.2);
+    --shadow-soft: 0 4px 20px -4px hsl(270 30% 40% / 0.12);
+    --shadow-card: 0 8px 30px -8px hsl(270 30% 40% / 0.15);
+    --shadow-hover: 0 12px 40px -8px hsl(280 65% 55% / 0.25);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -78,6 +78,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    font-weight: 500;
   }
 
   h1, h2, h3, h4, h5, h6 {
