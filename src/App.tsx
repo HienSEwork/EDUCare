@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,9 +15,7 @@ import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import GamesPage from "./pages/GamesPage";
 import QuizPage from "./pages/QuizPage";
-import PricingPage from "./pages/PricingPage";
 import DashboardPage from "./pages/DashboardPage";
-import LeaderboardPage from "./pages/LeaderboardPage";
 import CertificatePage from "./pages/CertificatePage";
 import SearchPage from "./pages/SearchPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -47,9 +45,9 @@ const App = () => (
                 <Route path="/blog/:id" element={<BlogPostPage />} />
                 <Route path="/games" element={<GamesPage />} />
                 <Route path="/games/quiz" element={<QuizPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/pricing" element={<Navigate to="/courses" replace />} />
+                <Route path="/leaderboard" element={<Navigate to="/games" replace />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/leaderboard" element={<LeaderboardPage />} />
                 <Route path="/certificate" element={<CertificatePage />} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
