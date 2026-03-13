@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Search, Bell, Menu, X, LogOut, User, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import logoImg from '@/assets/educare-logo.png';
 
 const navLinks = [
   { label: 'Trang chủ', to: '/' },
@@ -10,9 +11,7 @@ const navLinks = [
   { label: 'Blog', to: '/blog' },
   { label: 'Trò chơi', to: '/games' },
   { label: 'Cộng đồng', to: '/community' },
-  { label: 'Bảng xếp hạng', to: '/leaderboard' },
-  { label: 'Bảng giá', to: '/pricing' },
-  { label: 'Giới thiệu', to: '/about' },
+  { label: 'About us', to: '/about' },
 ];
 
 export default function Navbar() {
@@ -35,8 +34,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-2 font-heading font-bold text-xl">
-          <span className="text-2xl">🎓</span>
-          <span className="text-gradient">EDUcare</span>
+          <img src={logoImg} alt="EDUcare Logo" className="h-9 w-auto" />
         </Link>
 
         {/* Desktop nav */}
@@ -45,7 +43,7 @@ export default function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="px-3 py-2 rounded-lg text-sm font-semibold text-foreground/70 hover:text-foreground hover:bg-muted transition-colors"
             >
               {link.label}
             </Link>
@@ -53,7 +51,6 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Search */}
           {searchOpen ? (
             <form onSubmit={handleSearch} className="flex items-center gap-1">
               <input
@@ -90,7 +87,7 @@ export default function Navbar() {
                   <LogOut className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
-              <span className="hidden sm:block text-sm font-medium text-foreground ml-1">
+              <span className="hidden sm:block text-sm font-semibold text-foreground ml-1">
                 {user.fullName.split(' ').pop()}
               </span>
             </>
@@ -111,7 +108,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden border-t border-border bg-card p-4 space-y-2">
           {navLinks.map(link => (
@@ -119,15 +115,15 @@ export default function Navbar() {
               key={link.to}
               to={link.to}
               onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted"
+              className="block px-3 py-2 rounded-lg text-sm font-semibold text-foreground/70 hover:text-foreground hover:bg-muted"
             >
               {link.label}
             </Link>
           ))}
           {user ? (
             <>
-              <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted">Dashboard</Link>
-              <button onClick={() => { logout(); setMobileOpen(false); }} className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-destructive hover:bg-muted">Đăng xuất</button>
+              <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-semibold text-foreground/70 hover:bg-muted">Dashboard</Link>
+              <button onClick={() => { logout(); setMobileOpen(false); }} className="block w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-destructive hover:bg-muted">Đăng xuất</button>
             </>
           ) : (
             <div className="flex gap-2 pt-2">
