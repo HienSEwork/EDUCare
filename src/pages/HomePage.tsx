@@ -23,15 +23,15 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="gradient-hero py-16 md:py-24">
+      <section className="gradient-hero py-12 md:py-16 overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-4">
             {/* Left – Text */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex-1 text-center md:text-left"
+              className="flex-1 text-center md:text-left md:pr-8"
             >
               <span className="inline-block px-4 py-1.5 rounded-full bg-pink/20 text-pink-foreground text-sm font-medium mb-6">
                 🌟 Nền tảng #1 cho tuổi teen Việt Nam
@@ -65,37 +65,41 @@ export default function HomePage() {
                   </>
                 )}
               </div>
+
+              {/* Stats - bên dưới text */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="grid grid-cols-3 gap-8 max-w-md mx-auto md:mx-0 md:max-w-sm mt-10"
+              >
+                {[
+                  { num: '10+', label: 'Bài học' },
+                  { num: '5K+', label: 'Học sinh' },
+                  { num: '8+', label: 'Blog' },
+                ].map(s => (
+                  <div key={s.label} className="text-center md:text-left">
+                    <div className="text-2xl md:text-3xl font-heading font-bold text-gradient">{s.num}</div>
+                    <div className="text-sm text-muted-foreground">{s.label}</div>
+                  </div>
+                ))}
+              </motion.div>
             </motion.div>
 
-            {/* Right – Hero Image */}
+            {/* Right – Hero Image - Phóng to và căn sát phải */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="flex-1 max-w-md md:max-w-lg"
+              className="flex-1 flex justify-end md:justify-end"
             >
-              <img src={heroImg} alt="Học sinh EDUcare cùng nhau học tập" className="w-full h-auto drop-shadow-xl" />
+              <img 
+                src={heroImg} 
+                alt="Học sinh EDUcare cùng nhau học tập" 
+                className="w-[140%] max-w-[650px] md:max-w-[700px] lg:max-w-[800px] h-auto drop-shadow-2xl md:translate-x-12 lg:translate-x-16"
+              />
             </motion.div>
           </div>
-
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid grid-cols-3 gap-8 max-w-md mx-auto md:mx-0 md:max-w-sm mt-12"
-          >
-            {[
-              { num: '10+', label: 'Bài học' },
-              { num: '5K+', label: 'Học sinh' },
-              { num: '8+', label: 'Blog' },
-            ].map(s => (
-              <div key={s.label} className="text-center md:text-left">
-                <div className="text-2xl md:text-3xl font-heading font-bold text-gradient">{s.num}</div>
-                <div className="text-sm text-muted-foreground">{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
@@ -131,8 +135,8 @@ export default function HomePage() {
                 transition={{ delay: i * 0.1 }}
                 className="gradient-card rounded-2xl p-6 shadow-card hover:shadow-hover transition-shadow"
               >
-                <div className={`w-12 h-12 rounded-xl ${f.color} flex items-center justify-center mb-4`}>
-                  <f.icon className="w-6 h-6" />
+                <div className={`w-16 h-16 rounded-xl ${f.color} flex items-center justify-center mb-4`}>
+                  <f.icon className="w-8 h-8" />
                 </div>
                 <h3 className="font-heading font-bold text-lg mb-2">{f.title}</h3>
                 <p className="text-sm text-muted-foreground">{f.desc}</p>

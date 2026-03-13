@@ -9,10 +9,11 @@ const values = [
 ];
 
 const team = [
-  { name: 'Nguyễn Minh Anh', role: 'Founder & CEO', desc: 'Chuyên gia giáo dục giới tính với 10 năm kinh nghiệm làm việc với thanh thiếu niên.' },
-  { name: 'Trần Văn Hoàng', role: 'CTO', desc: 'Kỹ sư phần mềm với niềm đam mê ứng dụng công nghệ vào giáo dục.' },
-  { name: 'Lê Thị Hương', role: 'Trưởng nội dung', desc: 'Thạc sĩ Tâm lý học, chuyên gia tư vấn tâm lý thanh thiếu niên.' },
-  { name: 'Phạm Đức Thắng', role: 'Product Designer', desc: 'Designer với 7 năm kinh nghiệm thiết kế sản phẩm cho giới trẻ.' },
+  { name: 'Khoa', role: 'CEO', desc: 'Chịu trách nhiệm định hướng chiến lược, xác định tầm nhìn phát triển của dự án và đại diện nhóm trong các hoạt động đối ngoại.' },
+  { name: 'Hiển', role: 'CTO', desc: 'Phụ trách thiết kế kiến trúc hệ thống, đảm bảo chất lượng kỹ thuật và định hướng công nghệ cho nền tảng.' },
+  { name: 'Khanh', role: 'CPO', desc: 'Phụ trách phát triển nội dung giáo dục và định hướng trải nghiệm học tập nhằm đảm bảo nội dung phù hợp với người dùng mục tiêu.' },
+  { name: 'Thịnh', role: 'Software Engineer', desc: 'Chịu trách nhiệm xây dựng và phát triển hệ thống lõi của nền tảng, đảm bảo các chức năng hoạt động ổn định.' },
+  { name: 'Vinh', role: 'Software Engineer', desc: 'Phát triển các tính năng và giao diện UI cho website/app, đồng thời thực hiện kiểm thử để đảm bảo chất lượng sản phẩm.' },
 ];
 
 export default function AboutPage() {
@@ -70,7 +71,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="gradient-card rounded-2xl p-8 shadow-card">
-              <Target className="w-10 h-10 text-primary mb-4" />
+              <Target className="w-12 h-12 text-primary mb-4" />
               <h3 className="font-heading text-2xl font-bold mb-3">Sứ mệnh</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Cung cấp kiến thức giáo dục giới tính, sức khỏe tinh thần và kỹ năng sống chính xác,
@@ -78,7 +79,7 @@ export default function AboutPage() {
               </p>
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="gradient-card rounded-2xl p-8 shadow-card">
-              <Sparkles className="w-10 h-10 text-primary mb-4" />
+              <Sparkles className="w-12 h-12 text-primary mb-4" />
               <h3 className="font-heading text-2xl font-bold mb-3">Tầm nhìn</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Trở thành nền tảng giáo dục giới tính #1 Đông Nam Á, nơi mọi bạn trẻ đều được
@@ -96,8 +97,8 @@ export default function AboutPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {values.map((v, i) => (
               <motion.div key={v.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="gradient-card rounded-2xl p-6 shadow-card text-center">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <v.icon className="w-7 h-7 text-primary" />
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <v.icon className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="font-heading font-bold text-lg mb-2">{v.title}</h3>
                 <p className="text-sm text-muted-foreground">{v.desc}</p>
@@ -112,10 +113,10 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <h2 className="font-heading text-3xl font-bold mb-4 text-center">Đội ngũ sáng lập</h2>
           <p className="text-muted-foreground text-center mb-12 max-w-lg mx-auto">Những người đứng sau EDUcare với niềm đam mê giáo dục và công nghệ.</p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
             {team.map((t, i) => (
               <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="gradient-card rounded-2xl p-6 shadow-card text-center">
-                <div className="w-16 h-16 rounded-full bg-lavender/30 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <div className="w-20 h-20 rounded-full bg-lavender/30 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
                   {t.name.charAt(0)}
                 </div>
                 <h3 className="font-heading font-bold mb-1">{t.name}</h3>
