@@ -6,10 +6,20 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+# fe
 node_modules
 dist
 dist-ssr
+.vite
+frontend/node_modules
+backend/node_modules
+frontend/dist
+backend/dist
+backend/target
+frontend/.env
+backend/.env
+vite-dev.log
+vite-dev.err.log
 *.local
 
 # Editor directories and files
@@ -22,3 +32,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.env

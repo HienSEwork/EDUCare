@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: educare-backend
+    env: java
+    rootDir: backend
+    plan: free
+    buildCommand: mvn -DskipTests package
+    startCommand: java -jar target/educare-backend-1.0.0.jar
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        sync: false
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: APP_JWT_SECRET
+        sync: false
+      - key: APP_CORS_ALLOWED_ORIGINS
+        sync: false

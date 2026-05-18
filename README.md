@@ -1,73 +1,89 @@
-# Welcome to your Lovable project
+# EDUcare VN
 
-## Project info
+EDUcare VN la ung dung fullstack gom frontend React/Vite va backend Spring Boot. Du an su dung MySQL lam database chinh, du lieu schema/seed duoc quan ly trong thu muc `data/`.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Cau truc
 
-## How can I edit this code?
+```text
+educare-vn/
+  backend/   # Spring Boot API
+  frontend/  # React + Vite + Tailwind
+  data/      # SQL schema va seed data cho MySQL
+```
 
-There are several ways of editing your application.
+## Yeu cau moi truong
 
-**Use Lovable**
+- Node.js 20+
+- Java 17+
+- Maven 3.9+
+- MySQL 8+ hoac MariaDB tuong thich
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Cau hinh env
 
-Changes made via Lovable will be committed automatically to this repo.
+Tao file local tu cac file mau:
 
-**Use your preferred IDE**
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Gia tri local mac dinh:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:8081`
+- API URL: `http://localhost:8081/api`
+- Database: `jdbc:mysql://127.0.0.1:3306/educare`
 
-Follow these steps:
+Cap nhat `SPRING_DATASOURCE_USERNAME` va `SPRING_DATASOURCE_PASSWORD` trong `backend/.env` theo MySQL local cua ban.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Khoi tao database
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Backend dang chay voi `spring.jpa.hibernate.ddl-auto=validate`, vi vay can tao schema truoc khi start backend:
 
-# Step 3: Install the necessary dependencies.
-npm i
+```powershell
+mysql -u root -p < data/init.sql
+mysql -u root -p educare < data/seed.sql
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Neu can seed them bo quiz:
+
+```powershell
+mysql -u root -p educare < data/quizbank.sql
+```
+
+## Chay local
+
+Chay ca backend va frontend:
+
+```powershell
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Hoac chay rieng:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```powershell
+npm --prefix frontend run dev
+mvn -f backend/pom.xml spring-boot:run
+```
 
-**Use GitHub Codespaces**
+## Build va test
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```powershell
+npm run build
+npm run test
+```
 
-## What technologies are used for this project?
+## Tai khoan seed
 
-This project is built with:
+Admin:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- email: `admin@educare.vn`
+- username: `educare_admin`
+- password: `Admin@123`
 
-## How can I deploy this project?
+User:
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- email: `minhanh@educare.vn`
+- username: `minhanh`
+- password: `Admin@123`
