@@ -2,6 +2,8 @@ package vn.educare.backend.api;
 
 import jakarta.validation.ConstraintViolationException;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
   @ExceptionHandler(ApiException.class)
   public ResponseEntity<Map<String, Object>> handleApiException(ApiException exception) {
@@ -33,7 +37,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleUnexpected(Exception exception) {
-    exception.printStackTrace();
+    log.error("Unhandled API exception", exception);
     return ResponseEntity.status(500).body(Map.of("message", "Internal server error"));
   }
 }
