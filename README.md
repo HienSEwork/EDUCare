@@ -31,7 +31,7 @@ Gia tri local mac dinh:
 
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:8081`
-- API URL: `http://localhost:8081/api`
+- API URL in frontend dev: `/api` proxied to `http://localhost:8081/api`
 - Database: `jdbc:mysql://127.0.0.1:3306/educare`
 
 Cap nhat `SPRING_DATASOURCE_USERNAME` va `SPRING_DATASOURCE_PASSWORD` trong `backend/.env` theo MySQL local cua ban.
@@ -53,18 +53,29 @@ mysql -u root -p educare < data/quizbank.sql
 
 ## Chay local
 
-Chay ca backend va frontend:
+Chay ca backend va frontend tu root:
 
 ```powershell
 npm install
+npm --prefix frontend install
 npm run dev
 ```
 
-Hoac chay rieng:
+Hoac chay rieng trong 2 terminal:
 
 ```powershell
-npm --prefix frontend run dev
+# Terminal 1: backend
 mvn -f backend/pom.xml spring-boot:run
+
+# Terminal 2: frontend
+npm --prefix frontend run dev
+```
+
+Kiem tra backend:
+
+```powershell
+Invoke-WebRequest http://localhost:8081/actuator/health
+Invoke-WebRequest http://localhost:8081/api/lessons
 ```
 
 ## Build va test
