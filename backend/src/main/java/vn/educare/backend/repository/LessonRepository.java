@@ -8,4 +8,7 @@ import vn.educare.backend.model.LessonEntity;
 public interface LessonRepository extends JpaRepository<LessonEntity, Long> {
   List<LessonEntity> findAllByOrderByLessonOrderAsc();
   Optional<LessonEntity> findBySlug(String slug);
+
+  // NEW: list lessons by course
+  List<LessonEntity> findAllByCourseIdOrderByLessonOrderAsc(Long courseId);
 }

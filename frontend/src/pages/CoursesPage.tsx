@@ -4,46 +4,25 @@ import { motion } from "framer-motion";
 import { BookOpen, CheckCircle2, Lock, PlayCircle, Sparkles } from "lucide-react";
 
 import heroIllustration from "@/assets/hero-illustration.png";
-import {
-  COURSE_THEME_COPY,
-  COURSES_PAGE_COPY,
-  LESSON_DISPLAY_BY_SLUG,
-} from "@/content/pageCopy";
+import { COURSES_PAGE_COPY } from "@/content/pageCopy";
 import { useAuth } from "@/contexts/AuthContext";
 import { ApiError, apiRequest } from "@/lib/api/client";
-import type { Lesson } from "@/types/api";
+import type { Course, Lesson } from "@/types/api";
 
-type CourseTheme = (typeof COURSE_THEME_COPY)[number] & {
-  lessons: Lesson[];
-};
-
-function getLessonDisplay(lesson: Lesson) {
-  const display = LESSON_DISPLAY_BY_SLUG[lesson.slug as keyof typeof LESSON_DISPLAY_BY_SLUG];
-
-  return {
-    ...lesson,
-    title: display?.title ?? lesson.title,
-    summary: display?.summary ?? lesson.summary,
-  };
-}
-
-function buildThemes(lessons: Lesson[]): CourseTheme[] {
-  return COURSE_THEME_COPY.map((definition) => ({
-    ...definition,
-    lessons: lessons.filter((lesson) => definition.orders.includes(lesson.order)),
-  })).filter((theme) => theme.lessons.length > 0);
+function flattenLessons(courses: Course[]): Lesson[] {
+  return courses.flatMap((c) => c.lessons ?? []);
 }
 
 export default function CoursesPage() {
   const { user } = useAuth();
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [activeThemeId, setActiveThemeId] = useState("");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [activeCourseId, setActiveCourseId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void apiRequest<Lesson[]>("/lessons")
+    void apiRequest<Course[]>("/courses")
       .then((data) => {
-        setLessons(data);
+        setCourses(data);
         setError(null);
       })
       .catch((requestError) => {
@@ -51,17 +30,17 @@ export default function CoursesPage() {
       });
   }, []);
 
-  const displayLessons = useMemo(() => lessons.map(getLessonDisplay), [lessons]);
-  const themes = useMemo(() => buildThemes(displayLessons), [displayLessons]);
-
   useEffect(() => {
-    if (!activeThemeId && themes[0]) {
-      setActiveThemeId(themes[0].id);
+    if (activeCourseId == null && courses[0]) {
+      setActiveCourseId(courses[0].id);
     }
-  }, [activeThemeId, themes]);
+  }, [activeCourseId, courses]);
 
-  const activeTheme = themes.find((theme) => theme.id === activeThemeId) ?? themes[0];
-  const nextLesson = displayLessons.find((lesson) => !user?.completedLessons.includes(lesson.slug)) ?? displayLessons[0];
+  const activeCourse = courses.find((c) => c.id === activeCourseId) ?? courses[0];
+
+  const allLessons = useMemo(() => flattenLessons(courses), [courses]);
+  const nextLesson =
+    allLessons.find((lesson) => !user?.completedLessons.includes(lesson.slug)) ?? allLessons[0];
 
   return (
     <div className="min-h-screen pb-16 pt-8">
@@ -89,69 +68,68 @@ export default function CoursesPage() {
             >
               <div className="mb-4 flex items-center justify-between rounded-full bg-background/82 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                 <span>{COURSES_PAGE_COPY.imageTopLeft}</span>
-                <span>{themes.length} {COURSES_PAGE_COPY.imageTopRightSuffix}</span>
+                <span>{courses.length} {COURSES_PAGE_COPY.imageTopRightSuffix}</span>
               </div>
-              <img
-                src={heroIllustration}
-                alt={COURSES_PAGE_COPY.imageAlt}
-                className="mx-auto max-h-[300px] w-full object-contain"
-              />
+              <img src={heroIllustration} alt={COURSES_PAGE_COPY.imageAlt} className="mx-auto max-h-[300px] w-full object-contain" />
             </motion.div>
           </div>
         </section>
 
         {error ? <div className="mt-6 rounded-2xl bg-destructive/10 p-4 text-sm text-destructive">{error}</div> : null}
 
+        {/* Top course cards */}
         <section className="mt-8">
           <div className="grid gap-5 lg:grid-cols-3">
-            {themes.map((theme, index) => (
+            {courses.map((course, index) => (
               <motion.button
-                key={theme.id}
+                key={course.id}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.06 }}
-                onClick={() => setActiveThemeId(theme.id)}
+                onClick={() => setActiveCourseId(course.id)}
                 className={`overflow-hidden rounded-[2rem] border border-white/70 p-0 text-left shadow-card transition-all ${
-                  activeTheme?.id === theme.id ? "ring-2 ring-primary/25" : ""
+                  activeCourse?.id === course.id ? "ring-2 ring-primary/25" : ""
                 }`}
               >
-                <div className={`${theme.accentClass} h-full p-6`}>
+                <div className="h-full p-6 bg-white/50">
                   <div className="flex items-start justify-between gap-4">
                     <span className="rounded-full bg-white/88 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary shadow-soft">
-                      {theme.badge}
+                      {COURSES_PAGE_COPY.activeBadge}
                     </span>
                     <span className="rounded-full bg-background/88 px-3 py-1 text-xs font-semibold text-muted-foreground">
-                      {theme.lessons.length} bài
+                      {course.lessons?.length ?? 0} bài
                     </span>
                   </div>
 
-                  <h2 className="mt-5 font-heading text-2xl font-bold">{theme.title}</h2>
-                  <p className="mt-3 text-sm leading-6 text-foreground/74">{theme.summary}</p>
+                  <h2 className="mt-5 font-heading text-2xl font-bold">{course.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-foreground/74">{course.description ?? ""}</p>
                 </div>
               </motion.button>
             ))}
           </div>
         </section>
 
-        {activeTheme ? (
+        {activeCourse ? (
           <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
             <div className="space-y-6">
-              <div className={`rounded-[2.2rem] border border-white/70 p-6 shadow-card ${activeTheme.accentClass}`}>
+              {/* Active course panel */}
+              <div className="rounded-[2.2rem] border border-white/70 p-6 shadow-card bg-white/45">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="inline-flex rounded-full bg-white/86 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary shadow-soft">
                     {COURSES_PAGE_COPY.activeBadge}
                   </span>
                   <span className="inline-flex rounded-full bg-background/80 px-4 py-2 text-xs font-semibold text-muted-foreground">
-                    {activeTheme.lessons.length} {COURSES_PAGE_COPY.activeLessonsSuffix}
+                    {activeCourse.lessons.length} {COURSES_PAGE_COPY.activeLessonsSuffix}
                   </span>
                 </div>
-                <h2 className="mt-5 font-heading text-3xl font-bold">{activeTheme.title}</h2>
-                <p className="mt-4 max-w-3xl text-base leading-7 text-foreground/76">{activeTheme.summary}</p>
+                <h2 className="mt-5 font-heading text-3xl font-bold">{activeCourse.title}</h2>
+                <p className="mt-4 max-w-3xl text-base leading-7 text-foreground/76">{activeCourse.description ?? ""}</p>
               </div>
 
+              {/* Lessons of active course */}
               <div className="space-y-4">
-                {activeTheme.lessons.map((lesson, index) => {
+                {activeCourse.lessons.map((lesson, index) => {
                   const completed = user?.completedLessons.includes(lesson.slug);
                   const locked = !lesson.isFree && (!user || user.plan === "free");
 
@@ -169,6 +147,7 @@ export default function CoursesPage() {
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-heading text-xl font-bold leading-snug">{lesson.title}</h3>
+
                             {lesson.isFree ? (
                               <span className="rounded-full bg-teal/12 px-3 py-1 text-xs font-semibold text-teal-foreground">
                                 {COURSES_PAGE_COPY.freeBadge}
@@ -178,11 +157,13 @@ export default function CoursesPage() {
                                 {COURSES_PAGE_COPY.extendedBadge}
                               </span>
                             )}
+
                             {completed ? (
                               <span className="rounded-full bg-mint/12 px-3 py-1 text-xs font-semibold text-mint-foreground">
                                 {COURSES_PAGE_COPY.completedBadge}
                               </span>
                             ) : null}
+
                             {locked ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
                                 <Lock className="h-3.5 w-3.5" />
@@ -192,6 +173,9 @@ export default function CoursesPage() {
                           </div>
 
                           <p className="mt-3 text-sm leading-6 text-muted-foreground">{lesson.summary}</p>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            {lesson.estimatedMinutes} phút • {lesson.xpReward} XP
+                          </p>
                         </div>
                       </div>
                     </article>
@@ -212,6 +196,7 @@ export default function CoursesPage() {
               </div>
             </div>
 
+            {/* Sidebar */}
             <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
               <div className="rounded-[2rem] gradient-card p-6 shadow-card">
                 <div className="flex items-center gap-3">
@@ -224,10 +209,7 @@ export default function CoursesPage() {
                   </div>
                 </div>
                 {nextLesson ? (
-                  <Link
-                    to={`/lesson/${nextLesson.slug}`}
-                    className="mt-4 inline-flex rounded-full gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-soft"
-                  >
+                  <Link to={`/lesson/${nextLesson.slug}`} className="mt-4 inline-flex rounded-full gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-soft">
                     {COURSES_PAGE_COPY.nextAction}
                   </Link>
                 ) : null}
@@ -236,15 +218,15 @@ export default function CoursesPage() {
               <div className="rounded-[2rem] gradient-card p-6 shadow-card">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{COURSES_PAGE_COPY.switchThemeTitle}</p>
                 <div className="mt-4 space-y-3">
-                  {themes.map((theme) => (
+                  {courses.map((course) => (
                     <button
-                      key={theme.id}
-                      onClick={() => setActiveThemeId(theme.id)}
+                      key={course.id}
+                      onClick={() => setActiveCourseId(course.id)}
                       className={`w-full rounded-[1.4rem] px-4 py-3 text-left text-sm font-semibold transition-colors ${
-                        activeTheme.id === theme.id ? "bg-foreground text-background" : "bg-background/76 hover:bg-background"
+                        activeCourse.id === course.id ? "bg-foreground text-background" : "bg-background/76 hover:bg-background"
                       }`}
                     >
-                      {theme.title}
+                      {course.title}
                     </button>
                   ))}
                 </div>
@@ -262,13 +244,13 @@ export default function CoursesPage() {
                 </div>
 
                 <div className="mt-4 space-y-3">
-                  {displayLessons.map((lesson) => {
+                  {allLessons.map((lesson) => {
                     const completed = user?.completedLessons.includes(lesson.slug);
                     const locked = !lesson.isFree && (!user || user.plan === "free");
-                    const belongsToActiveTheme = activeTheme.lessons.some((item) => item.slug === lesson.slug);
+                    const belongsToActiveCourse = lesson.courseId === activeCourse.id;
 
                     const itemClasses = `block rounded-[1.3rem] px-4 py-3 text-sm transition-colors ${
-                      belongsToActiveTheme ? "bg-primary/10" : "bg-background/76 hover:bg-background"
+                      belongsToActiveCourse ? "bg-primary/10" : "bg-background/76 hover:bg-background"
                     }`;
 
                     const itemContent = (

@@ -38,6 +38,16 @@ public class LessonEntity {
   @Column(name = "is_free", nullable = false)
   private Boolean isFree;
 
+  // NEW FIELDS (theo Khoa.sql mới)
+  @Column(name = "course_id")
+  private Long courseId;
+
+  @Column(name = "xp_reward", nullable = false)
+  private Integer xpReward;
+
+  @Column(name = "estimated_minutes", nullable = false)
+  private Integer estimatedMinutes;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
