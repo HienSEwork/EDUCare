@@ -231,41 +231,17 @@ export default function LessonPage() {
                 <p className="text-base leading-7 text-muted-foreground">{lesson.summary}</p>
               </div>
 
-              {/* MicroLesson controls (moved on top) */}
+              {/* MicroLesson header (NO navigation buttons here) */}
               <div className="mt-8 rounded-[1.6rem] border border-white/70 bg-white/55 p-5 shadow-soft">
-                {/* Top row: buttons */}
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                    Micro lesson {activeMicro ? activeMicro.order : "-"} / {microLessonsSorted.length || 0}
-                  </p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                  Micro lesson {activeMicro ? activeMicro.order : "-"} / {microLessonsSorted.length || 0}
+                </p>
 
-                  <div className="flex flex-nowrap items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      disabled={!canPrevMicro}
-                      onClick={() => setActiveMicroIndex((v) => Math.max(0, v - 1))}
-                      className="h-10 whitespace-nowrap rounded-full bg-background/76 px-4"
-                    >
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Micro trước
-                    </Button>
-
-                    <Button
-                      disabled={!canNextMicro}
-                      onClick={() => setActiveMicroIndex((v) => Math.min(microLessonsSorted.length - 1, v + 1))}
-                      className="h-10 whitespace-nowrap rounded-full gradient-primary px-4 text-primary-foreground"
-                    >
-                      Micro tiếp theo
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Bottom row: title */}
                 <h2 className="mt-3 line-clamp-2 font-heading text-2xl font-bold">
                   {activeMicro ? activeMicro.title : "Chưa có micro lesson"}
                 </h2>
               </div>
+
               <div className="mt-8 space-y-5">
                 {activeMicro ? (
                   activeBlocks.map((block, idx) => (
@@ -348,8 +324,9 @@ export default function LessonPage() {
                   <button
                     key={ml.id}
                     onClick={() => setActiveMicroIndex(idx)}
-                    className={`w-full rounded-[1.1rem] px-4 py-3 text-left text-sm transition-colors ${idx === safeActiveMicroIndex ? "bg-foreground text-background" : "bg-background/76 hover:bg-background"
-                      }`}
+                    className={`w-full rounded-[1.1rem] px-4 py-3 text-left text-sm transition-colors ${
+                      idx === safeActiveMicroIndex ? "bg-foreground text-background" : "bg-background/76 hover:bg-background"
+                    }`}
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span className="min-w-0 truncate font-medium">
@@ -359,6 +336,28 @@ export default function LessonPage() {
                     </div>
                   </button>
                 ))}
+              </div>
+
+              {/* Micro navigation footer (sidebar) - no overflow */}
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <Button
+                  variant="ghost"
+                  disabled={!canPrevMicro}
+                  onClick={() => setActiveMicroIndex((v) => Math.max(0, v - 1))}
+                  className="h-10 w-full justify-center rounded-full bg-background/76 px-3"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Micro trước
+                </Button>
+
+                <Button
+                  disabled={!canNextMicro}
+                  onClick={() => setActiveMicroIndex((v) => Math.min(microLessonsSorted.length - 1, v + 1))}
+                  className="h-10 w-full justify-center rounded-full gradient-primary px-3 text-primary-foreground"
+                >
+                  Micro tiếp
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </div>
           </aside>
