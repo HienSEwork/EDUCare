@@ -14,10 +14,12 @@ import CoursesPage from "./pages/CoursesPage";
 import LessonPage from "./pages/LessonPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import GamesPage from "./pages/GamesPage";
 import FlashLightRunPage from "./pages/FlashLightRunPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import QuizPage from "./pages/QuizPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import CertificatePage from "./pages/CertificatePage";
@@ -63,6 +65,8 @@ function AppShell() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/lesson/:id" element={<LessonPage />} />
           <Route path="/blog" element={<BlogPage />} />

@@ -23,6 +23,11 @@ export interface AuthResponse {
   user: User;
 }
 
+export interface PasswordResetResponse {
+  status: string;
+  resetToken?: string;
+}
+
 export interface MeResponse {
   user: User;
 }

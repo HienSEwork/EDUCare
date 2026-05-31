@@ -99,6 +99,15 @@ public final class AuthDtos {
   public record QuizSessionResponse(String mode, int totalQuestions, List<QuizPlayQuestionResponse> questions) {
   }
 
+  public record ForgotPasswordRequest(@NotBlank @Email String email) {
+  }
+
+  public record PasswordResetRequest(@NotBlank String token, @NotBlank @Size(min = 6, max = 120) String password) {
+  }
+
+  public record PasswordResetResponse(String status, String resetToken) {
+  }
+
   public record QuizAnswerRequest(Long questionId, Integer selectedIndex) {
   }
 

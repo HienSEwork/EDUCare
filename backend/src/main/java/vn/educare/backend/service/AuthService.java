@@ -1,6 +1,7 @@
 package vn.educare.backend.service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -10,14 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.educare.backend.api.ApiException;
 import vn.educare.backend.api.AuthDtos.AuthResponse;
 import vn.educare.backend.api.AuthDtos.LoginRequest;
+import vn.educare.backend.api.AuthDtos.PasswordResetResponse;
 import vn.educare.backend.api.AuthDtos.RegisterRequest;
 import vn.educare.backend.api.AuthDtos.UserResponse;
 import vn.educare.backend.model.LessonProgressEntity;
+import vn.educare.backend.model.PasswordResetTokenEntity;
 import vn.educare.backend.model.UserEntity;
 import vn.educare.backend.model.UserPlan;
 import vn.educare.backend.model.UserRole;
 import vn.educare.backend.repository.LessonRepository;
 import vn.educare.backend.repository.LessonProgressRepository;
+import vn.educare.backend.repository.PasswordResetTokenRepository;
 import vn.educare.backend.repository.UserRepository;
 import vn.educare.backend.security.JwtService;
 
@@ -28,6 +32,7 @@ public class AuthService {
   private final UserRepository userRepository;
   private final LessonProgressRepository lessonProgressRepository;
   private final LessonRepository lessonRepository;
+  private final PasswordResetTokenRepository passwordResetTokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final UserMapper userMapper;
@@ -76,6 +81,42 @@ public class AuthService {
   public UserResponse me(String userId) {
     UserEntity user = userRepository.findById(userId).orElseThrow(() -> new ApiException(404, "User not found"));
     return mapUser(user);
+  }
+
+  @Transactional
+  public PasswordResetResponse requestPasswordReset(String email) {
+    var optionalUser = userRepository.findByEmail(email);
+    if (optionalUser.isEmpty()) {
+      return new PasswordResetResponse("If the email exists, a reset link has been sent", null);
+    }
+
+    UserEntity user = optionalUser.get();
+    passwordResetTokenRepository.deleteAllByUserId(user.getId());
+
+    PasswordResetTokenEntity resetToken = new PasswordResetTokenEntity();
+    resetToken.setToken(UUID.randomUUID().toString());
+    resetToken.setUserId(user.getId());
+    resetToken.setCreatedAt(Instant.now());
+    resetToken.setExpiresAt(Instant.now().plus(1, ChronoUnit.HOURS));
+    passwordResetTokenRepository.save(resetToken);
+
+    return new PasswordResetResponse("If the email exists, a reset link has been sent", resetToken.getToken());
+  }
+
+  @Transactional
+  public void resetPassword(String token, String password) {
+    PasswordResetTokenEntity resetToken = passwordResetTokenRepository.findByToken(token)
+        .orElseThrow(() -> new ApiException(400, "Invalid or expired reset token"));
+
+    if (resetToken.getExpiresAt().isBefore(Instant.now())) {
+      passwordResetTokenRepository.delete(resetToken);
+      throw new ApiException(400, "Invalid or expired reset token");
+    }
+
+    UserEntity user = userRepository.findById(resetToken.getUserId()).orElseThrow(() -> new ApiException(404, "User not found"));
+    user.setPasswordHash(passwordEncoder.encode(password));
+    userRepository.save(user);
+    passwordResetTokenRepository.delete(resetToken);
   }
 
   public UserResponse mapUser(UserEntity user) {

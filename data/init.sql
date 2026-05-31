@@ -23,6 +23,16 @@ create table if not exists users (
   updated_at timestamp not null default current_timestamp
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
 
+create table if not exists password_reset_tokens (
+  id bigint primary key auto_increment,
+  token varchar(255) not null unique,
+  user_id varchar(36) not null,
+  expires_at timestamp not null,
+  created_at timestamp not null default current_timestamp,
+  constraint fk_password_reset_user foreign key (user_id) references users (id) on delete cascade,
+  index idx_password_reset_user (user_id)
+) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
 create table if not exists lessons (
   id bigint primary key auto_increment,
   slug varchar(120) not null unique,
