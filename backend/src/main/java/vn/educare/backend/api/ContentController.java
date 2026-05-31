@@ -13,6 +13,7 @@ import vn.educare.backend.api.AuthDtos.LessonResponse;
 import vn.educare.backend.model.UserRole;
 import vn.educare.backend.repository.UserRepository;
 import vn.educare.backend.service.ContentService;
+import vn.educare.backend.api.AuthDtos.CourseResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +21,11 @@ public class ContentController {
 
   private final ContentService contentService;
   private final UserRepository userRepository;
+
+@GetMapping("/api/courses")
+public List<CourseResponse> courses() {
+  return contentService.courses();
+}
 
   @GetMapping("/api/lessons")
   public List<LessonResponse> lessons() {

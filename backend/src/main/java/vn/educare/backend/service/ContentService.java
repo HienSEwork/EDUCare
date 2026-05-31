@@ -9,15 +9,24 @@ import vn.educare.backend.api.ApiException;
 import vn.educare.backend.api.AuthDtos.BlogPostResponse;
 import vn.educare.backend.api.AuthDtos.GameResponse;
 import vn.educare.backend.api.AuthDtos.LessonResponse;
+import vn.educare.backend.api.AuthDtos.MicroLessonBlockResponse;
+import vn.educare.backend.api.AuthDtos.MicroLessonResponse;
 import vn.educare.backend.api.AuthDtos.QuizQuestionResponse;
 import vn.educare.backend.model.BlogPostEntity;
 import vn.educare.backend.model.GameEntity;
 import vn.educare.backend.model.LessonEntity;
+import vn.educare.backend.model.MicroLessonBlockEntity;
+import vn.educare.backend.model.MicroLessonEntity;
 import vn.educare.backend.model.QuizQuestionEntity;
 import vn.educare.backend.repository.BlogPostRepository;
 import vn.educare.backend.repository.GameRepository;
 import vn.educare.backend.repository.LessonRepository;
+import vn.educare.backend.repository.MicroLessonBlockRepository;
+import vn.educare.backend.repository.MicroLessonRepository;
 import vn.educare.backend.repository.QuizQuestionRepository;
+import vn.educare.backend.api.AuthDtos.CourseResponse;
+import vn.educare.backend.model.CourseEntity;
+import vn.educare.backend.repository.CourseRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +36,30 @@ public class ContentService {
   private final BlogPostRepository blogPostRepository;
   private final GameRepository gameRepository;
   private final QuizQuestionRepository quizQuestionRepository;
+
+  // NEW repositories for micro lessons structure
+  private final MicroLessonRepository microLessonRepository;
+  private final MicroLessonBlockRepository microLessonBlockRepository;
+  private final CourseRepository courseRepository;
+
+
   private final ObjectMapper objectMapper;
 
   public List<LessonResponse> lessons() {
+    // Note: This will now include microLessons as well (N+1 queries).
+    // If performance becomes an issue, we can optimize with batch fetching or custom queries.
     return lessonRepository.findAllByOrderByLessonOrderAsc()
         .stream()
         .map(this::toLessonResponse)
         .toList();
   }
+
+public List<CourseResponse> courses() {
+  return courseRepository.findAllByOrderByCourseOrderAsc()
+      .stream()
+      .map(this::toCourseResponse)
+      .toList();
+}
 
   public LessonResponse lesson(String slug) {
     return lessonRepository.findBySlug(slug)
@@ -70,6 +95,18 @@ public class ContentService {
   }
 
   public LessonResponse toLessonResponse(LessonEntity lesson) {
+    // Load micro lessons
+    List<MicroLessonEntity> microLessons = microLessonRepository
+        .findAllByLessonIdOrderByMicroOrderAsc(lesson.getId());
+
+    // Map micro lessons -> include blocks
+    List<MicroLessonResponse> microLessonResponses = microLessons.stream()
+        .map(this::toMicroLessonResponse)
+        .toList();
+
+    // IMPORTANT:
+    // This constructor MUST match your updated AuthDtos.LessonResponse signature.
+    // You need to update LessonResponse record in AuthDtos.java accordingly.
     return new LessonResponse(
         lesson.getId(),
         lesson.getSlug(),
@@ -77,8 +114,55 @@ public class ContentService {
         lesson.getSummary(),
         lesson.getContent(),
         lesson.getLessonOrder(),
-        lesson.getIsFree());
+        lesson.getIsFree(),
+
+        // new fields in lessons table (after ALTER)
+        lesson.getCourseId(),
+        lesson.getXpReward(),
+        lesson.getEstimatedMinutes(),
+
+        // nested micro lessons
+        microLessonResponses
+    );
   }
+
+  private MicroLessonResponse toMicroLessonResponse(MicroLessonEntity microLesson) {
+    List<MicroLessonBlockEntity> blocks = microLessonBlockRepository
+        .findAllByMicroLessonIdOrderByOrderIndexAsc(microLesson.getId());
+
+    List<MicroLessonBlockResponse> blockResponses = blocks.stream()
+        .map(b -> new MicroLessonBlockResponse(
+            b.getId(),
+            b.getBlockType(),
+            b.getContentJson(),
+            b.getOrderIndex()
+        ))
+        .toList();
+
+    return new MicroLessonResponse(
+        microLesson.getId(),
+        microLesson.getTitle(),
+        microLesson.getMicroOrder(),
+        blockResponses
+    );
+  }
+
+  private CourseResponse toCourseResponse(CourseEntity course) {
+  var lessons = lessonRepository.findAllByCourseIdOrderByLessonOrderAsc(course.getId())
+      .stream()
+      .map(this::toLessonResponse)
+      .toList();
+
+  return new CourseResponse(
+      course.getId(),
+      course.getTitle(),
+      course.getDescription(),
+      course.getThumbnail(),
+      course.getColorTheme(),
+      course.getCourseOrder(),
+      lessons
+  );
+}
 
   public BlogPostResponse toBlogResponse(BlogPostEntity post) {
     return new BlogPostResponse(
