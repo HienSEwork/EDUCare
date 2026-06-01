@@ -8,9 +8,11 @@ import vn.educare.backend.api.ApiException;
 import vn.educare.backend.api.AuthDtos.ProgressResponse;
 import vn.educare.backend.model.LessonEntity;
 import vn.educare.backend.model.LessonProgressEntity;
+import vn.educare.backend.model.MicroLessonProgressEntity;
 import vn.educare.backend.model.UserEntity;
 import vn.educare.backend.repository.LessonProgressRepository;
 import vn.educare.backend.repository.LessonRepository;
+import vn.educare.backend.repository.MicroLessonProgressRepository;
 import vn.educare.backend.repository.UserRepository;
 
 @Service
@@ -22,6 +24,7 @@ public class ProgressService {
   private final UserRepository userRepository;
   private final AuthService authService;
   private final NotificationService notificationService;
+  private final MicroLessonProgressRepository microLessonProgressRepository;
 
   @Transactional
   public ProgressResponse completeLesson(String userId, String lessonSlug) {
@@ -47,6 +50,41 @@ public class ProgressService {
 
     notificationService.create(userId, "lesson", "Lesson completed", "You completed " + lesson.getTitle() + " and earned 50 XP.");
     return new ProgressResponse(authService.mapUser(user), 50);
+  }
+
+  @Transactional
+  public ProgressResponse completeMicroLesson(String userId, Long microLessonId) {
+    UserEntity user = userRepository.findById(userId).orElseThrow(() -> new ApiException(404, "User not found"));
+
+    var progressOpt = microLessonProgressRepository.findByUserIdAndMicroLessonId(userId, microLessonId);
+    boolean newlyCompleted = false;
+    if (progressOpt.isPresent()) {
+      var progress = progressOpt.get();
+      if (!Boolean.TRUE.equals(progress.getCompleted())) {
+        progress.setCompleted(true);
+        progress.setCompletedAt(Instant.now());
+        microLessonProgressRepository.save(progress);
+        newlyCompleted = true;
+      }
+    } else {
+      var progress = new MicroLessonProgressEntity();
+      progress.setUserId(userId);
+      progress.setMicroLessonId(microLessonId);
+      progress.setCompleted(true);
+      progress.setCompletedAt(Instant.now());
+      microLessonProgressRepository.save(progress);
+      newlyCompleted = true;
+    }
+
+    int xpAwarded = 0;
+    if (newlyCompleted) {
+      xpAwarded = 10;
+      user.setXp(user.getXp() + xpAwarded);
+      userRepository.save(user);
+      notificationService.create(userId, "micro-lesson", "Micro lesson completed", "You completed a section and earned " + xpAwarded + " XP.");
+    }
+
+    return new ProgressResponse(authService.mapUser(user), xpAwarded);
   }
 
   @Transactional

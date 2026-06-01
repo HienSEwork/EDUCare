@@ -57,7 +57,7 @@ public record LessonResponse(
     Long courseId,
     Integer xpReward,
     Integer estimatedMinutes,
-
+String courseColorTheme,
     List<MicroLessonResponse> microLessons
 ) {}
 
@@ -72,6 +72,7 @@ public record MicroLessonResponse(
     Long id,
     String title,
     Integer order,
+    Boolean completed,
     List<MicroLessonBlockResponse> blocks
 ) {}
 

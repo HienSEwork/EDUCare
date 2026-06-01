@@ -135,7 +135,7 @@ ON UPDATE CURRENT_TIMESTAMP;
 
 -- =====================================================
 -- 7. CREATE micro_lesson_progress
--- tracking từng card
+-- tracking từng micro lesson
 -- =====================================================
 
 CREATE TABLE IF NOT EXISTS micro_lesson_progress (
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS micro_lesson_progress (
 
     user_id VARCHAR(36) NOT NULL,
 
-    micro_lesson_block_id BIGINT NOT NULL,
+    micro_lesson_id BIGINT NOT NULL,
 
     completed BOOLEAN DEFAULT FALSE,
 
@@ -155,9 +155,9 @@ CREATE TABLE IF NOT EXISTS micro_lesson_progress (
     REFERENCES users(id)
     ON DELETE CASCADE,
 
-    CONSTRAINT fk_micro_progress_block
-    FOREIGN KEY (micro_lesson_block_id)
-    REFERENCES micro_lesson_blocks(id)
+    CONSTRAINT fk_micro_progress_ml
+    FOREIGN KEY (micro_lesson_id)
+    REFERENCES micro_lessons(id)
     ON DELETE CASCADE
 
 ) ENGINE=InnoDB
