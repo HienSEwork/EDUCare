@@ -34,6 +34,11 @@ public class DashboardController {
     return progressService.completeLesson(currentUser.id(), slug);
   }
 
+  @PostMapping("/api/progress/micro-lessons/{microLessonId}/complete")
+  public ProgressResponse completeMicroLesson(@PathVariable Long microLessonId) {
+    return progressService.completeMicroLesson(currentUser.id(), microLessonId);
+  }
+
   @PostMapping("/api/progress/xp")
   public ProgressResponse addXp(@Valid @RequestBody AddXpRequest request) {
     return progressService.addXp(currentUser.id(), request.amount());

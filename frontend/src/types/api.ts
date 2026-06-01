@@ -43,6 +43,7 @@ export type MicroLesson = {
   id: number;
   title: string;
   order: number;             // microOrder bên backend
+  completed?: boolean;
   blocks: MicroLessonBlock[];
 };
 
@@ -60,6 +61,7 @@ export type Lesson = {
   xpReward: number;
   estimatedMinutes: number;
   microLessons: MicroLesson[];
+  courseColorTheme?: string | null;
 };
 
 export interface Course {

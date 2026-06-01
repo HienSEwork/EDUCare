@@ -25,8 +25,11 @@ import vn.educare.backend.repository.MicroLessonBlockRepository;
 import vn.educare.backend.repository.MicroLessonRepository;
 import vn.educare.backend.repository.QuizQuestionRepository;
 import vn.educare.backend.api.AuthDtos.CourseResponse;
+import vn.educare.backend.api.CurrentUser;
 import vn.educare.backend.model.CourseEntity;
+import vn.educare.backend.model.MicroLessonProgressEntity;
 import vn.educare.backend.repository.CourseRepository;
+import vn.educare.backend.repository.MicroLessonProgressRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +44,8 @@ public class ContentService {
   private final MicroLessonRepository microLessonRepository;
   private final MicroLessonBlockRepository microLessonBlockRepository;
   private final CourseRepository courseRepository;
+  private final CurrentUser currentUser;
+  private final MicroLessonProgressRepository microLessonProgressRepository;
 
 
   private final ObjectMapper objectMapper;
@@ -99,14 +104,30 @@ public List<CourseResponse> courses() {
     List<MicroLessonEntity> microLessons = microLessonRepository
         .findAllByLessonIdOrderByMicroOrderAsc(lesson.getId());
 
+    String userId = currentUser.idOrNull();
+    final List<Long> completedMicroLessonIds;
+    if (userId != null) {
+      completedMicroLessonIds = microLessonProgressRepository.findAllByUserId(userId).stream()
+          .filter(p -> Boolean.TRUE.equals(p.getCompleted()))
+          .map(MicroLessonProgressEntity::getMicroLessonId)
+          .toList();
+    } else {
+      completedMicroLessonIds = List.of();
+    }
+
     // Map micro lessons -> include blocks
     List<MicroLessonResponse> microLessonResponses = microLessons.stream()
-        .map(this::toMicroLessonResponse)
+        .map(ml -> toMicroLessonResponse(ml, completedMicroLessonIds))
         .toList();
 
-    // IMPORTANT:
-    // This constructor MUST match your updated AuthDtos.LessonResponse signature.
-    // You need to update LessonResponse record in AuthDtos.java accordingly.
+    // NEW: resolve course color theme for accent UI
+    String courseColorTheme = null;
+    if (lesson.getCourseId() != null) {
+      courseColorTheme = courseRepository.findById(lesson.getCourseId())
+          .map(CourseEntity::getColorTheme)
+          .orElse(null);
+    }
+
     return new LessonResponse(
         lesson.getId(),
         lesson.getSlug(),
@@ -116,17 +137,17 @@ public List<CourseResponse> courses() {
         lesson.getLessonOrder(),
         lesson.getIsFree(),
 
-        // new fields in lessons table (after ALTER)
         lesson.getCourseId(),
         lesson.getXpReward(),
         lesson.getEstimatedMinutes(),
 
-        // nested micro lessons
+        courseColorTheme, 
+
         microLessonResponses
     );
   }
 
-  private MicroLessonResponse toMicroLessonResponse(MicroLessonEntity microLesson) {
+  private MicroLessonResponse toMicroLessonResponse(MicroLessonEntity microLesson, List<Long> completedMicroLessonIds) {
     List<MicroLessonBlockEntity> blocks = microLessonBlockRepository
         .findAllByMicroLessonIdOrderByOrderIndexAsc(microLesson.getId());
 
@@ -139,10 +160,13 @@ public List<CourseResponse> courses() {
         ))
         .toList();
 
+    boolean completed = completedMicroLessonIds.contains(microLesson.getId());
+
     return new MicroLessonResponse(
         microLesson.getId(),
         microLesson.getTitle(),
         microLesson.getMicroOrder(),
+        completed,
         blockResponses
     );
   }
