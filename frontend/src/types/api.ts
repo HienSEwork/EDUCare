@@ -47,6 +47,13 @@ export type MicroLesson = {
   blocks: MicroLessonBlock[];
 };
 
+export interface LessonSource {
+  id: number;
+  sourceName: string;
+  sourceUrl: string;
+  sourceType?: string | null;
+}
+
 export type Lesson = {
   id: number;
   slug: string;
@@ -62,6 +69,7 @@ export type Lesson = {
   estimatedMinutes: number;
   microLessons: MicroLesson[];
   courseColorTheme?: string | null;
+  sources?: LessonSource[];
 };
 
 export interface Course {

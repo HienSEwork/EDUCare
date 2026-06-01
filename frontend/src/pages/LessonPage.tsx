@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, CheckCircle2, PlayCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ExternalLink, PlayCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -540,6 +540,36 @@ export default function LessonPage() {
                 </Button>
               </div>
             </div>
+
+            {/* Lesson Sources Card */}
+            {lesson.sources && lesson.sources.length > 0 ? (
+              <div className="rounded-[2rem] gradient-card p-6 shadow-card">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-primary/10">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Tài liệu uy tín</p>
+                    <h2 className="font-heading text-xl font-bold text-foreground">Tham khảo thêm</h2>
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-3">
+                  {lesson.sources.map((source) => (
+                    <a
+                      key={source.id}
+                      href={source.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between gap-3 rounded-[1.1rem] bg-background/76 px-4 py-3 text-sm font-semibold text-foreground/80 hover:text-foreground transition-all hover:bg-background/90"
+                    >
+                      <span className="truncate">{source.sourceName}</span>
+                      <ExternalLink className="h-4 w-4 shrink-0 text-foreground/50" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </aside>
         </section>
       </div>

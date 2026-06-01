@@ -25,10 +25,13 @@ import vn.educare.backend.repository.MicroLessonBlockRepository;
 import vn.educare.backend.repository.MicroLessonRepository;
 import vn.educare.backend.repository.QuizQuestionRepository;
 import vn.educare.backend.api.AuthDtos.CourseResponse;
+import vn.educare.backend.api.AuthDtos.LessonSourceResponse;
 import vn.educare.backend.api.CurrentUser;
 import vn.educare.backend.model.CourseEntity;
+import vn.educare.backend.model.LessonSourceEntity;
 import vn.educare.backend.model.MicroLessonProgressEntity;
 import vn.educare.backend.repository.CourseRepository;
+import vn.educare.backend.repository.LessonSourceRepository;
 import vn.educare.backend.repository.MicroLessonProgressRepository;
 
 @Service
@@ -46,6 +49,7 @@ public class ContentService {
   private final CourseRepository courseRepository;
   private final CurrentUser currentUser;
   private final MicroLessonProgressRepository microLessonProgressRepository;
+  private final LessonSourceRepository lessonSourceRepository;
 
 
   private final ObjectMapper objectMapper;
@@ -128,6 +132,11 @@ public List<CourseResponse> courses() {
           .orElse(null);
     }
 
+    // Load lesson sources
+    List<LessonSourceResponse> sourceResponses = lessonSourceRepository.findAllByLessonId(lesson.getId()).stream()
+        .map(s -> new LessonSourceResponse(s.getId(), s.getSourceName(), s.getSourceUrl(), s.getSourceType()))
+        .toList();
+
     return new LessonResponse(
         lesson.getId(),
         lesson.getSlug(),
@@ -143,7 +152,8 @@ public List<CourseResponse> courses() {
 
         courseColorTheme, 
 
-        microLessonResponses
+        microLessonResponses,
+        sourceResponses
     );
   }
 

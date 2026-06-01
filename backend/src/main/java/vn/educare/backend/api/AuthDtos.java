@@ -45,6 +45,13 @@ public final class AuthDtos {
       String createdAt) {
   }
 
+public record LessonSourceResponse(
+    Long id,
+    String sourceName,
+    String sourceUrl,
+    String sourceType
+) {}
+
 public record LessonResponse(
     Long id,
     String slug,
@@ -57,8 +64,9 @@ public record LessonResponse(
     Long courseId,
     Integer xpReward,
     Integer estimatedMinutes,
-String courseColorTheme,
-    List<MicroLessonResponse> microLessons
+    String courseColorTheme,
+    List<MicroLessonResponse> microLessons,
+    List<LessonSourceResponse> sources
 ) {}
 
   public record MicroLessonBlockResponse(
