@@ -209,3 +209,87 @@ create table if not exists notifications (
   created_at timestamp not null default current_timestamp,
   constraint fk_notification_user foreign key (user_id) references users (id) on delete cascade
 ) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+
+-- =====================================================
+-- COURSES AND MICRO LESSONS (From KhoaV1.sql)
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS courses (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    thumbnail VARCHAR(255),
+    color_theme VARCHAR(50),
+    course_order INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE lessons
+ADD COLUMN course_id BIGINT NULL AFTER id,
+ADD COLUMN xp_reward INT NOT NULL DEFAULT 50 AFTER is_free,
+ADD COLUMN estimated_minutes INT NOT NULL DEFAULT 5 AFTER xp_reward,
+ADD CONSTRAINT fk_lessons_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE;
+
+CREATE TABLE IF NOT EXISTS micro_lessons (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    lesson_id BIGINT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    micro_order INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_micro_lessons_lesson FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS micro_lesson_blocks (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    micro_lesson_id BIGINT NOT NULL,
+    block_type VARCHAR(50) NOT NULL,
+    content_json JSON NOT NULL,
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_micro_lesson_blocks_micro_lesson FOREIGN KEY (micro_lesson_id) REFERENCES micro_lessons(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE lesson_progress
+ADD COLUMN progress_percent INT NOT NULL DEFAULT 0 AFTER xp_awarded,
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+CREATE TABLE IF NOT EXISTS micro_lesson_progress (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id VARCHAR(36) NOT NULL,
+    micro_lesson_id BIGINT NOT NULL,
+    completed BOOLEAN DEFAULT FALSE,
+    completed_at TIMESTAMP NULL,
+    CONSTRAINT fk_micro_progress_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_micro_progress_ml FOREIGN KEY (micro_lesson_id) REFERENCES micro_lessons(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
+-- LESSON SOURCES (From KhoaV2.sql)
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS lesson_sources (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    lesson_id BIGINT NOT NULL,
+    source_name VARCHAR(255) NOT NULL,
+    source_url TEXT NOT NULL,
+    source_type VARCHAR(50),
+    FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
+-- COURSE ENROLLMENTS (From KhoaV3.sql / V5_course-enrollments.sql)
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS course_enrollments (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id VARCHAR(36) NOT NULL,
+    course_id BIGINT NOT NULL,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_user_course (user_id, course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.educare.backend.api.AuthDtos.BlogPostResponse;
 import vn.educare.backend.api.AuthDtos.GameResponse;
@@ -25,6 +26,11 @@ public class ContentController {
 @GetMapping("/api/courses")
 public List<CourseResponse> courses() {
   return contentService.courses();
+}
+
+@GetMapping("/api/courses/{id}")
+public CourseResponse course(@PathVariable Long id) {
+  return contentService.course(id);
 }
 
   @GetMapping("/api/lessons")
@@ -64,5 +70,15 @@ public List<CourseResponse> courses() {
                 user.getQuizScoreTotal(),
                 user.getAvatarUrl() == null ? "avatar" : user.getAvatarUrl()))
             .toList());
+  }
+
+  @PostMapping("/api/courses/{courseId}/enroll")
+  public void enroll(@PathVariable Long courseId) {
+    contentService.enroll(courseId);
+  }
+
+  @GetMapping("/api/courses/my-learning")
+  public List<CourseResponse> myLearning() {
+    return contentService.myLearning();
   }
 }

@@ -33,6 +33,7 @@ import vn.educare.backend.model.MicroLessonProgressEntity;
 import vn.educare.backend.repository.CourseRepository;
 import vn.educare.backend.repository.LessonSourceRepository;
 import vn.educare.backend.repository.MicroLessonProgressRepository;
+import vn.educare.backend.repository.CourseEnrollmentRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +51,7 @@ public class ContentService {
   private final CurrentUser currentUser;
   private final MicroLessonProgressRepository microLessonProgressRepository;
   private final LessonSourceRepository lessonSourceRepository;
+  private final CourseEnrollmentRepository courseEnrollmentRepository;
 
 
   private final ObjectMapper objectMapper;
@@ -68,6 +70,12 @@ public List<CourseResponse> courses() {
       .stream()
       .map(this::toCourseResponse)
       .toList();
+}
+
+public CourseResponse course(Long id) {
+  return courseRepository.findById(id)
+      .map(this::toCourseResponse)
+      .orElseThrow(() -> new ApiException(404, "Course not found"));
 }
 
   public LessonResponse lesson(String slug) {
@@ -182,21 +190,28 @@ public List<CourseResponse> courses() {
   }
 
   private CourseResponse toCourseResponse(CourseEntity course) {
-  var lessons = lessonRepository.findAllByCourseIdOrderByLessonOrderAsc(course.getId())
-      .stream()
-      .map(this::toLessonResponse)
-      .toList();
+    var lessons = lessonRepository.findAllByCourseIdOrderByLessonOrderAsc(course.getId())
+        .stream()
+        .map(this::toLessonResponse)
+        .toList();
 
-  return new CourseResponse(
-      course.getId(),
-      course.getTitle(),
-      course.getDescription(),
-      course.getThumbnail(),
-      course.getColorTheme(),
-      course.getCourseOrder(),
-      lessons
-  );
-}
+    String userId = currentUser.idOrNull();
+    boolean enrolled = false;
+    if (userId != null) {
+      enrolled = courseEnrollmentRepository.existsByUserIdAndCourseId(userId, course.getId());
+    }
+
+    return new CourseResponse(
+        course.getId(),
+        course.getTitle(),
+        course.getDescription(),
+        course.getThumbnail(),
+        course.getColorTheme(),
+        course.getCourseOrder(),
+        lessons,
+        enrolled
+    );
+  }
 
   public BlogPostResponse toBlogResponse(BlogPostEntity post) {
     return new BlogPostResponse(
@@ -237,5 +252,30 @@ public List<CourseResponse> courses() {
         game.getCoverImage(),
         game.getAccentColor(),
         Boolean.TRUE.equals(game.getIsPublished()));
+  }
+
+  public void enroll(Long courseId) {
+    String userId = currentUser.id();
+    if (!courseRepository.existsById(courseId)) {
+      throw new ApiException(404, "Course not found");
+    }
+    if (courseEnrollmentRepository.existsByUserIdAndCourseId(userId, courseId)) {
+      return;
+    }
+    vn.educare.backend.model.CourseEnrollmentEntity enrollment = new vn.educare.backend.model.CourseEnrollmentEntity();
+    enrollment.setUserId(userId);
+    enrollment.setCourseId(courseId);
+    enrollment.setEnrolledAt(java.time.Instant.now());
+    courseEnrollmentRepository.save(enrollment);
+  }
+
+  public List<CourseResponse> myLearning() {
+    String userId = currentUser.id();
+    List<vn.educare.backend.model.CourseEnrollmentEntity> enrollments = courseEnrollmentRepository.findAllByUserId(userId);
+    List<Long> courseIds = enrollments.stream().map(vn.educare.backend.model.CourseEnrollmentEntity::getCourseId).toList();
+    return courseRepository.findAllById(courseIds)
+        .stream()
+        .map(this::toCourseResponse)
+        .toList();
   }
 }

@@ -34,7 +34,7 @@ export interface ProgressResponse {
 
 export type MicroLessonBlock = {
   id: number;
-  blockType: "hook" | "explanation" | "scenario" | "interaction" | "reflection" | "takeaway";
+  blockType: "hook" | "explanation" | "scenario" | "interaction" | "reflection" | "takeaway" | "sorting" | "flashcard";
   contentJson: string;       // backend trả string JSON (mình map kiểu String ở entity)
   orderIndex: number;
 };
@@ -80,6 +80,7 @@ export interface Course {
   colorTheme: string | null;
   order: number | null;
   lessons: Lesson[];
+  enrolled?: boolean;
 }
 
 export interface BlogPost {

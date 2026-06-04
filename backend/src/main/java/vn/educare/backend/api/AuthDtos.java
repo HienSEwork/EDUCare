@@ -91,7 +91,8 @@ public record CourseResponse(
     String thumbnail,
     String colorTheme,
     Integer order,
-    List<LessonResponse> lessons
+    List<LessonResponse> lessons,
+    Boolean enrolled
 ) {}
 
   public record BlogPostResponse(

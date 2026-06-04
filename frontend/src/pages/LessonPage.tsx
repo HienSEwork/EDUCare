@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ExternalLink, PlayCircle } from "lucide-react";
@@ -57,6 +57,10 @@ function blockLabel(blockType: MicroLessonBlock["blockType"]) {
       return "Tình huống thực tế";
     case "interaction":
       return "Bạn sẽ làm gì?";
+    case "sorting":
+      return "Phân loại hành vi";
+    case "flashcard":
+      return "Thẻ nhớ lật 3D";
     case "reflection":
       return "Suy ngẫm";
     case "takeaway":
@@ -64,6 +68,331 @@ function blockLabel(blockType: MicroLessonBlock["blockType"]) {
     default:
       return blockType;
   }
+}
+
+function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void }) {
+  const [items] = useState<any[]>(() => data?.items ?? []);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [greenList, setGreenList] = useState<string[]>([]);
+  const [redList, setRedList] = useState<string[]>([]);
+  const [isWrong, setIsWrong] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+
+  const greenBoxRef = useRef<HTMLButtonElement>(null);
+  const redBoxRef = useRef<HTMLButtonElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const [isOverGreen, setIsOverGreen] = useState(false);
+  const [isOverRed, setIsOverRed] = useState(false);
+
+  const leftBoxTitle = data?.leftBox?.title ?? "Lành mạnh (Green Flag)";
+  const rightBoxTitle = data?.rightBox?.title ?? "Độc hại (Red Flag)";
+  const instruction = data?.instruction ?? "Kéo thẻ hoặc click phân loại hành vi sau:";
+
+  const currentItem = items[currentIndex];
+
+  const handleClassify = (target: "left" | "right") => {
+    if (isDone || !currentItem) return;
+
+    if (currentItem.correctBox === target) {
+      if (target === "left") {
+        setGreenList((prev) => [...prev, currentItem.text]);
+      } else {
+        setRedList((prev) => [...prev, currentItem.text]);
+      }
+      toast.success("Chính xác!", { duration: 1000 });
+      if (currentIndex + 1 >= items.length) {
+        setIsDone(true);
+        onComplete();
+      } else {
+        setCurrentIndex((prev) => prev + 1);
+      }
+    } else {
+      setIsWrong(true);
+      toast.error("Chưa chính xác rồi. Hãy thử lại!", { duration: 1500 });
+      setTimeout(() => setIsWrong(false), 500);
+    }
+  };
+
+  return (
+    <div className="mt-4 space-y-4">
+      <p className="text-[14px] font-semibold text-foreground/80">{instruction}</p>
+
+      <div className="grid grid-cols-2 gap-4">
+        {/* Left Box (Green Flag) */}
+        <button
+          ref={greenBoxRef}
+          onClick={() => handleClassify("left")}
+          disabled={isDone}
+          className={`flex flex-col items-center justify-start rounded-[1.6rem] border-2 border-dashed p-4 text-center transition-all min-h-[120px] w-full ${
+            isDone
+              ? "cursor-default opacity-90 border-mint/60 bg-mint/8 text-mint-foreground"
+              : isOverGreen
+              ? "border-mint bg-mint/22 shadow-lg scale-[1.02] ring-4 ring-mint/20 text-mint-foreground"
+              : "border-mint/60 bg-mint/8 hover:bg-mint/16 text-mint-foreground"
+          }`}
+        >
+          <span className="text-2xl mb-2">💚</span>
+          <span className="text-xs font-bold">{leftBoxTitle}</span>
+          <div className="mt-3 space-y-1.5 w-full">
+            {greenList.map((item, idx) => (
+              <div
+                key={idx}
+                className="rounded-lg bg-mint/14 px-2 py-1 text-[11px] font-semibold truncate text-center"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </button>
+
+        {/* Right Box (Red Flag) */}
+        <button
+          ref={redBoxRef}
+          onClick={() => handleClassify("right")}
+          disabled={isDone}
+          className={`flex flex-col items-center justify-start rounded-[1.6rem] border-2 border-dashed p-4 text-center transition-all min-h-[120px] w-full ${
+            isDone
+              ? "cursor-default opacity-90 border-peach/60 bg-peach/8 text-peach-foreground"
+              : isOverRed
+              ? "border-peach bg-peach/22 shadow-lg scale-[1.02] ring-4 ring-peach/20 text-peach-foreground"
+              : "border-peach/60 bg-peach/8 hover:bg-peach/16 text-peach-foreground"
+          }`}
+        >
+          <span className="text-2xl mb-2">❤️</span>
+          <span className="text-xs font-bold">{rightBoxTitle}</span>
+          <div className="mt-3 space-y-1.5 w-full">
+            {redList.map((item, idx) => (
+              <div
+                key={idx}
+                className="rounded-lg bg-peach/14 px-2 py-1 text-[11px] font-semibold truncate text-center"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </button>
+      </div>
+
+      {!isDone && currentItem ? (
+        <div className="relative pt-2 flex flex-col items-center">
+          <motion.div
+            ref={cardRef}
+            animate={isWrong ? { x: [-10, 10, -10, 10, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            drag={true}
+            dragSnapToOrigin={true}
+            onDrag={(_, info) => {
+              const dragX = info.point.x - window.scrollX;
+              const dragY = info.point.y - window.scrollY;
+
+              let overG = false;
+              let overR = false;
+
+              if (greenBoxRef.current) {
+                const rect = greenBoxRef.current.getBoundingClientRect();
+                const pointerInside =
+                  dragX >= rect.left &&
+                  dragX <= rect.right &&
+                  dragY >= rect.top &&
+                  dragY <= rect.bottom;
+                if (pointerInside) {
+                  overG = true;
+                }
+              }
+
+              if (redBoxRef.current) {
+                const rect = redBoxRef.current.getBoundingClientRect();
+                const pointerInside =
+                  dragX >= rect.left &&
+                  dragX <= rect.right &&
+                  dragY >= rect.top &&
+                  dragY <= rect.bottom;
+                if (pointerInside) {
+                  overR = true;
+                }
+              }
+
+              setIsOverGreen(overG);
+              setIsOverRed(overR);
+            }}
+            onDragEnd={(_, info) => {
+              setIsOverGreen(false);
+              setIsOverRed(false);
+
+              // Viewport coordinates of the pointer drop point (scroll-compensated)
+              const dragX = info.point.x - window.scrollX;
+              const dragY = info.point.y - window.scrollY;
+
+              if (greenBoxRef.current) {
+                const rect = greenBoxRef.current.getBoundingClientRect();
+                const pointerInside =
+                  dragX >= rect.left &&
+                  dragX <= rect.right &&
+                  dragY >= rect.top &&
+                  dragY <= rect.bottom;
+
+                if (pointerInside) {
+                  handleClassify("left");
+                  return;
+                }
+              }
+
+              if (redBoxRef.current) {
+                const rect = redBoxRef.current.getBoundingClientRect();
+                const pointerInside =
+                  dragX >= rect.left &&
+                  dragX <= rect.right &&
+                  dragY >= rect.top &&
+                  dragY <= rect.bottom;
+
+                if (pointerInside) {
+                  handleClassify("right");
+                  return;
+                }
+              }
+            }}
+            className="w-full max-w-sm cursor-grab active:cursor-grabbing rounded-[1.6rem] border border-border/80 bg-background/90 p-6 text-center shadow-soft hover:shadow-card transition-shadow duration-200"
+          >
+            <p className="text-[15px] font-bold text-foreground leading-snug mb-4">{currentItem.text}</p>
+            <p className="text-[10px] text-foreground/50 font-semibold mb-3">
+              Kéo thẻ thả trực tiếp vào hai hộp phía trên để phân loại
+            </p>
+            <div className="flex justify-center gap-3">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-full bg-mint/10 text-mint-foreground hover:bg-mint/20 text-xs font-bold px-4"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClassify("left");
+                }}
+              >
+                Lành mạnh
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="rounded-full bg-peach/10 text-peach-foreground hover:bg-peach/20 text-xs font-bold px-4"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClassify("right");
+                }}
+              >
+                Độc hại
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      ) : (
+        <div className="rounded-[1.6rem] bg-mint/10 p-5 text-center border border-mint/20 shadow-soft w-full">
+          <p className="text-[14px] font-bold text-mint-foreground">🎉 Bạn đã phân loại xuất sắc tất cả hành vi!</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FlashcardBlock({ data, onComplete }: { data: any; onComplete: () => void }) {
+  const [flipped, setFlipped] = useState(false);
+  const [rated, setRated] = useState(false);
+  const [rating, setRating] = useState<string | null>(null);
+
+  const front = data?.front ?? "Mặt trước";
+  const back = data?.back ?? "Mặt sau";
+  const notes = data?.notes ?? "";
+
+  const handleRate = (level: "easy" | "medium" | "hard") => {
+    setRating(level);
+    setRated(true);
+    toast.success(`Ghi nhận mức độ gợi nhớ: ${level === "easy" ? "Dễ" : level === "medium" ? "Trung bình" : "Khó"}`);
+    onComplete();
+  };
+
+  return (
+    <div className="mt-4 flex flex-col items-center w-full">
+      <div
+        onClick={() => setFlipped(!flipped)}
+        className="perspective-1000 w-full max-w-sm h-52 cursor-pointer relative"
+      >
+        <div
+          className={`w-full h-full duration-500 preserve-3d relative transition-transform ${
+            flipped ? "rotate-y-180" : ""
+          }`}
+        >
+          {/* Front Side */}
+          <div className="absolute inset-0 w-full h-full backface-hidden flex flex-col items-center justify-center rounded-[1.8rem] border border-border bg-card p-6 text-center shadow-card">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-[0.16em] mb-3">Câu hỏi / Thuật ngữ</span>
+            <p className="text-base font-bold text-foreground leading-relaxed px-2">{front}</p>
+            <span className="absolute bottom-4 text-[10px] text-foreground/40 font-semibold animate-pulse">Bấm để lật thẻ ↺</span>
+          </div>
+
+          {/* Back Side */}
+          <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 flex flex-col items-center justify-center rounded-[1.8rem] border border-primary/20 bg-background p-6 text-center shadow-card">
+            <span className="text-[10px] font-bold text-violet-700 uppercase tracking-[0.16em] mb-2">Giải nghĩa / Đáp án</span>
+            <div className="overflow-y-auto max-h-24 px-2 mb-2 w-full">
+              <p className="text-sm font-semibold text-foreground leading-relaxed">{back}</p>
+              {notes ? <p className="mt-2 text-xs text-foreground/60 italic">{notes}</p> : null}
+            </div>
+            <span className="absolute bottom-4 text-[10px] text-foreground/40 font-semibold">Bấm để lật lại ↺</span>
+          </div>
+        </div>
+      </div>
+
+      {flipped && !rated && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-5 w-full max-w-sm text-center"
+        >
+          <p className="text-xs font-bold text-foreground/60 mb-2.5">Bạn tự đánh giá mức độ ghi nhớ:</p>
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl border-peach/40 text-peach-foreground hover:bg-peach/14 text-xs font-bold py-5"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRate("hard");
+              }}
+            >
+              😰 Khó
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl border-yellow-300 text-yellow-800 hover:bg-yellow-50 text-xs font-bold py-5"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRate("medium");
+              }}
+            >
+              😐 T.Bình
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl border-mint/40 text-mint-foreground hover:bg-mint/14 text-xs font-bold py-5"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRate("easy");
+              }}
+            >
+              😊 Dễ
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
+      {rated && (
+        <div className="mt-4 rounded-xl bg-mint/10 border border-mint/20 px-4 py-2.5 text-center w-full max-w-sm">
+          <p className="text-xs font-bold text-mint-foreground">
+            ✓ Đã ghi nhận gợi nhớ: <span className="uppercase">{rating === "easy" ? "Dễ" : rating === "medium" ? "Trung bình" : "Khó"}</span>
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function renderBlockContent(block: MicroLessonBlock, onInteractionCorrect?: () => void) {
@@ -124,6 +453,14 @@ function renderBlockContent(block: MicroLessonBlock, onInteractionCorrect?: () =
         </div>
       </div>
     );
+  }
+
+  if (block.blockType === "sorting") {
+    return <SortingBlock data={data} onComplete={onInteractionCorrect ?? (() => {})} />;
+  }
+
+  if (block.blockType === "flashcard") {
+    return <FlashcardBlock data={data} onComplete={onInteractionCorrect ?? (() => {})} />;
   }
 
   if (block.blockType === "reflection") {
@@ -334,7 +671,10 @@ export default function LessonPage() {
                   activeBlocks.slice(0, visibleBlocksCount).map((block, idx) => {
                     const isLastVisible = idx === visibleBlocksCount - 1;
                     const isLastBlock = idx === activeBlocks.length - 1;
-                    const showContinueButton = isLastVisible && !isLastBlock && block.blockType !== "interaction";
+                    const showContinueButton =
+                      isLastVisible &&
+                      !isLastBlock &&
+                      !["interaction", "sorting", "flashcard"].includes(block.blockType);
 
                     return (
                       <motion.div

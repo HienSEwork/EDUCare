@@ -5,7 +5,7 @@ import { Bell, BookOpen, Flame, Shield, Star, Trophy } from "lucide-react";
 import { DASHBOARD_COPY } from "@/content/uiCopy";
 import { useAuth } from "@/contexts/AuthContext";
 import { ApiError, apiRequest } from "@/lib/api/client";
-import type { DashboardResponse } from "@/types/api";
+import type { DashboardResponse, Course } from "@/types/api";
 
 function planLabel(plan: string) {
   if (plan === "free") return DASHBOARD_COPY.planLabels.free;
@@ -25,6 +25,7 @@ function notificationTypeLabel(type: string) {
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const [data, setData] = useState<DashboardResponse | null>(null);
+  const [myLearning, setMyLearning] = useState<Course[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,9 +33,13 @@ export default function DashboardPage() {
       return;
     }
 
-    void apiRequest<DashboardResponse>("/dashboard")
-      .then((response) => {
-        setData(response);
+    Promise.all([
+      apiRequest<DashboardResponse>("/dashboard"),
+      apiRequest<Course[]>("/courses/my-learning"),
+    ])
+      .then(([dashboardData, myCourses]) => {
+        setData(dashboardData);
+        setMyLearning(myCourses);
         setError(null);
       })
       .catch((requestError) => {
@@ -112,14 +117,63 @@ export default function DashboardPage() {
             ))}
           </div>
 
+          {/* Enrolled Courses Progress */}
           <div className="mb-8 rounded-2xl gradient-card p-6 shadow-card">
-            <h2 className="mb-3 font-heading text-lg font-bold">{DASHBOARD_COPY.courseProgress}</h2>
-            <div className="mb-2 h-3 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${data.summary.progressPercentage}%` }} />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Hoàn thành {data.summary.progressPercentage}% ({data.summary.completedLessons}/{data.summary.totalLessons} bài học)
-            </p>
+            <h2 className="mb-4 font-heading text-lg font-bold">Khóa học của tôi (My Learning)</h2>
+            {myLearning.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-sm text-muted-foreground mb-4">Bạn chưa đăng ký khóa học nào.</p>
+                <Link
+                  to="/courses"
+                  className="inline-flex h-9 items-center justify-center rounded-xl bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-soft hover:bg-primary/90 transition-all"
+                >
+                  Khám phá khóa học ngay
+                </Link>
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                {myLearning.map((course) => {
+                  const lessonsCount = course.lessons?.length ?? 0;
+                  const completedLessonsCount = course.lessons?.filter((l) => user.completedLessons.includes(l.slug)).length ?? 0;
+                  const progressPercent = lessonsCount > 0 ? Math.round((completedLessonsCount / lessonsCount) * 100) : 0;
+
+                  return (
+                    <Link
+                      key={course.id}
+                      to={`/course/${course.id}`}
+                      className="group flex flex-col justify-between rounded-xl border border-white/60 bg-background/50 p-4 transition-all hover:bg-background/80 hover:shadow-soft"
+                    >
+                      <div>
+                        <div className="flex justify-between items-center gap-2 mb-2">
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
+                            Chi tiết →
+                          </span>
+                          <span className="text-xs text-muted-foreground font-semibold">
+                            {completedLessonsCount}/{lessonsCount} bài học
+                          </span>
+                        </div>
+                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                          {course.title}
+                        </h3>
+                      </div>
+
+                      <div className="mt-4 space-y-1.5">
+                        <div className="flex justify-between items-center text-xs font-bold text-foreground">
+                          <span>Tiến độ</span>
+                          <span>{progressPercent}%</span>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-muted w-full">
+                          <div
+                            className="h-full rounded-full gradient-primary transition-all"
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {data.nextLesson ? (
