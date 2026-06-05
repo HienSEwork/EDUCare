@@ -124,13 +124,12 @@ function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void 
           ref={greenBoxRef}
           onClick={() => handleClassify("left")}
           disabled={isDone}
-          className={`flex flex-col items-center justify-start rounded-[1.6rem] border-2 border-dashed p-4 text-center transition-all min-h-[120px] w-full ${
-            isDone
-              ? "cursor-default opacity-90 border-mint/60 bg-mint/8 text-mint-foreground"
-              : isOverGreen
+          className={`flex flex-col items-center justify-start rounded-[1.6rem] border-2 border-dashed p-4 text-center transition-all min-h-[120px] w-full ${isDone
+            ? "cursor-default opacity-90 border-mint/60 bg-mint/8 text-mint-foreground"
+            : isOverGreen
               ? "border-mint bg-mint/22 shadow-lg scale-[1.02] ring-4 ring-mint/20 text-mint-foreground"
               : "border-mint/60 bg-mint/8 hover:bg-mint/16 text-mint-foreground"
-          }`}
+            }`}
         >
           <span className="text-2xl mb-2">💚</span>
           <span className="text-xs font-bold">{leftBoxTitle}</span>
@@ -151,13 +150,12 @@ function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void 
           ref={redBoxRef}
           onClick={() => handleClassify("right")}
           disabled={isDone}
-          className={`flex flex-col items-center justify-start rounded-[1.6rem] border-2 border-dashed p-4 text-center transition-all min-h-[120px] w-full ${
-            isDone
-              ? "cursor-default opacity-90 border-peach/60 bg-peach/8 text-peach-foreground"
-              : isOverRed
+          className={`flex flex-col items-center justify-start rounded-[1.6rem] border-2 border-dashed p-4 text-center transition-all min-h-[120px] w-full ${isDone
+            ? "cursor-default opacity-90 border-peach/60 bg-peach/8 text-peach-foreground"
+            : isOverRed
               ? "border-peach bg-peach/22 shadow-lg scale-[1.02] ring-4 ring-peach/20 text-peach-foreground"
               : "border-peach/60 bg-peach/8 hover:bg-peach/16 text-peach-foreground"
-          }`}
+            }`}
         >
           <span className="text-2xl mb-2">❤️</span>
           <span className="text-xs font-bold">{rightBoxTitle}</span>
@@ -316,9 +314,8 @@ function FlashcardBlock({ data, onComplete }: { data: any; onComplete: () => voi
         className="perspective-1000 w-full max-w-sm h-52 cursor-pointer relative"
       >
         <div
-          className={`w-full h-full duration-500 preserve-3d relative transition-transform ${
-            flipped ? "rotate-y-180" : ""
-          }`}
+          className={`w-full h-full duration-500 preserve-3d relative transition-transform ${flipped ? "rotate-y-180" : ""
+            }`}
         >
           {/* Front Side */}
           <div className="absolute inset-0 w-full h-full backface-hidden flex flex-col items-center justify-center rounded-[1.8rem] border border-border bg-card p-6 text-center shadow-card">
@@ -456,11 +453,11 @@ function renderBlockContent(block: MicroLessonBlock, onInteractionCorrect?: () =
   }
 
   if (block.blockType === "sorting") {
-    return <SortingBlock data={data} onComplete={onInteractionCorrect ?? (() => {})} />;
+    return <SortingBlock data={data} onComplete={onInteractionCorrect ?? (() => { })} />;
   }
 
   if (block.blockType === "flashcard") {
-    return <FlashcardBlock data={data} onComplete={onInteractionCorrect ?? (() => {})} />;
+    return <FlashcardBlock data={data} onComplete={onInteractionCorrect ?? (() => { })} />;
   }
 
   if (block.blockType === "reflection") {
@@ -499,6 +496,8 @@ export default function LessonPage() {
   useEffect(() => {
     if (!id) return;
 
+    setLesson(null);
+
     void Promise.all([apiRequest<Lesson[]>("/lessons"), apiRequest<Lesson>(`/lessons/${id}`)])
       .then(([lessonList, currentLesson]) => {
         setLessons(lessonList);
@@ -518,9 +517,19 @@ export default function LessonPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeMicroIndex, id]);
 
-  const currentIndex = useMemo(() => lessons.findIndex((item) => item.slug === id), [id, lessons]);
-  const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
-  const nextLesson = currentIndex >= 0 && currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
+  const courseLessons = useMemo(() => {
+    if (!lesson || !lessons) return [];
+    return lessons.filter((l) => l.courseId === lesson.courseId)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }, [lessons, lesson]);
+
+  const currentIndex = useMemo(() => {
+    if (!lesson) return -1;
+    return courseLessons.findIndex((item) => item.slug === id);
+  }, [id, courseLessons, lesson]);
+
+  const prevLesson = currentIndex > 0 ? courseLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex >= 0 && currentIndex < courseLessons.length - 1 ? courseLessons[currentIndex + 1] : null;
 
   const locked = lesson ? !lesson.isFree && (!user || user.plan === "free") : false;
   const completed = lesson ? user?.completedLessons.includes(lesson.slug) : false;
@@ -543,12 +552,6 @@ export default function LessonPage() {
     }
   }, [activeMicro?.id, activeMicro?.completed, activeBlocks.length]);
 
-  const handleComplete = async () => {
-    if (!lesson) return;
-    await completeLesson(lesson.slug);
-    toast.success("Đã hoàn thành bài học.");
-  };
-
   const handleCompleteMicro = async (microLessonId: number) => {
     try {
       const res = await apiRequest<{ user: User; awardedXp: number }>(
@@ -561,14 +564,24 @@ export default function LessonPage() {
       toast.success(`Đã hoàn thành phần học! (+${res.awardedXp} XP)`);
 
       // Re-fetch current lesson to update micro completion status
+      let updatedLesson = lesson;
       if (id) {
-        const currentLesson = await apiRequest<Lesson>(`/lessons/${id}`);
-        setLesson(currentLesson);
+        updatedLesson = await apiRequest<Lesson>(`/lessons/${id}`);
+        setLesson(updatedLesson);
       }
 
-      // Auto-advance to next micro lesson if available
-      if (canNextMicro) {
-        setActiveMicroIndex((v) => v + 1);
+      // Check if this was the last micro lesson based on sorted list
+      const sortedList = sortMicroLessons(updatedLesson?.microLessons ?? []);
+      const currentIndex = activeMicroIndex;
+      const isLastMicro = currentIndex >= sortedList.length - 1;
+
+      if (isLastMicro) {
+        if (updatedLesson && res.user && !res.user.completedLessons.includes(updatedLesson.slug)) {
+          await completeLesson(updatedLesson.slug);
+          toast.success(`🎉 Chúc mừng! Bạn đã hoàn thành toàn bộ bài học: ${updatedLesson.title}! (+${updatedLesson.xpReward} XP)`);
+        }
+      } else if (currentIndex < sortedList.length - 1) {
+        setActiveMicroIndex(currentIndex + 1);
       }
     } catch (err) {
       toast.error("Không thể hoàn thành phần học. Vui lòng thử lại.");
@@ -607,7 +620,13 @@ export default function LessonPage() {
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="detail-panel max-w-xl px-8 py-10 text-center">
           <p className="mb-4 text-lg">Bài học này dành cho tài khoản đã mở nội dung nâng cao.</p>
-          <Button onClick={() => navigate("/courses")} className="rounded-full gradient-primary text-primary-foreground">
+          <Button onClick={() => {
+            if (lesson.courseId) {
+              navigate(`/course/${lesson.courseId}`);
+            } else {
+              navigate("/courses");
+            }
+          }} className="rounded-full gradient-primary text-primary-foreground">
             Xem lộ trình khóa học
           </Button>
         </div>
@@ -619,7 +638,13 @@ export default function LessonPage() {
     <div className="min-h-screen pb-16 pt-8">
       <div className="container mx-auto max-w-6xl px-4">
         <button
-          onClick={() => navigate("/courses")}
+          onClick={() => {
+            if (lesson.courseId) {
+              navigate(`/course/${lesson.courseId}`);
+            } else {
+              navigate("/courses");
+            }
+          }}
           className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-foreground/70 transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -634,7 +659,7 @@ export default function LessonPage() {
                   className="rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em]"
                   style={{ backgroundColor: accentSoft, color: accentStrong }}
                 >
-                  Bài {lesson.order} / {lessons.length}
+                  Bài {currentIndex !== -1 ? currentIndex + 1 : 1} / {courseLessons.length || 1}
                 </span>
 
                 <span className="rounded-full bg-background/70 px-4 py-2 text-xs font-semibold text-foreground/70">
@@ -753,13 +778,6 @@ export default function LessonPage() {
                 </div>
               ) : null}
 
-              {user && !completed ? (
-                <div className="mt-10 border-t border-border/70 pt-6">
-                  <Button onClick={() => void handleComplete()} className="rounded-full gradient-primary px-8 text-primary-foreground">
-                    Hoàn thành bài học (+{lesson.xpReward} XP)
-                  </Button>
-                </div>
-              ) : null}
             </motion.div>
           </article>
 
@@ -814,9 +832,8 @@ export default function LessonPage() {
                   <button
                     key={ml.id}
                     onClick={() => setActiveMicroIndex(idx)}
-                    className={`w-full rounded-[1.1rem] px-4 py-3 text-left text-sm transition-colors ${
-                      idx === safeActiveMicroIndex ? "text-foreground" : "text-foreground/80 hover:text-foreground"
-                    }`}
+                    className={`w-full rounded-[1.1rem] px-4 py-3 text-left text-sm transition-colors ${idx === safeActiveMicroIndex ? "text-foreground" : "text-foreground/80 hover:text-foreground"
+                      }`}
                     style={{
                       backgroundColor: idx === safeActiveMicroIndex ? accentSoft : "rgba(255,255,255,0.72)",
                       border: idx === safeActiveMicroIndex ? `1px solid ${accentBorder}` : "1px solid rgba(255,255,255,0.65)",

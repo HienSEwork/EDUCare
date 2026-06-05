@@ -1,295 +1,2434 @@
-set names utf8mb4;
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Jun 05, 2026 at 05:16 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
-create database if not exists educare
-  character set utf8mb4
-  collate utf8mb4_unicode_ci;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
-use educare;
 
-create table if not exists users (
-  id varchar(36) primary key,
-  full_name varchar(120) not null,
-  email varchar(190) not null unique,
-  username varchar(80) not null unique,
-  password_hash varchar(255) not null,
-  age int not null,
-  plan varchar(20) not null,
-  xp int not null default 0,
-  streak int not null default 0,
-  quiz_score_total int not null default 0,
-  avatar_url varchar(255),
-  role varchar(20) not null,
-  created_at timestamp not null default current_timestamp,
-  updated_at timestamp not null default current_timestamp
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
-create table if not exists lessons (
-  id bigint primary key auto_increment,
-  slug varchar(120) not null unique,
-  title varchar(255) not null,
-  summary text not null,
-  content longtext not null,
-  lesson_order int not null unique,
-  is_free boolean not null default true,
-  created_at timestamp not null default current_timestamp,
-  updated_at timestamp not null default current_timestamp
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+--
+-- Database: `educare`
+--
 
-create table if not exists blog_posts (
-  id bigint primary key auto_increment,
-  slug varchar(120) not null unique,
-  title varchar(255) not null,
-  excerpt text not null,
-  content longtext not null,
-  category varchar(120) not null,
-  published_at date not null,
-  read_time_minutes int not null,
-  emoji varchar(20) not null,
-  created_at timestamp not null default current_timestamp,
-  updated_at timestamp not null default current_timestamp
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+-- --------------------------------------------------------
 
-create table if not exists games (
-  id bigint primary key auto_increment,
-  slug varchar(120) not null unique,
-  title varchar(180) not null,
-  summary text not null,
-  description longtext not null,
-  game_type varchar(40) not null,
-  play_path varchar(255) not null,
-  cover_image varchar(255),
-  accent_color varchar(30) not null default '#9b5de5',
-  is_published boolean not null default true,
-  created_at timestamp not null default current_timestamp,
-  updated_at timestamp not null default current_timestamp
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+--
+-- Table structure for table `anonymous_questions`
+--
 
-create table if not exists quiz_questions (
-  id bigint primary key auto_increment,
-  slug varchar(160) not null unique,
-  prompt text not null,
-  category varchar(120) not null,
-  difficulty varchar(40) not null,
-  question_type varchar(40) not null default 'MULTIPLE_CHOICE',
-  options_json text not null,
-  correct_index int not null,
-  explanation text,
-  sort_order int not null,
-  is_active boolean not null default true,
-  created_at timestamp not null default current_timestamp,
-  updated_at timestamp not null default current_timestamp
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists quiz_attempts (
-  id bigint primary key auto_increment,
-  user_id varchar(36),
-  mode varchar(20) not null,
-  total_questions int not null,
-  correct_answers int not null,
-  score int not null,
-  xp_awarded int not null default 0,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_quiz_attempt_user foreign key (user_id) references users (id) on delete set null,
-  index idx_quiz_attempt_user (user_id),
-  index idx_quiz_attempt_created_at (created_at)
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists lesson_progress (
-  id bigint primary key auto_increment,
-  user_id varchar(36) not null,
-  lesson_id bigint not null,
-  xp_awarded int not null default 50,
-  completed_at timestamp not null default current_timestamp,
-  constraint fk_lesson_progress_user foreign key (user_id) references users (id) on delete cascade,
-  constraint fk_lesson_progress_lesson foreign key (lesson_id) references lessons (id) on delete cascade,
-  unique key uq_user_lesson (user_id, lesson_id)
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists community_posts (
-  id bigint primary key auto_increment,
-  user_id varchar(36),
-  author_name varchar(120) not null,
-  anonymous boolean not null default false,
-  content text not null,
-  likes_count int not null default 0,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_community_post_user foreign key (user_id) references users (id) on delete set null
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists community_replies (
-  id bigint primary key auto_increment,
-  post_id bigint not null,
-  user_id varchar(36),
-  author_name varchar(120) not null,
-  anonymous boolean not null default false,
-  content text not null,
-  likes_count int not null default 0,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_community_reply_post foreign key (post_id) references community_posts (id) on delete cascade,
-  constraint fk_community_reply_user foreign key (user_id) references users (id) on delete set null
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists community_post_likes (
-  id bigint primary key auto_increment,
-  post_id bigint not null,
-  user_id varchar(36) not null,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_community_post_like_post foreign key (post_id) references community_posts (id) on delete cascade,
-  constraint fk_community_post_like_user foreign key (user_id) references users (id) on delete cascade,
-  unique key uq_post_like (post_id, user_id)
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists community_reply_likes (
-  id bigint primary key auto_increment,
-  reply_id bigint not null,
-  user_id varchar(36) not null,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_community_reply_like_reply foreign key (reply_id) references community_replies (id) on delete cascade,
-  constraint fk_community_reply_like_user foreign key (user_id) references users (id) on delete cascade,
-  unique key uq_reply_like (reply_id, user_id)
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists chat_rooms (
-  id bigint primary key auto_increment,
-  slug varchar(120) not null unique,
-  name varchar(120) not null,
-  description text not null,
-  created_at timestamp not null default current_timestamp,
-  updated_at timestamp not null default current_timestamp
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists chat_messages (
-  id bigint primary key auto_increment,
-  room_id bigint not null,
-  user_id varchar(36),
-  author_name varchar(120) not null,
-  content text not null,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_chat_message_room foreign key (room_id) references chat_rooms (id) on delete cascade,
-  constraint fk_chat_message_user foreign key (user_id) references users (id) on delete set null
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists anonymous_questions (
-  id bigint primary key auto_increment,
-  user_id varchar(36),
-  question text not null,
-  answer text not null,
-  likes_count int not null default 0,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_anonymous_question_user foreign key (user_id) references users (id) on delete set null
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists anonymous_question_likes (
-  id bigint primary key auto_increment,
-  question_id bigint not null,
-  user_id varchar(36) not null,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_anonymous_question_like_question foreign key (question_id) references anonymous_questions (id) on delete cascade,
-  constraint fk_anonymous_question_like_user foreign key (user_id) references users (id) on delete cascade,
-  unique key uq_question_like (question_id, user_id)
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists mood_entries (
-  id bigint primary key auto_increment,
-  user_id varchar(36) not null,
-  mood_code varchar(30) not null,
-  note text,
-  entry_date date not null,
-  constraint fk_mood_entry_user foreign key (user_id) references users (id) on delete cascade,
-  unique key uq_user_mood_date (user_id, entry_date)
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
-create table if not exists notifications (
-  id bigint primary key auto_increment,
-  user_id varchar(36) not null,
-  type varchar(50) not null,
-  title varchar(255) not null,
-  message text not null,
-  is_read boolean not null default false,
-  created_at timestamp not null default current_timestamp,
-  constraint fk_notification_user foreign key (user_id) references users (id) on delete cascade
-) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
-
--- =====================================================
--- COURSES AND MICRO LESSONS (From KhoaV1.sql)
--- =====================================================
-
-CREATE TABLE IF NOT EXISTS courses (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    thumbnail VARCHAR(255),
-    color_theme VARCHAR(50),
-    course_order INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+CREATE TABLE `anonymous_questions` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) DEFAULT NULL,
+  `question` text NOT NULL,
+  `answer` text NOT NULL,
+  `likes_count` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE lessons
-ADD COLUMN course_id BIGINT NULL AFTER id,
-ADD COLUMN xp_reward INT NOT NULL DEFAULT 50 AFTER is_free,
-ADD COLUMN estimated_minutes INT NOT NULL DEFAULT 5 AFTER xp_reward,
-ADD CONSTRAINT fk_lessons_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE;
+-- --------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS micro_lessons (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    lesson_id BIGINT NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    micro_order INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_micro_lessons_lesson FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+--
+-- Table structure for table `anonymous_question_likes`
+--
+
+CREATE TABLE `anonymous_question_likes` (
+  `id` bigint(20) NOT NULL,
+  `question_id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS micro_lesson_blocks (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    micro_lesson_id BIGINT NOT NULL,
-    block_type VARCHAR(50) NOT NULL,
-    content_json JSON NOT NULL,
-    order_index INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_micro_lesson_blocks_micro_lesson FOREIGN KEY (micro_lesson_id) REFERENCES micro_lessons(id) ON DELETE CASCADE
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `blog_posts`
+--
+
+CREATE TABLE `blog_posts` (
+  `id` bigint(20) NOT NULL,
+  `slug` varchar(120) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `excerpt` text NOT NULL,
+  `content` longtext NOT NULL,
+  `category` varchar(120) NOT NULL,
+  `published_at` date NOT NULL,
+  `read_time_minutes` int(11) NOT NULL,
+  `emoji` varchar(20) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE lesson_progress
-ADD COLUMN progress_percent INT NOT NULL DEFAULT 0 AFTER xp_awarded,
-ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+--
+-- Dumping data for table `blog_posts`
+--
 
-CREATE TABLE IF NOT EXISTS micro_lesson_progress (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id VARCHAR(36) NOT NULL,
-    micro_lesson_id BIGINT NOT NULL,
-    completed BOOLEAN DEFAULT FALSE,
-    completed_at TIMESTAMP NULL,
-    CONSTRAINT fk_micro_progress_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_micro_progress_ml FOREIGN KEY (micro_lesson_id) REFERENCES micro_lessons(id) ON DELETE CASCADE
+INSERT INTO `blog_posts` (`id`, `slug`, `title`, `excerpt`, `content`, `category`, `published_at`, `read_time_minutes`, `emoji`, `created_at`, `updated_at`) VALUES
+(1, 'vi-sao-cam-xuc-thay-doi-nhanh', 'Vì sao cảm xúc thay đổi nhanh ở tuổi teen?', 'Giải thích đơn giản về việc cảm xúc thay đổi nhanh và cách hiểu mình rõ hơn.', 'Cảm xúc ở tuổi teen có thể thay đổi nhanh vì có nhiều yếu tố cùng xuất hiện một lúc.\nNội dung này giúp bạn hiểu ảnh hưởng của học tập, tình bạn, gia đình và giấc ngủ.\nQuan trọng hơn, bài viết nhắc rằng mọi cảm xúc đều đáng được lắng nghe.', 'Cảm xúc', '2025-01-15', 5, ':)', '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+(2, 'meo-giam-ap-luc-truoc-kiem-tra', 'Mẹo giảm áp lực trước kiểm tra', 'Những cách nhỏ để ôn bài có nhịp độ và bớt bị quá tải.', 'Khi quá lo lắng, bạn dễ học nhiều mà nhớ ít.\nThử chia việc cần học thành từng chặng ngắn, đổi môn sau 25 phút và nghỉ ngắn giữa các chặng.\nChuẩn bị trước một đêm và ngủ đủ vẫn là điều quan trọng nhất.', 'Học tập', '2025-01-22', 4, ':D', '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+(3, 'cach-noi-voi-bo-me-ve-dieu-kho-noi', 'Cách nói với bố mẹ về điều khó nói', 'Gợi ý một lời mở đầu nhẹ nhàng để bắt đầu cuộc trò chuyện khó.', 'Nói về áp lực, thay đổi cơ thể hay một nỗi lo lắng không hề dễ.\nBạn có thể bắt đầu bằng một câu ngắn, chọn lúc mọi người đang bình tĩnh và nói rõ điều bạn đang cần.\nNếu khó nói trực tiếp, viết ra trước cũng là một cách tốt.', 'Gia đình', '2025-02-03', 6, '<3', '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+(4, 'ranh-gioi-ca-nhan-la-gi', 'Ranh giới cá nhân là gì?', 'Hiểu đúng về ranh giới để biết cách tự tôn trọng và bảo vệ mình.', 'Ranh giới là những điều khiến bạn thấy an toàn và được tôn trọng.\nBài viết đưa ví dụ về giao tiếp, đụng chạm, mật khẩu và việc chia sẻ hình ảnh.\nBạn có quyền nói không với điều khiến mình không thoải mái.', 'Kỹ năng sống', '2025-02-18', 5, '[!]', '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+(5, 'lam-sao-de-ngu-ngon-hon', 'Làm sao để ngủ ngon hơn?', 'Ngủ đủ và đúng giờ giúp tâm trạng và trí nhớ ổn định hơn.', 'Ngủ không chỉ là nghỉ ngơi mà còn là thời gian để cơ thể và trí não phục hồi.\nGiảm thời gian dùng điện thoại trước khi ngủ, uống đủ nước và tránh thức khuya sát ngày kiểm tra đều rất hữu ích.\nThói quen nhỏ lặp lại mỗi ngày sẽ tạo khác biệt lớn.', 'Sức khỏe', '2025-03-01', 4, 'zzz', '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+(6, 'khi-nao-can-tim-nguoi-ho-tro', 'Khi nào cần tìm người hỗ trợ?', 'Một số dấu hiệu cho thấy bạn nên nói với người lớn đáng tin.', 'Nếu lo lắng kéo dài, bị cô lập, mất ngủ hoặc có suy nghĩ tiêu cực lặp lại, bạn không nên giữ một mình.\nMột cuộc trò chuyện đúng lúc với người lớn đáng tin có thể giúp bạn an toàn hơn.\nTìm hỗ trợ không phải là yếu đuối mà là biết bảo vệ bản thân.', 'Hỗ trợ', '2025-03-12', 5, ':(', '2026-05-20 06:53:29', '2026-05-20 06:53:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_rooms`
+--
+
+CREATE TABLE `chat_rooms` (
+  `id` bigint(20) NOT NULL,
+  `slug` varchar(120) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `description` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- =====================================================
--- LESSON SOURCES (From KhoaV2.sql)
--- =====================================================
+--
+-- Dumping data for table `chat_rooms`
+--
 
-CREATE TABLE IF NOT EXISTS lesson_sources (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    lesson_id BIGINT NOT NULL,
-    source_name VARCHAR(255) NOT NULL,
-    source_url TEXT NOT NULL,
-    source_type VARCHAR(50),
-    FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+INSERT INTO `chat_rooms` (`id`, `slug`, `name`, `description`, `created_at`, `updated_at`) VALUES
+(1, 'crew-bot', 'crewBot', 'Không gian chat riêng với trợ lý đồng hành của EDUcare.', '2026-05-20 07:36:42', '2026-05-20 07:36:42');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_messages`
+--
+
+CREATE TABLE `chat_messages` (
+  `id` bigint(20) NOT NULL,
+  `room_id` bigint(20) NOT NULL,
+  `user_id` varchar(36) DEFAULT NULL,
+  `author_name` varchar(120) NOT NULL,
+  `content` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- =====================================================
--- COURSE ENROLLMENTS (From KhoaV3.sql / V5_course-enrollments.sql)
--- =====================================================
+--
+-- Dumping data for table `chat_messages`
+--
 
-CREATE TABLE IF NOT EXISTS course_enrollments (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id VARCHAR(36) NOT NULL,
-    course_id BIGINT NOT NULL,
-    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
-    UNIQUE KEY uq_user_course (user_id, course_id)
+INSERT INTO `chat_messages` (`id`, `room_id`, `user_id`, `author_name`, `content`, `created_at`) VALUES
+(1, 1, NULL, 'crewBot', 'Chào bạn, mình là crewBot. Bạn có thể tâm sự, hỏi cách học nhẹ nhàng hơn hoặc xin gợi ý khi đang thấy rối.', '2026-05-20 00:36:42'),
+(2, 1, '73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', 'hello', '2026-05-20 00:37:00'),
+(3, 1, NULL, 'crewBot', 'Nghe có vẻ bạn đang khá nặng đầu. Mình gợi ý bạn nghỉ ngắn vài phút, hít thở sâu và thử viết ra đúng một điều đang làm bạn mệt nhất lúc này.', '2026-05-20 00:37:00'),
+(4, 1, '73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', 'tôi đang thiếu ý tưởng kinh doanh', '2026-05-20 00:37:30'),
+(5, 1, NULL, 'crewBot', 'Nếu bạn đang áp lực chuyện học, hãy thử chia việc thành từng chặng 20 đến 25 phút. Làm xong một chặng rồi nghỉ ngắn sẽ dễ theo hơn là ôm hết một lúc.', '2026-05-20 00:37:31'),
+(6, 1, '73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', '1+1 bằng mấy', '2026-05-20 00:37:46'),
+(7, 1, NULL, 'crewBot', 'Mình đang ở đây để đồng hành cùng bạn. Bạn có thể kể cụ thể hơn một chút về điều bạn đang băn khoăn, mình sẽ gợi ý theo hướng gần với tình huống của bạn hơn.', '2026-05-20 00:37:46'),
+(8, 1, '73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', 'tôi muốn hỏi bạn sáng mai tôi nên ăn gì', '2026-05-20 00:38:12'),
+(9, 1, NULL, 'crewBot', 'Mình đang ở đây để đồng hành cùng bạn. Bạn có thể kể cụ thể hơn một chút về điều bạn đang băn khoăn, mình sẽ gợi ý theo hướng gần với tình huống của bạn hơn.', '2026-05-20 00:38:12'),
+(10, 1, '73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', 'giới tính là gì', '2026-05-20 00:39:10'),
+(11, 1, NULL, 'crewBot', 'Mình đang ở đây để đồng hành cùng bạn. Bạn có thể kể cụ thể hơn một chút về điều bạn đang băn khoăn, mình sẽ gợi ý theo hướng gần với tình huống của bạn hơn.', '2026-05-20 00:39:10'),
+(12, 1, '73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', 'giáo dục giới tính là gì', '2026-05-20 00:39:34'),
+(13, 1, NULL, 'crewBot', 'Mình đang ở đây để đồng hành cùng bạn. Bạn có thể kể cụ thể hơn một chút về điều bạn đang băn khoăn, mình sẽ gợi ý theo hướng gần với tình huống của bạn hơn.', '2026-05-20 00:39:34');
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `community_posts`
+--
+
+CREATE TABLE `community_posts` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) DEFAULT NULL,
+  `author_name` varchar(120) NOT NULL,
+  `anonymous` tinyint(1) NOT NULL DEFAULT 0,
+  `content` text NOT NULL,
+  `likes_count` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `community_post_likes`
+--
+
+CREATE TABLE `community_post_likes` (
+  `id` bigint(20) NOT NULL,
+  `post_id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `community_replies`
+--
+
+CREATE TABLE `community_replies` (
+  `id` bigint(20) NOT NULL,
+  `post_id` bigint(20) NOT NULL,
+  `user_id` varchar(36) DEFAULT NULL,
+  `author_name` varchar(120) NOT NULL,
+  `anonymous` tinyint(1) NOT NULL DEFAULT 0,
+  `content` text NOT NULL,
+  `likes_count` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `community_reply_likes`
+--
+
+CREATE TABLE `community_reply_likes` (
+  `id` bigint(20) NOT NULL,
+  `reply_id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courses`
+--
+
+CREATE TABLE `courses` (
+  `id` bigint(20) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `thumbnail` varchar(255) DEFAULT NULL,
+  `color_theme` varchar(50) DEFAULT NULL,
+  `course_order` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `courses`
+--
+
+INSERT INTO `courses` (`id`, `title`, `description`, `thumbnail`, `color_theme`, `course_order`, `created_at`, `updated_at`) VALUES
+(4, 'Tự Tin Lớn Lên, Tự Chủ Khám Phá', 'Khóa học về sự đồng thuận, ranh giới cá nhân và phát triển lành mạnh dành cho tuổi teen.', 'consent-course.png', '#4361ee', 10, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(5, 'Mối Quan Hệ Lành Mạnh', 'Tìm hiểu về cách xây dựng tình bạn, tình yêu tôn trọng, đặt ranh giới cá nhân và ứng xử văn minh trước cờ đỏ.', 'relationship-course.png', '#ff5d8f', 20, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(6, 'Lướt Mạng Tỉnh Táo, Kết Nối Cực Chất', 'Tìm hiểu cách bảo vệ quyền riêng tư, thiết lập ranh giới số, hiểu về sự đồng thuận trực tuyến, chia sẻ ảnh an toàn và ứng phó với cờ đỏ thao túng.', 'digital-safety-course.png', '#7209b7', 21, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(10, 'Dậy Thì Thành Công: Cẩm Nang \"Upgrade\" Bản Thân!', 'Tìm hiểu về thay đổi thể chất, hệ sinh sản, kinh nguyệt, mộng tinh, bão cảm xúc và cách tự chăm sóc cơ thể tuổi dậy thì.', 'puberty-course.png', '#f77f00', 22, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(11, 'Tâm Lý Tuổi Teen: \"Gỡ Rối\" Bão Cảm Xúc!', 'Học cách nhận diện và làm quen với những biến động cảm xúc tuổi dậy thì, xây dựng sự tự tin, ứng phó áp lực học tập và nuôi dưỡng các mối quan hệ lành mạnh.', 'emotional-wellbeing-course.png', '#06d6a0', 23, '2026-06-05 15:00:15', '2026-06-05 15:00:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `course_enrollments`
+--
+
+CREATE TABLE `course_enrollments` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `course_id` bigint(20) NOT NULL,
+  `enrolled_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `games`
+--
+
+CREATE TABLE `games` (
+  `id` bigint(20) NOT NULL,
+  `slug` varchar(120) NOT NULL,
+  `title` varchar(180) NOT NULL,
+  `summary` text NOT NULL,
+  `description` longtext NOT NULL,
+  `game_type` varchar(40) NOT NULL,
+  `play_path` varchar(255) NOT NULL,
+  `cover_image` varchar(255) DEFAULT NULL,
+  `accent_color` varchar(30) NOT NULL DEFAULT '#9b5de5',
+  `is_published` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `games`
+--
+
+INSERT INTO `games` (`id`, `slug`, `title`, `summary`, `description`, `game_type`, `play_path`, `cover_image`, `accent_color`, `is_published`, `created_at`, `updated_at`) VALUES
+(1, 'quiz-quick', 'Quiz nhanh 10 câu', 'Một lượt chơi gọn để kiểm tra kiến thức và cộng điểm cá nhân.', 'Chế độ quiz nhanh được rút gọn trong 10 câu hỏi ngẫu nhiên từ ngân hàng câu hỏi.\nNgười chơi đi hết lượt mà không bị dừng lại khi sai.\nKết quả sau mỗi lượt được cộng vào tổng điểm quiz và cập nhật streak tương tác.', 'QUIZ', '/games/quiz?mode=quick', 'hero-illustration.png', '#9b5de5', 1, '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+(2, 'quiz-long', 'Quiz dài 30 câu', 'Chế độ dài dành cho người muốn luyện tập sâu hơn và đưa lên bảng xếp hạng.', 'Chế độ quiz dài lấy 30 câu hỏi ngẫu nhiên từ quiz bank.\nCàng làm nhiều, điểm cá nhân và streak càng được cập nhật rõ hơn.\nĐây là chế độ chính để nhận biết mức độ hiểu bài và giữ nhịp học đều.', 'QUIZ', '/games/quiz?mode=long', 'hero-illustration.png', '#f15bb5', 1, '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+(3, 'anh-sang-tu-tin', 'Ánh sáng tự tin', 'Mini game phong cách flash nhẹ nhàng, hợp chủ đề tuổi teen và xây dựng tự tin.', 'Người chơi điều khiển nhân vật thu thập bóng đèn tích cực và tránh đám mây lo âu.\nGame có phong cách HTML vui mắt, nhịp nhanh và phù hợp để chơi trong vài phút nghỉ giải lao.\nTrang game được thiết kế theo hướng flash game nhưng vẫn đồng bộ giao diện chung của EDUcare.', 'FLASH', '/games/flash-light-run', 'hero-illustration.png', '#00bbbf', 1, '2026-05-20 06:53:29', '2026-05-20 06:53:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lessons`
+--
+
+CREATE TABLE `lessons` (
+  `id` bigint(20) NOT NULL,
+  `course_id` bigint(20) DEFAULT NULL,
+  `slug` varchar(120) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `summary` text NOT NULL,
+  `content` longtext NOT NULL,
+  `lesson_order` int(11) NOT NULL,
+  `is_free` tinyint(1) NOT NULL DEFAULT 1,
+  `xp_reward` int(11) NOT NULL DEFAULT 50,
+  `estimated_minutes` int(11) NOT NULL DEFAULT 5,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `lessons`
+--
+
+INSERT INTO `lessons` (`id`, `course_id`, `slug`, `title`, `summary`, `content`, `lesson_order`, `is_free`, `xp_reward`, `estimated_minutes`, `created_at`, `updated_at`) VALUES
+(12, 4, 'luat-di-duong-dong-thuan-la-gi', 'Luật đi đường - Đồng thuận là gì?', 'Tìm hiểu khái niệm đèn xanh, đèn vàng, đèn đỏ trong giao tiếp tình cảm và quy tắc đồng thuận F.R.I.E.S.', 'Bài học giúp bạn nắm bắt khái niệm về sự đồng thuận trong tình cảm, quy tắc F.R.I.E.S và kỹ năng check-in.', 9, 1, 100, 10, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(13, 4, 'lac-dau-khong-sao-ca', 'Lắc đầu không sao cả - Đối diện với từ chối', 'Học cách đối diện lành mạnh với lời từ chối, hiểu về ranh giới cá nhân và luật đồng thuận Việt Nam.', 'Bài học trang bị kỹ năng vượt qua cảm giác hụt hẫng khi bị từ chối, cách từ chối lịch sự và kiến thức pháp luật.', 10, 1, 100, 10, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(14, 4, 'ranh-gioi-so-mang-xa-hoi', 'Ranh giới số & Mạng xã hội', 'Quản lý tính riêng tư trên không gian mạng và cách thực hành đồng thuận số (digital consent).', 'Nội dung hướng dẫn phân biệt ranh giới công khai/riêng tư, quy tắc chia sẻ hình ảnh, mật khẩu mạng xã hội và phòng tránh áp lực số.', 11, 1, 100, 10, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(15, 4, 'lam-chu-co-the-va-suc-khoe', 'Làm chủ cơ thể & Sức khỏe', 'Học cách tự chủ cơ thể, hiểu đúng kiến thức sinh học, an toàn sức khỏe và luật pháp.', 'Bài học trang bị kiến thức về quyền tự quyết cơ thể, gọi đúng tên các bộ phận sinh dục, an toàn y khoa và luật độ tuổi đồng thuận Việt Nam.', 12, 0, 100, 10, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(16, 4, 'ap-luc-ban-be-va-diem-tua-ho-tro', 'Áp lực bạn bè & Điểm tựa hỗ trợ', 'Vượt qua áp lực từ bạn bè, định hình giá trị bản thân và kết nối với mạng lưới hỗ trợ.', 'Bài học hướng dẫn nhận diện áp lực nhóm, kỹ năng nói Không khéo léo, đối thoại giá trị gia đình và tìm kiếm sự hỗ trợ khi gặp nguy hiểm.', 13, 0, 100, 10, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(17, 5, 'nen-tang-moi-quan-he-lanh-manh', 'Thế nào là mối quan hệ lành mạnh?', 'Tìm hiểu về các viên gạch nền tảng: sự tôn trọng, lòng tin, sự bình đẳng và cách giữ cá tính riêng.', 'Bài học này giới thiệu về các tiêu chí cốt lõi tạo nên một tình bạn hay tình yêu lành mạnh, giúp bạn cảm thấy được là chính mình.', 14, 1, 100, 10, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(18, 5, 'giao-tiep-va-giai-quyet-xung-dot', 'Giao tiếp & Giải quyết Xung đột', 'Học cách lắng nghe chủ động, dùng câu bắt đầu bằng \"Tớ\" để bày tỏ cảm xúc và giải quyết mâu thuẫn lành mạnh.', 'Bài học trang bị cho bạn kỹ năng giao tiếp hiệu quả, tránh hiểu lầm khi nhắn tin và các bước hòa giải xung đột êm thấm.', 15, 0, 100, 10, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(19, 5, 'ranh-gioi-long-tin-va-su-ton-trong', 'Ranh giới, Lòng tin & Sự Tôn trọng', 'Tìm hiểu về ranh giới cá nhân, cách từng bước xây dựng lòng tin và tôn trọng không gian riêng tư của nhau.', 'Bài học hướng dẫn bạn cách xác định ranh giới cơ thể và cảm xúc của bản thân, xử lý tình huống bị đòi mật khẩu mạng xã hội và rèn luyện kỹ năng từ chối tự tin.', 16, 0, 100, 10, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(20, 5, 'su-gan-ket-va-gan-gui-cam-xuc', 'Sự Gắn kết & Gần gũi Cảm xúc', 'Tìm hiểu về sự thân mật cảm xúc, phân biệt tình bạn với tình yêu tuổi học trò và xây dựng gắn kết lành mạnh.', 'Bài học chia sẻ về cách thấu hiểu sự gắn kết tinh thần, xử lý áp lực khi đối phương muốn tiến xa hơn và các hình thức gần gũi phi thể xác.', 17, 0, 100, 10, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(21, 5, 'dong-thuan-trong-moi-quan-he', 'Đồng thuận trong Mối quan hệ', 'Hiểu sâu về khái niệm sự đồng thuận, quy tắc F.R.I.E.S cho tuổi teen và cách check-in tinh tế.', 'Bài học trang bị cho bạn kiến thức cơ bản về sự đồng thuận tự nguyện, cách nhận biết tín hiệu đèn vàng, đèn đỏ trong tình cảm và cách tôn trọng quyền đổi ý.', 18, 0, 100, 10, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(22, 5, 'crush-hen-ho-va-tu-choi', 'Crush, Hẹn hò & Từ chối', 'Khám phá cảm xúc cảm nắng, cách hẹn hò an toàn và ứng xử văn minh khi đối diện lời từ chối.', 'Bài học cung cấp cho bạn cái nhìn thực tế về những cảm xúc ngượng ngùng tuổi teen, các bước chuẩn bị cho buổi hẹn hò an toàn và cách phục hồi cảm xúc sau khi bị từ chối.', 19, 0, 100, 10, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(23, 5, 'co-do-va-moi-quan-he-doc-hai', 'Nhận diện Cờ Đỏ & Mối Quan hệ Độc hại', 'Nhận diện các dấu hiệu cảnh báo (Red Flags) như kiểm soát, cô lập và học cách bước ra an toàn.', 'Bài học hướng dẫn bạn cách phân biệt sự quan tâm lành mạnh với sự kiểm soát độc hại, nhận biết vòng lặp bạo lực cảm xúc và cách tìm kiếm sự trợ giúp khi cần thiết.', 20, 0, 100, 10, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(24, 6, 'quyen-rieng-tu-va-thong-tin-ca-nhan', 'Dấu Chân Số: Đừng Để Lộ \"Sơ Hở\"!', 'Hiểu về dấu chân số, cách phân loại thông tin nhạy cảm và bảo vệ tài khoản cá nhân.', 'Bài học này giúp bạn nhận biết những gì an toàn để chia sẻ trực tuyến, cách quản lý dấu chân số của mình và thiết lập bảo mật cơ bản.', 21, 1, 100, 12, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(25, 6, 'giao-tiep-mang-lanh-manh', 'Chat Sao Cho \"Mượt\", Bớt \"Bất Ổn\"!', 'Học cách giao tiếp tránh hiểu lầm, viết tin nhắn tôn trọng và giữ năng lượng tích cực.', 'Bài học này trang bị cho bạn cách ứng xử tinh tế khi nhắn tin, kỹ năng hạ nhiệt khi group chat bốc hỏa và lọc năng lượng tích cực.', 22, 0, 100, 12, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(26, 6, 'ranh-gioi-thoi-cong-nghe', 'Ranh Giới Số: Vẽ Vạch Rõ, Đỡ Phiền Toái!', 'Đặt giới hạn thời gian, sự riêng tư cá nhân trực tuyến và cách nói lời từ chối không áy náy.', 'Bài học hướng dẫn bạn thiết lập các ranh giới lành mạnh về thời gian online, bảo vệ mật khẩu cá nhân và nói không với sự kiểm soát số.', 23, 0, 100, 12, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(27, 6, 'dong-thuan-so', 'Đồng Thuận Số: Đừng Tự Ý \"Mặc Định\"!', 'Khái niệm về đồng thuận trên mạng, nhận diện sự ép buộc và tôn trọng quyền tự quyết của người khác.', 'Bài học giúp bạn hiểu thế nào là sự đồng thuận trực tuyến thực sự, cách nhận diện áp lực từ bạn bè và thói quen hỏi ý kiến trước khi đăng bài liên quan đến người khác.', 24, 0, 100, 12, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(28, 6, 'sexting-va-chia-se-anh-an-toan', 'Sexting & Gửi Ảnh: Giữ Mình An Toàn Trên Sóng!', 'Tìm hiểu về sexting, rủi ro pháp lý, đối phó áp lực gửi ảnh nhạy cảm và cách xử lý sự cố.', 'Bài học cung cấp kiến thức thực tế về những rủi ro của việc gửi ảnh nhạy cảm trực tuyến, cách kiên quyết từ chối áp lực và các bước hỗ trợ khẩn cấp nếu ảnh bị phát tán trái phép.', 25, 0, 100, 12, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(29, 6, 'co-do-va-thao-tung-truc-tuyen', 'Né \"Cờ Đỏ\" & Kẻ Thao Túng Trên Mạng!', 'Nhận diện các dấu hiệu kiểm soát độc hại, cảnh giác trước kẻ lừa đảo giả mạo và cách tìm hỗ trợ.', 'Bài học hướng dẫn học sinh nhận diện cờ đỏ trong các mối quan hệ qua mạng, phòng tránh bẫy tâm lý giả mạo danh tính (catfishing), bẫy cô lập số và cách thoát ra an toàn.', 26, 0, 100, 12, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(30, 6, 'cong-dan-so-van-minh', 'Công Dân Số Văn Minh: Lan Tỏa Vibes Lành!', 'Tìm hiểu về bạo lực mạng, cách trở thành người bảo vệ Upstander và lan tỏa văn hóa mạng tử tế.', 'Bài học cuối giúp bạn phân biệt đùa vui và bắt nạt trên mạng, trang bị kỹ năng ứng phó khi chứng kiến bạo lực mạng với vai trò người can thiệp dũng cảm, và hướng tới văn hóa số tích cực.', 27, 0, 100, 12, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(34, 10, 'day-thi-la-gi', 'Dậy Thì Là Gì? Khi Cơ Thể Rục Rịch Thay Đổi!', 'Khám phá khái niệm về dậy thì, nhịp độ phát triển của mỗi cơ thể và cách vượt qua những ngại ngùng đầu đời.', 'Bài học này giúp bạn hiểu rõ thế nào là dậy thì, giải đáp vì sao mọi người dậy thì ở thời điểm khác nhau và tìm kiếm đồng minh đáng tin cậy.', 28, 1, 100, 12, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(35, 10, 'f5-dien-mao-thay-doi-the-chat', '\"F5\" Diện Mạo: Những Thay Đổi Rõ Mồn Một!', 'Tìm hiểu sự phát triển thể chất về da, tóc, lông cơ thể, mùi cơ thể và thói quen tắm rửa vệ sinh cá nhân đúng cách.', 'Bài học cung cấp kiến thức thực tế về các thay đổi bên ngoài như mụn, mùi cơ thể và lông, từ đó hướng dẫn chăm sóc cơ thể sạch sẽ.', 29, 0, 100, 12, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(36, 10, 'den-thang-va-co-quan-sinh-san', '\"Đến Tháng\" & Chuyện Phía Trong: Hiểu Để Đỡ Lo!', 'Giải mã hoạt động của hệ sinh sản, chu kỳ kinh nguyệt, mộng tinh và cách chuẩn bị tâm lý cùng dụng cụ vệ sinh.', 'Bài học làm rõ nguyên lý sinh học bên trong, hướng dẫn chuẩn bị dụng cụ kinh nguyệt và giúp bạn bình tĩnh xử lý các sự cố tế nhị.', 30, 0, 100, 12, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(37, 10, 'bao-cam-xuc-tuoi-day-thi', 'Bão Cảm Xúc: Sáng Nắng Chiều Mưa, Có Sao Đâu?', 'Hiểu về hormone ảnh hưởng đến tâm trạng, sự nhạy cảm tuổi mới lớn và học kỹ năng cân bằng cảm xúc.', 'Bài học hướng dẫn bạn gọi tên cảm xúc, giải quyết bất đồng lành mạnh với bố mẹ và thiết lập các bài tập xoa dịu stress.', 31, 0, 100, 12, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(38, 10, 'yeu-lay-chiec-body', 'Yêu Lấy Chiếc Body: Đừng Để Ai \"Body Shame\"!', 'Hiểu về hình ảnh cơ thể lành mạnh, ứng phó trước phán xét ngoại hình và lọc bớt áp lực từ mạng xã hội.', 'Bài học giúp bạn xây dựng lòng tự tin bên trong, kiên định phản hồi trước những lời chê bai ngoại hình và tôn trọng sự đa dạng cơ thể.', 32, 0, 100, 12, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(39, 10, 'tu-cham-soc-ban-than-dung-dieu', 'Tự Chăm Sóc Bản Thân: Học Cách Yêu Mình Đúng Điệu!', 'Tầm quan trọng của dinh dưỡng, giấc ngủ, lắng nghe tín hiệu mệt mỏi và xây dựng thói quen tự chăm sóc hàng ngày.', 'Bài học trang bị thói quen ngủ nghỉ khoa học, cách hạn chế lướt điện thoại ban đêm và kiên nhẫn bao dung với bản thân.', 33, 0, 100, 12, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(40, 10, 'giai-ma-tin-don-tuoi-day-thi', '\"Tin Chuẩn\" Vs \"Tin Đồn\": Giải Mã Thắc Mắc Khó Nói!', 'Phân biệt tin đồn phản khoa học về chiều cao, hành vi tự khám phá cơ thể và cách tìm kiếm thông tin chính thống.', 'Bài học cuối cùng giúp giải mã các tin đồn nhảm học đường, hướng dẫn tư duy phản biện khi đọc tin và tự tin làm chủ tuổi dậy thì.', 34, 0, 100, 12, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(41, 11, 'thau-hieu-cam-xuc', 'Ủa, Sao Dạo Này Tâm Trạng \"Bão Bùng\" Quá?', 'Tìm hiểu về sự thay đổi tâm trạng do hormone dậy thì và học cách gọi tên cảm xúc.', 'Bài học mở đầu giúp bạn gọi tên các loại cảm xúc, làm bạn với cảm xúc khó chịu và viết nhật ký giải tỏa suy nghĩ.', 35, 1, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(42, 11, 'tu-tin-va-gia-tri-ban-than', 'Chữa Lành \"Tự Ti\": Bạn Có Giá Trị Hơn Bạn Tưởng!', 'Học cách phân biệt tự tin lành mạnh, hiểu nguồn gốc của tự ti và xây dựng lòng tự trắc ẩn.', 'Bài học hướng dẫn bạn vượt qua áp lực so sánh, đối mặt với điểm kém và tập cách nói lời tự trắc ẩn với chính mình.', 36, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(43, 11, 'co-the-va-chap-nhan-ban-than', 'Hòa Giải Với Chiếc Body: Bạn Đẹp Theo Cách Riêng!', 'Nhận diện ảnh hưởng của truyền thông đến hình ảnh cơ thể, học cách yêu thương vóc dáng và ứng phó body shaming.', 'Bài học trang bị kiến thức phân biệt filter ảo ma vs thực tế, tôn trọng sự đa dạng vóc dáng và rèn luyện kỹ năng ứng phó body shaming.', 37, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(44, 11, 'vuot-qua-stress-va-cam-xuc-kho-khan', 'Khi Áp Lực Đè Nặng: \"Giải Cứu\" Bộ Não Quá Tải!', 'Nhận biết dấu hiệu stress trên cơ thể, phân biệt các loại stress và thực hành kỹ thuật xoa dịu tâm trí.', 'Bài học hướng dẫn các phương pháp đối mặt chủ động với stress, phân bổ lịch học thi khoa học và rèn luyện kỹ thuật thở sâu.', 38, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(45, 11, 'rung-dong-tu-choi-va-phuc-hoi-cam-xuc', 'Khi \"Crush\" Từ Chối: Vượt Qua \"Bể Sầu\" Cực Mượt!', 'Hiểu về cảm xúc rung động tuổi teen, chấp nhận sự từ chối và xây dựng khả năng phục hồi sau thất bại tình cảm.', 'Bài học trang bị kỹ năng vượt qua mối tình đơn phương hững hờ, học cách đối mặt với sự từ chối văn minh và phục hồi niềm tin vào bản thân.', 39, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(46, 11, 'ket-noi-lanh-manh-va-diem-tua-cam-xuc', 'Mối Quan Hệ \"Chất Lượng Cao\" Vs Độc Hại', 'Phân biệt tình bạn lành mạnh (Green Flag) và độc hại (Red Flag), nhận diện các hành vi kiểm soát cảm xúc.', 'Bài học hướng dẫn phân biệt mối quan hệ Green Flag và cờ đỏ thao túng cảm xúc, cách chia sẻ tổn thương tinh thần và xây dựng mạng lưới hỗ trợ.', 40, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(47, 11, 'tu-cham-soc-va-phat-trien-ban-than', 'Yêu Bản Thân: Không Chỉ Là Câu Nói Bắt Trend!', 'Hiểu đúng về tự chăm sóc bản thân, học cách thiết lập ranh giới từ từ chối và hướng tới sự phát triển cá nhân bền vững.', 'Bài học cuối cùng hướng dẫn phương pháp self-care đích thực, rèn luyện kỹ năng từ chối bảo vệ năng lượng cá nhân và đặt mục tiêu thói quen nhỏ.', 41, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lesson_progress`
+--
+
+CREATE TABLE `lesson_progress` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `lesson_id` bigint(20) NOT NULL,
+  `xp_awarded` int(11) NOT NULL DEFAULT 50,
+  `progress_percent` int(11) NOT NULL DEFAULT 0,
+  `completed_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `lesson_progress`
+--
+
+INSERT INTO `lesson_progress` (`id`, `user_id`, `lesson_id`, `xp_awarded`, `progress_percent`, `completed_at`, `updated_at`) VALUES
+(6, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 12, 50, 0, '2026-06-05 00:03:33', '2026-06-05 07:03:33');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lesson_sources`
+--
+
+CREATE TABLE `lesson_sources` (
+  `id` bigint(20) NOT NULL,
+  `lesson_id` bigint(20) NOT NULL,
+  `source_name` varchar(255) NOT NULL,
+  `source_url` text NOT NULL,
+  `source_type` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `lesson_sources`
+--
+
+INSERT INTO `lesson_sources` (`id`, `lesson_id`, `source_name`, `source_url`, `source_type`) VALUES
+(4, 12, 'Scarleteen - Quickies: Sexual Consent Basics', 'https://www.scarleteen.com/read/sex-sexuality/quickies-sexual-consent-basics', 'website'),
+(5, 12, 'Scarleteen - Driver\'s Ed for the Sexual Superhighway: Navigating Consent', 'https://www.scarleteen.com/read/sex-sexuality/drivers-ed-sexual-superhighway-navigating-consent', 'website'),
+(6, 12, 'Scarleteen - Our Philosophy', 'https://www.scarleteen.com/about/our-philosophy', 'website'),
+(7, 13, 'Scarleteen - I Know Consent is Awesome, But Rejection Is Not', 'https://www.scarleteen.com/read/sex-sexuality/i-know-consent-awesome-rejection-not', 'website'),
+(8, 13, 'Scarleteen - Age of Consent: What is it, exactly?', 'https://www.scarleteen.com/read/culture/age-consent-what-exactly', 'website'),
+(9, 14, 'Scarleteen - What Is Healthy Sexual Development?', 'https://www.scarleteen.com/read/bodies/what-healthy-sexual-development', 'website'),
+(10, 15, 'Scarleteen - What Is Healthy Sexual Development?', 'https://www.scarleteen.com/read/bodies/what-healthy-sexual-development', 'website'),
+(11, 15, 'Scarleteen - Age of Consent: What is it, exactly?', 'https://www.scarleteen.com/read/culture/age-consent-what-exactly', 'website'),
+(12, 16, 'Scarleteen - What Is Healthy Sexual Development?', 'https://www.scarleteen.com/read/bodies/what-healthy-sexual-development', 'website'),
+(13, 16, 'Scarleteen - Our Philosophy', 'https://www.scarleteen.com/about/our-philosophy', 'website'),
+(14, 17, 'Scarleteen - Quickies: Healthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(15, 17, 'Scarleteen - Hello Sailor: How to Build, Board, and Navigate a Healthy Relationship', 'https://www.scarleteen.com/read/relationships/hello-sailor-how-build-board-navigate-healthy-relationship', 'website'),
+(16, 18, 'Scarleteen - Hello Sailor: How to Build, Board, and Navigate a Healthy Relationship', 'https://www.scarleteen.com/read/relationships/hello-sailor-how-build-board-navigate-healthy-relationship', 'website'),
+(17, 19, 'Scarleteen - Quickies: Healthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(18, 20, 'Scarleteen - Quickies: Intimacy', 'https://www.scarleteen.com/read/quickies-intimacy', 'website'),
+(19, 21, 'Scarleteen - Quickies: Sexual Consent Basics', 'https://www.scarleteen.com/read/sex-sexuality/quickies-sexual-consent-basics', 'website'),
+(20, 22, 'Scarleteen - Crushes, Dating & Rejection', 'https://www.scarleteen.com/read/sex-sexuality/i-know-consent-awesome-rejection-not', 'website'),
+(21, 23, 'Scarleteen - Red Flags & Unhealthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(22, 24, 'Scarleteen - Relationships', 'https://www.scarleteen.com/read/relationships', 'website'),
+(23, 25, 'Scarleteen - Hello Sailor: How to Build, Board, and Navigate a Healthy Relationship', 'https://www.scarleteen.com/read/relationships/hello-sailor-how-build-board-navigate-healthy-relationship', 'website'),
+(24, 26, 'Scarleteen - Quickies: Healthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(25, 26, 'Scarleteen - Hello Sailor: How to Build, Board, and Navigate a Healthy Relationship', 'https://www.scarleteen.com/read/relationships/hello-sailor-how-build-board-navigate-healthy-relationship', 'website'),
+(26, 27, 'Scarleteen - Quickies: Sexual Consent Basics', 'https://www.scarleteen.com/read/sex-sexuality/quickies-sexual-consent-basics', 'website'),
+(27, 27, 'Scarleteen - Hello Sailor: How to Build, Board, and Navigate a Healthy Relationship', 'https://www.scarleteen.com/read/relationships/hello-sailor-how-build-board-navigate-healthy-relationship', 'website'),
+(28, 28, 'Scarleteen - Sex & Sexuality', 'https://www.scarleteen.com/read/sex-sexuality', 'website'),
+(29, 29, 'Scarleteen - Quickies: Healthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(30, 29, 'Scarleteen - Hello Sailor: How to Build, Board, and Navigate a Healthy Relationship', 'https://www.scarleteen.com/read/relationships/hello-sailor-how-build-board-navigate-healthy-relationship', 'website'),
+(31, 30, 'Scarleteen - Our Philosophy', 'https://www.scarleteen.com/about/our-philosophy', 'website'),
+(34, 34, 'Scarleteen - Puberty Basics', 'https://www.scarleteen.com/read/bodies/not-everything-you-wanted-know-about-puberty-pretty-darn-close', 'website'),
+(35, 35, 'Scarleteen - Puberty Basics', 'https://www.scarleteen.com/read/bodies/not-everything-you-wanted-know-about-puberty-pretty-darn-close', 'website'),
+(36, 36, 'Scarleteen - Quickies: Sexual Anatomy', 'https://www.scarleteen.com/read/bodies/quickies-sexual-anatomy', 'website'),
+(37, 36, 'Scarleteen - Quickies: Periods & Menstrual Cycle', 'https://www.scarleteen.com/read/bodies/quickies-periods-menstrual-cycle', 'website'),
+(38, 37, 'Scarleteen - Puberty Basics', 'https://www.scarleteen.com/read/bodies/not-everything-you-wanted-know-about-puberty-pretty-darn-close', 'website'),
+(39, 38, 'Scarleteen - Body Image', 'https://www.scarleteen.com/read/body-image', 'website'),
+(40, 39, 'Scarleteen - Puberty Basics', 'https://www.scarleteen.com/read/bodies/not-everything-you-wanted-know-about-puberty-pretty-darn-close', 'website'),
+(41, 40, 'Scarleteen - Do It', 'https://www.scarleteen.com/read/bodies/do-it', 'website'),
+(42, 40, 'Scarleteen - Puberty Basics', 'https://www.scarleteen.com/read/bodies/not-everything-you-wanted-know-about-puberty-pretty-darn-close', 'website'),
+(43, 41, 'Scarleteen - What is Healthy Sexual Development', 'https://www.scarleteen.com/read/bodies/what-healthy-sexual-development', 'website'),
+(44, 42, 'Scarleteen - Quickies: Healthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(45, 43, 'Scarleteen - Body Image', 'https://www.scarleteen.com/read/body-image', 'website'),
+(46, 44, 'Scarleteen - Quickies: Healthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(47, 45, 'Scarleteen - I Know Consent is Awesome, Rejection is Not', 'https://www.scarleteen.com/read/sex-sexuality/i-know-consent-awesome-rejection-not', 'website'),
+(48, 45, 'Scarleteen - Quickies: Crushes', 'https://www.scarleteen.com/read/relationships/quickies-crushes', 'website'),
+(49, 46, 'Scarleteen - Quickies: Healthy Relationships', 'https://www.scarleteen.com/read/relationships/quickies-healthy-relationships', 'website'),
+(50, 46, 'Scarleteen - Hello Sailor: How to Build, Board and Navigate a Healthy Relationship', 'https://www.scarleteen.com/read/relationships/hello-sailor-how-build-board-navigate-healthy-relationship', 'website'),
+(51, 47, 'Scarleteen - Self-Care', 'https://www.scarleteen.com/read/bodies/do-it', 'website');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `micro_lessons`
+--
+
+CREATE TABLE `micro_lessons` (
+  `id` bigint(20) NOT NULL,
+  `lesson_id` bigint(20) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `micro_order` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `micro_lessons`
+--
+
+INSERT INTO `micro_lessons` (`id`, `lesson_id`, `title`, `micro_order`, `created_at`, `updated_at`) VALUES
+(13, 12, 'Luật đi đường tình cảm', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(14, 12, 'Nhận diện một lời \"Đồng ý\" xịn', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(15, 12, 'Vì sao im lặng không phải là đồng ý?', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(16, 12, 'Từ \"Ok\" đến \"Không Ok\" trong chớp mắt', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(17, 12, 'Cách check-in siêu tự nhiên', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(18, 12, 'Tình dục không ép buộc mới vui!', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(19, 13, 'Tại sao từ chối lại nhói lòng?', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(20, 13, 'Lắc đầu không phải là phủ nhận bạn', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(21, 13, 'Kỹ năng \"phanh xe\" lịch sự', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(22, 13, 'Cách tự đặt ranh giới và từ chối', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(23, 13, 'Vết xước nhỏ giúp ta đi xa hơn', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(24, 14, 'Công cộng vs Riêng tư: Ranh giới ở đâu?', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(25, 14, 'Quy tắc chia sẻ ảnh: Đừng \"share\" tự ý!', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(26, 14, 'Mật khẩu và sự kiểm soát trực tuyến', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(27, 14, '\"Gửi ảnh nhạy cảm\" - Áp lực trực tuyến', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(28, 14, 'Bộ lọc truyền thông - Phân biệt phim ảnh với thực tế', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(29, 15, 'Quyền tự quyết (Agency) cơ thể', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(30, 15, 'Gọi đúng tên các bộ phận cơ thể', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(31, 15, '\"An toàn\" nghĩa là gì?', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(32, 15, 'Luật đồng thuận tại Việt Nam: Cột mốc 16 tuổi', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(33, 15, 'Chấp nhận bản thân (Self-acceptance)', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(34, 16, 'Khi bạn bè thúc ép', 1, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(35, 16, 'Nói \"Không\" với đám đông: Vì sao lại khó?', 2, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(36, 16, 'Kỹ năng từ chối áp lực nhóm cực khéo', 3, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(37, 16, 'Đối thoại giá trị: Bạn vs Gia đình & Xã hội', 4, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(38, 16, 'Điểm tựa an toàn: Khi ranh giới bị vượt qua', 5, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(39, 17, 'Ba viên gạch nền tảng', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(40, 17, 'Cảm xúc của bạn nói lên điều gì?', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(41, 17, 'Bạn có cần thay đổi vì người khác?', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(42, 17, 'Tình huống: Chiếc áo gượng ép', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(43, 17, 'Cách giữ cá tính riêng', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(44, 18, 'Nghe để hiểu hay nghe để cãi?', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(45, 18, 'Sức mạnh của từ \"Tớ\"', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(46, 18, 'Khi đầu óc bốc hỏa', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(47, 18, 'Tình huống: Tin nhắn hiểu lầm', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(48, 18, 'Quy tắc hòa giải 3 bước', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(49, 19, 'Vòng tròn ranh giới cá nhân', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(50, 19, 'Lòng tin không tự nhiên có', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(51, 19, 'Sự tôn trọng đến từ điều nhỏ nhặt', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(52, 19, 'Tình huống: Mật khẩu mạng xã hội', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(53, 19, 'Cách đặt ranh giới cứng rắn', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(54, 20, 'Sự thân mật cảm xúc là gì?', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(55, 20, 'Tình bạn thân thiết vs Tình yêu tuổi học trò', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(56, 20, 'Áp lực tiến xa hơn', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(57, 20, 'Tình huống: Nắm tay bất ngờ', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(58, 20, 'Gắn kết phi thể xác', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(59, 21, 'Đồng thuận là gì?', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(60, 21, 'Nhận diện đèn vàng', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(61, 21, 'Quyền quay xe', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(62, 21, 'Tình huống: Nụ hôn đầu bất ngờ', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(63, 21, 'Cách check-in mượt mà', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(64, 22, 'Khi con tim rung động', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(65, 22, 'Hẹn hò an toàn thế nào?', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(66, 22, 'Bị từ chối không phải là dấu chấm hết', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(67, 22, 'Tình huống: Cách ứng xử sau tỏ tình', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(68, 22, 'Cách từ chối khéo léo', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(69, 23, 'Thế nào là \"Cờ Đỏ\"?', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(70, 23, 'Vòng lặp độc hại', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(71, 23, 'Mệt mỏi hơn vui vẻ', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(72, 23, 'Tình huống: Bị cô lập', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(73, 23, 'Cách bước ra an toàn', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(74, 24, 'Dấu chân số là gì?', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(75, 24, 'Thông tin cá nhân nhạy cảm', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(76, 24, 'Áp lực chia sẻ mọi thứ', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(77, 24, 'Tình huống: Bức ảnh dìm', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(78, 24, 'Dọn dẹp tài khoản số', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(79, 24, 'Kiểm soát những gì thuộc về mình', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(80, 25, 'Giao tiếp qua màn hình', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(81, 25, 'Đọc vị giọng điệu tin nhắn', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(82, 25, 'Áp lực trả lời ngay lập tức', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(83, 25, 'Khi group chat bốc hỏa', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(84, 25, 'Viết tin nhắn Green Flag', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(85, 25, 'Giữ năng lượng tích cực', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(86, 26, 'Ranh giới số là gì?', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(87, 26, 'Khi ranh giới bị vượt qua', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(88, 26, 'Cảm giác tội lỗi khi từ chối', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(89, 26, 'Tình huống: Mượn mật khẩu', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(90, 26, 'Cách nói Không cứng rắn', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(91, 26, 'Ranh giới bảo vệ tình bạn', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(92, 27, 'Đồng thuận số là gì?', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(93, 27, 'Nhận diện sự ép buộc ngầm', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(94, 27, 'Áp lực từ người mình thích', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(95, 27, 'Tình huống: Tag tên tự ý', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(96, 27, 'Hãy hỏi ý kiến trước!', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(97, 27, 'Đồng thuận là liên tục', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(98, 28, 'Sexting là gì?', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(99, 28, 'Áp lực gửi ảnh mát mẻ', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(100, 28, 'Cảm xúc sau khi gửi ảnh', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(101, 28, 'Tình huống: Thử thách lòng tin', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(102, 28, 'Làm gì khi ảnh bị phát tán?', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(103, 28, 'Quyền kiểm soát cơ thể', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(104, 29, 'Cờ đỏ trên mạng là gì?', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(105, 29, 'Cảnh giác kẻ giả mạo', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(106, 29, 'Cạm bẫy cô lập', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(107, 29, 'Tình huống: Món quà từ người lạ', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(108, 29, 'Thoát khỏi mối quan hệ thao túng', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(109, 29, 'Tin vào trực giác của bạn', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(110, 30, 'Bạo lực mạng là gì?', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(111, 30, 'Đùa vui hay bắt nạt?', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(112, 30, 'Cảm xúc của nạn nhân', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(113, 30, 'Tình huống: Kẻ đứng xem (Bystander)', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(114, 30, 'Trở thành người bảo vệ (Upstander)', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(115, 30, 'Lan tỏa văn hóa số tích cực', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(118, 34, 'Ủa, \"Dậy thì\" thực chất là gì?', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(119, 34, 'Khi nào thì \"công tắc\" bật lên?', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(120, 34, 'Cảm giác \"bất ổn\" đầu đời', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(121, 34, 'Tình huống: Lời trêu chọc vô duyên', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(122, 34, 'Tìm kiếm đồng minh đáng tin', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(123, 34, 'Chúc mừng bản cập nhật mới!', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(124, 35, 'Mùi hương \"mới tinh\" của cơ thể', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(125, 35, 'Những vị khách không mời: Mụn!', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(126, 35, 'Chuyện của những sợi lông', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(127, 35, 'Tình huống: Chiếc mụn \"đáng ghét\"', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(128, 35, 'Cẩm nang tắm rửa \"Green Flag\"', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(129, 35, 'Yêu lấy từng centimet cơ thể', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(130, 36, 'Hệ sinh sản thức giấc!', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(131, 36, 'Kỳ kinh đầu tiên & Mộng tinh', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(132, 36, 'Vượt qua sự bối rối khó nói', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(133, 36, 'Tình huống: Sự cố hành kinh ở trường', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(134, 36, 'Cẩm nang sử dụng dụng cụ vệ sinh', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(135, 36, 'Cơ thể là một khối thống nhất', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(136, 37, 'Những \"kẻ quậy phá\" âm thầm: Hormone!', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(137, 37, 'Đọc vị cơn giận vô cớ', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(138, 37, 'Chiếc kính lúp nhạy cảm', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(139, 37, 'Tình huống: Bất đồng với bố mẹ', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(140, 37, 'Hộp công cụ bình ổn tâm trạng', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(141, 37, 'Kết bạn với những cơn bão', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(142, 38, 'Chiếc gương phản chiếu: Body Image là gì?', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(143, 38, 'Nhận diện \"Body Shaming\"', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(144, 38, 'Cạm bẫy filter và mạng xã hội', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(145, 38, 'Tình huống: Bị phán xét công khai', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(146, 38, 'Cách đối phó với những lời chỉ trích', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(147, 38, 'Cơ thể đa dạng là một món quà', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(148, 39, 'Năng lượng cho cỗ máy lớn lên', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(149, 39, 'Giấc ngủ: Thời gian vàng \"Upgrade\"', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(150, 39, 'Lắng nghe tiếng nói của cơ thể', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(151, 39, 'Tình huống: Thức khuya cày điện thoại', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(152, 39, 'Lập thời gian biểu \"Yêu Mình\"', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(153, 39, 'Tự chăm sóc là một hành trình dài', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(154, 40, 'Giải mã tin đồn về chiều cao và vóc dáng', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(155, 40, 'Sự thật về việc khám phá cơ thể', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(156, 40, 'Tại sao lại ngại hỏi?', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(157, 40, 'Tình huống: Lời rỉ tai ở trường', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(158, 40, 'Trở thành bộ lọc thông tin', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(159, 40, 'Tự tin bước qua tuổi dậy thì!', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(160, 41, 'Ủa, sao dạo này dễ \"cọc\" thế?', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(161, 41, 'Lục tủ đồ cảm xúc: Hôm nay hệ gì?', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(162, 41, 'Gắn nhãn \"toxic\" cho nỗi buồn: Oan quá!', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(163, 41, 'Khi vũ trụ gửi tín hiệu \"ét ô ét\" sầu đời', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(164, 41, 'Bắt tay làm hòa với \"vị khách khó chịu\"', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(165, 41, 'Viết nhật ký: Nơi trút bầu tâm sự cực \"chill\"', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(166, 42, 'Tự tin \"real\" vs Tự tin \"fake\"', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(167, 42, 'Tự hào về bản thân: Đừng nhầm với \"flexing\" quá đà!', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(168, 42, 'Hiệu ứng \"con nhà người ta\" và chiếc bẫy tự ti', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(169, 42, 'Khi bị điểm kém: Điểm số có định nghĩa bạn?', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(170, 42, 'Thần chú \"yêu mình\": Trò chuyện với bản thân', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(171, 42, 'Hòa giải với \"vết xước\": Ai cũng có góc không hoàn hảo!', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(172, 43, 'Filter ảo ma vs Vẻ đẹp thực tế', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(173, 43, 'Mỗi chiếc body là độc bản, không có khuôn mẫu!', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(174, 43, 'Bớt soi, thêm thương: Tại sao ta hay phán xét ngoại hình?', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(175, 43, 'Khi chiếc mũi hay cân nặng \"lệch chuẩn\" một chút', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(176, 43, 'Nói gì khi bị \"body shaming\" vô duyên?', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(177, 43, 'Nói lời cảm ơn \"chiếc vỏ bọc\" đã làm việc chăm chỉ', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(178, 44, 'SOS: Cơ thể đang kêu cứu vì stress đấy!', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(179, 44, 'Stress \"tốt\" vs Stress \"độc hại\": Bạn có phân biệt được?', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(180, 44, 'Chạy trốn stress: Tạm thời hay trọn đời?', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(181, 44, 'Bơi giữa mùa thi: Làm sao để không \"chìm\"?', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(182, 44, 'Hít vào thở ra: Kỹ thuật 4-7-8 siêu xịn', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(183, 44, 'Tự chế chiếc \"van xả stress\" lành mạnh', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(184, 45, 'Uống nhầm một ánh mắt: Cơn say nắng ngọt ngào', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(185, 45, 'Khi tình cảm là đường một chiều: Nhận biết thế nào?', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(186, 45, 'Tại sao bị từ chối lại đau buốt tim?', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(187, 45, 'Lấy hết can đảm tỏ tình và cái kết... bị từ chối!', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(188, 45, 'Mẹo \"F5\" tâm trạng sau khi bị \"từ chối thẳng thừng\"', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(189, 45, 'Sau cơn mưa trời lại sáng: Khơi dậy niềm tự hào', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(190, 46, 'Thế nào là một chiếc bạn \"Green Flag\"?', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(191, 46, 'Nhận diện kẻ thao túng cảm xúc cực tinh vi', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(192, 46, 'Tại sao chia sẻ nỗi buồn lại thấy ngượng ngùng?', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(193, 46, 'Khi tình bạn \"nhạt dần\" và xuất hiện cờ đỏ', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(194, 46, 'Khi quá tải: Tìm kiếm đồng minh đáng tin cậy', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(195, 46, 'Xây dựng \"biệt đội giải cứu cảm xúc\" cho riêng bạn', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(196, 47, 'Tự chăm sóc (Self-care): Đâu chỉ là đi shopping!', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(197, 47, 'Lập chiếc \"menu\" sạc pin tâm hồn', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(198, 47, 'Yêu chiều bản thân: Không có gì phải thấy tội lỗi!', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(199, 47, 'Khi bạn nói \"Có\" với người khác nhưng lại nói \"Không\" với chính mình', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(200, 47, 'Nghệ thuật nói \"Không\" để bảo vệ sức khỏe tinh thần', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(201, 47, 'Mỗi ngày tốt hơn 1%: Thiết lập thói quen nhỏ', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `micro_lesson_blocks`
+--
+
+CREATE TABLE `micro_lesson_blocks` (
+  `id` bigint(20) NOT NULL,
+  `micro_lesson_id` bigint(20) NOT NULL,
+  `block_type` varchar(50) NOT NULL,
+  `content_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`content_json`)),
+  `order_index` int(11) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `micro_lesson_blocks`
+--
+
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES
+(75, 13, 'hook', '{\"title\": \"Bạn có bao giờ lái xe băng qua giao lộ mà không thèm nhìn đèn tín hiệu?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(76, 13, 'explanation', '{\"bullets\": [\"Khi đi trên đường, tụi mình cần đèn xanh đèn đỏ để không đâm vào nhau.\", \"Trong tình cảm cũng vậy. Cơ thể và cảm xúc của mỗi người đều có những tín hiệu riêng.\", \"Muốn chạm vào ai đó hay tiến xa hơn, bạn bắt buộc phải quan sát và hỏi ý kiến đối phương.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(77, 13, 'scenario', '{\"title\": \"Nhìn tín hiệu cơ thể\", \"body\": \"Quân định bá vai Vy khi hai đứa đang ngồi học nhóm. Vy hơi rụt vai lại và mắt dán vào trang sách. Quân phân vân: Vy đang ngại hay Vy không thích mình chạm vào nhỉ?\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(78, 13, 'interaction', '{\"question\": \"Bạn khuyên Quân nên làm gì?\", \"choices\": [{\"text\": \"Cứ bá vai tiếp, bạn bè thân thiết ngại gì.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Dừng lại, hỏi nhẹ nhàng: Tớ để tay lên vai cậu được không?\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(79, 13, 'reflection', '{\"question\": \"Bạn có cảm thấy thoải mái khi người khác đột ngột đụng chạm mà không hỏi trước?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(80, 13, 'takeaway', '{\"items\": [\"Lái xe an toàn cần nhìn biển báo. Muốn chạm vào người khác cần hỏi trước.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(81, 14, 'hook', '{\"title\": \"Một lời đồng ý gượng ép có thực sự mang lại niềm vui?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(82, 14, 'explanation', '{\"bullets\": [\"Đèn xanh chỉ bật khi có sự đồng thuận rõ ràng, tự nguyện từ hai phía.\", \"Quy tắc F.R.I.E.S bao gồm: Tự nguyện (Freely given), Linh hoạt (Reversible), Đầy đủ thông tin (Informed), Hào hứng (Enthusiastic) và Cụ thể (Specific).\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(83, 14, 'scenario', '{\"title\": \"Đồng ý vì nể\", \"body\": \"Nam rủ Linh vào góc tối công viên nói chuyện. Linh ngập ngừng nói: Cũng được... nếu cậu muốn. Nhưng tay Linh bấu chặt vào vạt áo, mắt nhìn xuống đất.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(84, 14, 'interaction', '{\"question\": \"Lời đồng ý của Linh có phải là đồng thuận xịn không?\", \"choices\": [{\"text\": \"Có chứ, bạn ấy đã gật đầu rồi mà.\", \"correct\": false, \"emoji\": \"🚩\"}, {\"text\": \"Không. Linh đồng ý vì nể Nam và đang lo lắng, không hề hào hứng.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(85, 14, 'reflection', '{\"question\": \"Bạn từng đồng ý làm điều gì đó chỉ vì đối phương nài nỉ quá nhiều chưa?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(86, 14, 'takeaway', '{\"items\": [\"Chỉ có tiếng Có hào hứng và tự nguyện mới là đèn xanh để đi tiếp.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(87, 15, 'hook', '{\"title\": \"Tại sao đôi khi tụi mình muốn nói Không nhưng họng lại nghẹn đắng?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(88, 15, 'explanation', '{\"bullets\": [\"Nỗi sợ bị ghét, sợ làm hỏng bầu không khí khiến tụi mình chọn im lặng hoặc cười trừ.\", \"Không phản đối không có nghĩa là đồng ý.\", \"Khi thấy đối phương im lặng hoặc cứng đờ người (Đèn Vàng), bạn phải dừng lại và hỏi han.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(89, 15, 'scenario', '{\"title\": \"Áp lực từ bạn bè\", \"body\": \"Trong một buổi tiệc sinh nhật, nhóm bạn ép Minh uống thêm một ly nước ngọt pha cồn. Minh không thích nhưng chỉ im lặng cúi đầu và cười gượng.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(90, 15, 'interaction', '{\"question\": \"Nếu bạn là bạn thân ngồi cạnh Minh, bạn sẽ làm gì?\", \"choices\": [{\"text\": \"Hùa theo nhóm bạn: Cơ hội vui mà Minh, uống đi sợ gì!\", \"correct\": false, \"emoji\": \"🚩\"}, {\"text\": \"Giúp Minh từ chối: Thôi Minh không uống được đâu, tụi mình uống nước ngọt đi.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(91, 15, 'reflection', '{\"question\": \"Bạn từng im lặng chấp nhận một điều mình ghét vì sợ người khác đánh giá chưa?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(92, 15, 'takeaway', '{\"items\": [\"Im lặng không phải là đồng ý. Đó có thể là lúc đối phương đang cần bạn dừng lại.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(93, 16, 'hook', '{\"title\": \"Đồng ý lúc trước thì lúc sau có được đổi ý không?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(94, 16, 'explanation', '{\"bullets\": [\"Đồng thuận có tính linh hoạt (Reversible). Bạn có quyền đổi ý bất cứ lúc nào.\", \"Giây trước thấy thích, giây sau thấy không thoải mái là chuyện hết sức bình thường.\", \"Đối phương có nghĩa vụ phải tôn trọng khi bạn nói Dừng lại.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(95, 16, 'scenario', '{\"title\": \"Quyền đổi ý giữa chừng\", \"body\": \"Trang đồng ý để Quân ôm mình. Nhưng khi Quân ôm hơi chặt và định thơm má, Trang thấy ngột ngạt và đẩy nhẹ Quân ra: Khoan đã Quân, tớ thấy hơi nhanh.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(96, 16, 'interaction', '{\"question\": \"Phản ứng nào của Quân là Green Flag xịn?\", \"choices\": [{\"text\": \"Giận dỗi: Ơ hay, nãy đồng ý rồi mà giờ lại thế?\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Dừng lại ngay, nới lỏng tay: Tớ xin lỗi, tớ làm cậu khó chịu hả?\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(97, 16, 'reflection', '{\"question\": \"Bạn có dám đổi ý khi đang làm một việc gì đó với bạn bè không?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(98, 16, 'takeaway', '{\"items\": [\"Bạn luôn có quyền quay xe. Cơ thể và ranh giới của bạn là của riêng bạn.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(99, 17, 'hook', '{\"title\": \"Làm thế nào để xin phép người ta mà không khiến bầu không khí bị sượng trân?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(100, 17, 'explanation', '{\"bullets\": [\"Hỏi ý kiến không làm giảm đi sự lãng mạn.\", \"Hỏi han tinh tế thể hiện bạn quan tâm chân thành đến cảm giác của người ta.\", \"Hãy dùng những câu hỏi ngắn gọn, tự nhiên và ngọt ngào.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(101, 17, 'scenario', '{\"title\": \"Ý định nắm tay\", \"body\": \"Duy muốn nắm tay Linh khi hai đứa đang đi dạo công viên. Thay vì tự ý chụp lấy, Duy nhìn Linh và mỉm cười nhẹ.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(102, 17, 'interaction', '{\"question\": \"Giúp Duy chọn câu hỏi mượt nhất nhé:\", \"choices\": [{\"text\": \"Đưa tay đây tớ nắm xem nào.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Tớ nắm tay cậu được không?\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(103, 17, 'reflection', '{\"question\": \"Bạn thích được hỏi ý kiến trước hay thích đối phương tự ý hành động hơn?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(104, 17, 'takeaway', '{\"items\": [\"Hỏi trước khi chạm thể hiện sự tôn trọng, đó là nền tảng của sự lãng mạn.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(105, 18, 'hook', '{\"title\": \"Tình yêu có thực sự hạnh phúc nếu thiếu đi sự tự nguyện?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(106, 18, 'explanation', '{\"bullets\": [\"Mối quan hệ lành mạnh mang lại niềm vui, tự do và sự tin cậy.\", \"Mọi hành vi ép buộc, nài nỉ hay thao túng tâm lý đều làm tổn thương tình cảm.\", \"Tình yêu lành mạnh không bao giờ đi kèm sự lo sợ hay cảm giác có lỗi.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(107, 18, 'scenario', '{\"title\": \"Áp lực gửi ảnh riêng tư\", \"body\": \"Cường nhắn tin năn nỉ An gửi ảnh cá nhân riêng tư cho mình, nói rằng yêu nhau thì phải tin tưởng nhau tuyệt đối. An lo sợ nếu không gửi Cường sẽ giận.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(108, 18, 'interaction', '{\"question\": \"Bạn khuyên An nên nhắn gì cho Cường?\", \"choices\": [{\"text\": \"Thôi được rồi, gửi một tấm thôi nha, cậu đừng cho ai xem.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Tớ không thoải mái với việc này. Mong cậu tôn trọng ranh giới của tớ.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(109, 18, 'reflection', '{\"question\": \"Bạn có đang cố làm hài lòng người khác bằng cách bỏ qua cảm xúc của chính mình?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(110, 18, 'takeaway', '{\"items\": [\"Yêu thương đi liền với sự tôn trọng, không phải sự ép buộc.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(111, 19, 'hook', '{\"title\": \"Tại sao khi người ấy từ chối, tụi mình lại thấy xấu hổ đến thế?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(112, 19, 'explanation', '{\"bullets\": [\"Bị từ chối (rejection) kích hoạt cảm giác hụt hẫng, ngượng ngùng tạm thời.\", \"Đây là trải nghiệm siêu bình thường mà ai cũng phải trải qua khi trưởng thành.\", \"Lời từ chối chỉ có nghĩa mong muốn của hai bên chưa khớp nhau tại thời điểm đó.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(113, 19, 'scenario', '{\"title\": \"Lời từ chối bận rộn\", \"body\": \"Kiên rủ Vy đi ăn kem sau giờ học. Vy trả lời: Xin lỗi cậu nha, hôm nay tớ phải về dọn nhà giúp mẹ rồi. Kiên đứng thẫn thờ, đỏ mặt và tự trách mình đã rủ rê.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(114, 19, 'interaction', '{\"question\": \"Kiên nên nghĩ thế nào để bớt buồn?\", \"choices\": [{\"text\": \"Chắc mình nhạt nhẽo nên bạn ấy mới lấy cớ từ chối. Sẽ không bao giờ rủ ai nữa.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Vy bận thật mà. Hôm khác mình rủ lại hoặc rủ đám bạn thân đi ăn kem.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(115, 19, 'reflection', '{\"question\": \"Bạn đã từng bị từ chối một lời mời chưa? Cảm xúc lúc đó thế nào?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(116, 19, 'takeaway', '{\"items\": [\"Bị từ chối không có nghĩa là bạn tệ. Chỉ là thời điểm chưa phù hợp thôi.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(117, 20, 'hook', '{\"title\": \"Lý do từ chối thường nằm ở phía đối phương, không phải do bạn kém cỏi.\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(118, 20, 'explanation', '{\"bullets\": [\"Có nhiều lý do khiến người khác lắc đầu: mệt mỏi, áp lực học tập, lo lắng chuyện gia đình.\", \"Đừng vội tự ti hay trách móc bản thân.\", \"Học cách phân loại lý do từ chối để giải tỏa tâm lý.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(119, 20, 'sorting', '{\"instruction\": \"Hãy phân loại các lý do từ chối sau đây vào đúng hộp:\", \"leftBox\": {\"title\": \"Ranh giới & Hoàn cảnh của họ\"}, \"rightBox\": {\"title\": \"Suy diễn tự ti của mình\"}, \"items\": [{\"text\": \"Tớ đang lo lắng chuyện bài vở\", \"correctBox\": \"left\"}, {\"text\": \"Tại mình xấu xí nên bạn chê\", \"correctBox\": \"right\"}, {\"text\": \"Tớ chưa sẵn sàng thân mật\", \"correctBox\": \"left\"}, {\"text\": \"Do mình nhạt nên bị từ chối\", \"correctBox\": \"right\"}]}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(120, 20, 'reflection', '{\"question\": \"Bạn có bao giờ từ chối đi chơi với bạn thân chỉ vì bạn đang mệt hay buồn ngủ chưa?\"}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(121, 20, 'takeaway', '{\"items\": [\"Họ từ chối một đề nghị, chứ không phủ nhận con người bạn.\"]}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(122, 21, 'hook', '{\"title\": \"Ứng xử thế nào sau khi bị từ chối để giữ được sự cool ngầu và lịch sự?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(123, 21, 'explanation', '{\"bullets\": [\"Tuyệt đối không giận dỗi, trách móc hay im lặng cắt đứt liên lạc.\", \"Hãy mỉm cười, tôn trọng ranh giới của họ và cư xử bình thường.\", \"Điều này thể hiện sự tự tin và giúp họ nể trọng bạn hơn.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(124, 21, 'scenario', '{\"title\": \"Bị từ chối xem phim\", \"body\": \"Sơn rủ Vy đi xem phim cuối tuần. Vy nhắn tin từ chối: Cuối tuần này tớ bận đi sinh nhật họ hàng mất rồi. Sơn thấy hụt hẫng và ngượng.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(125, 21, 'interaction', '{\"question\": \"Giúp Sơn nhắn lại một câu thật lịch sự nhé:\", \"choices\": [{\"text\": \"Bận suốt thế. Thôi từ sau tớ chả rủ nữa.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Ok cậu nè, đi sinh nhật vui vẻ nha! Hẹn cậu dịp khác.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(126, 21, 'reflection', '{\"question\": \"Nếu bạn từ chối ai đó, bạn muốn nhận lại phản ứng vui vẻ hay giận dỗi từ họ?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(127, 21, 'takeaway', '{\"items\": [\"Tôn trọng lời từ chối là biểu hiện của một tình bạn đẹp và trưởng thành.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(128, 22, 'hook', '{\"title\": \"Làm sao để nói Không một cách rõ ràng mà không sợ làm tổn thương người khác?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(129, 22, 'explanation', '{\"bullets\": [\"Bạn không cần giải thích quá dông dài khi muốn bảo vệ ranh giới của mình.\", \"Từ chối thẳng thắn, lịch sự tốt hơn là nói dối hoặc chịu đựng.\", \"Một câu nói rõ ràng giúp cả hai giữ sự tôn trọng.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(130, 22, 'scenario', '{\"title\": \"Sự mệt mỏi sau giờ học\", \"body\": \"Lâm rủ Vy đi uống trà sữa. Vy thấy rất mệt và muốn về nhà ngủ, nhưng Vy sợ từ chối thẳng thừng sẽ khiến Lâm nghĩ mình kiêu kỳ.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(131, 22, 'interaction', '{\"question\": \"Vy nên nhắn gì cho Lâm?\", \"choices\": [{\"text\": \"Tớ bận rồi.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Cảm ơn Lâm nha, nhưng hôm nay tớ hơi mệt nên muốn về nghỉ sớm. Hẹn cậu hôm khác nhé!\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(132, 22, 'reflection', '{\"question\": \"Bạn có cảm thấy khó khăn khi phải nói lời từ chối với bạn bè không?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(133, 22, 'takeaway', '{\"items\": [\"Nói Không lịch sự là quyền của bạn. Người trân trọng bạn sẽ luôn thấu hiểu.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(134, 23, 'hook', '{\"title\": \"Những lần bị từ chối có thể dạy tụi mình điều gì về bản thân?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(135, 23, 'explanation', '{\"bullets\": [\"Sự bền bỉ (resilience) là khả năng chấp nhận thực tế và tự hồi phục sau thất vọng.\", \"Thất bại trong tình cảm là cơ hội để học hỏi và thấu hiểu ranh giới của người khác.\", \"Tập trung vào các hoạt động tích cực giúp bạn chữa lành nhanh hơn.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(136, 23, 'scenario', '{\"title\": \"Sức mạnh của sự kiên cường\", \"body\": \"Duy tỏ tình với bạn cùng lớp và bị từ chối nhẹ nhàng. Duy buồn vài ngày, nhưng sau đó nhận ra việc dám bày tỏ đã là sự dũng cảm của mình.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(137, 23, 'interaction', '{\"question\": \"Duy đã làm gì để tự vượt qua?\", \"choices\": [{\"text\": \"Tự cô lập bản thân và ghét bỏ tình bạn cũ.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Chấp nhận, tập trung vào bóng rổ và củng cố việc học tập.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(138, 23, 'reflection', '{\"question\": \"Bạn có nghĩ rằng sau mỗi lần từ chối, chúng ta sẽ trở nên vững vàng hơn không?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(139, 23, 'takeaway', '{\"items\": [\"Vết xước nhỏ trong tình cảm không làm bạn yếu đi, chúng giúp bạn trưởng thành hơn.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(140, 24, 'hook', '{\"title\": \"Đâu là sự khác biệt giữa bảng tin công khai và không gian riêng tư của bạn?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(141, 24, 'explanation', '{\"bullets\": [\"Không gian mạng xã hội cũng có công viên công cộng và có phòng ngủ riêng tư.\", \"Làm lộ thông tin hoặc đăng hình ảnh quá cá nhân có thể gây hại cho bản thân.\", \"Hiểu ranh giới giúp bạn tự bảo vệ hình ảnh cá nhân và tôn trọng người khác.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(142, 24, 'scenario', '{\"title\": \"Ảnh dìm bạn thân\", \"body\": \"Vy chụp được bức ảnh dìm của bạn thân lúc ngủ gật trong lớp. Vy thấy rất vui và định đăng lên story Facebook công khai cho cả trường xem.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(143, 24, 'interaction', '{\"question\": \"Vy nên làm gì để tôn trọng ranh giới riêng tư?\", \"choices\": [{\"text\": \"Vui mà, bạn bè đùa tí có sao đâu cứ đăng đi.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Gửi riêng cho bạn đó xem trước, nếu bạn đồng ý mới được đăng.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(144, 24, 'reflection', '{\"question\": \"Bạn có thấy khó chịu nếu hình ảnh lúc ngốc nghếch của mình bị đăng lên mạng mà chưa hỏi ý kiến?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(145, 24, 'takeaway', '{\"items\": [\"Mạng xã hội không bao giờ quên. Hãy bảo vệ sự riêng tư của chính mình và bạn bè.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(146, 25, 'hook', '{\"title\": \"Chụp ảnh chung với người khác thì có được tự ý đăng lên mạng không?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(147, 25, 'explanation', '{\"bullets\": [\"Đồng thuận số (digital consent) bắt đầu từ việc hỏi ý kiến trước khi đăng ảnh người khác.\", \"Có thể bạn thấy ảnh đẹp, nhưng người khác lại không thoải mái khi ảnh họ hiện diện trên mạng.\", \"Hãy gỡ ảnh hoặc xóa tag nếu bạn của bạn yêu cầu.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(148, 25, 'scenario', '{\"title\": \"Yêu cầu gỡ ảnh\", \"body\": \"Nam đăng ảnh chụp chung với Trang lên Instagram. Trang thấy ảnh đó mặt mình bị dìm nên nhắn tin bảo Nam gỡ xuống. Nam thấy Trang phiền phức.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(149, 25, 'interaction', '{\"question\": \"Nam nên xử lý thế nào để thể hiện sự tôn trọng?\", \"choices\": [{\"text\": \"Kệ Trang: Hình đẹp thế này gỡ làm gì, cậu cứ vẽ chuyện.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Gỡ ảnh hoặc xóa tag ngay lập tức: Xin lỗi cậu nha, tớ gỡ liền nè.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(150, 25, 'reflection', '{\"question\": \"Bạn đã từng nhờ bạn bè gỡ hình chụp chung vì thấy mình không được đẹp chưa?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(151, 25, 'takeaway', '{\"items\": [\"Chụp chung không có nghĩa là được tự ý share. Tôn trọng ranh giới là ưu tiên số 1.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(152, 26, 'hook', '{\"title\": \"Yêu nhau là phải đưa mật khẩu tài khoản mạng xã hội để chứng minh lòng tin?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(153, 26, 'explanation', '{\"bullets\": [\"Yêu cầu đưa mật khẩu để kiểm soát tin nhắn là hành vi xâm phạm ranh giới riêng tư.\", \"Tình yêu lành mạnh dựa trên sự tin tưởng lẫn nhau, không phải kiểm soát 24/7.\", \"Mỗi người đều cần có một không gian riêng tư được tôn trọng.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(154, 26, 'scenario', '{\"title\": \"Đòi mật khẩu TikTok\", \"body\": \"Lâm yêu cầu Vy đưa mật khẩu tài khoản TikTok để kiểm tra tin nhắn. Vy thấy ngột ngạt nhưng sợ Lâm giận nên định nhượng bộ.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(155, 26, 'interaction', '{\"question\": \"Vy nên nói gì với Lâm để bảo vệ ranh giới?\", \"choices\": [{\"text\": \"Đây nè, cậu cứ vào xem đi để khỏi nghi ngờ tớ nữa.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Tớ yêu cậu nhưng tớ muốn giữ không gian riêng tư. Tin tưởng nhau quan trọng hơn mật khẩu.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(156, 26, 'reflection', '{\"question\": \"Bạn có nghĩ một người thực sự tin tưởng bạn sẽ không cần giám sát tin nhắn của bạn không?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(157, 26, 'takeaway', '{\"items\": [\"Mật khẩu là chìa khóa riêng tư tối thiểu. Hãy tôn trọng lòng tự trọng của nhau.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(158, 27, 'hook', '{\"title\": \"Phải làm sao khi người yêu nhắn tin đòi bạn gửi hình ảnh nhạy cảm?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(159, 27, 'explanation', '{\"bullets\": [\"Gửi ảnh nhạy cảm (sexting) tiềm ẩn rủi ro cực kỳ lớn đối với học sinh.\", \"Bạn hoàn toàn có quyền từ chối. Không ai được dùng tình cảm để ép buộc bạn làm điều này.\", \"Ảnh gửi đi sẽ không còn nằm trong kiểm soát của bạn và có thể bị phát tán.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(160, 27, 'scenario', '{\"title\": \"Chứng minh tình yêu bằng ảnh\", \"body\": \"Cường nhắn tin đòi Vy gửi ảnh chụp bờ vai trần của Vy để chứng minh tình yêu. Vy sợ nếu không gửi Cường sẽ đòi chia tay.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(161, 27, 'interaction', '{\"question\": \"Vy nên làm thế nào?\", \"choices\": [{\"text\": \"Gửi đại một tấm mờ mờ để xoa dịu Cường.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Từ chối dứt khoát: Tớ không làm việc này đâu. Mong cậu tôn trọng quyết định của tớ.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(162, 27, 'reflection', '{\"question\": \"Nếu một người sẵn sàng giận dỗi vì bạn từ chối gửi ảnh nhạy cảm, họ có yêu bạn thật lòng?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(163, 27, 'takeaway', '{\"items\": [\"Hình ảnh đã gửi đi không thể lấy lại. Hãy bảo vệ ranh giới an toàn của mình.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(164, 28, 'hook', '{\"title\": \"Những gì bạn thấy trên mạng về tình yêu tuổi teen có giống 100% ngoài đời thực?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(165, 28, 'explanation', '{\"bullets\": [\"Phim ảnh và mạng xã hội thường cường điệu hóa và lãng mạn hóa sự đụng chạm ép buộc.\", \"Năng lực đánh giá truyền thông (media literacy) giúp bạn không bị ảo tưởng bởi kỳ vọng phi thực tế.\", \"Mối quan hệ thực tế cần sự thấu hiểu, vụng về và tôn trọng ranh giới.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(166, 28, 'flashcard', '{\"front\": \"Sự đụng chạm bá đạo trên phim ảnh có phải là hình mẫu ngoài đời?\", \"back\": \"Không. Trên phim thường lãng mạn hóa việc đụng chạm không xin phép. Ngoài đời, sự đồng thuận tự nguyện và tôn trọng ranh giới mới là ưu tiên số 1.\", \"notes\": \"Cần phân biệt kịch bản điện ảnh với các mối quan hệ an toàn thực tế.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(167, 28, 'reflection', '{\"question\": \"Bạn có từng mong muốn người yêu mình phải hoàn hảo hay bá đạo giống nhân vật trong phim chưa?\"}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(168, 28, 'takeaway', '{\"items\": [\"Đừng mang kịch bản phim ảnh áp vào đời thực. Sự an toàn và tôn trọng quan trọng hơn sự lãng mạn giả tạo.\"]}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(169, 29, 'hook', '{\"title\": \"Ai là người đưa ra quyết định cuối cùng đối với cơ thể của bạn?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(170, 29, 'explanation', '{\"bullets\": [\"Quyền tự quyết (Agency) nghĩa là bạn có toàn quyền sở hữu cơ thể của mình.\", \"Không ai được chạm vào cơ thể bạn nếu chưa được bạn đồng ý.\", \"Bạn có quyền từ chối mọi đụng chạm mà bạn thấy không thoải mái.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(171, 29, 'scenario', '{\"title\": \"Thử thách của đám đông\", \"body\": \"Vy bị nhóm bạn thách ôm một bạn nam trong lớp mà Vy không quen thân. Nhóm bạn hò reo ép Vy làm, dù Vy thấy rất ngượng ngập và không muốn.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(172, 29, 'interaction', '{\"question\": \"Vy nên ứng xử thế nào để giữ quyền tự quyết?\", \"choices\": [{\"text\": \"Nhắm mắt làm theo để không bị chê là nhát và phá cuộc vui.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Từ chối dứt khoát: Tớ không thoải mái với thử thách này, tớ xin chịu phạt kiểu khác nhé.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(173, 29, 'reflection', '{\"question\": \"Bạn có từng ép bản thân đụng chạm với ai đó chỉ vì áp lực xung quanh chưa?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(174, 29, 'takeaway', '{\"items\": [\"Cơ thể là lãnh thổ riêng của bạn. Chỉ có bạn mới quyết định ai được phép bước vào.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(175, 30, 'hook', '{\"title\": \"Tại sao tụi mình thường dùng từ lóng để nói về bộ phận nhạy cảm?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(176, 30, 'explanation', '{\"bullets\": [\"Giáo dục giới tính khoa học cần gọi đúng tên các bộ phận sinh học (âm hộ, dương vật, tinh hoàn).\", \"Gọi đúng tên giúp bạn bớt ngại ngùng và tự tin chăm sóc vệ sinh.\", \"Đây là ngôn ngữ y tế chính xác để bạn giao tiếp khi gặp vấn đề sức khỏe.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(177, 30, 'flashcard', '{\"front\": \"Tại sao phải phân biệt Vulva (Âm hộ) và Vagina (Âm đạo)?\", \"back\": \"Vulva là toàn bộ cơ quan sinh dục ngoài (có thể nhìn thấy bên ngoài), còn Vagina là ống âm đạo nằm bên trong. Việc gọi tên chính xác giúp nhận diện cấu tạo sinh học và chăm sóc sức khỏe đúng cách.\", \"notes\": \"Khoa học không có sự xấu hổ.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(178, 30, 'reflection', '{\"question\": \"Bạn có thấy việc dùng tên khoa học giúp các cuộc thảo luận trở nên nghiêm túc hơn không?\"}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(179, 30, 'takeaway', '{\"items\": [\"Không có gì xấu hổ khi nói về sinh học cơ thể. Gọi đúng tên là tự trọng và khoa học.\"]}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(180, 31, 'hook', '{\"title\": \"Bảo vệ an toàn cho cơ thể có phải là chuyện của riêng ai?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(181, 31, 'explanation', '{\"bullets\": [\"An toàn (safety) bao gồm an toàn thể chất, ngừa thai và phòng tránh bệnh STIs.\", \"Các bạn teen cần hiểu rõ biện pháp phòng ngừa để chịu trách nhiệm bảo vệ bản thân.\", \"Hãy dựa vào kiến thức y học, đừng tin vào những lời truyền miệng thiếu căn cứ.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(182, 31, 'scenario', '{\"title\": \"Xuất tinh ngoài có an toàn?\", \"body\": \"Huy nghe các bạn kháo nhau rằng chỉ cần rút ra kịp lúc là an toàn, không cần dùng bao cao su vướng víu.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(183, 31, 'interaction', '{\"question\": \"Ý kiến của các bạn Huy đúng hay sai?\", \"choices\": [{\"text\": \"Đúng, phương pháp này rất phổ biến và tiết kiệm.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Sai hoàn toàn. Phương pháp này rủi ro cao và không ngừa được bệnh STIs. Chỉ bao cao su mới an toàn.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(184, 31, 'reflection', '{\"question\": \"Bạn có tự tin mình biết cách phòng ngừa các rủi ro sức khỏe sinh sản chưa?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(185, 31, 'takeaway', '{\"items\": [\"An toàn thể chất cần kiến thức y học chính xác. Đừng đánh cược sức khỏe của mình.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(186, 32, 'hook', '{\"title\": \"Bạn có biết pháp luật Việt Nam bảo vệ ranh giới tuổi teen nghiêm ngặt như thế nào?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(187, 32, 'explanation', '{\"bullets\": [\"Độ tuổi đồng thuận tình dục tối thiểu ở Việt Nam là từ đủ 16 tuổi trở lên.\", \"Quan hệ tình dục với người dưới 16 tuổi là vi phạm pháp luật hình sự, kể cả tự nguyện.\", \"Luật pháp đặt ranh giới này để bảo vệ vị thành niên khỏi các tổn thương tâm lý và thể chất sớm.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(188, 32, 'scenario', '{\"title\": \"Tự nguyện dưới 16 tuổi\", \"body\": \"Tuấn (17 tuổi) và Lan (15 tuổi) yêu nhau. Tuấn muốn hai đứa tiến xa hơn vì cho rằng tự nguyện thì không sao. Lan băn khoăn về pháp luật.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(189, 32, 'interaction', '{\"question\": \"Ý kiến của Tuấn có đúng luật pháp Việt Nam không?\", \"choices\": [{\"text\": \"Đúng, tự nguyện yêu nhau thì không ai can thiệp.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Sai. Lan 15 tuổi (dưới 16), việc quan hệ tình dục là phạm pháp đối với Tuấn, kể cả tự nguyện.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(190, 32, 'reflection', '{\"question\": \"Tại sao luật pháp lại cần bảo vệ các bạn dưới 16 tuổi một cách tuyệt đối như vậy?\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(191, 32, 'takeaway', '{\"items\": [\"Biết luật để tự bảo vệ mình và người mình yêu thương. Ranh giới pháp lý là tấm khiên vững chắc.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(192, 33, 'hook', '{\"title\": \"Có bao giờ bạn đứng trước gương và tự ti về cơ thể dậy thì đang thay đổi?\"}', 1, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(193, 33, 'explanation', '{\"bullets\": [\"Mỗi người lớn lên với tốc độ khác nhau. Mụn, giọng nói hay cân nặng thay đổi đều là bình thường.\", \"Không có một vóc dáng chuẩn nào cả. Yêu cơ thể mình là nền tảng của tự tin.\", \"Hãy kiên nhẫn với bản thân trong giai đoạn dậy thì này.\"]}', 2, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(194, 33, 'scenario', '{\"title\": \"So sánh chiều cao\", \"body\": \"Linh tự ti vì các bạn nữ trong lớp đã phổng phao và cao lớn, còn mình vẫn thấp bé như học sinh tiểu học. Linh sợ mình bị chậm phát triển.\"}', 3, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(195, 33, 'interaction', '{\"question\": \"Chọn lời khuyên giúp Linh tự tin hơn:\", \"choices\": [{\"text\": \"Tìm mua các loại thuốc tăng chiều cao hoặc ăn kiêng cấp tốc.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Cơ thể cậu đang phát triển đúng nhịp của nó. Hãy kiên nhẫn và yêu bản thân nhé.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(196, 33, 'reflection', '{\"question\": \"Bạn thích nhất điểm nào trên cơ thể mình hiện tại? Hãy dành một lời khen cho nó nhé.\"}', 5, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(197, 33, 'takeaway', '{\"items\": [\"Cơ thể bạn đang lớn lên theo cách riêng của nó. Đừng so sánh bản thân với bất kỳ ai.\"]}', 6, '2026-06-05 01:35:30', '2026-06-05 01:35:30'),
+(198, 34, 'hook', '{\"title\": \"Bạn có bao giờ làm một việc nguy hiểm chỉ vì sợ bị hội bạn thân chê nhát gan?\"}', 1, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(199, 34, 'explanation', '{\"bullets\": [\"Áp lực đồng trang lứa (peer pressure) dễ khiến tụi mình làm những việc không thoải mái.\", \"Hội bạn có thể ép trốn học, thử vape hay đùa cợt thô bạo người khác.\", \"Nhận biết sự thúc ép giúp bạn bảo vệ ranh giới cá nhân kỹ càng.\"]}', 2, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(200, 34, 'scenario', '{\"title\": \"Thử thách uống bia\", \"body\": \"Trong buổi tiệc, các bạn thách Nam uống thử một hớp bia lớn để chứng minh mình đàn ông. Nam không thích nhưng sợ bị cả hội tẩy chay.\"}', 3, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(201, 34, 'interaction', '{\"question\": \"Nam nên làm thế nào?\", \"choices\": [{\"text\": \"Uống luôn cho xong để được cả nhóm khen ngầu.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Từ chối vui vẻ: Thôi tớ xin kiếu, uống nước ngọt được rồi, tớ phải đạp xe về.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(202, 34, 'reflection', '{\"question\": \"Bạn đã từng làm việc gì đó mà mình ghét chỉ để được nhóm bạn chơi chung chấp nhận chưa?\"}', 5, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(203, 34, 'takeaway', '{\"items\": [\"Đám bạn thực sự tốt sẽ tôn trọng quyết định của bạn, chứ không ép bạn làm việc nguy hại.\"]}', 6, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(204, 35, 'hook', '{\"title\": \"Tại sao việc đi ngược lại số đông lại cần nhiều dũng khí đến thế?\"}', 1, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(205, 35, 'explanation', '{\"bullets\": [\"Teenager luôn có nỗi sợ bị cô lập, bị trêu chọc hay bị coi là lập dị trong nhóm.\", \"Hiểu được cảm xúc lo sợ này giúp bạn bớt tự trách mình khi thấy khó mở lời.\", \"Giữ vững lập trường của mình mới là biểu hiện của sự tự tin thực sự.\"]}', 2, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(206, 35, 'scenario', '{\"title\": \"Trò cô lập bạn mới\", \"body\": \"Vy thấy cả nhóm bạn thân đang hùa nhau nói xấu và cô lập một bạn nữ mới chuyển trường. Vy muốn đến bắt chuyện nhưng sợ cả nhóm quay sang tẩy chay mình.\"}', 3, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(207, 35, 'interaction', '{\"question\": \"Đâu là lựa chọn dũng khí của Vy?\", \"choices\": [{\"text\": \"Im lặng hùa theo nhóm để bảo vệ bản thân.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Đứng về phía lẽ phải: chủ động bắt chuyện với bạn mới và khuyên ngăn nhóm bạn.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(208, 35, 'reflection', '{\"question\": \"Bạn có sẵn sàng đứng về phía lẽ phải ngay cả khi chỉ có một mình không?\"}', 5, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(209, 35, 'takeaway', '{\"items\": [\"Đi ngược lại đám đông cần dũng khí, nhưng đó là cách để giữ gìn sự tự trọng của bạn.\"]}', 6, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(210, 36, 'hook', '{\"title\": \"Làm sao để từ chối lời rủ rê mà không gây rạn nứt tình bạn thân thiết?\"}', 1, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(211, 36, 'explanation', '{\"bullets\": [\"Từ chối không cần phải gay gắt hay gây chiến.\", \"Bạn có thể đưa ra lý do cá nhân hợp lý hoặc dùng sự hài hước để giảm bớt căng thẳng.\", \"Quan trọng là giọng điệu kiên định nhưng thân thiện.\"]}', 2, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(212, 36, 'scenario', '{\"title\": \"Rủ trốn học cày rank\", \"body\": \"Nhóm bạn rủ Lâm trốn học buổi chiều để đi quán net chơi game. Lâm muốn ở lại học bài chuẩn bị thi nhưng sợ bị chê là mọt sách chán ngắt.\"}', 3, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(213, 36, 'interaction', '{\"question\": \"Giúp Lâm từ chối khéo nhất nhé:\", \"choices\": [{\"text\": \"Trốn học là xấu đấy, các cậu lười biếng quá.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Chiều nay tớ phải cày nốt đống đề Toán mai thi rồi. Các đại ca đi vui vẻ nhé, mai thi xong tớ bù sau!\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(214, 36, 'reflection', '{\"question\": \"Bạn thường dùng cách nào để từ chối bạn bè khi họ rủ rê làm việc bạn không muốn?\"}', 5, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(215, 36, 'takeaway', '{\"items\": [\"Từ chối khéo léo giúp bạn giữ vững ranh giới mà vẫn duy trì tình bạn tốt đẹp.\"]}', 6, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(216, 37, 'hook', '{\"title\": \"Phải làm sao khi những giá trị bạn tin tưởng khác biệt với kỳ vọng của gia đình?\"}', 1, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(217, 37, 'explanation', '{\"bullets\": [\"Trưởng thành là quá trình định hình thế giới quan và đạo đức cá nhân riêng.\", \"Khác biệt quan điểm không phải là nổi loạn, mà là bước lớn lên tự nhiên.\", \"Hãy đối thoại chân thành và tôn trọng để tìm sự đồng cảm từ bố mẹ.\"]}', 2, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(218, 37, 'scenario', '{\"title\": \"Lệnh cấm kết bạn\", \"body\": \"Bố mẹ Vy cấm Vy không được kết bạn hay nói chuyện với bất kỳ bạn nam nào trong lớp. Vy thấy quy định quá khắt khe nhưng sợ cãi lời sẽ bị mắng hỗn láo.\"}', 3, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(219, 37, 'interaction', '{\"question\": \"Vy nên làm thế nào để đối thoại hiệu quả?\", \"choices\": [{\"text\": \"Cài lại gay gắt hoặc âm thầm nói dối, giấu giếm mối quan hệ.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Chọn lúc vui vẻ, chia sẻ về việc học nhóm chung và cam kết giữ ranh giới học tập để bố mẹ an tâm.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(220, 37, 'reflection', '{\"question\": \"Có quan điểm nào về tình bạn hay tình yêu mà bạn muốn thảo luận cởi mở với bố mẹ của mình không?\"}', 5, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(221, 37, 'takeaway', '{\"items\": [\"Tôn trọng giá trị gia đình không có nghĩa là im lặng. Đối thoại chân thành kết nối các thế hệ.\"]}', 6, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(222, 38, 'hook', '{\"title\": \"Bạn sẽ tìm đến ai khi cảm thấy ranh giới an toàn của mình đang bị đe dọa?\"}', 1, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(223, 38, 'explanation', '{\"bullets\": [\"Bạn không bao giờ phải chịu đựng hay giải quyết các rắc rối một mình.\", \"Nếu bị đe dọa, xâm hại ranh giới hoặc đụng chạm trái phép, hãy báo ngay cho bố mẹ hoặc thầy cô.\", \"Tổng đài Quốc gia Bảo vệ Trẻ em 111 hoạt động miễn phí 24/7 để lắng nghe và bảo vệ bạn.\"]}', 2, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(224, 38, 'scenario', '{\"title\": \"Lời đe dọa từ khóa trên\", \"body\": \"An bị một bạn khóa trên đe dọa sẽ đăng bức ảnh chụp trộm An lên nhóm chat của trường nếu không chịu đi chơi riêng. An vô cùng hoảng sợ.\"}', 3, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(225, 38, 'interaction', '{\"question\": \"An nên làm thế nào?\", \"choices\": [{\"text\": \"Im lặng làm theo vì quá sợ hãi lời đe dọa.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Chụp màn hình bằng chứng, báo ngay cho bố mẹ/thầy cô và gọi tổng đài can thiệp 111.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(226, 38, 'reflection', '{\"question\": \"Bạn có ghi nhớ số điện thoại 111 và số của người lớn đáng tin cậy nhất để gọi khi khẩn cấp không?\"}', 5, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(227, 38, 'takeaway', '{\"items\": [\"Tìm kiếm sự hỗ trợ không phải là yếu đuối. Đó là hành động dũng cảm để tự bảo vệ mình.\"]}', 6, '2026-06-05 01:35:31', '2026-06-05 01:35:31'),
+(228, 39, 'hook', '{\"title\": \"Mối quan hệ lành mạnh không phải là một phép thuật có sẵn, mà là một ngôi nhà cần tự xây.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(229, 39, 'explanation', '{\"bullets\": [\"Nền tảng đầu tiên là Tôn Trọng: coi trọng cảm xúc và ý kiến của nhau.\", \"Nền tảng thứ hai là Lòng Tin: tin tưởng đối phương mà không cần kiểm soát.\", \"Nền tảng thứ ba là Bình Đẳng: cả hai có quyền quyết định và đóng góp ngang nhau.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(230, 39, 'scenario', '{\"title\": \"Đi ăn đồ nướng\", \"body\": \"Vân muốn đi ăn lẩu, nhưng Huy lại muốn ăn đồ nướng. Huy cười bảo: Thôi hôm nay ăn lẩu theo ý Vân đi, tuần sau tụi mình ăn đồ nướng nha. Cả hai đều vui vẻ.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(231, 39, 'interaction', '{\"question\": \"Hành vi của Huy thể hiện điều gì?\", \"choices\": [{\"text\": \"Bình đẳng và biết nhường nhịn tôn trọng ý kiến bạn bè.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Huy quá yếu đuối, không dám giữ chính kiến của mình.\", \"correct\": false, \"emoji\": \"🚩\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(232, 39, 'reflection', '{\"question\": \"Trong mối quan hệ bạn bè của bạn, bạn cảm thấy tiếng nói của mình có được lắng nghe bình đẳng không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(233, 39, 'takeaway', '{\"items\": [\"Tôn trọng, lòng tin và bình đẳng là ba viên gạch xây nên mối quan hệ bền vững.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(234, 40, 'hook', '{\"title\": \"Làm sao biết một mối quan hệ có tốt cho bạn hay không? Hãy hỏi cơ thể bạn.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(235, 40, 'explanation', '{\"bullets\": [\"Mối quan hệ lành mạnh mang lại cảm giác an tâm, vui vẻ và ấm áp.\", \"Nếu bạn luôn cảm thấy hồi hộp lo lắng, sợ hãi, hoặc bồn chồn (đau bụng, căng cơ), đó là tín hiệu cảnh báo.\", \"Đừng bỏ qua cảm giác bất an bên trong cơ thể bạn.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(236, 40, 'scenario', '{\"title\": \"Mỗi lần nhận tin nhắn\", \"body\": \"Mỗi khi nhận cuộc gọi từ Lâm, tim Lan lại đập thình thịch vì sợ Lâm sẽ mắng hoặc giận dỗi vì Lan không rep tin nhắn ngay lập tức.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(237, 40, 'flashcard', '{\"front\": \"Làm sao để nhận biết cơ thể đang báo động một mối quan hệ bất ổn?\", \"back\": \"Nhận biết qua cảm xúc lo âu, bồn chồn, tim đập thình thịch sợ hãi, cơ thể căng cứng, hoặc cảm giác nơm nớp sợ đối phương mắng giận.\", \"notes\": \"Cơ thể luôn gửi tín hiệu trước khi lý trí nhận ra. Đừng bỏ qua cảm giác bất an bên trong bạn.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(238, 40, 'reflection', '{\"question\": \"Bạn có từng cảm thấy sợ hãi hoặc căng thẳng trước phản ứng của một người bạn thân chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(239, 40, 'takeaway', '{\"items\": [\"Mối quan hệ tốt giúp bạn thấy nhẹ lòng, chứ không phải nơm nớp lo sợ.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(240, 41, 'hook', '{\"title\": \"Liệu chúng ta có phải từ bỏ cá tính của mình để đổi lấy một tình bạn?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(241, 41, 'explanation', '{\"bullets\": [\"Lành mạnh nghĩa là bạn được là chính mình, với cả ưu điểm và khuyết điểm.\", \"Bạn có thể thay đổi để tốt lên, nhưng không phải vì bị ép buộc hay nịnh bợ.\", \"Một người thực sự quý bạn sẽ yêu thích con người thật của bạn chứ không phải một phiên bản giả tạo.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(242, 41, 'scenario', '{\"title\": \"Mái tóc mới\", \"body\": \"Bách thích cắt tóc ngắn năng động, nhưng bạn bè trong nhóm nói tóc ngắn trông kì cục và bắt Bách phải nuôi tóc dài lại để hợp với nhóm.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(243, 41, 'interaction', '{\"question\": \"Bách nên làm gì?\", \"choices\": [{\"text\": \"Nghe theo nhóm để không bị cô lập.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Giữ kiểu tóc mình thích và nhẹ nhàng bảo: Tớ thấy thoải mái với kiểu này nhất.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(244, 41, 'reflection', '{\"question\": \"Bạn đã bao giờ giả vờ thích một thứ chỉ để giống với nhóm bạn chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(245, 41, 'takeaway', '{\"items\": [\"Người trân trọng bạn sẽ yêu quý con người thật, chứ không bắt bạn thành bản sao của họ.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(246, 42, 'hook', '{\"title\": \"Học cách từ chối áp lực từ nhóm bạn mà vẫn giữ được sự kết nối.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(247, 42, 'explanation', '{\"bullets\": [\"Áp lực đồng trang lứa là có thật, đặc biệt là mong muốn hòa nhập nhóm.\", \"Tuy nhiên, đồng thuận và tự nguyện vẫn luôn là yếu tố quyết định.\", \"Đặt ranh giới từ chối một hoạt động không có nghĩa là bạn ghét họ.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(248, 42, 'scenario', '{\"title\": \"Chiếc áo đắt đỏ\", \"body\": \"Nhóm bạn rủ nhau mua áo nhóm có giá khá đắt. Chi không đủ tiền tiêu vặt, nhưng sợ nếu nói không mua sẽ bị xem là \'nghèo\' và bị đẩy ra rìa.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(249, 42, 'sorting', '{\"instruction\": \"Hãy phân loại các hành vi ứng phó áp lực đồng trang lứa sau:\", \"leftBox\": {\"title\": \"Ứng phó lành mạnh\"}, \"rightBox\": {\"title\": \"Áp lực bắt chước\"}, \"items\": [{\"text\": \"Nói thật về điều kiện kinh tế của mình và đề xuất giải pháp\", \"correctBox\": \"left\"}, {\"text\": \"Cố gắng vay nợ để mua bằng được món đồ đắt đỏ giống bạn\", \"correctBox\": \"right\"}, {\"text\": \"Tự tin mặc trang phục theo sở thích cá nhân\", \"correctBox\": \"left\"}, {\"text\": \"Ép bản thân làm điều mình không thích để được nhóm chấp nhận\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(250, 42, 'reflection', '{\"question\": \"Bạn đã bao giờ gặp khó khăn khi phải nói thật về hoàn cảnh hay cảm xúc của mình với bạn bè chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(251, 42, 'takeaway', '{\"items\": [\"Bạn bè chân chính tôn trọng khả năng và ranh giới của bạn, chứ không ép bạn đua đòi.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(252, 43, 'hook', '{\"title\": \"Làm thế nào để vừa là một phần của nhóm, vừa là chính mình?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(253, 43, 'explanation', '{\"bullets\": [\"Đầu tiên, xác định sở thích cá nhân của bạn.\", \"Thứ hai, cởi mở chia sẻ sự khác biệt một cách tự tin và vui vẻ.\", \"Thứ ba, tôn trọng sở thích của người khác và mong đợi sự tôn trọng ngược lại.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(254, 43, 'scenario', '{\"title\": \"Nhạc gì cũng được?\", \"body\": \"Nhóm bạn thích nghe nhạc K-pop sôi động, riêng Hoàng lại thích nghe nhạc Indie nhẹ nhàng. Khi được hỏi ý kiến, Hoàng tự tin giới thiệu bài nhạc Indie yêu thích của mình.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(255, 43, 'interaction', '{\"question\": \"Sự tự tin của Hoàng đem lại kết quả gì?\", \"choices\": [{\"text\": \"Giúp nhóm có thêm lựa chọn âm nhạc thú vị và tôn trọng cá tính riêng của Hoàng.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Hoàng sẽ bị nhóm tẩy chay vì gu âm nhạc khác biệt.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(256, 43, 'reflection', '{\"question\": \"Bạn có sẵn sàng chia sẻ sở thích độc lạ của mình với bạn bè xung quanh không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(257, 43, 'takeaway', '{\"items\": [\"Cá tính riêng làm nên sự thú vị của bạn. Hãy tự tin tỏa sáng theo cách của mình!\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(258, 44, 'hook', '{\"title\": \"Bạn có bao giờ đợi người ta nói xong chỉ để nhảy vào cãi lại?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(259, 44, 'explanation', '{\"bullets\": [\"Lắng nghe chủ động là tập trung hiểu cảm xúc và ý kiến của đối phương.\", \"Tránh cắt ngang lời khi họ đang chia sẻ suy nghĩ.\", \"Đặt câu hỏi để làm rõ nếu bạn chưa chắc chắn: Có phải ý cậu là...?\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(260, 44, 'scenario', '{\"title\": \"Tâm sự điểm kém\", \"body\": \"Vân khóc kể với Nam về việc bị điểm kém môn Toán. Nam lập tức bảo: Ôi giời, có thế cũng khóc, lần sau học chăm lên là được chứ gì.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(261, 44, 'flashcard', '{\"front\": \"Lắng nghe chủ động (Active Listening) khi bạn bè tâm sự là gì?\", \"back\": \"Là tập trung hoàn toàn để hiểu cảm xúc đối phương, không cắt ngang hay phán xét, và đặt câu hỏi làm rõ nếu cần thiết.\", \"notes\": \"Lắng nghe là món quà tuyệt vời nhất bạn có thể trao tặng.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(262, 44, 'reflection', '{\"question\": \"Bạn từng bị người khác gạt phắt đi cảm xúc khi đang cố tâm sự chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(263, 44, 'takeaway', '{\"items\": [\"Lắng nghe là món quà tuyệt vời nhất bạn có thể tặng cho người đang chia sẻ.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(264, 45, 'hook', '{\"title\": \"Dùng từ ngữ khéo léo để biến một lời trách móc thành một cuộc trò chuyện cởi mở.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(265, 45, 'explanation', '{\"bullets\": [\"Câu bắt đầu bằng \'Cậu\' dễ mang lại cảm giác đổ lỗi: Cậu lúc nào cũng..., Cậu làm hỏng... \", \"Dùng cấu trúc bắt đầu bằng \'Tớ\' để nói về cảm xúc của bạn: Tớ thấy buồn khi..., Tớ lo lắng vì...\", \"Điều này giúp đối phương bớt phòng thủ và dễ thấu hiểu hơn.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(266, 45, 'scenario', '{\"title\": \"Lỗi trễ hẹn\", \"body\": \"Duy hẹn Linh đi uống nước nhưng lại đến trễ 30 phút mà không báo trước. Linh rất giận.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(267, 45, 'sorting', '{\"instruction\": \"Hãy phân loại câu nói của bạn Linh sau đây vào đúng hộp cảm xúc:\", \"leftBox\": {\"title\": \"Bày tỏ bằng câu bắt đầu bằng Tớ\"}, \"rightBox\": {\"title\": \"Đổ lỗi bằng câu bắt đầu bằng Cậu\"}, \"items\": [{\"text\": \"Tớ thấy hơi hụt hẫng khi phải chờ lâu mà không nghe báo trước\", \"correctBox\": \"left\"}, {\"text\": \"Cậu lúc nào cũng cao su, thiếu tôn trọng giờ giấc của người khác\", \"correctBox\": \"right\"}, {\"text\": \"Tớ lo lắng khi thấy cậu đến muộn mà không gọi được điện thoại\", \"correctBox\": \"left\"}, {\"text\": \"Cậu cố tình bắt tớ leo cây để làm tớ bực mình đúng không\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(268, 45, 'reflection', '{\"question\": \"Bạn thấy bản thân có hay vô tình dùng những câu trách móc \'Cậu thế này, cậu thế nọ\' khi tức giận không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(269, 45, 'takeaway', '{\"items\": [\"Chia sẻ cảm xúc của mình (dùng Tớ) thay vì đổ lỗi cho người khác (dùng Cậu).\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(270, 46, 'hook', '{\"title\": \"Khi cơn tức giận lên đỉnh điểm, im lặng tạm thời chính là một siêu năng lực.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(271, 46, 'explanation', '{\"bullets\": [\"Lúc nóng giận, não bộ dễ đưa ra những lời nói sát thương gây hối hận sau này.\", \"Học cách nhận biết cơn giận: tim đập nhanh, mặt nóng lên.\", \"Chủ động xin tạm dừng: Tụi mình đang nóng, để chiều nói tiếp nha.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(272, 46, 'scenario', '{\"title\": \"Tranh cãi nhóm\", \"body\": \"Quân và Trang tranh cãi gay gắt về phân chia công việc trong nhóm. Cả hai bắt đầu to tiếng và dùng những từ ngữ xúc phạm nhau.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(273, 46, 'interaction', '{\"question\": \"Ai nên là người xin tạm dừng?\", \"choices\": [{\"text\": \"Cả hai đều có thể dừng lại và hẹn thảo luận sau khi bình tĩnh.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Trang nên chịu đựng và nghe Quân xả hết giận rồi tính tiếp.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59');
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES
+(274, 46, 'reflection', '{\"question\": \"Bạn có hay nói ra những lời hối hận khi đang nóng giận với người thân thiết không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(275, 46, 'takeaway', '{\"items\": [\"Hạ nhiệt cơn giận trước khi tìm cách giải quyết mâu thuẫn.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(276, 47, 'hook', '{\"title\": \"Nhắn tin chữ không có cảm xúc, rất dễ khiến tình cảm sứt mẻ vì hiểu lầm.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(277, 47, 'explanation', '{\"bullets\": [\"Tin nhắn thiếu tông giọng, nét mặt dễ bị suy diễn theo hướng tiêu cực.\", \"Hạn chế tranh cãi những chuyện nghiêm trọng qua tin nhắn chữ.\", \"Gặp mặt trực tiếp hoặc gọi điện video là cách tốt nhất để hòa giải.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(278, 47, 'scenario', '{\"title\": \"Từ \'Ừ\' lạnh lùng\", \"body\": \"Linh nhắn tin rủ Vy đi chơi, Vy chỉ rep vỏn vẹn chữ \'Ừ\'. Linh nghĩ Vy đang ghét mình nên đâm ra giận dỗi, trong khi Vy chỉ đang bận học bài.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(279, 47, 'interaction', '{\"question\": \"Linh nên xử lý thế nào cho đúng tinh thần Green Flag?\", \"choices\": [{\"text\": \"Im lặng và hủy kết bạn luôn với Vy cho bõ ghét.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Gọi điện hỏi thăm: Cậu đang bận hả? Lúc nãy thấy rep ngắn tớ cứ sợ cậu có chuyện gì.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(280, 47, 'reflection', '{\"question\": \"Bạn từng giận dỗi ai đó chỉ vì suy diễn nội dung tin nhắn chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(281, 47, 'takeaway', '{\"items\": [\"Đừng suy diễn tin nhắn. Hãy hỏi trực tiếp bằng giọng nói ấm áp.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(282, 48, 'hook', '{\"title\": \"Mối quan hệ bền vững không phải không có mâu thuẫn, mà là biết cách làm hòa.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(283, 48, 'explanation', '{\"bullets\": [\"Bước 1: Chấp nhận lỗi sai và xin lỗi chân thành, không bao biện.\", \"Bước 2: Lắng nghe cảm nhận của đối phương về lỗi sai đó.\", \"Bước 3: Cùng đưa ra giải pháp cụ thể để không lặp lại lỗi cũ.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(284, 48, 'scenario', '{\"title\": \"Lỡ miệng kể bí mật\", \"body\": \"An vô tình kể chuyện thầm kín của Bình cho nhóm bạn biết. Bình rất giận và thất vọng về An.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(285, 48, 'flashcard', '{\"front\": \"Quy tắc hòa giải mâu thuẫn gồm những bước nào?\", \"back\": \"Bước 1: Chấp nhận lỗi sai và xin lỗi chân thành; Bước 2: Lắng nghe cảm nhận đối phương; Bước 3: Cùng đưa ra giải pháp khắc phục.\", \"notes\": \"Lời xin lỗi chân thành đi kèm hành động cụ thể mới có thể chữa lành vết thương.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(286, 48, 'reflection', '{\"question\": \"Bạn có thấy khó khăn khi phải nói lời xin lỗi trước với bạn bè không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(287, 48, 'takeaway', '{\"items\": [\"Lời xin lỗi chân thành đi kèm hành động khắc phục mới có thể chữa lành vết thương.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(288, 49, 'hook', '{\"title\": \"Ranh giới cá nhân không phải là bức tường ngăn cách, mà là cánh cửa để mọi người biết cách bước vào.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(289, 49, 'explanation', '{\"bullets\": [\"Ranh giới vật lý: quyền quyết định ai được đụng chạm vào cơ thể bạn.\", \"Ranh giới cảm xúc: quyền giữ những suy nghĩ riêng, nói không khi thấy quá tải.\", \"Mỗi người có một vòng tròn ranh giới rộng hẹp khác nhau, cần được tôn trọng.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(290, 49, 'scenario', '{\"title\": \"Những cái ôm bất ngờ\", \"body\": \"Vy thích khoác vai bạn bè, nhưng Linh lại thấy khó chịu khi bị đụng chạm đột ngột. Linh phân vân không biết có nên nói thẳng với Vy không.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(291, 49, 'flashcard', '{\"front\": \"Ranh giới cá nhân (Personal Boundaries) là gì và gồm những loại nào?\", \"back\": \"Là những giới hạn bạn đặt ra để tự bảo vệ sự thoải mái của mình. Gồm: Ranh giới cơ thể (ai được đụng chạm) và Ranh giới cảm xúc (giữ suy nghĩ riêng, biết từ chối khi thấy quá tải).\", \"notes\": \"Thiết lập ranh giới giúp mọi người biết cách tôn trọng bạn.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(292, 49, 'reflection', '{\"question\": \"Bạn có ranh giới nào về mặt cơ thể hoặc không gian riêng tư mà bạn không muốn ai vượt qua không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(293, 49, 'takeaway', '{\"items\": [\"Ranh giới của bạn là do bạn quyết định. Người thực sự quý bạn sẽ tôn trọng nó.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(294, 50, 'hook', '{\"title\": \"Lòng tin giống như một cây non, cần thời gian tưới tắm mới lớn khôn.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(295, 50, 'explanation', '{\"bullets\": [\"Lòng tin được xây dựng từ những hành động nhỏ nhất: giữ đúng lời hứa, đi học đúng giờ.\", \"Lòng tin dễ vỡ và rất khó để lấy lại sau khi bị phản bội.\", \"Tin tưởng không có nghĩa là mù quáng bỏ qua mọi nghi ngờ.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(296, 50, 'scenario', '{\"title\": \"Giữ bí mật\", \"body\": \"Minh kể với Hoàng về việc mình đang thầm thích một bạn lớp bên, nhờ Hoàng giữ bí mật. Hôm sau, cả lớp đều xì xầm bàn tán về chuyện này.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(297, 50, 'interaction', '{\"question\": \"Hành động của Hoàng ảnh hưởng thế nào đến lòng tin?\", \"choices\": [{\"text\": \"Phá vỡ lòng tin của Minh và làm rạn nứt tình bạn giữa hai người.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Không sao cả, chuyện nhỏ nhặt này kể cho vui tai thôi mà.\", \"correct\": false, \"emoji\": \"😐\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(298, 50, 'reflection', '{\"question\": \"Bạn đã bao giờ hối hận vì trao lòng tin nhầm người chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(299, 50, 'takeaway', '{\"items\": [\"Lòng tin cần được xây dựng qua hành động nhất quán, chứ không qua lời hứa suông.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(300, 51, 'hook', '{\"title\": \"Tôn trọng người khác bắt đầu từ việc tôn trọng sự riêng tư của họ.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(301, 51, 'explanation', '{\"bullets\": [\"Không tự ý đọc tin nhắn, xem nhật ký hay lục lọi đồ đạc của bạn bè.\", \"Chấp nhận sự khác biệt về quan điểm, tôn giáo hay sở thích.\", \"Luôn hỏi ý kiến trước khi chia sẻ ảnh của bạn bè lên mạng xã hội.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(302, 51, 'scenario', '{\"title\": \"Bức ảnh dìm hàng\", \"body\": \"Quân tự ý đăng bức ảnh chụp lúc Vy đang ngáp ngủ lên trang cá nhân làm trò đùa. Vy thấy vô cùng xấu hổ và yêu cầu Quân gỡ xuống.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(303, 51, 'sorting', '{\"instruction\": \"Hãy phân loại hành vi sau vào hộp Tôn trọng hay Xâm phạm quyền riêng tư:\", \"leftBox\": {\"title\": \"Tôn trọng riêng tư\"}, \"rightBox\": {\"title\": \"Xâm phạm riêng tư\"}, \"items\": [{\"text\": \"Luôn hỏi ý kiến bạn trước khi chia sẻ ảnh của bạn lên mạng\", \"correctBox\": \"left\"}, {\"text\": \"Tự ý đọc trộm nhật ký hoặc tin nhắn điện thoại của bạn\", \"correctBox\": \"right\"}, {\"text\": \"Gõ cửa trước khi vào phòng riêng của người khác\", \"correctBox\": \"left\"}, {\"text\": \"Lục lọi cặp sách, ví tiền của bạn để xem có gì\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(304, 51, 'reflection', '{\"question\": \"Bạn đã bao giờ bị bạn bè chia sẻ hình ảnh hoặc bí mật cá nhân lên mạng mà chưa hỏi ý kiến chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(305, 51, 'takeaway', '{\"items\": [\"Tôn trọng quyền riêng tư là thể hiện sự trưởng thành và văn minh trong mối quan hệ.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(306, 52, 'hook', '{\"title\": \"Chia sẻ mật khẩu tài khoản mạng xã hội có phải là bằng chứng của tình yêu chân chính?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(307, 52, 'explanation', '{\"bullets\": [\"Mật khẩu cá nhân là ranh giới riêng tư tuyệt đối, bảo vệ danh tính của bạn.\", \"Đòi mật khẩu để kiểm soát tin nhắn là dấu hiệu của sự thiếu lòng tin.\", \"Yêu thương lành mạnh tôn trọng không gian cá nhân của nhau.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(308, 52, 'scenario', '{\"title\": \"Đòi mật khẩu\", \"body\": \"Nam yêu cầu Trang đưa mật khẩu Facebook để chứng minh Trang không nhắn tin với bạn nam khác. Trang thấy không thoải mái.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(309, 52, 'interaction', '{\"question\": \"Trang nên phản hồi thế nào để bảo vệ ranh giới cá nhân?\", \"choices\": [{\"text\": \"Đành đưa mật khẩu cho Nam để tránh cãi vã.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Từ chối: Tớ yêu cậu nhưng tớ muốn giữ quyền riêng tư cá nhân. Tụi mình nên tin tưởng nhau thay vì kiểm soát mật khẩu.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(310, 52, 'reflection', '{\"question\": \"Bạn có sẵn sàng chia sẻ mật khẩu cá nhân của mình cho bạn bè hoặc người yêu không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(311, 52, 'takeaway', '{\"items\": [\"Yêu thương không đồng nghĩa với việc từ bỏ quyền riêng tư cơ bản của bản thân.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(312, 53, 'hook', '{\"title\": \"Học cách nói \'Không\' dứt khoát nhưng không làm tổn thương mối quan hệ.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(313, 53, 'explanation', '{\"bullets\": [\"Sử dụng ngôn ngữ cơ thể: nhìn thẳng mắt đối phương, đứng thẳng.\", \"Dùng lời nói ngắn gọn, rõ ràng: Tớ không thoải mái với điều này.\", \"Không cần phải giải thích dông dài hay xin lỗi vì đã đặt ranh giới.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(314, 53, 'scenario', '{\"title\": \"Lời rủ rê trốn học\", \"body\": \"Nhóm bạn rủ Duy trốn tiết học thêm để đi chơi game. Duy muốn ở lại ôn thi nhưng sợ bị nhóm gọi là nhát gan.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(315, 53, 'interaction', '{\"question\": \"Duy nên từ chối thế nào cho hiệu quả?\", \"choices\": [{\"text\": \"Tớ bận tí việc gia đình... chắc không đi được... xin lỗi nhé.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Tớ cần ôn thi cho bài kiểm tra ngày mai rồi. Các cậu đi chơi vui vẻ nhé!\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(316, 53, 'reflection', '{\"question\": \"Bạn thấy bản thân có dễ dàng nói lời từ chối trước lời rủ rê của bạn thân không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(317, 53, 'takeaway', '{\"items\": [\"Đặt ranh giới là bảo vệ chính mình, không phải là ích kỷ hay xa cách bạn bè.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(318, 54, 'hook', '{\"title\": \"Gần gũi không chỉ là đụng chạm cơ thể. Đó còn là sự kết nối giữa hai tâm hồn.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(319, 54, 'explanation', '{\"bullets\": [\"Thân mật cảm xúc là cảm giác an toàn khi chia sẻ bí mật, ước mơ hay nỗi sợ.\", \"Được lắng nghe và thấu cảm mà không sợ bị phán xét.\", \"Xây dựng tình bạn bền chặt cũng cần sự thân mật cảm xúc này.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(320, 54, 'scenario', '{\"title\": \"Chia sẻ áp lực học tập\", \"body\": \"Vy tâm sự với Nam về nỗi sợ thi trượt cấp 3 và áp lực từ kỳ vọng của bố mẹ. Nam yên lặng lắng nghe, nắm tay động viên Vy.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(321, 54, 'flashcard', '{\"front\": \"Sự thân mật cảm xúc (Emotional Intimacy) là gì?\", \"back\": \"Là cảm giác an toàn và tin cậy tuyệt đối để mở lòng chia sẻ những bí mật, ước mơ hay nỗi sợ với người khác mà không lo sợ bị phán xét hay chế giễu.\", \"notes\": \"Thân mật cảm xúc là nền tảng bền chặt nhất cho mọi mối quan hệ.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(322, 54, 'reflection', '{\"question\": \"Bạn có một người bạn thân nào sẵn sàng lắng nghe mọi tâm tư thầm kín của bạn không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(323, 54, 'takeaway', '{\"items\": [\"Kết nối cảm xúc là chìa khóa mở cánh cửa cho một tình bạn hay tình yêu lâu dài.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(324, 55, 'hook', '{\"title\": \"Làm sao phân biệt giữa việc cực kỳ thích chơi cùng bạn thân và việc đã cảm nắng họ?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(325, 55, 'explanation', '{\"bullets\": [\"Tình bạn thân: muốn chia sẻ niềm vui, cùng đi học, đi chơi chung cả nhóm.\", \"Tình cảm lãng mạn (Crush/Yêu): cảm xúc rạo rực, muốn ở riêng bên nhau, có sự thu hút giới tính.\", \"Sự nhầm lẫn cảm xúc ở tuổi teen là rất bình thường, hãy cho bản thân thời gian suy ngẫm.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(326, 55, 'scenario', '{\"title\": \"Cảm giác lạ\", \"body\": \"An nhận ra dạo gần đây mình hay đỏ mặt khi đứng gần Linh và luôn để ý xem Linh nhắn tin với ai. Trước đó hai đứa là đôi bạn thân từ nhỏ.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(327, 55, 'sorting', '{\"instruction\": \"Hãy phân loại cảm xúc của bạn An sau đây vào đúng hộp:\", \"leftBox\": {\"title\": \"Tình bạn thân thiết\"}, \"rightBox\": {\"title\": \"Tình cảm cảm nắng (Crush)\"}, \"items\": [{\"text\": \"Muốn học nhóm chung, đi chơi cùng nhóm bạn đông vui\", \"correctBox\": \"left\"}, {\"text\": \"Tim đập nhanh, đỏ mặt lúng túng khi đứng gần đối phương\", \"correctBox\": \"right\"}, {\"text\": \"Chia sẻ chuyện trường lớp thoải mái và tự nhiên\", \"correctBox\": \"left\"}, {\"text\": \"Hay tò mò nhìn trộm đối phương và để ý xem họ đang nhắn tin với ai\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(328, 55, 'reflection', '{\"question\": \"Bạn từng bị nhầm lẫn cảm xúc giữa một tình bạn rất thân và một tình yêu học trò chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(329, 55, 'takeaway', '{\"items\": [\"Nhận diện đúng cảm xúc giúp bạn ứng xử phù hợp và bảo vệ tình bạn quý giá.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(330, 56, 'hook', '{\"title\": \"Đừng để nhịp độ của người khác ép buộc bước đi của chính bạn.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(331, 56, 'explanation', '{\"bullets\": [\"Mỗi người có tốc độ phát triển tâm sinh lý và mức độ sẵn sàng khác nhau.\", \"Bạn có quyền từ chối các đụng chạm thân mật (ôm, hôn) nếu thấy chưa sẵn sàng.\", \"Yêu thương lành mạnh không ép buộc hay dùng tình cảm để mặc cả.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(332, 56, 'scenario', '{\"title\": \"Đòi nụ hôn đầu\", \"body\": \"Quân thúc ép Trang cho Quân hôn má để chứng minh Trang yêu Quân thực lòng. Trang thấy lo lắng và chưa muốn làm việc đó.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(333, 56, 'interaction', '{\"question\": \"Trang nên phản ứng thế nào?\", \"choices\": [{\"text\": \"Nhắm mắt cho Quân hôn một cái để Quân không giận nữa.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Nói rõ: Tớ quý cậu nhưng tớ chưa sẵn sàng cho việc này. Tụi mình cứ từ từ nhé.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(334, 56, 'reflection', '{\"question\": \"Bạn có cảm thấy áp lực khi thấy bạn bè xung quanh đã hẹn hò hoặc có người yêu hết rồi không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(335, 56, 'takeaway', '{\"items\": [\"Mức độ sẵn sàng của bạn là ranh giới cao nhất. Không ai có quyền thúc ép bạn.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(336, 57, 'hook', '{\"title\": \"Đột ngột đụng chạm cơ thể có thể làm hỏng khoảnh khắc lãng mạn.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(337, 57, 'explanation', '{\"bullets\": [\"Tự ý nắm tay hay bá vai khi đối phương chưa sẵn sàng dễ gây cảm giác khó chịu.\", \"Quan sát phản ứng cơ thể của họ: có rụt tay lại, có tránh né ánh mắt?\", \"Cách an toàn nhất là hỏi han nhẹ nhàng trước khi thực hiện hành động.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(338, 57, 'scenario', '{\"title\": \"Nắm tay dạo phố\", \"body\": \"Duy và Vy đang đi dạo. Duy định đưa tay nắm lấy tay Vy nhưng nhận thấy Vy đang ôm khư khư chiếc balo trước ngực.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(339, 57, 'interaction', '{\"question\": \"Vy đang phát đi tín hiệu gì và Duy nên làm thế nào?\", \"choices\": [{\"text\": \"Vy đang muốn Duy giật lấy balo hộ. Duy nên chủ động giật balo ra rồi nắm tay.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Vy đang giữ ranh giới phòng thủ. Duy nên đi bên cạnh trò chuyện tiếp và hỏi han thoải mái.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(340, 57, 'reflection', '{\"question\": \"Bạn có từng lúng túng khi đối phương đột ngột nắm tay hoặc ôm lấy mình ở chỗ đông người chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(341, 57, 'takeaway', '{\"items\": [\"Hành vi đụng chạm cần có tín hiệu đèn xanh từ cả hai phía để thực sự lãng mạn.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(342, 58, 'hook', '{\"title\": \"Có rất nhiều cách để xích lại gần nhau mà không cần chạm vào cơ thể.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(343, 58, 'explanation', '{\"bullets\": [\"Cùng nhau làm bài tập, học nhóm hoặc tham gia hoạt động ngoại khóa.\", \"Viết thư tay chia sẻ cảm xúc, tặng những món quà handmade nhỏ xinh.\", \"Chia sẻ danh sách bài hát yêu thích, cùng xem một bộ phim hay trò chuyện sâu sắc.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(344, 58, 'scenario', '{\"title\": \"Playlist nhạc tặng bạn\", \"body\": \"Hoàng tự tay làm một playlist nhạc chứa các bài hát mang thông điệp vui tươi để tặng Vân khi biết Vân đang buồn chuyện gia đình.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(345, 58, 'flashcard', '{\"front\": \"Làm thế nào để gắn kết tình cảm phi thể xác lành mạnh?\", \"back\": \"Thông qua các hành động tinh tế như viết thư tay chia sẻ cảm xúc, tự làm playlist bài hát tặng nhau, cùng đi nhà sách học bài hoặc trao đổi những món quà handmade nhỏ.\", \"notes\": \"Có rất nhiều cách để xích lại gần nhau mà không cần đụng chạm cơ thể.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(346, 58, 'reflection', '{\"question\": \"Cách bày tỏ sự quan tâm yêu thích của bạn đối với người thân thiết thường là gì?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(347, 58, 'takeaway', '{\"items\": [\"Sự thấu hiểu và sẻ chia tinh thần là chất keo bền chặt nhất gắn kết hai người.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(348, 59, 'hook', '{\"title\": \"Đồng thuận không chỉ áp dụng cho người lớn. Đó là quy tắc tôn trọng cơ bản ở mọi lứa tuổi.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(349, 59, 'explanation', '{\"bullets\": [\"Đồng thuận là sự đồng ý tự nguyện, hào hứng và rõ ràng từ cả hai phía.\", \"Đồng ý khi bị ép buộc, đe dọa hay nài nỉ không được coi là đồng thuận.\", \"Quy tắc F.R.I.E.S: Tự nguyện, Linh hoạt, Đầy đủ thông tin, Hào hứng, Cụ thể.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(350, 59, 'scenario', '{\"title\": \"Đồng ý vì nể bạn\", \"body\": \"Nam rủ Linh vào góc tối công viên nói chuyện. Linh ngập ngừng nói: Cũng được... nếu cậu muốn. Nhưng tay Linh bấu chặt vào vạt áo, mắt nhìn xuống đất.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(351, 59, 'flashcard', '{\"front\": \"Quy tắc F.R.I.E.S biểu diễn 5 tiêu chí nào của sự đồng thuận?\", \"back\": \"F - Freely given (Tự nguyện), R - Reversible (Linh hoạt, dễ đổi ý), I - Informed (Đầy đủ thông tin), E - Enthusiastic (Hào hứng), S - Specific (Cụ thể cho từng hành vi).\", \"notes\": \"Thiếu bất kỳ yếu tố nào trong 5 từ trên đều không được coi là sự đồng thuận lành mạnh.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(352, 59, 'reflection', '{\"question\": \"Bạn từng đồng ý làm điều gì đó chỉ vì đối phương nài nỉ quá nhiều chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(353, 59, 'takeaway', '{\"items\": [\"Chỉ có tiếng Có hào hứng và tự nguyện mới là đèn xanh để đi tiếp.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(354, 60, 'hook', '{\"title\": \"Đôi khi sự im lặng hoặc tránh né chứa đựng câu trả lời \'Không\' khó nói.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(355, 60, 'explanation', '{\"bullets\": [\"Tín hiệu Đèn Vàng: ngập ngừng, cười trừ, im lặng, tránh ánh mắt, người cứng đờ.\", \"Khi thấy đèn vàng, bạn có nghĩa vụ phải dừng lại và check-in cảm xúc đối phương.\", \"Tiếp tục thực hiện hành động khi đối phương có đèn vàng là vi phạm ranh giới.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(356, 60, 'scenario', '{\"title\": \"Cúi đầu tránh né\", \"body\": \"Hoàng định nắm tay Chi khi đi xem phim. Chi không gạt tay ra nhưng cúi đầu, rụt tay sát người và im lặng.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(357, 60, 'sorting', '{\"instruction\": \"Hãy phân loại tín hiệu cảm xúc của đối phương vào đúng hộp:\", \"leftBox\": {\"title\": \"Đèn Xanh (Đồng thuận xịn)\"}, \"rightBox\": {\"title\": \"Đèn Vàng (Cần dừng check-in)\"}, \"items\": [{\"text\": \"Mỉm cười rạng rỡ và chủ động tiến lại gần bạn\", \"correctBox\": \"left\"}, {\"text\": \"Im lặng tránh ánh mắt, người cứng đờ\", \"correctBox\": \"right\"}, {\"text\": \"Nói câu \'Tớ cũng muốn\' một cách hào hứng\", \"correctBox\": \"left\"}, {\"text\": \"Nói câu \'Cũng được...\' nhưng nét mặt lo âu bứt rứt\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(358, 60, 'reflection', '{\"question\": \"Bạn có bao giờ dùng sự im lặng hoặc tránh né để biểu đạt sự từ chối của mình chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(359, 60, 'takeaway', '{\"items\": [\"Im lặng không phải là đồng ý. Đó có thể là lúc đối phương đang cần bạn dừng lại.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(360, 61, 'hook', '{\"title\": \"Đồng thuận không phải là một giao kèo vĩnh viễn. Bạn được quyền đổi ý bất cứ lúc nào.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(361, 61, 'explanation', '{\"bullets\": [\"Đồng thuận có tính linh hoạt (Reversible). Giây trước nói có, giây sau nói không là hoàn toàn bình thường.\", \"Đối phương phải lập tức dừng lại khi bạn nói dừng.\", \"Bạn không bao giờ phải cảm thấy tội lỗi khi đổi ý để bảo vệ sự thoải mái của mình.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(362, 61, 'scenario', '{\"title\": \"Dừng lại giữa chừng\", \"body\": \"Trang đồng ý để Quân ôm mình. Nhưng khi Quân ôm hơi chặt, Trang thấy ngạt thở và đẩy nhẹ Quân ra: Khoan đã Quân, tớ thấy hơi nhanh.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(363, 61, 'interaction', '{\"question\": \"Phản ứng nào của Quân là Green Flag xịn?\", \"choices\": [{\"text\": \"Giận dỗi: Ơ hay, nãy đồng ý rồi mà giờ lại thế?\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Dừng lại ngay, nới lỏng tay: Tớ xin lỗi, tớ làm cậu khó chịu hả?\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(364, 61, 'reflection', '{\"question\": \"Bạn có thấy sợ hãi khi muốn thay đổi quyết định của mình trong một nhóm bạn không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(365, 61, 'takeaway', '{\"items\": [\"Bạn luôn có quyền quay xe. Cơ thể và ranh giới của bạn là của riêng bạn.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(366, 62, 'hook', '{\"title\": \"Cưỡng hôn bất ngờ có thực sự lãng mạn như trên phim ảnh?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(367, 62, 'explanation', '{\"bullets\": [\"Phim ảnh thường lãng mạn hóa các hành động tự ý đụng chạm thân mật.\", \"Ngoài đời thực, tự ý hôn khi chưa được cho phép dễ gây cảm giác sợ hãi và bị xúc phạm.\", \"Hỏi ý kiến trước khi hôn là tôn trọng tối thiểu đối phương.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(368, 62, 'scenario', '{\"title\": \"Nụ hôn bất chợt\", \"body\": \"Quân định cưỡng hôn Vy khi hai đứa đang ngồi nói chuyện riêng. Vy giật mình, đẩy mạnh Quân ra và tỏ vẻ giận dữ.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(369, 62, 'interaction', '{\"question\": \"Hành vi của Quân là gì?\", \"choices\": [{\"text\": \"Là thể hiện tình cảm mãnh liệt lãng mạn.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Là xâm hại ranh giới cá nhân khi chưa có sự đồng thuận.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(370, 62, 'reflection', '{\"question\": \"Bạn có nghĩ rằng việc hỏi xin phép trước khi hôn làm mất đi sự bất ngờ lãng mạn không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(371, 62, 'takeaway', '{\"items\": [\"Lãng mạn chỉ có giá trị khi đi kèm sự an toàn và đồng thuận tự nguyện từ hai phía.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(372, 63, 'hook', '{\"title\": \"Làm thế nào để hỏi ý kiến người ta mà không khiến bầu không khí bị sượng trân?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(373, 63, 'explanation', '{\"bullets\": [\"Hỏi ý kiến không làm giảm đi sự ngọt ngào của khoảnh khắc.\", \"Hỏi han tinh tế thể hiện bạn quan tâm chân thành đến cảm giác của người ta.\", \"Hãy dùng những câu hỏi ngắn gọn, tự nhiên: Tớ nắm tay cậu được không?, Cậu thấy thoải mái chứ?\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(374, 63, 'scenario', '{\"title\": \"Ý định nắm tay\", \"body\": \"Duy muốn nắm tay Linh khi hai đứa đang đi dạo. Thay vì tự ý chụp lấy, Duy nhìn Linh và mỉm cười nhẹ.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(375, 63, 'interaction', '{\"question\": \"Giúp Duy chọn câu hỏi check-in mượt nhất nhé:\", \"choices\": [{\"text\": \"Đưa tay đây tớ nắm xem nào.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Tớ nắm tay cậu được không?\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(376, 63, 'reflection', '{\"question\": \"Bạn có cảm thấy tự tin hơn khi biết đối phương cũng hoàn toàn hào hứng muốn nắm tay mình?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(377, 63, 'takeaway', '{\"items\": [\"Check-in tinh tế thể hiện sự tôn trọng và tạo ra sự tin tưởng tuyệt đối giữa hai bạn.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(378, 64, 'hook', '{\"title\": \"Cảm giác crush một người có gì kỳ lạ mà khiến đầu óc bạn cứ lơ lửng trên mây?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(379, 64, 'explanation', '{\"bullets\": [\"Crush là cảm xúc say nắng, ngưỡng mộ hoặc bị thu hút mạnh mẽ bởi ai đó.\", \"Bạn có thể đỏ mặt, ngượng ngùng hoặc hồi hộp mỗi khi nhìn thấy họ.\", \"Đây là một trải nghiệm lớn lên tự nhiên, đẹp đẽ và hết sức bình thường của tuổi teen.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(380, 64, 'scenario', '{\"title\": \"Bức thư tình giấu kín\", \"body\": \"Chi luôn lén nhìn Hoàng trong giờ ra chơi và dành hàng giờ để vẽ những hình trái tim nhỏ trong sổ tay, phân vân có nên thổ lộ không.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(381, 64, 'flashcard', '{\"front\": \"Cảm giác say nắng (Crush) một người có bình thường không?\", \"back\": \"Hoàn toàn bình thường! Đó là một trải nghiệm lớn lên tự nhiên, đẹp đẽ và hết sức tự nhiên của tuổi dậy thì.\", \"notes\": \"Bạn không cần phải cảm thấy xấu hổ hay áp lực vì cảm xúc này.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(382, 64, 'reflection', '{\"question\": \"Bạn đang crush một ai đó trong trường hoặc lớp học của mình chứ?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(383, 64, 'takeaway', '{\"items\": [\"Crush là cảm xúc ngọt ngào giúp bạn nhận ra trái tim mình đã biết rung động.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(384, 65, 'hook', '{\"title\": \"Buổi hẹn đầu tiên nên chuẩn bị những gì để vừa vui vẻ vừa an toàn?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(385, 65, 'explanation', '{\"bullets\": [\"Chọn địa điểm công cộng quen thuộc: quán trà sữa, công viên đông người.\", \"Tự chuẩn bị chi phí đi lại của mình để giữ tính chủ động.\", \"Báo trước cho một người bạn thân hoặc gia đình biết địa điểm bạn đến.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(386, 65, 'scenario', '{\"title\": \"Lời rủ rê lúc nửa đêm\", \"body\": \"Bách rủ Vy đi chơi riêng lúc 10 giờ đêm tại một bãi đất trống vắng vẻ ngoại ô thành phố.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(387, 65, 'interaction', '{\"question\": \"Vy nên làm thế nào?\", \"choices\": [{\"text\": \"Đồng ý đi luôn vì muốn chứng minh mình dũng cảm.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Từ chối và gợi ý: Giờ đó muộn rồi, chiều mai tụi mình đi uống trà sữa ở quán gần trường nha.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(388, 65, 'reflection', '{\"question\": \"Bạn thường thích chọn địa điểm nào nhất cho một buổi hẹn đi chơi với bạn bè?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(389, 65, 'takeaway', '{\"items\": [\"An toàn là điều kiện tiên quyết cho mọi cuộc hẹn hò vui vẻ.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(390, 66, 'hook', '{\"title\": \"Từ chối (Rejection) là một phần tất yếu của cuộc sống. Nó đau, nhưng nó dạy tụi mình trưởng thành.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(391, 66, 'explanation', '{\"bullets\": [\"Bị từ chối không có nghĩa là bạn kém cỏi hay xấu xí.\", \"Mọi người đều có quyền từ chối tình cảm của người khác, giống như bạn vậy.\", \"Cho phép bản thân buồn, khóc, nhưng đừng dằn vặt hay hạ thấp giá trị bản thân.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(392, 66, 'scenario', '{\"title\": \"Lời từ chối lịch sự\", \"body\": \"Minh tỏ tình với Chi, Chi nhẹ nhàng từ chối: Tớ trân trọng tình cảm của cậu, nhưng hiện tại tớ chỉ muốn tập trung học tập thôi.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(393, 66, 'sorting', '{\"instruction\": \"Hãy phân loại cách đối xử sau khi bị từ chối vào đúng hộp:\", \"leftBox\": {\"title\": \"Green Flag (Văn minh)\"}, \"rightBox\": {\"title\": \"Red Flag (Độc hại)\"}, \"items\": [{\"text\": \"Chấp nhận, tôn trọng quyết định của họ và giữ khoảng cách lịch sự\", \"correctBox\": \"left\"}, {\"text\": \"Khóc lóc ăn vạ, liên tục nài nỉ làm phiền bắt họ đổi ý\", \"correctBox\": \"right\"}, {\"text\": \"Tâm sự nỗi buồn với bạn bè thân thiết hoặc viết nhật ký\", \"correctBox\": \"left\"}, {\"text\": \"Đi nói xấu hoặc tung tin đồn thất thiệt để trả đũa đối phương\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(394, 66, 'reflection', '{\"question\": \"Bạn đã bao giờ trải qua cảm giác bị từ chối trong học tập hoặc tình cảm chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(395, 66, 'takeaway', '{\"items\": [\"Lời từ chối của người khác là ranh giới của họ. Tôn trọng ranh giới là tôn trọng chính mình.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(396, 67, 'hook', '{\"title\": \"Làm thế nào để giữ mối quan hệ bạn bè bình thường sau một lần tỏ tình thất bại?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(397, 67, 'explanation', '{\"bullets\": [\"Đừng cố gắng tỏ ra không có chuyện gì xảy ra một cách gượng ép.\", \"Cho cả hai không gian riêng để cảm xúc bình lặng lại.\", \"Khi gặp lại, hãy cư xử lịch sự, tự nhiên, tránh trêu chọc hay làm sượng không khí.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(398, 67, 'scenario', '{\"title\": \"Cuộc chạm mặt ở hành lang\", \"body\": \"Sau khi bị Vân từ chối, Hoàng cảm thấy vô cùng sượng ngùng mỗi khi chạm mặt Vân ở hành lang lớp học.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(399, 67, 'interaction', '{\"question\": \"Hoàng nên làm thế nào khi chạm mặt Vân?\", \"choices\": [{\"text\": \"Cúi mặt đi thẳng, giả vờ như không thấy Vân.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Gật đầu mỉm cười nhẹ nhàng chào Vân rồi bước tiếp.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(400, 67, 'reflection', '{\"question\": \"Bạn có sẵn lòng làm bạn lại với một người đã từng từ chối tình cảm của mình không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(401, 67, 'takeaway', '{\"items\": [\"Ứng xử văn minh sau khi tỏ tình thất bại thể hiện sự tôn trọng và bản lĩnh của bạn.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(402, 68, 'hook', '{\"title\": \"Từ chối tình cảm của người khác mà không làm họ tổn thương sâu sắc.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(403, 68, 'explanation', '{\"bullets\": [\"Nói lời cảm ơn vì họ đã trân trọng mình.\", \"Bày tỏ rõ ràng, dứt khoát quyết định của bản thân, tránh mập mờ thả thính.\", \"Dùng từ ngữ lịch sự, nhẹ nhàng nhưng không tạo ra hy vọng giả.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(404, 68, 'scenario', '{\"title\": \"Hộp quà sô-cô-la\", \"body\": \"Bình tặng sô-cô-la tỏ tình với Vy. Vy không thích Bình nhưng không muốn Bình phải xấu hổ trước lớp.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(405, 68, 'flashcard', '{\"front\": \"Làm thế nào để từ chối tình cảm của người khác một cách khéo léo?\", \"back\": \"Bước 1: Cảm ơn họ đã trân trọng mình. Bước 2: Bày tỏ rõ ràng, dứt khoát quyết định của bản thân để không tạo hy vọng giả. Bước 3: Giữ thái độ lịch sự nhẹ nhàng.\", \"notes\": \"Từ chối rõ ràng là sự tử tế cao nhất để tránh làm mất thời gian của nhau.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(406, 68, 'reflection', '{\"question\": \"Bạn từng phải từ chối tình cảm của ai bao giờ chưa? Bạn thấy điều đó có khó khăn không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(407, 68, 'takeaway', '{\"items\": [\"Từ chối rõ ràng là sự tử tế cao nhất để đối phương không phí thời gian hy vọng.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(408, 69, 'hook', '{\"title\": \"Cờ đỏ (Red Flag) là những tín hiệu cảnh báo bạn nên dừng lại và xem xét mối quan hệ.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(409, 69, 'explanation', '{\"bullets\": [\"Kiểm soát quá mức: đòi biết mọi tin nhắn, bắt báo cáo lịch trình.\", \"Ghen tuông bệnh lý: cấm cản nói chuyện với mọi người khác giới.\", \"Hạ thấp đối phương: chê bai ngoại hình, năng lực trước đám đông.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(410, 69, 'scenario', '{\"title\": \"Bắt báo cáo lịch trình\", \"body\": \"Nam bắt Trang phải chụp ảnh gửi qua Zalo mỗi khi Trang đi chơi với bất kỳ ai để kiểm tra xem Trang có nói dối không.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(411, 69, 'sorting', '{\"instruction\": \"Hãy phân loại các hành vi ứng xử vào đúng hộp:\", \"leftBox\": {\"title\": \"Lành mạnh (Green Flag)\"}, \"rightBox\": {\"title\": \"Cờ Đỏ (Red Flag)\"}, \"items\": [{\"text\": \"Khuyên bạn đi học đúng giờ và chúc bạn làm bài tốt\", \"correctBox\": \"left\"}, {\"text\": \"Bắt bạn phải chụp hình gửi qua Zalo báo cáo vị trí liên tục\", \"correctBox\": \"right\"}, {\"text\": \"Khuyến khích bạn duy trì mối quan hệ tốt với bạn bè\", \"correctBox\": \"left\"}, {\"text\": \"Cấm đoán bạn nói chuyện hay gặp mặt tất cả những người khác giới\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(412, 69, 'reflection', '{\"question\": \"Bạn từng thấy bạn bè xung quanh bị người yêu cấm đoán đi chơi chung với nhóm bạn chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(413, 69, 'takeaway', '{\"items\": [\"Yêu thương tôn trọng sự tự do cá nhân của nhau, chứ không giam lỏng bằng ghen tuông.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(414, 70, 'hook', '{\"title\": \"Tại sao nhiều người lại chấp nhận ở lại trong một mối quan hệ làm họ đau lòng hết lần này đến lần khác?\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(415, 70, 'explanation', '{\"bullets\": [\"Vòng lặp bạo lực cảm xúc: Giận dỗi/Gây hấn -> Xin lỗi/Tặng quà mật ngọt -> Bình yên giả tạo -> Tiếp tục gây hấn.\", \"Lời ngọt ngào sau cơn giận dễ khiến nạn nhân quên đi tổn thương cũ.\", \"Nhận diện vòng lặp này để tìm cách cắt đứt.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(416, 70, 'scenario', '{\"title\": \"Lời hứa ngọt ngào\", \"body\": \"Lâm vừa quát mắng Lan thậm tệ vì Lan đi học nhóm muộn. Hôm sau Lâm mua trà sữa mang đến tận lớp, khóc lóc hứa hẹn sẽ thay đổi.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(417, 70, 'flashcard', '{\"front\": \"Vòng lặp bạo lực cảm xúc (Abuse Cycle) gồm những giai đoạn nào?\", \"back\": \"Giai đoạn 1: Giận dỗi/Gây hấn ➡️ Giai đoạn 2: Xin lỗi khóc lóc/Tặng quà mật ngọt ➡️ Giai đoạn 3: Bình yên giả tạo ➡️ Tiếp tục gây hấn.\", \"notes\": \"Lời hứa ngọt ngào sau cơn giận không xóa nhòa được bạo lực cảm xúc.\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(418, 70, 'reflection', '{\"question\": \"Bạn có thấy quen thuộc với những người bạn cứ cãi nhau to rồi lại làm hòa ngọt ngào liên tục không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(419, 70, 'takeaway', '{\"items\": [\"Quà cáp ngọt ngào không thể xóa nhòa sự thiếu tôn trọng và bạo lực cảm xúc.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(420, 71, 'hook', '{\"title\": \"Mối quan hệ nên là nơi nương tựa, chứ không phải một cuộc chiến mệt mỏi mỗi ngày.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(421, 71, 'explanation', '{\"bullets\": [\"Cảm thấy kiệt sức, mất tự tin sau mỗi lần nói chuyện với họ.\", \"Luôn phải nhún nhường, bỏ qua mong muốn của bản thân để họ vui vẻ.\", \"Mối quan hệ mang lại nhiều nước mắt hơn tiếng cười là lúc cần dừng lại.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(422, 71, 'scenario', '{\"title\": \"Mất đi nụ cười\", \"body\": \"Lan nhận ra dạo gần đây mình hay cáu gắt với mọi người xung quanh và học lực sa sút kể từ khi nhận lời yêu Lâm.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(423, 71, 'interaction', '{\"question\": \"Lan nên làm gì?\", \"choices\": [{\"text\": \"Tiếp tục chịu đựng và cố gắng làm hài lòng Lâm nhiều hơn.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Chia sẻ với bố mẹ/bạn bè và xem xét việc kết thúc mối quan hệ mệt mỏi này.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(424, 71, 'reflection', '{\"question\": \"Bạn có cảm thấy năng lượng tích cực của mình bị hút cạn bởi một người bạn độc hại nào không?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(425, 71, 'takeaway', '{\"items\": [\"Bảo vệ sức khỏe tinh thần của bạn quan trọng hơn việc giữ một mối quan hệ độc hại.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(426, 72, 'hook', '{\"title\": \"Khi người yêu muốn bạn là thế giới duy nhất của họ, hãy cẩn thận.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(427, 72, 'explanation', '{\"bullets\": [\"Hành vi cấm cản chơi với bạn thân, cô lập bạn khỏi gia đình là dấu hiệu kiểm soát độc hại.\", \"Họ muốn bạn hoàn toàn phụ thuộc vào họ về mặt tình cảm.\", \"Mối quan hệ lành mạnh khuyến khích bạn duy trì các mối quan hệ xã hội tốt đẹp khác.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(428, 72, 'scenario', '{\"title\": \"Cấm chơi với bạn thân\", \"body\": \"Hoàng yêu cầu Vy không được đi uống nước với nhóm bạn thân cấp 2 vì Hoàng cảm thấy ghen và không thích nhóm đó.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(429, 72, 'interaction', '{\"question\": \"Vy nên làm gì?\", \"choices\": [{\"text\": \"Nghe theo Hoàng để Hoàng được an lòng, tránh cãi nhau.\", \"correct\": false, \"emoji\": \"🙁\"}, {\"text\": \"Từ chối: Tớ trân trọng tình cảm của cậu, nhưng bạn bè cũng rất quan trọng với tớ. Tớ vẫn sẽ đi chơi với họ.\", \"correct\": true, \"emoji\": \"💚\"}]}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(430, 72, 'reflection', '{\"question\": \"Bạn từng thấy ai đó bỏ bê hoàn toàn bạn bè xung quanh sau khi có người yêu chưa?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(431, 72, 'takeaway', '{\"items\": [\"Một người yêu thương bạn thật lòng sẽ tôn trọng các mối quan hệ xã hội lành mạnh của bạn.\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(432, 73, 'hook', '{\"title\": \"Chia tay một mối quan hệ độc hại cần sự dứt khoát và an toàn.\"}', 1, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(433, 73, 'explanation', '{\"bullets\": [\"Nói lời chia tay rõ ràng, dứt khoát ở nơi công cộng hoặc qua tin nhắn nếu sợ bị phản ứng bạo lực.\", \"Cắt đứt liên lạc, chặn tài khoản mạng xã hội để tránh bị làm phiền.\", \"Tìm kiếm sự giúp đỡ của bố mẹ, thầy cô hoặc gọi 111 nếu bị đe dọa bám đuôi.\"]}', 2, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(434, 73, 'scenario', '{\"title\": \"Lời đe dọa chia tay\", \"body\": \"Khi Lan đòi chia tay, Lâm đe dọa sẽ đăng những ảnh riêng tư của Lan lên mạng xã hội hoặc tự làm đau bản thân.\"}', 3, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(435, 73, 'flashcard', '{\"front\": \"Làm sao để bước ra an toàn khỏi mối quan hệ độc hại bị đe dọa?\", \"back\": \"Nói chia tay ở nơi công cộng hoặc qua tin nhắn nếu sợ bạo lực, cắt liên lạc (chặn tài khoản), và báo ngay cho bố mẹ/thầy cô hoặc gọi Tổng đài 111.\", \"notes\": \"Bạn không bao giờ cô đơn, luôn có sự hỗ trợ xung quanh!\"}', 4, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(436, 73, 'reflection', '{\"question\": \"Nếu một người bạn thân của bạn đang gặp nguy hiểm trong mối quan hệ, bạn sẵn sàng giúp họ tìm kiếm sự hỗ trợ chứ?\"}', 5, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(437, 73, 'takeaway', '{\"items\": [\"Bạn không bao giờ phải đối mặt với nguy hiểm một mình. Hãy mạnh dạn tìm kiếm sự trợ giúp xung quanh!\"]}', 6, '2026-06-05 10:27:59', '2026-06-05 10:27:59'),
+(438, 74, 'hook', '{\"title\": \"Bạn có biết mỗi lần lướt mạng, bạn đều đang để lại một dấu chân không bao giờ biến mất?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(439, 74, 'explanation', '{\"bullets\": [\"Dấu chân số (Digital Footprint) là lịch sử hoạt động của bạn trên Internet: bài đăng, lượt like, comment, và tìm kiếm.\", \"Ngay cả khi bạn bấm nút Xóa, thông tin đó vẫn có thể đã được người khác chụp màn hình hoặc lưu lại.\", \"Hãy suy nghĩ kỹ trước khi nhấn nút Đăng.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(440, 74, 'scenario', '{\"title\": \"Bức ảnh dìm biến mất?\", \"body\": \"Nam đăng một bức ảnh dìm hài hước của đứa em họ lên mạng. Dù Nam đã xóa sau 5 phút, bức ảnh đã bị một người bạn tải về và gửi vào nhóm chat của lớp.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(441, 74, 'flashcard', '{\"front\": \"Liệu có thể xóa hoàn toàn một thứ gì đó trên Internet không?\", \"back\": \"Rất tiếc là KHÔNG. Khi thông tin đã lên mạng, nó có thể được lưu trữ, chụp màn hình hoặc chia sẻ lại bất kỳ lúc nào.\", \"notes\": \"Hãy luôn tự hỏi: Mình có ổn không nếu bức ảnh/dòng trạng thái này tồn tại mãi mãi?\"}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(442, 74, 'reflection', '{\"question\": \"Bạn có từng đăng thứ gì lên mạng rồi sau đó cuống cuồng xóa đi vì thấy không nên chưa?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(443, 74, 'takeaway', '{\"items\": [\"Internet có trí nhớ siêu tốt. Hãy để lại những dấu chân số mà bạn tự hào nhé!\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(444, 75, 'hook', '{\"title\": \"Tại sao việc chia sẻ địa chỉ nhà hay thời khóa biểu lên mạng lại là một ý tưởng tồi?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(445, 75, 'explanation', '{\"bullets\": [\"Những thông tin như số điện thoại, mật khẩu, địa chỉ nhà, tên trường học và lộ trình đi lại là thông tin cá nhân nhạy cảm.\", \"Kẻ xấu có thể dùng chúng để định vị, theo dõi hoặc giả mạo danh tính của bạn.\", \"Giữ bí mật những thông tin này chính là chiếc khiên bảo vệ bạn khỏi các nguy cơ ngoài đời thực.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(446, 75, 'scenario', '{\"title\": \"Thẻ học sinh mới\", \"body\": \"Vy rất vui khi nhận được thẻ học sinh mới nên đã chụp ảnh khoe lên Story, lộ rõ họ tên, mã số học sinh và tên trường THCS đang học.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(447, 75, 'interaction', '{\"question\": \"Vy đăng ảnh như vậy có an toàn không?\", \"choices\": [{\"text\": \"Không an toàn. Kẻ xấu có thể biết Vy học trường nào để tiếp cận hoặc quấy rối.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"An toàn mà, chỉ có bạn bè trên mạng mới xem được thôi.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(448, 75, 'reflection', '{\"question\": \"Hãy kiểm tra lại trang cá nhân của bạn, có thông tin nào tiết lộ nơi bạn đang sinh sống hoặc học tập không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(449, 75, 'takeaway', '{\"items\": [\"Bảo mật thông tin cá nhân chính là bảo vệ sự an toàn của chính mình ngoài đời thực.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(450, 76, 'hook', '{\"title\": \"Tại sao tụi mình luôn có cảm giác thèm thuồng được đăng tất tần tật mọi thứ lên mạng?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(451, 76, 'explanation', '{\"bullets\": [\"Lượt like, thả tim kích thích não bộ tiết ra dopamine, khiến tụi mình cảm thấy được quan tâm và công nhận.\", \"Áp lực từ bạn bè (ai cũng đăng thì mình cũng đăng) khiến bạn dễ chia sẻ quá đà (oversharing).\", \"Lắng nghe cảm xúc của mình trước khi đăng bài: Bạn đang thực sự muốn kết nối hay chỉ cần sự chú ý tức thời?\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(452, 76, 'scenario', '{\"title\": \"Status lúc buồn\", \"body\": \"Linh cảm thấy cô đơn vì bố mẹ bận việc. Linh định đăng một status buồn bã kể chi tiết chuyện gia đình cãi nhau để nhận được sự an ủi từ bạn bè.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(453, 76, 'sorting', '{\"instruction\": \"Hãy phân loại các hành vi đăng bài sau đây vào hộp phù hợp:\", \"leftBox\": {\"title\": \"Chia sẻ lành mạnh\"}, \"rightBox\": {\"title\": \"Chia sẻ quá đà\"}, \"items\": [{\"text\": \"Đăng ảnh chú mèo đáng yêu mới nuôi\", \"correctBox\": \"left\"}, {\"text\": \"Đăng ảnh chụp màn hình tin nhắn cãi nhau riêng tư với bạn thân\", \"correctBox\": \"right\"}, {\"text\": \"Đăng cảm nghĩ sau khi xem một bộ phim hay\", \"correctBox\": \"left\"}, {\"text\": \"Đăng số điện thoại của người khác để nhờ mọi người spam hộ\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(454, 76, 'reflection', '{\"question\": \"Bạn có bao giờ hối hận vì đã lỡ đăng một dòng trạng thái quá riêng tư lúc tâm trạng bất ổn không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(455, 76, 'takeaway', '{\"items\": [\"Không phải mọi cảm xúc đều cần được phơi bày trên mạng xã hội. Hãy giữ lại những khoảng riêng cho mình.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(456, 77, 'hook', '{\"title\": \"Bạn có thấy ổn khi bạn bè tự ý đăng ảnh dìm, ảnh xấu của bạn lên mạng mà không hỏi trước?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(457, 77, 'explanation', '{\"bullets\": [\"Nhiều người nghĩ đăng ảnh dìm là đùa vui, nhưng đùa chỉ vui khi tất cả mọi người cùng cười.\", \"Tự ý đăng ảnh của người khác lên mạng là vi phạm quyền riêng tư của họ.\", \"Tôn trọng người khác bắt đầu từ việc hỏi ý kiến trước khi đăng ảnh có mặt họ.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(458, 77, 'scenario', '{\"title\": \"Khoảnh khắc ngáp ngủ\", \"body\": \"Trong buổi dã ngoại, Minh chụp được ảnh Khoa đang ngáp ngủ há to miệng. Minh thấy buồn cười và đăng lên mạng kèm caption trêu chọc. Khoa thấy rất xấu hổ.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(459, 77, 'flashcard', '{\"front\": \"Bạn nên làm gì nếu bạn bè đăng ảnh dìm của bạn mà bạn không thích?\", \"back\": \"Hãy nói chuyện trực tiếp hoặc nhắn tin riêng một cách nhẹ nhàng nhưng rõ ràng: Cậu xóa bức ảnh đó giúp tớ nhé, tớ không thoải mái khi ảnh đó bị đăng lên mạng đâu.\", \"notes\": \"Bạn bè thực sự sẽ tôn trọng cảm xúc của bạn và xóa ảnh ngay lập tức.\"}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(460, 77, 'reflection', '{\"question\": \"Bạn đã từng tự ý đăng ảnh dìm của bạn bè chỉ vì nghĩ nó vui chưa? Họ có thực sự vui không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(461, 77, 'takeaway', '{\"items\": [\"Đùa vui chỉ thực sự vui khi người trong cuộc cảm thấy thoải mái và đồng ý.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(462, 78, 'hook', '{\"title\": \"Đã bao lâu rồi bạn chưa dọn dẹp danh sách bạn bè và cài đặt bảo mật của mình?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(463, 78, 'explanation', '{\"bullets\": [\"Để tài khoản ở chế độ công khai (Public) nghĩa là bất kỳ ai, kể cả người lạ, cũng có thể xem và tải ảnh của bạn về.\", \"Hãy lọc lại danh sách bạn bè: chỉ kết bạn với những người bạn thực sự quen biết ngoài đời.\", \"Sử dụng mật khẩu mạnh và bật xác thực 2 lớp (2FA) để bảo vệ tài khoản khỏi bị hack.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(464, 78, 'scenario', '{\"title\": \"Bị lấy ảnh đi lừa đảo\", \"body\": \"Tài khoản của Mai để chế độ công khai. Một ngày nọ, Mai phát hiện có một tài khoản lạ lấy toàn bộ ảnh của mình để đi lừa đảo nạp thẻ cào.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(465, 78, 'interaction', '{\"question\": \"Mai nên làm gì để tránh tình trạng này lặp lại?\", \"choices\": [{\"text\": \"Chuyển tài khoản sang chế độ riêng tư (Private) và chỉ kết bạn với người quen biết.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục để công khai nhưng viết bài cảnh báo trên trang cá nhân.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(466, 78, 'reflection', '{\"question\": \"Danh sách bạn bè trên mạng của bạn có bao nhiêu người là người lạ mà bạn chưa từng nói chuyện ngoài đời?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(467, 78, 'takeaway', '{\"items\": [\"Khóa bớt cửa (bảo mật riêng tư) giúp ngôi nhà ảo của bạn an toàn hơn nhiều.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(468, 79, 'hook', '{\"title\": \"Ai mới là người có quyền tối cao quyết định những gì xuất hiện trên mạng xã hội của bạn?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20');
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES
+(469, 79, 'explanation', '{\"bullets\": [\"Bạn chính là người biên tập và quản lý cuộc sống số của mình.\", \"Bạn có quyền từ chối yêu cầu kết bạn, hủy kết bạn (unfriend) hoặc chặn (block) bất kỳ ai khiến bạn thấy không thoải mái.\", \"Bảo vệ không gian mạng của bạn không phải là ích kỷ, đó là quyền tự chăm sóc bản thân.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(470, 79, 'scenario', '{\"title\": \"Những tin nhắn thô lỗ\", \"body\": \"Một tài khoản lạ liên tục gửi tin nhắn bình phẩm thô lỗ về ngoại hình của Lan dưới các bài đăng của cô ấy.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(471, 79, 'sorting', '{\"instruction\": \"Phân loại các hành động quản lý không gian số sau:\", \"leftBox\": {\"title\": \"Bảo vệ lành mạnh\"}, \"rightBox\": {\"title\": \"Cố chịu đựng\"}, \"items\": [{\"text\": \"Chặn một người liên tục nhắn tin trêu chọc thô lỗ\", \"correctBox\": \"left\"}, {\"text\": \"Vẫn rep tin nhắn của người lạ dù thấy sợ hãi vì sợ bị nói là kiêu\", \"correctBox\": \"right\"}, {\"text\": \"Hủy kết bạn với những tài khoản không còn tương tác hoặc không quen\", \"correctBox\": \"left\"}, {\"text\": \"Để người khác tự ý tag mình vào các bài viết quảng cáo độc hại\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(472, 79, 'reflection', '{\"question\": \"Bạn có cảm thấy áy náy khi phải block hoặc unfriend một ai đó mang lại năng lượng độc hại không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(473, 79, 'takeaway', '{\"items\": [\"Bạn là chủ nhân tài khoản của mình. Bạn có quyền quyết định ai được phép bước vào thế giới số của bạn.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(474, 80, 'hook', '{\"title\": \"Tại sao nói chuyện trên mạng lại dễ gây hiểu lầm hơn là gặp mặt trực tiếp?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(475, 80, 'explanation', '{\"bullets\": [\"Khi nhắn tin, tụi mình thiếu đi biểu cảm gương mặt, ngôn ngữ cơ thể và tông giọng của đối phương.\", \"Một câu đùa tinh nghịch khi viết thành chữ có thể nghe như một lời mỉa mai lạnh lùng.\", \"Đọc kỹ tin nhắn và cố gắng không suy diễn tiêu cực khi chưa rõ ý người viết.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(476, 80, 'scenario', '{\"title\": \"Tin nhắn ngắn gọn\", \"body\": \"An nhắn tin rủ Bình đi chơi đá bóng. Bình đang bận làm bài tập nên nhắn lại ngắn gọn: Không đi. An nghĩ Bình đang giận dỗi mình nên cũng im lặng luôn.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(477, 80, 'flashcard', '{\"front\": \"Làm sao để giảm thiểu hiểu lầm khi giao tiếp qua tin nhắn chữ?\", \"back\": \"Sử dụng thêm emoji để thể hiện cảm xúc, tránh nhắn tin cộc lốc, và nếu thấy bất an, hãy gọi điện hoặc hỏi trực tiếp để làm rõ.\", \"notes\": \"Một emoji đúng chỗ có thể cứu vãn cả một tình bạn đấy!\"}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(478, 80, 'reflection', '{\"question\": \"Bạn có từng giận dỗi ai đó chỉ vì đọc tin nhắn cộc lốc của họ chưa?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(479, 80, 'takeaway', '{\"items\": [\"Chữ viết không có tông giọng. Hãy thêm một chút ấm áp bằng biểu cảm hoặc hỏi lại cho rõ nhé.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(480, 81, 'hook', '{\"title\": \"Chữ Ừ hay Ok trong tin nhắn của bạn bè có thực sự đáng sợ như bạn nghĩ?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(481, 81, 'explanation', '{\"bullets\": [\"Mỗi người có phong cách nhắn tin khác nhau: có người thích viết dài kèm emoji, có người thích viết ngắn gọn.\", \"Đừng vội kết luận đối phương đang ghét mình chỉ qua một tin nhắn ngắn.\", \"Thay vì lo lắng suy diễn, hãy chủ động hỏi thăm nhẹ nhàng.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(482, 81, 'scenario', '{\"title\": \"Vy gửi bài hát\", \"body\": \"Vy gửi một bài hát yêu thích cho bạn thân. Bạn thân chỉ rep lại: Ok. Vy cảm thấy hụt hẫng và nghĩ bạn mình không còn quan tâm đến mình.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(483, 81, 'interaction', '{\"question\": \"Vy nên phản ứng thế nào để giữ mối quan hệ lành mạnh?\", \"choices\": [{\"text\": \"Tự nhắc mình có thể bạn đang bận, và lúc khác sẽ hỏi cảm nhận của bạn sau.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Nhắn tin trách móc bạn hờ hững hoặc im lặng không nhắn tin nữa.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(484, 81, 'reflection', '{\"question\": \"Bạn thuộc tuýp người nhắn tin cộc lốc hay thích dùng nhiều emoji/icon?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(485, 81, 'takeaway', '{\"items\": [\"Mỗi người nhắn tin một kiểu. Đừng để những ký tự ngắn ngủi làm rạn nứt tình cảm.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(486, 82, 'hook', '{\"title\": \"Bạn có cảm thấy nghẹt thở khi nhìn thấy chữ Đã xem (Seen) mà đối phương không trả lời ngay?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(487, 82, 'explanation', '{\"bullets\": [\"Điện thoại thông minh khiến tụi mình có cảm giác đối phương phải luôn túc trực 24/7 để rep tin nhắn.\", \"Thực tế, ai cũng có cuộc sống riêng: học tập, làm việc nhà hoặc đơn giản là cần thời gian rời xa màn hình.\", \"Tôn trọng thời gian riêng của người khác và không ép bản thân phải trả lời tin nhắn ngay lập tức nếu đang bận.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(488, 82, 'scenario', '{\"title\": \"Seen không rep\", \"body\": \"Duy gửi tin nhắn hỏi bài tập cho Tuấn. Thấy tin nhắn hiện trạng thái Đã xem nhưng 20 phút rồi chưa thấy Tuấn trả lời, Duy thấy rất bực mình.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(489, 82, 'sorting', '{\"instruction\": \"Phân loại các phản ứng khi đối phương chưa trả lời tin nhắn:\", \"leftBox\": {\"title\": \"Suy nghĩ thấu cảm\"}, \"rightBox\": {\"title\": \"Suy diễn tiêu cực\"}, \"items\": [{\"text\": \"Chắc cậu ấy đang bận học hoặc không cầm điện thoại, lát sẽ rep thôi\", \"correctBox\": \"left\"}, {\"text\": \"Cố tình bơ mình đây mà, để xem ai lì hơn ai\", \"correctBox\": \"right\"}, {\"text\": \"Để điện thoại xuống và đi làm việc khác của mình\", \"correctBox\": \"left\"}, {\"text\": \"Spam liên tục hàng chục tin nhắn hỏi chấm để bắt rep bằng được\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(490, 82, 'reflection', '{\"question\": \"Bạn có thấy bồn chồn hay tội lỗi khi nhìn thấy tin nhắn chưa đọc mà chưa có thời gian rep không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(491, 82, 'takeaway', '{\"items\": [\"Ai cũng có quyền ngoại tuyến. Đừng để chế độ đã xem kiểm soát cảm xúc của bạn.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(492, 83, 'hook', '{\"title\": \"Làm gì khi cuộc thảo luận nhóm trong group chat lớp bắt đầu biến thành một trận chiến nảy lửa?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(493, 83, 'explanation', '{\"bullets\": [\"Tranh cãi bằng bàn phím rất dễ leo thang vì ai cũng muốn gõ thật nhanh để tự vệ.\", \"Những từ ngữ xúc phạm viết ra rất khó thu hồi và để lại tổn thương lớn.\", \"Khi thấy group chat bắt đầu nóng lên, hãy là người chủ động kêu gọi mọi người tạm dừng để gặp nhau nói chuyện trực tiếp.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(494, 83, 'scenario', '{\"title\": \"Tranh luận bài nhóm\", \"body\": \"Trong nhóm làm bài tập văn, Linh và Nam bất đồng ý kiến về việc chọn chủ đề. Cả hai bắt đầu dùng những câu từ nặng nề công kích cá nhân nhau trước mặt các thành viên khác.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(495, 83, 'flashcard', '{\"front\": \"Bạn nên làm gì nếu là thành viên chứng kiến group chat bốc hỏa?\", \"back\": \"Nhắn tin xoa dịu: Tụi mình dừng gõ một chút nha. Mai lên lớp gặp nhau nói chuyện trực tiếp 5 phút là xong ngay ấy mà.\", \"notes\": \"Gặp mặt trực tiếp giúp chúng ta nhìn thấy biểu cảm của nhau và dễ thông cảm hơn nhiều.\"}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(496, 83, 'reflection', '{\"question\": \"Bạn từng tham gia hoặc chứng kiến một trận phím chiến nào trong group chat chưa? Cảm xúc lúc đó thế nào?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(497, 83, 'takeaway', '{\"items\": [\"Một lời kêu gọi tạm dừng đúng lúc trong group chat có thể ngăn chặn những rạn nứt không đáng có.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(498, 84, 'hook', '{\"title\": \"Làm sao để bày tỏ sự không đồng ý mà vẫn khiến đối phương cảm thấy được tôn trọng?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(499, 84, 'explanation', '{\"bullets\": [\"Thay vì dùng câu khẳng định quy kết: Ý kiến của cậu tệ quá, hãy tập trung vào cảm nhận của bản thân.\", \"Sử dụng cấu trúc: Tớ thấy... khi... kết hợp với từ ngữ nhẹ nhàng.\", \"Lắng nghe ý kiến của họ trước khi đưa ra phản hồi của mình.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(500, 84, 'scenario', '{\"title\": \"Góp ý thiết kế slide\", \"body\": \"Minh không thích ý tưởng thiết kế slide thuyết trình của Trang vì nó quá lòe loẹt.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(501, 84, 'interaction', '{\"question\": \"Minh nên nhắn tin cho Trang thế nào cho đúng tinh thần Green Flag?\", \"choices\": [{\"text\": \"Tớ thấy slide hơi nhiều màu sắc một chút, liệu tụi mình có thể thử tông màu đơn giản hơn xem sao được không Trang?\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Slide này trông trẻ con và lòe loẹt quá, cậu làm lại cái khác đơn giản hơn đi.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(502, 84, 'reflection', '{\"question\": \"Bạn có thấy dễ chịu hơn khi nhận được lời góp ý nhẹ nhàng thay vì một lời chê bai thẳng thừng không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(503, 84, 'takeaway', '{\"items\": [\"Góp ý nhẹ nhàng và tôn trọng giúp công việc trôi chảy và tình bạn khăng khít hơn.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(504, 85, 'hook', '{\"title\": \"Làm sao để lướt mạng xã hội mỗi ngày mà không cảm thấy kiệt sức hay tự ti?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(505, 85, 'explanation', '{\"bullets\": [\"Những gì người khác đăng lên mạng thường chỉ là những khoảnh khắc đẹp đẽ nhất, đã qua chỉnh sửa của họ.\", \"Đừng so sánh cuộc sống thường nhật của bạn với cuốn phim nổi bật của người khác.\", \"Hãy chủ động theo dõi (follow) những tài khoản truyền cảm hứng lành mạnh và nhấn hủy theo dõi các nguồn tin độc hại.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(506, 85, 'scenario', '{\"title\": \"So sánh bản thân\", \"body\": \"Hân lướt Tiktok thấy các bạn khoe đồ hiệu, đi du lịch sang chảnh rồi tự nhìn lại bản thân và thấy cuộc sống của mình thật tẻ nhạt, tầm thường.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(507, 85, 'sorting', '{\"instruction\": \"Phân loại các thói quen sử dụng mạng xã hội sau:\", \"leftBox\": {\"title\": \"Nạp năng lượng tích cực\"}, \"rightBox\": {\"title\": \"Hút cạn năng lượng\"}, \"items\": [{\"text\": \"Theo dõi các trang chia sẻ mẹo học tập, vẽ tranh hoặc lối sống xanh\", \"correctBox\": \"left\"}, {\"text\": \"Liên tục lướt xem ảnh của các hot teen rồi tự ti về ngoại hình của mình\", \"correctBox\": \"right\"}, {\"text\": \"Giới hạn thời gian dùng mạng xã hội dưới 1 tiếng mỗi ngày\", \"correctBox\": \"left\"}, {\"text\": \"Đọc các bài viết drama, bóc phốt và tham gia bình luận chửi bới\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(508, 85, 'reflection', '{\"question\": \"Bạn có cảm thấy mệt mỏi sau khi lướt mạng xã hội quá lâu không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(509, 85, 'takeaway', '{\"items\": [\"Bạn là người lựa chọn nguồn năng lượng nạp vào tâm trí mình mỗi ngày qua màn hình điện thoại.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(510, 86, 'hook', '{\"title\": \"Bạn có bao giờ cảm thấy ngột ngạt vì một người bạn cứ liên tục nhắn tin hỏi bạn đang làm gì, ở đâu mọi lúc mọi nơi?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(511, 86, 'explanation', '{\"bullets\": [\"Ranh giới số (Digital Boundary) là những giới hạn bạn đặt ra về thời gian, không gian và mức độ riêng tư khi sử dụng công nghệ.\", \"Nó bao gồm việc quyết định khi nào bạn online, ai được phép gọi cho bạn, và bạn muốn chia sẻ những gì.\", \"Đặt ranh giới rõ ràng giúp bạn duy trì những mối quan hệ khỏe mạnh mà không cảm thấy bị kiểm soát.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(512, 86, 'scenario', '{\"title\": \"Spam cuộc gọi\", \"body\": \"Nam thích chơi game vào buổi tối để thư giãn. Tuy nhiên, Khánh liên tục gọi video cho Nam để buôn chuyện, dù Nam đã nói là đang bận chơi game. Khánh giận dỗi bảo Nam không coi trọng bạn.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(513, 86, 'flashcard', '{\"front\": \"Đặt ranh giới số có phải là ích kỷ hay làm tổn thương tình bạn không?\", \"back\": \"KHÔNG. Đặt ranh giới giúp cả hai hiểu rõ giới hạn thoải mái của nhau, từ đó tôn trọng nhau hơn và tránh những xung đột không đáng có.\", \"notes\": \"Tình bạn lành mạnh luôn đi kèm sự tôn trọng ranh giới của nhau.\"}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(514, 86, 'reflection', '{\"question\": \"Bạn đã từng cảm thấy mệt mỏi vì một người bạn liên tục đòi hỏi sự chú ý của bạn trên mạng chưa?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(515, 86, 'takeaway', '{\"items\": [\"Ranh giới số không phải là bức tường ngăn cách, nó là cánh cửa giúp tình bạn thở dễ dàng hơn.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(516, 87, 'hook', '{\"title\": \"Làm sao nhận ra khi ai đó đang ngấm ngầm xâm phạm ranh giới số của bạn?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(517, 87, 'explanation', '{\"bullets\": [\"Dấu hiệu bao gồm: kiểm soát danh sách bạn bè, bắt bạn chụp màn hình cuộc trò chuyện với người khác để kiểm chứng, tự ý vào đọc trộm tin nhắn.\", \"Những hành vi này thường được ngụy trang dưới danh nghĩa vì quan tâm hoặc vì yêu thương.\", \"Nhận biết sớm giúp bạn bảo vệ bản thân trước những mối quan hệ độc hại.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(518, 87, 'scenario', '{\"title\": \"Đọc trộm tin nhắn\", \"body\": \"Huy mượn điện thoại của bạn gái là Linh để tra cứu bản đồ, nhưng sau đó tự ý mở lịch sử chat Zalo của Linh với các bạn nam khác để kiểm tra xem có nhắn tin mờ ám không.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(519, 87, 'interaction', '{\"question\": \"Hành vi của Huy là gì?\", \"choices\": [{\"text\": \"Xâm phạm ranh giới cá nhân và thể hiện sự thiếu tin tưởng nghiêm trọng.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Sự quan tâm đáng yêu, vì yêu nên mới ghen và muốn kiểm tra.\", \"correct\": false, \"emoji\": \"🚩\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(520, 87, 'reflection', '{\"question\": \"Bạn có cảm thấy thoải mái khi cho người khác (kể cả bạn thân hoặc người yêu) tự ý đọc tin nhắn riêng tư của mình không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(521, 87, 'takeaway', '{\"items\": [\"Yêu thương hay tình bạn không đi kèm quyền được kiểm soát và xâm phạm không gian riêng tư của nhau.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(522, 88, 'hook', '{\"title\": \"Tại sao tụi mình thường thấy rất tội lỗi khi nhấn nút từ chối một cuộc gọi hoặc không rep tin nhắn ngay?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(523, 88, 'explanation', '{\"bullets\": [\"Tụi mình sợ làm người khác buồn, sợ bị đánh giá là không nhiệt tình hoặc bị tẩy chay khỏi nhóm bạn.\", \"Nhưng hãy nhớ: năng lượng của bạn là có hạn. Bạn cần nạp lại năng lượng trước khi có thể chia sẻ nó.\", \"Từ chối một yêu cầu không có nghĩa là bạn từ chối con người họ, đó chỉ là bạn đang bảo vệ sức khỏe tinh thần của mình.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(524, 88, 'scenario', '{\"title\": \"Ép bản thân online\", \"body\": \"Dù rất mệt sau buổi tập thể thao, Vy vẫn cố thức đến 11h đêm nhắn tin buôn chuyện với nhóm bạn vì sợ nếu off sớm sẽ bị nói là thiếu hòa nhập.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(525, 88, 'sorting', '{\"instruction\": \"Phân loại các suy nghĩ sau khi bạn cần từ chối giao tiếp để nghỉ ngơi:\", \"leftBox\": {\"title\": \"Tự chăm sóc lành mạnh\"}, \"rightBox\": {\"title\": \"Tự trách độc hại\"}, \"items\": [{\"text\": \"Tớ cần sạc lại năng lượng cho bản thân trước, tớ sẽ nhắn lại cho bạn vào ngày mai\", \"correctBox\": \"left\"}, {\"text\": \"Mình là một đứa bạn tồi tệ vì đã không trả lời tin nhắn của cậu ấy ngay lập tức\", \"correctBox\": \"right\"}, {\"text\": \"Mình có quyền dành một buổi tối không điện thoại để đọc sách hoặc ngủ sớm\", \"correctBox\": \"left\"}, {\"text\": \"Mình phải luôn online để chứng minh mình luôn sẵn sàng vì bạn bè\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(526, 88, 'reflection', '{\"question\": \"Bạn có thường ép bản thân trò chuyện trên mạng ngay cả khi cơ thể và tâm trí đã mệt nhoài không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(527, 88, 'takeaway', '{\"items\": [\"Bạn không cần phải làm người khác vui lòng bằng cách bào mòn năng lượng và sự thoải mái của chính mình.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(528, 89, 'hook', '{\"title\": \"Nếu là bạn thân/người yêu thực sự thì phải tin tưởng chia sẻ mật khẩu tài khoản mạng xã hội cho nhau chứ? Bạn nghĩ sao?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(529, 89, 'explanation', '{\"bullets\": [\"Mật khẩu tài khoản là ranh giới riêng tư tối cao của mỗi cá nhân trên không gian số.\", \"Chia sẻ mật khẩu không chứng minh lòng tin, ngược lại nó tạo ra cơ hội cho sự giám sát và nghi ngờ lẫn nhau.\", \"Tình bạn chân chính tôn trọng sự riêng tư của nhau mà không cần những bằng chứng mang tính kiểm soát.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(530, 89, 'scenario', '{\"title\": \"Instagram của ai?\", \"body\": \"Quân muốn chứng minh tình cảm với Mai nên đã hỏi xin mật khẩu tài khoản Instagram của Mai. Mai cảm thấy không thoải mái nhưng sợ Quân nghĩ mình đang giấu giếm.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(531, 89, 'flashcard', '{\"front\": \"Mai nên trả lời Quân thế nào để vừa giữ được ranh giới vừa không gây rạn nứt?\", \"back\": \"Mai có thể nói: Tớ rất trân trọng tình cảm của tụi mình, nhưng tớ muốn giữ mật khẩu tài khoản làm không gian riêng tư cá nhân. Tụi mình tin tưởng nhau bằng hành động ngoài đời nhé.\", \"notes\": \"Giữ bí mật mật khẩu là nguyên tắc an toàn số cơ bản nhất, không ngoại lệ cho bất kỳ ai.\"}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(532, 89, 'reflection', '{\"question\": \"Bạn có từng chia sẻ mật khẩu tài khoản của mình cho ai chưa? Cảm xúc của bạn sau đó thế nào?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(533, 89, 'takeaway', '{\"items\": [\"Tin tưởng nhau nằm ở sự tôn trọng tự nguyện, không nằm ở việc bàn giao chìa khóa cuộc sống số của mình cho người khác.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(534, 90, 'hook', '{\"title\": \"Làm thế nào để từ chối một lời đề nghị trên mạng một cách lịch sự, rõ ràng mà không phải nói dối quanh co?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(535, 90, 'explanation', '{\"bullets\": [\"Nói lời từ chối trực tiếp giúp bạn đỡ mệt mỏi và tránh những hiểu lầm dây dưa về sau.\", \"Công thức từ chối: Cảm ơn/Ghi nhận + Lời từ chối rõ ràng + Đề xuất thay thế (nếu muốn).\", \"Tránh viện cớ nói dối vì khi lời nói dối bị phát hiện, mối quan hệ sẽ càng rạn nứt nghiêm trọng hơn.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(536, 90, 'scenario', '{\"title\": \"Group chat ẩn danh\", \"body\": \"Nam rủ Vy tham gia một group chat ẩn danh chuyên bàn tán chuyện đời tư của các bạn khác. Vy không muốn tham gia vì thấy điều đó không tốt.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(537, 90, 'interaction', '{\"question\": \"Vy nên từ chối thế nào cho đúng tinh thần văn minh và cứng rắn?\", \"choices\": [{\"text\": \"Cảm ơn đã rủ nhé, nhưng tớ không thoải mái với việc bàn tán chuyện riêng tư của người khác nên tớ không vào nhóm đâu.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tớ đang bận ôn thi lắm, để khi khác nha (rồi im lặng né tránh).\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(538, 90, 'reflection', '{\"question\": \"Bạn thấy mình thường chọn cách từ chối thẳng thắn hay chọn cách nói dối để né tránh đối đầu?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(539, 90, 'takeaway', '{\"items\": [\"Một lời từ chối thẳng thắn và lịch sự tốt hơn vạn lần những lời hứa hẹn quanh co làm mất thời gian của nhau.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(540, 91, 'hook', '{\"title\": \"Đặt ranh giới rõ ràng thực chất là đang giúp tình bạn kéo dài lâu hơn, bạn tin không?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(541, 91, 'explanation', '{\"bullets\": [\"Khi không có ranh giới, tụi mình dễ tích tụ những bức bối, ức chế ngầm bên trong (resentment).\", \"Đến một ngày, những bức bối đó sẽ bùng phát thành một trận cãi vã lớn hủy hoại mối quan hệ.\", \"Nói rõ giới hạn của mình từ đầu giúp cả hai hiểu nhau và cư xử tinh tế với nhau hơn.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(542, 91, 'scenario', '{\"title\": \"Bất bình tích tụ\", \"body\": \"Hải liên tục mượn nick game của Tùng và đổi cài đặt trang phục mà không hỏi trước. Tùng thấy khó chịu nhưng không nói gì, dần dần Tùng bắt đầu lảng tránh và ghét chơi game chung với Hải.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(543, 91, 'sorting', '{\"instruction\": \"Phân loại các hành vi thiết lập ranh giới sau:\", \"leftBox\": {\"title\": \"Giúp tình bạn bền vững\"}, \"rightBox\": {\"title\": \"Gây ức chế ngầm\"}, \"items\": [{\"text\": \"Thẳng thắn chia sẻ: Tớ không thích bị trêu về cân nặng đâu nhé\", \"correctBox\": \"left\"}, {\"text\": \"Im lặng chịu đựng khi bạn lấy đồ dùng cá nhân của mình mà không hỏi\", \"correctBox\": \"right\"}, {\"text\": \"Góp ý riêng tư khi thấy bạn có hành động khiến mình không thoải mái\", \"correctBox\": \"left\"}, {\"text\": \"Giả vờ vui vẻ bên ngoài nhưng ấm ức nói xấu sau lưng bạn với người khác\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(544, 91, 'reflection', '{\"question\": \"Bạn có mối quan hệ nào đang khiến bạn thấy ấm ức nhưng chưa dám nói thẳng giới hạn của mình không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(545, 91, 'takeaway', '{\"items\": [\"Ranh giới lành mạnh giúp chúng ta yêu quý nhau mà không làm cạn kiệt năng lượng của nhau.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(546, 92, 'hook', '{\"title\": \"Im lặng trên mạng có phải là đồng ý không? Làm sao biết đối phương thực sự muốn tham gia trò chuyện?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(547, 92, 'explanation', '{\"bullets\": [\"Đồng thuận số (Digital Consent) là sự đồng ý hoàn toàn tự nguyện, hào hứng, tỉnh táo và có thể thay đổi bất kỳ lúc nào đối với các hoạt động trực tuyến.\", \"Im lặng, trả lời chậm, hoặc trả lời gượng ép (sao cũng được, ừ chắc thế) KHÔNG PHẢI là đồng thuận.\", \"Chỉ khi đối phương nói Có một cách vui vẻ và thoải mái, đó mới là đồng thuận thực sự.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(548, 92, 'scenario', '{\"title\": \"Cuộc gọi muộn\", \"body\": \"Nam nhắn tin rủ Vy gọi video nói chuyện. Vy chỉ nhắn lại: Tớ đang chuẩn bị đi ngủ... Nam nghĩ Vy nói thế tức là vẫn gọi được nên lập tức bấm nút gọi video luôn.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(549, 92, 'flashcard', '{\"front\": \"Khi nào thì một lời nói hay hành động trên mạng được coi là có sự đồng thuận thực sự?\", \"back\": \"Khi đối phương bày tỏ sự đồng ý rõ ràng, hào hứng, tự nguyện, không bị ép buộc, và họ có quyền rút lại sự đồng ý đó bất kỳ lúc nào họ muốn.\", \"notes\": \"Đồng thuận phải là F.R.E.S.H (Freely given, Reversible, Informed, Enthusiastic, Specific).\"}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(550, 92, 'reflection', '{\"question\": \"Bạn đã bao giờ ép bản thân đồng ý làm điều gì đó trên mạng chỉ vì ngại từ chối chưa?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(551, 92, 'takeaway', '{\"items\": [\"Đồng ý gượng ép hay im lặng không bao giờ bằng một lời đồng thuận tự nguyện, vui vẻ.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(552, 93, 'hook', '{\"title\": \"Làm sao để nhận biết khi một lời đề nghị trên mạng thực chất là một sự ép buộc tinh vi?\"}', 1, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(553, 93, 'explanation', '{\"bullets\": [\"Sự ép buộc ngầm thường đi kèm các câu nói thao túng tâm lý: Nếu cậu thực sự coi tớ là bạn thì..., Có thế mà cũng ngại à?, hoặc liên tục spam tin nhắn đòi hỏi.\", \"Đồng thuận có được từ sự nể sợ, mệt mỏi hay áp lực không bao giờ có giá trị.\", \"Lắng nghe trực giác: Nếu bạn cảm thấy nghẹn ở cổ họng hay bồn chồn ở bụng, đó là dấu hiệu bạn đang bị ép buộc.\"]}', 2, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(554, 93, 'scenario', '{\"title\": \"Đi spam acc clone\", \"body\": \"Nhóm bạn của Duy rủ nhau lập acc clone đi spam chửi bới một bạn học lớp bên cạnh. Duy từ chối, nhóm bạn liền cười cợt: Đúng là đồ nhát gan, không chơi thì từ sau đừng đi chung nhóm nữa.\"}', 3, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(555, 93, 'interaction', '{\"question\": \"Hành vi của nhóm bạn Duy thể hiện điều gì?\", \"choices\": [{\"text\": \"Sự ép buộc ngầm bằng cách đe dọa cô lập để bắt Duy đồng thuận tham gia.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Một lời đùa giỡn kích lệ tinh thần đồng đội bình thường của bạn bè.\", \"correct\": false, \"emoji\": \"🚩\"}]}', 4, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(556, 93, 'reflection', '{\"question\": \"Bạn có từng đồng ý làm một việc mình thấy sai trái trên mạng chỉ vì sợ bị bạn bè tẩy chay không?\"}', 5, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(557, 93, 'takeaway', '{\"items\": [\"Bạn có quyền nói không với bất kỳ hoạt động nào khiến bạn cảm thấy không thoải mái, bất kể áp lực từ ai.\"]}', 6, '2026-06-05 12:18:20', '2026-06-05 12:18:20'),
+(558, 94, 'hook', '{\"title\": \"Tại sao việc đặt ranh giới từ chối lại trở nên cực kỳ khó khăn khi đối phương chính là crush của bạn?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(559, 94, 'explanation', '{\"bullets\": [\"Chúng ta luôn muốn làm hài lòng người mình thích vì sợ họ sẽ chán mình, giận dỗi hoặc đi tìm người khác.\", \"Tuy nhiên, một người thực sự thích bạn sẽ trân trọng cảm xúc và ranh giới của bạn hơn là việc ép bạn làm điều bạn không muốn.\", \"Tình cảm chân chính được xây dựng trên sự tôn trọng lẫn nhau, không dựa trên sự thỏa hiệp mù quáng.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(560, 94, 'scenario', '{\"title\": \"Yêu cầu bật camera\", \"body\": \"Crush của Vy liên tục giận dỗi và không rep tin nhắn vì Vy không chịu bật camera phòng riêng của mình vào buổi tối khi đang mặc đồ ngủ.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(561, 94, 'sorting', '{\"instruction\": \"Phân loại các phản ứng của crush khi bạn từ chối một yêu cầu trên mạng:\", \"leftBox\": {\"title\": \"Crush lành mạnh\"}, \"rightBox\": {\"title\": \"Crush thao túng\"}, \"items\": [{\"text\": \"Tớ hiểu rồi, cậu cứ nghỉ ngơi đi nhé, khi nào rảnh tụi mình nói chuyện sau\", \"correctBox\": \"left\"}, {\"text\": \"Cậu lúc nào cũng bận, chắc là cậu không thích tớ nên mới né tránh chứ gì\", \"correctBox\": \"right\"}, {\"text\": \"Tôn trọng quyết định không bật camera khi gọi video của bạn\", \"correctBox\": \"left\"}, {\"text\": \"Giận dỗi cả ngày, không rep tin nhắn vì bạn không chịu gửi ảnh selfie chụp cận mặt\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(562, 94, 'reflection', '{\"question\": \"Bạn có bao giờ lo sợ crush sẽ ghét mình nếu bạn từ chối một cuộc gọi của họ không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(563, 94, 'takeaway', '{\"items\": [\"Người thực sự trân trọng bạn sẽ lắng nghe lời từ chối của bạn với sự thấu hiểu và tôn trọng.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(564, 95, 'hook', '{\"title\": \"Tag tên bạn bè vào một bài đăng dìm hàng hoặc bài viết nhạy cảm mà không hỏi trước có thực sự vô hại?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(565, 95, 'explanation', '{\"bullets\": [\"Gắn thẻ (Tag) tên ai đó đồng nghĩa với việc đưa thông tin của họ xuất hiện công khai trên dòng thời gian của họ và bạn bè họ.\", \"Điều này có thể khiến họ rơi vào những tình huống dở khóc dở cười hoặc bị người khác hiểu lầm, trêu chọc.\", \"Tôn trọng quyền tự chủ danh tính của bạn bè bằng cách hỏi ý kiến trước khi gắn thẻ họ.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(566, 95, 'scenario', '{\"title\": \"Tag tên bài viết nhạy cảm\", \"body\": \"Khanh đăng một bài viết thảo luận về học sinh hay ngủ gật trong lớp và gắn thẻ tên Hải vào bài đăng đó mà không hỏi trước, khiến Hải bị bạn bè chọc ghẹo.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(567, 95, 'flashcard', '{\"front\": \"Bạn nên cư xử thế nào trước khi gắn thẻ (tag) bạn bè vào một bài viết công khai?\", \"back\": \"Hãy gửi tin nhắn riêng hỏi trước: Tớ đăng bài này có tag tên cậu được không?, hoặc sử dụng tính năng xem lại thẻ trước khi cho xuất hiện trên trang cá nhân.\", \"notes\": \"Tôn trọng danh tính trực tuyến của bạn bè là một phần của sự đồng thuận số.\"}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(568, 95, 'reflection', '{\"question\": \"Bạn có bao giờ cảm thấy bực mình vì bị tag vào những bài viết quảng cáo hoặc bài đăng dìm hàng nhạy cảm chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(569, 95, 'takeaway', '{\"items\": [\"Danh tiếng trực tuyến của mỗi người là tài sản riêng của họ. Hãy xin phép trước khi gắn thẻ tag nhé.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(570, 96, 'hook', '{\"title\": \"Làm sao để tạo thói quen xin phép trước khi chia sẻ hình ảnh hoặc thông tin liên quan đến người khác?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(571, 96, 'explanation', '{\"bullets\": [\"Thói quen xin phép thể hiện sự tinh tế và tôn trọng sâu sắc đối với người bạn của mình.\", \"Chỉ mất vài giây nhắn tin hỏi thăm, nhưng nó giữ gìn sự tin tưởng lâu dài giữa hai bên.\", \"Quy tắc vàng: Nếu nghi ngờ, đừng đăng. Nếu muốn đăng, hãy hỏi!\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(572, 96, 'scenario', '{\"title\": \"Bức ảnh dìm nhẹ\", \"body\": \"Bình chụp được bức ảnh chụp chung rất đẹp với Vân, nhưng biểu cảm của Vân trông hơi ngơ ngác một chút.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(573, 96, 'interaction', '{\"question\": \"Bình nên làm gì trước khi đăng bức ảnh này lên trang cá nhân của mình?\", \"choices\": [{\"text\": \"Gửi ảnh cho Vân xem trước và hỏi: Tớ đăng ảnh này lên Instagram nhé Vân, cậu thấy tấm này ổn không?\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Cứ đăng luôn rồi tag tên Vân vào, nếu Vân không thích thì tự xóa tag sau.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(574, 96, 'reflection', '{\"question\": \"Bạn có cảm thấy tin tưởng và yêu quý hơn những người bạn luôn hỏi ý kiến bạn trước khi đăng ảnh chung không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(575, 96, 'takeaway', '{\"items\": [\"Tôn trọng quyền riêng tư của bạn bè giúp mối quan hệ bền chặt và tránh được những hiểu lầm.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(576, 97, 'hook', '{\"title\": \"Nếu hôm qua bạn đồng ý gọi điện muộn, liệu điều đó có nghĩa là hôm nay bạn cũng phải đồng ý không?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(577, 97, 'explanation', '{\"bullets\": [\"Đồng thuận không phải là một chiếc vé trọn đời. Việc bạn nói Có hôm nay không đồng nghĩa với việc bạn tự động nói Có vào ngày mai.\", \"Đối phương có quyền thay đổi quyết định của mình bất kỳ lúc nào họ cảm thấy mệt mỏi hoặc không thoải mái.\", \"Hãy luôn kiểm tra sự thoải mái của đối phương mỗi lần tương tác, không lấy sự đồng thuận trong quá khứ làm mặc định.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(578, 97, 'scenario', '{\"title\": \"Mượn tài khoản game\", \"body\": \"Khoa đã từng cho Hùng mượn tài khoản game tuần trước. Tuần này, Hùng tự ý đăng nhập chơi tiếp mà không nhắn tin hỏi lại Khoa.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(579, 97, 'sorting', '{\"instruction\": \"Phân loại các tình huống đồng thuận sau:\", \"leftBox\": {\"title\": \"Tôn trọng ranh giới\"}, \"rightBox\": {\"title\": \"Tự ý mặc định\"}, \"items\": [{\"text\": \"Hôm qua tụi mình call nói chuyện vui quá, tối nay cậu có sẵn sàng call tiếp không?\", \"correctBox\": \"left\"}, {\"text\": \"Lần trước cậu cho mượn acc game rồi nên lần này tớ tự ý đăng nhập chơi tiếp luôn\", \"correctBox\": \"right\"}, {\"text\": \"Dừng gửi ảnh meme khi bạn nói hôm nay bạn mệt và muốn yên tĩnh\", \"correctBox\": \"left\"}, {\"text\": \"Bắt bạn phải đi chơi chung trên mạng vì lần trước bạn đã từng hứa đi\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(580, 97, 'reflection', '{\"question\": \"Bạn có bao giờ thấy khó xử khi muốn rút lại một lời đồng ý trước đó với bạn bè không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(581, 97, 'takeaway', '{\"items\": [\"Bạn luôn có quyền thay đổi quyết định. Sự đồng thuận thực sự cần được hỏi lại mỗi lần.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(582, 98, 'hook', '{\"title\": \"Bạn đã bao giờ nghe nói về việc gửi tin nhắn nhạy cảm hoặc ảnh riêng tư (sexting) chưa?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(583, 98, 'explanation', '{\"bullets\": [\"Sexting là việc gửi hoặc nhận những tin nhắn, hình ảnh hoặc video có nội dung nhạy cảm, gợi dục hoặc khỏa thân qua mạng.\", \"Đối với lứa tuổi học sinh (dưới 18 tuổi), việc tạo ra, lưu trữ hoặc chia sẻ ảnh nhạy cảm của bản thân hoặc người khác là vi phạm pháp luật nghiêm trọng.\", \"Một khi bức ảnh nhạy cảm đã rời khỏi điện thoại của bạn, bạn hoàn toàn mất quyền kiểm soát nó.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(584, 98, 'scenario', '{\"title\": \"Lời hứa xem xong xóa\", \"body\": \"Một người bạn cùng khóa gửi cho Vy một tin nhắn rủ rê chụp ảnh phần cơ thể nhạy cảm gửi qua Zalo và hứa sẽ xóa đi ngay sau khi xem xong.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(585, 98, 'flashcard', '{\"front\": \"Lời hứa xem xong sẽ xóa ngay trên ứng dụng chat có thực sự đáng tin cậy không?\", \"back\": \"Tuyệt đối KHÔNG. Đối phương hoàn toàn có thể dùng một điện thoại khác để chụp lại màn hình, hoặc ảnh được lưu tự động vào bộ nhớ đám mây.\", \"notes\": \"Đừng bao giờ mạo hiểm chụp và gửi những bức ảnh nhạy cảm của bản thân lên mạng.\"}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(586, 98, 'reflection', '{\"question\": \"Bạn có biết rằng ở lứa tuổi học sinh, việc gửi ảnh nhạy cảm có thể dẫn đến những rắc rối pháp lý rất lớn không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(587, 98, 'takeaway', '{\"items\": [\"Một khi ảnh nhạy cảm đã gửi đi, bạn không thể thu hồi nó khỏi thế giới Internet được nữa.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(588, 99, 'hook', '{\"title\": \"Làm sao để nhận diện và từ chối khi bị người yêu hoặc crush ép gửi ảnh nhạy cảm để chứng minh tình yêu?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(589, 99, 'explanation', '{\"bullets\": [\"Kẻ ép buộc thường dùng các chiêu bài tình cảm: Nếu yêu tớ thì cậu phải gửi chứ, Tớ gửi cho cậu rồi, cậu phải gửi lại cho công bằng.\", \"Tình yêu thực sự không cần những bức ảnh khỏa thân để chứng minh lòng thủy chung.\", \"Từ chối gửi ảnh nhạy cảm chính là biểu hiện của việc biết bảo vệ bản thân và tôn trọng ranh giới cơ thể.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(590, 99, 'scenario', '{\"title\": \"Đòi ảnh để làm hòa\", \"body\": \"Bạn trai của Lan liên tục giận dỗi và dọa chia tay nếu Lan không chịu chụp ảnh mặc đồ bơi gợi cảm gửi qua tin nhắn Messenger cho anh ta xem.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(591, 99, 'interaction', '{\"question\": \"Lan nên phản ứng thế nào để bảo vệ bản thân?\", \"choices\": [{\"text\": \"Kiên quyết từ chối: Tớ không thoải mái với việc chụp ảnh này đâu. Nếu cậu thực sự yêu tớ thì cậu sẽ không bắt tớ làm điều tớ thấy sợ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Chấp nhận chụp gửi một tấm mờ mờ để bạn trai không giận nữa.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(592, 99, 'reflection', '{\"question\": \"Bạn đã từng nghe về trường hợp ai đó bị người yêu cũ phát tán ảnh riêng tư lên mạng sau khi chia tay chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(593, 99, 'takeaway', '{\"items\": [\"Người thực sự yêu bạn sẽ bảo vệ sự an toàn của bạn, chứ không bao giờ đặt bạn vào rủi ro lộ ảnh nhạy cảm.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(594, 100, 'hook', '{\"title\": \"Tại sao nhiều bạn trẻ lại cảm thấy hối hận, lo âu tột độ ngay sau khi nhấn nút gửi đi một bức ảnh nhạy cảm?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(595, 100, 'explanation', '{\"bullets\": [\"Cảm giác phấn khích nhất thời nhanh chóng bị thay thế bởi sự lo sợ lộ ảnh, sợ bị đánh giá, tống tiền hoặc bị phát tán lên các hội nhóm.\", \"Sự lo lắng nơm nớp này có thể gây căng thẳng kéo dài, ảnh hưởng nghiêm trọng đến việc học tập và tâm lý.\", \"Bảo vệ ranh giới cơ thể trực tuyến giúp bạn giữ được sự bình yên trong tâm trí.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(596, 100, 'scenario', '{\"title\": \"Nỗi lo vô hình\", \"body\": \"Huy lỡ gửi ảnh cởi trần nhạy cảm cho bạn gái mới quen qua mạng. Sau đó, Huy không thể tập trung học bài vì lúc nào cũng sợ bạn gái mang đi khoe với người khác.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(597, 100, 'sorting', '{\"instruction\": \"Phân loại các hành vi tự bảo vệ bản thân trước nguy cơ lộ ảnh riêng tư:\", \"leftBox\": {\"title\": \"Bảo vệ an toàn\"}, \"rightBox\": {\"title\": \"Đặt mình vào rủi ro\"}, \"items\": [{\"text\": \"Tuyệt đối không chụp ảnh nhạy cảm lộ rõ khuôn mặt hoặc hình xăm đặc trưng\", \"correctBox\": \"left\"}, {\"text\": \"Lưu trữ ảnh nhạy cảm trong album điện thoại không cài mật khẩu khóa riêng\", \"correctBox\": \"right\"}, {\"text\": \"Kiên quyết từ chối mọi lời gạ gẫm gửi ảnh nhạy cảm từ người lạ trên mạng\", \"correctBox\": \"left\"}, {\"text\": \"Gửi ảnh nhạy cảm qua ứng dụng chat và nghĩ rằng tính năng tự xóa là an toàn\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(598, 100, 'reflection', '{\"question\": \"Bạn có cảm thấy sự bình yên trong tâm trí quan trọng hơn việc làm vừa lòng một ai đó trên mạng xã hội không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(599, 100, 'takeaway', '{\"items\": [\"Sự an toàn và bình yên tinh thần của bạn là vô giá. Đừng đánh đổi nó lấy sự hài lòng nhất thời của người khác.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(600, 101, 'hook', '{\"title\": \"Liệu gửi ảnh nhạy cảm có phải là cách để thể hiện sự gắn kết và tin tưởng tuyệt đối vào người yêu của mình?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(601, 101, 'explanation', '{\"bullets\": [\"Lòng tin được xây dựng qua sự quan tâm, chia sẻ và tôn trọng ranh giới ngoài đời thực, không phụ thuộc vào những bức ảnh nhạy cảm.\", \"Người yêu của bạn dù tốt đến đâu cũng không thể kiểm soát được việc điện thoại của họ bị hack, bị mất, hoặc bị người khác tò mò đọc trộm.\", \"Giữ lại sự riêng tư cho bản thân không phải là thiếu tin tưởng đối phương, đó là hành vi tự chịu trách nhiệm thông minh.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(602, 101, 'scenario', '{\"title\": \"Lời thề thốt\", \"body\": \"Quân hứa với Mai: Tớ thề là chỉ giữ ảnh này cho riêng tớ xem thôi, tớ mà chia sẻ cho ai thì tớ làm con cún. Mai rất yêu Quân nhưng vẫn cảm thấy lo sợ.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(603, 101, 'flashcard', '{\"front\": \"Mai nên làm gì trước lời thề thốt chân thành của Quân?\", \"back\": \"Mai nên giữ vững lập trường từ chối: Tớ tin cậu, nhưng tớ không tin chiếc điện thoại hay các hacker trên mạng đâu. Tụi mình yêu nhau đâu cần phải qua những bức ảnh này.\", \"notes\": \"Đừng bao giờ gửi ảnh nhạy cảm chỉ vì bị thuyết phục bởi những lời thề thốt.\"}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(604, 101, 'reflection', '{\"question\": \"Bạn có đồng ý rằng việc giữ an toàn cho bản thân chính là cách tốt nhất để bảo vệ tương lai của chính mình không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(605, 101, 'takeaway', '{\"items\": [\"Hãy tin tưởng nhau bằng hành động tử tế, đừng tin tưởng bằng cách trao đi những thông tin nhạy cảm có thể hủy hoại bạn.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(606, 102, 'hook', '{\"title\": \"Nếu không may hình ảnh riêng tư của bạn bị phát tán trái phép lên mạng, bạn cần làm gì ngay lập tức?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(607, 102, 'explanation', '{\"bullets\": [\"Đầu tiên: Không tự trách bản thân. Bạn là nạn nhân của hành vi phát tán trái phép, lỗi hoàn toàn thuộc về kẻ phát tán.\", \"Thứ hai: Chụp màn hình bằng chứng và báo cáo (report) bài đăng lên nền tảng mạng xã hội để yêu cầu gỡ bỏ.\", \"Thứ ba: Chia sẻ câu chuyện với người lớn đáng tin cậy (bố mẹ, thầy cô) hoặc liên hệ Tổng đài bảo vệ trẻ em 111 để nhận trợ giúp.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(608, 102, 'scenario', '{\"title\": \"Ảnh chế trong nhóm kín\", \"body\": \"Linh phát hiện bức ảnh mặc đồ bó sát nhạy cảm mình từng gửi cho người yêu cũ bị đăng lên một hội nhóm bêu rếu trên Facebook của trường. Linh vô cùng hoảng loạn.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(609, 102, 'interaction', '{\"question\": \"Linh nên làm gì đầu tiên trong tình huống này?\", \"choices\": [{\"text\": \"Chụp lại màn hình bài viết để làm bằng chứng, báo cáo bài đăng và tâm sự ngay với mẹ hoặc giáo viên chủ nhiệm.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Nhắn tin cầu xin người yêu cũ gỡ bài và khóa tài khoản mạng xã hội để trốn tránh.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(610, 102, 'reflection', '{\"question\": \"Bạn có biết số điện thoại của Tổng đài bảo vệ trẻ em 111 tại Việt Nam không? Nó hoàn toàn miễn phí và bảo mật thông tin.\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(611, 102, 'takeaway', '{\"items\": [\"Bạn không hề cô độc khi gặp sự cố trên mạng. Luôn có những người lớn đáng tin cậy sẵn sàng che chở và bảo vệ bạn.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(612, 103, 'hook', '{\"title\": \"Ai mới là người có tiếng nói duy nhất và tối cao đối với hình ảnh và cơ thể của bạn trên không gian số?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(613, 103, 'explanation', '{\"bullets\": [\"Bạn có toàn quyền quyết định về hình ảnh cơ thể mình trên mạng.\", \"Không ai được phép chụp ảnh bạn khi chưa được sự đồng ý, và không ai được phép ép bạn phơi bày cơ thể qua camera.\", \"Tôn trọng cơ thể của chính mình và tôn trọng cơ thể của người khác chính là nền tảng của một công dân số văn minh.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(614, 103, 'scenario', '{\"title\": \"Bị ép mở camera\", \"body\": \"Dũng gọi video cho bạn gái và liên tục ép cô ấy phải kéo áo xuống cho Dũng xem vai trần, mặc dù cô ấy đã từ chối và nói rằng thấy rất ngại.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(615, 103, 'sorting', '{\"instruction\": \"Phân loại các hành vi ứng xử tôn trọng quyền cơ thể sau:\", \"leftBox\": {\"title\": \"Tôn trọng quyền cơ thể\"}, \"rightBox\": {\"title\": \"Xâm phạm quyền cơ thể\"}, \"items\": [{\"text\": \"Từ chối chụp ảnh cơ thể mình dù bị người khác năn nỉ, chèo kéo\", \"correctBox\": \"left\"}, {\"text\": \"Lén lút chụp ảnh bạn bè đang thay đồ thể dục để trêu đùa trong nhóm\", \"correctBox\": \"right\"}, {\"text\": \"Báo cáo tài khoản đăng ảnh chế giễu ngoại hình của một bạn học sinh khác\", \"correctBox\": \"left\"}, {\"text\": \"Bắt người yêu phải bật camera khi đang tắm để chứng tỏ không giấu giếm\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(616, 103, 'reflection', '{\"question\": \"Bạn có luôn cảm thấy tự tin bảo vệ ranh giới cơ thể mình trước những lời đề nghị thô lỗ trên mạng không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(617, 103, 'takeaway', '{\"items\": [\"Cơ thể bạn là của bạn. Quyền quyết định chia sẻ hình ảnh hay không hoàn toàn thuộc về bạn, không ngoại lệ cho bất kỳ ai.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(618, 104, 'hook', '{\"title\": \"Làm sao nhận ra một mối quan hệ qua mạng đang chuyển từ ngọt ngào đáng yêu sang kiểm soát độc hại?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(619, 104, 'explanation', '{\"bullets\": [\"Cờ đỏ (Red Flag) trên mạng là những dấu hiệu cảnh báo mối quan hệ thiếu lành mạnh: ghen tuông vô cớ, đòi kiểm tra vị trí liên tục, bắt xóa bạn bè khác giới.\", \"Những hành vi này ban đầu thường được ngụy trang dưới danh nghĩa yêu quá nên mới thế.\", \"Nhận biết cờ đỏ giúp bạn tránh xa những mối quan hệ thao túng trước khi quá muộn.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(620, 104, 'scenario', '{\"title\": \"Yêu cầu xóa bạn game\", \"body\": \"Vy quen một bạn nam qua game online. Bạn này rất chiều Vy, thường tặng quà ingame, nhưng bắt Vy phải chụp ảnh màn hình danh sách bạn bè trong game và xóa hết các bạn nam khác đi.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(621, 104, 'flashcard', '{\"front\": \"Yêu cầu kiểm tra vị trí hoặc bắt xóa bạn bè khác giới trên mạng có phải là biểu hiện của tình yêu chân thành không?\", \"back\": \"Tuyệt đối KHÔNG. Đó là hành vi kiểm soát và thiếu tôn trọng không gian riêng tư của đối phương, một cờ đỏ cảnh báo mối quan hệ độc hại.\", \"notes\": \"Tình yêu lành mạnh mang lại sự tự do và lòng tin, chứ không phải sự giam cầm số.\"}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(622, 104, 'reflection', '{\"question\": \"Bạn đã từng gặp ai trên mạng có những yêu cầu kiểm soát vô lý khiến bạn thấy ngột ngạt chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(623, 104, 'takeaway', '{\"items\": [\"Đừng nhầm lẫn giữa sự kiểm soát độc hại và tình yêu thương chân thành trên không gian mạng.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(624, 105, 'hook', '{\"title\": \"Người bạn 15 tuổi, siêu đẹp trai, đang học trường quốc tế nói chuyện cực hợp với bạn trên mạng liệu có thực sự tồn tại ngoài đời?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(625, 105, 'explanation', '{\"bullets\": [\"Catfishing (Giả mạo danh tính) là việc một người tạo tài khoản ảo với hình ảnh và thông tin của người khác để tiếp cận, làm quen và lừa gạt bạn.\", \"Mục đích của họ có thể là lừa tiền, lừa tình cảm, hoặc dụ dỗ bạn làm những việc nhạy cảm để tống tiền.\", \"Hãy luôn cảnh giác với những tài khoản không bao giờ chịu gọi video call trực tiếp hoặc luôn từ chối gặp mặt ngoài đời.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(626, 105, 'scenario', '{\"title\": \"Camera hỏng liên tục\", \"body\": \"Lan quen anh Duy qua Instagram, ảnh cá nhân của anh trông rất lãng tử và giàu có. Mỗi lần Lan rủ gọi video để nhìn mặt, anh Duy đều bảo camera bị hỏng.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(627, 105, 'interaction', '{\"question\": \"Lan nên làm gì để kiểm chứng thông tin của Duy?\", \"choices\": [{\"text\": \"Đề nghị dừng nói chuyện yêu đương cho đến khi có thể gọi video call nhìn rõ mặt và xác nhận danh tính thật ngoài đời.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục tin tưởng và gửi thẻ cào điện thoại giúp anh Duy vì anh bảo đang gặp khó khăn tạm thời.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(628, 105, 'reflection', '{\"question\": \"Bạn có thói quen kiểm tra kỹ trang cá nhân (ngày lập, lượng tương tác thật) của một người lạ trước khi kết bạn không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(629, 105, 'takeaway', '{\"items\": [\"Đừng trao trọn lòng tin cho một bức ảnh đại diện long lanh trên mạng xã hội khi chưa được kiểm chứng thực tế.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(630, 106, 'hook', '{\"title\": \"Tại sao kẻ thao túng trên mạng luôn tìm cách bắt bạn giữ bí mật mối quan hệ và không được kể cho bố mẹ hay bạn bè nghe?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(631, 106, 'explanation', '{\"bullets\": [\"Cô lập bạn là bước đầu tiên để kẻ thao túng dễ dàng kiểm soát tâm lý và hành vi của bạn.\", \"Khi bạn không chia sẻ với ai khác, bạn sẽ mất đi những góc nhìn khách quan và lời khuyên tỉnh táo từ những người xung quanh.\", \"Một mối quan hệ lành mạnh không bao giờ bắt bạn phải sống trong bóng tối và che giấu tất cả mọi người.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(632, 106, 'scenario', '{\"title\": \"Yêu cầu bí mật\", \"body\": \"Một người đàn ông trung niên giả danh làm tuyển trạch viên người mẫu trẻ tuổi kết bạn với Vy và dặn cô phải tuyệt đối giữ bí mật về các buổi chụp ảnh thử.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(633, 106, 'sorting', '{\"instruction\": \"Phân loại các hành vi ứng xử trước yêu cầu giữ bí mật mối quan hệ:\", \"leftBox\": {\"title\": \"Hành vi tỉnh táo\"}, \"rightBox\": {\"title\": \"Bị cô lập thao túng\"}, \"items\": [{\"text\": \"Tâm sự với bạn thân về người bạn mới quen trên mạng để nghe nhận xét\", \"correctBox\": \"left\"}, {\"text\": \"Giấu kín mọi cuộc trò chuyện với người lạ vì họ dọa nếu nói ra sẽ bị trừng phạt\", \"correctBox\": \"right\"}, {\"text\": \"Dẫn theo bạn bè đi cùng khi lần đầu tiên hẹn gặp người quen trên mạng ngoài đời\", \"correctBox\": \"left\"}, {\"text\": \"Nói dối bố mẹ đi học thêm để đến nhà riêng của một người quen qua mạng\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(634, 106, 'reflection', '{\"question\": \"Bạn có cảm thấy một mối quan hệ luôn bắt bạn phải nói dối người thân có thực sự mang lại hạnh phúc lâu dài không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21');
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES
+(635, 106, 'takeaway', '{\"items\": [\"Ánh sáng là kẻ thù của sự thao túng. Hãy chia sẻ câu chuyện của bạn với những người yêu thương bạn ngoài đời thực.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(636, 107, 'hook', '{\"title\": \"Một game thủ VIP trên mạng tặng bạn rất nhiều trang phục đẹp và đề nghị bạn gọi video call riêng tư để nói chuyện, bạn sẽ làm gì?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(637, 107, 'explanation', '{\"bullets\": [\"Không có bữa ăn nào là miễn phí, đặc biệt là từ những người lạ trên không gian mạng.\", \"Những món quà đắt tiền thường là mồi nhử để tạo ra cảm giác mắc nợ, khiến bạn thấy khó từ chối các yêu cầu nhạy cảm tiếp theo của họ.\", \"Hãy kiên quyết từ chối những món quà vô cớ từ người lạ để giữ cho mình thế chủ động và an toàn.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(638, 107, 'scenario', '{\"title\": \"Trang phục game đắt giá\", \"body\": \"Một người lạ kết bạn với Minh trong game Liên Quân và tặng Minh trang phục tướng trị giá 500k. Sau đó, người này nhắn tin yêu cầu Minh bật camera phòng riêng và cởi áo ra cho xem để cảm ơn.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(639, 107, 'flashcard', '{\"front\": \"Minh nên xử lý thế nào trước yêu cầu của người lạ sau khi đã nhận quà game?\", \"back\": \"Minh nên chặn tài khoản của người đó ngay lập tức, tuyệt đối không bật camera và kể ngay sự việc cho bố mẹ nghe.\", \"notes\": \"Đừng vì tiếc một món quà ảo mà đánh đổi sự an toàn và danh dự thực tế của bản thân.\"}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(640, 107, 'reflection', '{\"question\": \"Bạn có bao giờ cảm thấy áy náy hoặc mắc nợ khi nhận được quà từ một người bạn mới quen trên mạng chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(641, 107, 'takeaway', '{\"items\": [\"Sự an toàn của bạn quan trọng hơn bất kỳ món quà ảo hay trang phục game đắt tiền nào trên thế giới.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(642, 108, 'hook', '{\"title\": \"Làm sao để chấm dứt một mối quan hệ trực tuyến độc hại khi đối phương liên tục đe dọa sẽ hủy hoại bạn?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(643, 108, 'explanation', '{\"bullets\": [\"Kẻ thao túng thường dùng những lời đe dọa để giữ chân bạn: dọa tự tử, dọa tung ảnh riêng tư, hoặc dọa mách bố mẹ.\", \"Hãy nhớ: bạn không phải chịu trách nhiệm về hành vi tự hủy hoại của đối phương. Những lời đe dọa đó thường chỉ là chiêu trò tâm lý.\", \"Lập tức chụp bằng chứng, chặn mọi kênh liên lạc, không đôi co thêm và tìm kiếm sự hỗ trợ từ người lớn đáng tin cậy.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(644, 108, 'scenario', '{\"title\": \"Lời đe dọa tung tin nhắn\", \"body\": \"Người yêu qua mạng của Vy dọa sẽ gửi những tin nhắn tâm sự riêng tư nhạy cảm của hai người cho bố mẹ Vy xem nếu Vy đòi chia tay. Vy rất sợ hãi và cắn răng chịu đựng.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(645, 108, 'interaction', '{\"question\": \"Vy nên làm gì để thoát khỏi tình cảnh bế tắc này?\", \"choices\": [{\"text\": \"Chặn toàn bộ liên lạc với người đó, chủ động kể thật câu chuyện với bố mẹ trước để nhận sự bảo vệ và hỗ trợ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục chịu đựng và làm theo mọi yêu cầu của người đó để giữ bình yên tạm thời.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(646, 108, 'reflection', '{\"question\": \"Bạn có tin rằng việc chủ động nói thật với bố mẹ luôn tốt hơn việc để kẻ xấu dùng điều đó để khống chế bạn không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(647, 108, 'takeaway', '{\"items\": [\"Đừng để sự sợ hãi giam giữ bạn trong ngục tối số. Hãy dũng cảm cắt đứt và tìm kiếm sự che chở từ những người yêu thương bạn thực sự.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(648, 109, 'hook', '{\"title\": \"Khi trò chuyện với ai đó trên mạng mà bạn luôn cảm thấy có điều gì đó sai sai, bạn nên làm gì?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(649, 109, 'explanation', '{\"bullets\": [\"Trực giác (Gut feeling) là hệ thống cảnh báo sớm của cơ thể dựa trên những chi tiết nhỏ nhặt mà lý trí chưa kịp phân tích.\", \"Nếu bạn thấy lo sợ, bất an hoặc nghi ngờ lòng tốt của đối phương, đừng cố lờ đi cảm xúc đó để tỏ ra lịch sự.\", \"Bạn luôn có quyền dừng cuộc trò chuyện và lùi lại một bước để bảo vệ sự an toàn của mình.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(650, 109, 'scenario', '{\"title\": \"Cảm giác bất an\", \"body\": \"Hùng nói chuyện với một người tự xưng là anh họ của bạn thân trên mạng. Người này liên tục hỏi Hùng bố mẹ đi làm về lúc mấy giờ, nhà có lắp camera không. Hùng thấy gai người và thấy có gì đó bất ổn.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(651, 109, 'sorting', '{\"instruction\": \"Phân loại các hành dung ứng xử theo trực giác mách bảo sau:\", \"leftBox\": {\"title\": \"Lắng nghe trực giác\"}, \"rightBox\": {\"title\": \"Phớt lờ cảnh báo\"}, \"items\": [{\"text\": \"Ngừng chat khi thấy đối phương liên tục hỏi về địa chỉ phòng ngủ của mình\", \"correctBox\": \"left\"}, {\"text\": \"Cố gắng tiếp tục trò chuyện dù thấy nổi da gà trước những câu hỏi riêng tư của họ\", \"correctBox\": \"right\"}, {\"text\": \"Hỏi ý kiến chị gái khi thấy bạn quen trên mạng đòi gọi video call lúc nửa đêm\", \"correctBox\": \"left\"}, {\"text\": \"Bỏ qua cảm giác bồn chồn lo lắng để đồng ý gặp mặt riêng tư người lạ ở công viên vắng\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(652, 109, 'reflection', '{\"question\": \"Đã bao giờ trực giác mách bảo bạn tránh xa một người trên mạng và sau đó bạn phát hiện ra họ thực sự có vấn đề chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(653, 109, 'takeaway', '{\"items\": [\"Trực giác của bạn là người bạn đồng hành trung thực nhất. Hãy tin tưởng và lắng nghe khi nó lên tiếng cảnh báo nhé.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(654, 110, 'hook', '{\"title\": \"Bạn có nghĩ một dòng comment chê bai, chế giễu ngoại hình của người khác trên mạng chỉ là một trò đùa vô hại?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(655, 110, 'explanation', '{\"bullets\": [\"Bạo lực mạng (Cyberbullying) là hành vi cố ý, lặp đi lặp lại nhằm đe dọa, hạ nhục, cô lập hoặc gây tổn thương cho người khác qua internet.\", \"Nó bao gồm việc đăng ảnh chế giễu, bình luận thóa mạ, lập group anti, hoặc chia sẻ tin đồn thất thiệt.\", \"Bạo lực mạng có thể gây ra những tổn thương tâm lý sâu sắc ngoài đời thực cho nạn nhân.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(656, 110, 'scenario', '{\"title\": \"Group chat anti\", \"body\": \"Cả lớp lập một nhóm chat riêng không có mặt Vy, chuyên đăng những bức ảnh chụp lén Vy lúc đang ăn hoặc ngủ gật để chế ảnh meme cười cợt và bình luận xúc phạm.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(657, 110, 'flashcard', '{\"front\": \"Bạo lực mạng khác gì so với những tranh cãi thông thường giữa bạn bè?\", \"back\": \"Bạo lực mạng là hành vi cố ý hướng vào một cá nhân, lặp đi lặp lại nhiều lần, có tính chất hạ nhục, bắt nạt và tạo ra sự cô lập hoàn toàn.\", \"notes\": \"Đừng tham gia hoặc cổ xúy cho bất kỳ hành vi bắt nạt trực tuyến nào.\"}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(658, 110, 'reflection', '{\"question\": \"Bạn đã bao giờ chứng kiến một bạn học của mình trở thành mục tiêu chế giễu của tập thể trên mạng chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(659, 110, 'takeaway', '{\"items\": [\"Chữ viết trên màn hình có thể tạo ra những vết sẹo thật trong tim. Hãy suy nghĩ trước khi gõ phím.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(660, 111, 'hook', '{\"title\": \"Làm sao để phân biệt giữa một lời trêu đùa thân thiện giữa những người bạn và hành vi bắt nạt trực tuyến độc hại?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(661, 111, 'explanation', '{\"bullets\": [\"Trêu đùa lành mạnh là khi cả hai bên đều thấy vui vẻ, thoải mái và có thể dừng lại ngay khi một bên cảm thấy khó chịu.\", \"Bắt nạt là khi một bên liên tục cảm thấy xấu hổ, sợ hãi nhưng bên kia vẫn tiếp tục tấn công bất chấp sự phản đối.\", \"Quy tắc đơn giản: Nếu người bị trêu không cười, đó không phải là trò đùa!\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(662, 111, 'scenario', '{\"title\": \"Đùa quá trớn\", \"body\": \"Nam vẽ một bức ảnh hoạt hình hài hước trêu gu thời trang của Bình. Lần sau, Nam đăng ảnh chế Bình bị ngã xe kèm những lời lẽ chế giễu, Bình nhắn tin xin gỡ nhưng Nam bảo: Đùa tí làm gì căng thế?\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(663, 111, 'interaction', '{\"question\": \"Hành vi lần thứ hai của Nam là gì?\", \"choices\": [{\"text\": \"Bắt đầu chuyển thành hành vi bắt nạt trực tuyến vì phớt lờ lời yêu cầu dừng lại của bạn và gây tổn thương cho bạn.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Vẫn là trêu đùa vui vẻ bình thường, Bình quá nhạy cảm và thiếu khiếu hài hước thôi.\", \"correct\": false, \"emoji\": \"🚩\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(664, 111, 'reflection', '{\"question\": \"Bạn có bao giờ cảm thấy bị tổn thương bởi một trò đùa của bạn bè trên mạng nhưng vẫn phải giả vờ cười để không bị coi là kẻ phá đám chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(665, 111, 'takeaway', '{\"items\": [\"Sự thoải mái của người nghe mới là thước đo quyết định đó có phải là trò đùa vui vẻ hay không.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(666, 112, 'hook', '{\"title\": \"Bạn có bao giờ tự hỏi cảm giác của một người khi mở điện thoại ra và thấy hàng trăm bình luận chửi bới hướng vào mình sẽ như thế nào?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(667, 112, 'explanation', '{\"bullets\": [\"Nạn nhân của bạo lực mạng thường trải qua cảm giác cô đơn tột cùng, bất an, sợ hãi không dám đến trường và tự trách bản thân.\", \"Sự công kích dồn dập khiến họ có cảm giác cả thế giới đang quay lưng lại với mình.\", \"Thấu hiểu và đồng cảm giúp chúng ta có trách nhiệm hơn với từng lượt tương tác của mình trên mạng.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(668, 112, 'scenario', '{\"title\": \"Áp lực dồn dập\", \"body\": \"Trang mở Facebook lên và thấy hàng chục bình luận chế giễu ngoại hình cô ấy dưới bài đăng của một trang confession trường. Trang khóc nức nở và khóa phòng kín mít.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(669, 112, 'sorting', '{\"instruction\": \"Phân loại các cách ứng xử thể hiện sự đồng cảm với nạn nhân bạo lực mạng:\", \"leftBox\": {\"title\": \"Đồng cảm ấm áp\"}, \"rightBox\": {\"title\": \"Thờ ơ độc hại\"}, \"items\": [{\"text\": \"Nhắn tin riêng hỏi thăm và động viên: Tớ luôn bên cậu, cậu không cô đơn đâu\", \"correctBox\": \"left\"}, {\"text\": \"Hùa vào bình luận thả icon cười cợt dưới bài viết dìm hàng để tỏ ra hợp thời\", \"correctBox\": \"right\"}, {\"text\": \"Báo cáo bài viết xúc phạm và đề nghị mọi người không chia sẻ thêm\", \"correctBox\": \"left\"}, {\"text\": \"Nghĩ bụng: Chắc bạn đó phải làm gì sai thì mới bị mọi người ghét như vậy chứ\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(670, 112, 'reflection', '{\"question\": \"Nếu một ngày bạn bị cả nhóm bạn quay lưng nói xấu trên mạng, bạn mong muốn nhận được sự hỗ trợ như thế nào từ những người xung quanh?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(671, 112, 'takeaway', '{\"items\": [\"Một lời hỏi thăm riêng tư, ấm áp của bạn có thể cứu rỗi cả một tâm hồn đang tuyệt vọng vì bạo lực mạng.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(672, 113, 'hook', '{\"title\": \"Khi chứng kiến một người khác bị bắt nạt trên mạng, việc bạn im lặng đứng nhìn có thực sự giúp bạn vô can?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(673, 113, 'explanation', '{\"bullets\": [\"Kẻ đứng xem (Bystander) là người nhìn thấy hành vi bắt nạt nhưng lựa chọn im lặng, phớt lờ hoặc chia sẻ bài viết để xem trò vui.\", \"Sự im lặng của đám đông vô tình tạo ra sự cổ vũ ngầm, khiến kẻ bắt nạt càng đắc ý và nạn nhân càng cô độc.\", \"Bạn không cần phải nhảy vào tranh cãi tay đôi, nhưng bạn có thể hành động thông minh để bảo vệ nạn nhân.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(674, 113, 'scenario', '{\"title\": \"Đám đông im lặng\", \"body\": \"Trong nhóm chat lớp, một bạn nam đăng ảnh chế giễu cân nặng của bạn Vy. Cả nhóm im lặng không ai nói gì, một vài bạn thả icon cười cợt. Vy nhìn thấy và thấy vô cùng xấu hổ.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(675, 113, 'flashcard', '{\"front\": \"Bạn nên làm gì để không trở thành một kẻ đứng xem vô cảm trong tình huống trên?\", \"back\": \"Bạn có thể nhắn tin riêng động viên Vy, đồng thời báo cáo tin nhắn xấu đó cho lớp trưởng hoặc giáo viên chủ nhiệm biết để can thiệp kịp thời.\", \"notes\": \"Đừng làm khán giả cho những hành vi bắt nạt trực tuyến.\"}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(676, 113, 'reflection', '{\"question\": \"Bạn đã từng im lặng đứng nhìn một hành vi bất công trên mạng vì sợ bị liên lụy chưa? Bạn cảm thấy thế nào sau đó?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(677, 113, 'takeaway', '{\"items\": [\"Im lặng trước cái xấu chính là tiếp tay cho nó lan tỏa. Hãy dũng cảm hành động vì sự công bằng.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(678, 114, 'hook', '{\"title\": \"Làm thế nào để nâng cấp bản thân từ một kẻ đứng xem vô cảm thành một người bảo vệ dũng cảm (Upstander) trên mạng?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(679, 114, 'explanation', '{\"bullets\": [\"Người bảo vệ (Upstander) là người chủ động hành động để ngăn chặn hành vi bắt nạt và hỗ trợ nạn nhân.\", \"Các bước hành động: Báo cáo (Report) bài viết vi phạm, Bày tỏ sự ủng hộ (Support) trực tiếp với nạn nhân, và Báo cáo cho người lớn (Refer) đáng tin cậy.\", \"Một hành động nhỏ của người bảo vệ có thể xoay chuyển hoàn toàn tình thế và mang lại hy vọng.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(680, 114, 'scenario', '{\"title\": \"Lên tiếng đúng lúc\", \"body\": \"Thấy Vy bị chế giễu cân nặng trong nhóm chat, Duy quyết định không im lặng nữa mà nhắn tin yêu cầu mọi người dừng lại.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(681, 114, 'interaction', '{\"question\": \"Duy nên viết tin nhắn như thế nào trong nhóm chat lớp để thể hiện vai trò Upstander một cách văn minh?\", \"choices\": [{\"text\": \"Tớ thấy trò đùa chế ảnh này không vui chút nào đâu các bạn ơi. Tụi mình dừng lại và xóa ảnh đi nhé.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Mấy đứa vô duyên kia im miệng lại hết đi, có giỏi thì ra ngoài đời thật nói chuyện xem nào!\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(682, 114, 'reflection', '{\"question\": \"Bạn có sẵn sàng lên tiếng bảo vệ một bạn học bị bắt nạt trên mạng nếu bạn có sự đồng hành của những người bạn khác không?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(683, 114, 'takeaway', '{\"items\": [\"Người bảo vệ dũng cảm không dùng bạo lực để giải quyết bạo lực, họ dùng sự kiên định và tử tế để đẩy lùi bóng tối.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(684, 115, 'hook', '{\"title\": \"Làm sao để mỗi ngày mở mạng xã hội ra, bạn đều nhận lại những nụ cười ấm áp thay vì những cuộc cãi vã mệt mỏi?\"}', 1, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(685, 115, 'explanation', '{\"bullets\": [\"Văn hóa mạng được tạo nên từ hành vi của từng cá nhân sử dụng nó.\", \"Hãy lan tỏa năng lượng tích cực bằng cách: viết những lời khen ngợi chân thành, chia sẻ những câu chuyện tử tế, và hỗ trợ bạn bè.\", \"Gieo hạt mầm tử tế trên thế giới số hôm nay, bạn sẽ gặt hái được một không gian sống chung an toàn và hạnh phúc ngày mai.\"]}', 2, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(686, 115, 'scenario', '{\"title\": \"Hạt mầm tử tế\", \"body\": \"Hồng thấy bạn cùng bàn đăng ảnh khoe bức vẽ tự tay làm quà sinh nhật cho mẹ bị một vài người chê là vẽ xấu. Hồng liền vào bình luận thả tim khen ngợi nỗ lực và ý nghĩa bức vẽ.\"}', 3, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(687, 115, 'sorting', '{\"instruction\": \"Phân loại các hành dung góp phần xây dựng văn hóa số văn minh sau:\", \"leftBox\": {\"title\": \"Gieo hạt mầm tử tế\"}, \"rightBox\": {\"title\": \"Gieo mầm độc hại\"}, \"items\": [{\"text\": \"Thả tim và chúc mừng bài viết khoe thành tích học tập của bạn cùng lớp\", \"correctBox\": \"left\"}, {\"text\": \"Bình luận móc mỉa ngoại hình của một ca sĩ nổi tiếng dưới bài báo\", \"correctBox\": \"right\"}, {\"text\": \"Chia sẻ bài viết kêu gọi quyên góp giúp đỡ hoàn cảnh khó khăn thật sự\", \"correctBox\": \"left\"}, {\"text\": \"Spam các meme tục tĩu, phản cảm vào phần bình luận của người khác\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(688, 115, 'reflection', '{\"question\": \"Ngày hôm nay, bạn đã làm được việc tốt hay gửi đi thông điệp tử tế nào trên không gian mạng chưa?\"}', 5, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(689, 115, 'takeaway', '{\"items\": [\"Một thế giới mạng văn minh, tử tế bắt đầu từ chính hành động nhỏ bé của bạn ngày hôm nay.\"]}', 6, '2026-06-05 12:18:21', '2026-06-05 12:18:21'),
+(690, 118, 'hook', '{\"title\": \"Có bao giờ bạn thức dậy và cảm thấy cơ thể hay cảm xúc của mình có chút \'lạ lẫm\' hơn hôm qua không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(691, 118, 'explanation', '{\"bullets\": [\"Dậy thì (Puberty) là giai đoạn chuyển tiếp tự nhiên từ một đứa trẻ thành một người trưởng thành về mặt sinh học.\", \"Não bộ sẽ phát tín hiệu giải phóng các hormone (kẻ kích hoạt âm thầm) để khởi động hàng loạt thay đổi về thể chất lẫn cảm xúc.\", \"Đây là hành trình bắt buộc và hoàn toàn tự nhiên mà ai trong chúng ta cũng phải đi qua.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(692, 118, 'scenario', '{\"title\": \"Giọng nói lạ lẫm\", \"body\": \"Nam dạo này thấy mình cao vọt lên, giọng nói bỗng dưng ồm ồm như người lớn khiến cậu rất ngại ngùng mỗi khi phát biểu bài trước lớp.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(693, 118, 'flashcard', '{\"front\": \"Dậy thì có phải là một \'căn bệnh\' hay điều gì bất thường không?\", \"back\": \"Tuyệt đối KHÔNG. Đó là một quá trình sinh học kỳ diệu để chuẩn bị cho cơ thể bạn trưởng thành.\", \"notes\": \"Hãy xem nó như một bản cập nhật phần mềm (software update) cực kỳ quan trọng của cơ thể.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(694, 118, 'reflection', '{\"question\": \"Bạn bắt đầu nhận thấy sự thay đổi nào đầu tiên trên cơ thể mình gần đây chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(695, 118, 'takeaway', '{\"items\": [\"Dậy thì chỉ là cách cơ thể thông báo: \'Bạn đang lớn lên đấy thôi!\'.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(696, 119, 'hook', '{\"title\": \"Có phải tất cả mọi người đều dậy thì vào cùng một độ tuổi không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(697, 119, 'explanation', '{\"bullets\": [\"Độ tuổi dậy thì phổ biến là từ 8 đến 14 tuổi, nhưng mỗi người có một chiếc đồng hồ sinh học riêng.\", \"Có bạn dậy thì rất sớm, có bạn lại dậy thì muộn hơn. Cả hai điều này đều hoàn toàn bình thường!\", \"Đừng lo lắng nếu bạn thấy mình \'lớn\' nhanh hơn hoặc chậm hơn các bạn cùng lớp.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(698, 119, 'scenario', '{\"title\": \"So sánh vóc dáng\", \"body\": \"Vy thấy các bạn nữ trong lớp đều đã bắt đầu cao lên và thay đổi vóc dáng, riêng mình vẫn nhỏ bé như học sinh tiểu học khiến Vy cảm thấy rất sốt ruột.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(699, 119, 'interaction', '{\"question\": \"Vy có nên quá lo lắng vì mình chưa dậy thì giống các bạn không?\", \"choices\": [{\"text\": \"Không nên lo lắng. Chiếc đồng hồ dậy thì của mỗi người là khác nhau và Vy rồi cũng sẽ dậy thì theo nhịp độ của riêng mình.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Có chứ, nên đi mua các loại thuốc tăng trưởng uống ngay để bắt kịp các bạn.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(700, 119, 'reflection', '{\"question\": \"Bạn có từng cảm thấy tự ti khi so sánh tốc độ lớn của mình với một người bạn thân chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(701, 119, 'takeaway', '{\"items\": [\"Mỗi cơ thể có một lịch trình riêng. Hãy kiên nhẫn và yêu thương nhịp điệu của chính mình.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(702, 120, 'hook', '{\"title\": \"Tại sao dậy thì lại đi kèm với những lo lắng và bỡ ngỡ khó tả thành lời?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(703, 120, 'explanation', '{\"bullets\": [\"Cơ thể thay đổi quá nhanh khiến não bộ chưa kịp thích nghi, dẫn đến cảm giác bất an hoặc lạ lẫm với chính mình.\", \"Bạn có thể thấy ngại ngùng với những bộ quần áo cũ không còn vừa, hoặc lo sợ người khác soi xét ngoại hình của mình.\", \"Chấp nhận rằng cảm giác \'bất ổn\' này là bình thường giúp bạn nhẹ lòng hơn rất nhiều.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(704, 120, 'scenario', '{\"title\": \"Quần áo chật chội\", \"body\": \"Mai cảm thấy bực bội khi chiếc quần jeans yêu thích bỗng chật ních ở hông, và cô bạn bắt đầu ghét việc phải mặc đồ ôm sát người.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(705, 120, 'sorting', '{\"instruction\": \"Phân loại các phản ứng trước những thay đổi đầu đời:\", \"leftBox\": {\"title\": \"Đón nhận tích cực\"}, \"rightBox\": {\"title\": \"Lo âu quá mức\"}, \"items\": [{\"text\": \"Tự nhủ: Cơ thể mình đang lớn lên và việc thay đổi này là hoàn toàn tự nhiên\", \"correctBox\": \"left\"}, {\"text\": \"Trốn tránh không dám đi chơi với bạn bè vì sợ họ nhận ra mình cao lên\", \"correctBox\": \"right\"}, {\"text\": \"Mua quần áo mới thoải mái hơn để phù hợp với vóc dáng hiện tại\", \"correctBox\": \"left\"}, {\"text\": \"Liên tục soi gương và tự trách móc bản thân vì cơ thể không giống ngày xưa\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(706, 120, 'reflection', '{\"question\": \"Cảm xúc nào khiến bạn thấy khó khăn nhất khi nghĩ về sự trưởng thành của bản thân?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(707, 120, 'takeaway', '{\"items\": [\"Bỡ ngỡ là một phần của sự trưởng thành. Bạn đang làm rất tốt hành trình này!\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(708, 121, 'hook', '{\"title\": \"Bạn sẽ làm gì khi bạn bè xung quanh bắt đầu đem những thay đổi cơ thể của bạn ra làm trò đùa?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(709, 121, 'explanation', '{\"bullets\": [\"Ở tuổi dậy thì, bạn bè thường tò mò và đôi khi có những lời trêu chọc thiếu tinh tế về giọng nói, chiều cao hay ngực.\", \"Những lời đùa đó có thể làm bạn tổn thương, nhưng hãy nhớ: lỗi không nằm ở cơ thể bạn.\", \"Học cách thiết lập ranh giới và phản hồi kiên định trước những lời trêu chọc vô duyên.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(710, 121, 'scenario', '{\"title\": \"Giờ ra chơi ồn ào\", \"body\": \"Trong giờ ra chơi, một nhóm bạn nam cười phá lên trêu giọng nói đang vỡ bị ồm và rè của Tuấn, khiến Tuấn đỏ mặt cúi gục xuống bàn.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(711, 121, 'flashcard', '{\"front\": \"Tuấn nên ứng phó thế nào để bảo vệ lòng tự trọng của mình một cách văn minh?\", \"back\": \"Tuấn có thể nhìn thẳng vào họ và nói bình thản: Giọng tớ đang thay đổi vì tớ đang dậy thì thôi, có gì lạ đâu cậu?.\", \"notes\": \"Sự tự tin và bình thản của bạn chính là câu trả lời mạnh mẽ nhất làm tắt đài những lời trêu chọc.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(712, 121, 'reflection', '{\"question\": \"Bạn đã từng chứng kiến hay trải qua việc bị trêu chọc về ngoại hình ở trường chưa? Cảm xúc lúc đó thế nào?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(713, 121, 'takeaway', '{\"items\": [\"Cơ thể bạn đang làm việc chăm chỉ để lớn lên. Không ai có quyền chế giễu nỗ lực đó của bạn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(714, 122, 'hook', '{\"title\": \"Bạn có thấy khó khăn khi muốn mở lời tâm sự những chuyện thầm kín tuổi dậy thì với bố mẹ không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(715, 122, 'explanation', '{\"bullets\": [\"Nhiều bạn trẻ thấy xấu hổ khi nói về mụn, mùi cơ thể, hay kinh nguyệt với người lớn.\", \"Tuy nhiên, bố mẹ hay thầy cô đều đã từng đi qua giai đoạn này và họ có rất nhiều kinh nghiệm thực tế.\", \"Chọn một thời điểm thoải mái và một người lớn bạn tin tưởng nhất để bắt đầu cuộc trò chuyện.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(716, 122, 'scenario', '{\"title\": \"Yêu cầu khó mở lời\", \"body\": \"Linh bắt đầu nhận thấy ngực mình hơi đau và nhú lên, Linh muốn xin mẹ mua cho chiếc áo lót đầu tiên nhưng ngại ngùng không biết nói sao.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(717, 122, 'interaction', '{\"question\": \"Linh nên mở lời với mẹ thế nào cho tự nhiên và đỡ ngại?\", \"choices\": [{\"text\": \"Nhắn tin riêng cho mẹ hoặc nói nhỏ: Mẹ ơi, cơ thể con dạo này đang thay đổi chút ít, cuối tuần mẹ đi mua đồ lót mới với con nha mẹ?\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Im lặng tự chịu đựng đau đớn và tự lấy tiền tiết kiệm mua đại đồ lót không vừa cỡ trên mạng.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(718, 122, 'reflection', '{\"question\": \"Ai là người lớn mà bạn cảm thấy thoải mái và tin tưởng nhất để hỏi về những thay đổi cơ thể?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(719, 122, 'takeaway', '{\"items\": [\"Bạn không cần phải tự mình gánh vác mọi thắc mắc. Hãy chia sẻ để nhận được sự nâng đỡ.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(720, 123, 'hook', '{\"title\": \"Bạn có sẵn sàng đón nhận phiên bản mới của chính mình với đầy niềm vui và sự tự tin không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(721, 123, 'explanation', '{\"bullets\": [\"Dậy thì là dấu mốc đánh dấu bạn đang bước vào một chương mới thú vị của cuộc đời.\", \"Phiên bản mới này đi kèm với nhiều quyền tự chủ hơn, nhiều khả năng mới và chiều sâu cảm xúc hơn.\", \"Hãy chào đón những thay đổi này với sự tò mò lành mạnh thay vì sợ hãi.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(722, 123, 'scenario', '{\"title\": \"Độc lập hơn\", \"body\": \"Khánh dạo này tự dọn phòng, biết tự chọn trang phục phù hợp đi chơi và bắt đầu biết quan tâm chăm sóc sức khỏe cá nhân kỹ hơn.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(723, 123, 'sorting', '{\"instruction\": \"Phân loại các suy nghĩ về hành trình dậy thì của bạn:\", \"leftBox\": {\"title\": \"Chào đón phiên bản mới\"}, \"rightBox\": {\"title\": \"Khước từ lớn lên\"}, \"items\": [{\"text\": \"Tò mò tìm hiểu kiến thức y khoa để chăm sóc bản thân tốt hơn\", \"correctBox\": \"left\"}, {\"text\": \"Luôn ước mình mãi là đứa trẻ tiểu học để không phải thay đổi\", \"correctBox\": \"right\"}, {\"text\": \"Tự hào vì mình đang cao lớn và trưởng thành hơn mỗi ngày\", \"correctBox\": \"left\"}, {\"text\": \"Ghét bỏ cơ thể vì nó bắt đầu có mùi hoặc mọc mụn\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(724, 123, 'reflection', '{\"question\": \"Bạn mong chờ điều gì nhất ở phiên bản trưởng thành của mình trong tương lai?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(725, 123, 'takeaway', '{\"items\": [\"Chào mừng bạn đến với hành trình lớn lên. Hãy tự hào về phiên bản nâng cấp của chính mình!\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(726, 124, 'hook', '{\"title\": \"Tại sao dạo này sau mỗi tiết thể dục, bạn lại ngửi thấy mùi cơ thể mình đậm hơn trước rất nhiều?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(727, 124, 'explanation', '{\"bullets\": [\"Dưới tác động của hormone, các tuyến mồ hôi đặc biệt ở nách và vùng kín bắt đầu hoạt động mạnh mẽ.\", \"Bản thân mồ hôi không có mùi, nhưng vi khuẩn trên da phân hủy mồ hôi sẽ tạo nên mùi cơ thể đặc trưng.\", \"Đây là hiện tượng sinh lý hoàn toàn bình thường, chỉ cần bạn học cách vệ sinh sạch sẽ mỗi ngày.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(728, 124, 'scenario', '{\"title\": \"Ướt đẫm nách áo\", \"body\": \"Huy nhận thấy nách áo của mình dạo này hay bị ướt và có mùi hôi sau khi đá bóng, khiến Huy rất tự ti không dám ngồi gần các bạn trong lớp.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(729, 124, 'flashcard', '{\"front\": \"Làm sao để kiểm soát mùi cơ thể tuổi dậy thì hiệu quả?\", \"back\": \"Tắm rửa xà phòng hàng ngày, thay quần áo sạch (đặc biệt là đồ lót bằng vải cotton), và có thể sử dụng thêm lăn/xịt khử mùi sau khi lau khô da.\", \"notes\": \"Đừng dùng nước hoa xịt đè lên mùi mồ hôi, nó sẽ tạo ra một hỗn hợp mùi cực kỳ đáng sợ đấy!\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(730, 124, 'reflection', '{\"question\": \"Bạn đã trang bị cho mình một chai lăn khử mùi hoặc nước hoa nhẹ nhàng cho những ngày nắng nóng chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(731, 124, 'takeaway', '{\"items\": [\"Mùi cơ thể chỉ là tín hiệu nhắc nhở bạn: Đã đến lúc nâng cấp thói quen vệ sinh cá nhân rồi!\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(732, 125, 'hook', '{\"title\": \"Tại sao những nốt mụn đáng ghét lại chọn đúng thời điểm này để thi nhau biểu tình trên khuôn mặt bạn?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(733, 125, 'explanation', '{\"bullets\": [\"Hormone dậy thì kích thích tuyến bã nhờn sản xuất quá nhiều dầu thừa trên da mặt.\", \"Dầu thừa kết hợp với tế bào chết gây tắc nghẽn lỗ chân lông, tạo môi trường cho vi khuẩn gây mụn phát triển.\", \"Mụn là một phần trải nghiệm của hầu hết mọi thanh thiếu niên, không phải do bạn ở bẩn đâu nhé.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(734, 125, 'scenario', '{\"title\": \"Nốt mụn chụp ảnh kỷ yếu\", \"body\": \"Vy thức dậy và phát hiện một chiếc mụn bọc to tướng, đỏ chót ngay trên chóp mũi trước ngày chụp ảnh kỷ yếu của lớp. Vy muốn nặn nó ra ngay.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(735, 125, 'interaction', '{\"question\": \"Vy có nên tự ý dùng tay nặn chiếc mụn bọc đó ngay lập tức không?\", \"choices\": [{\"text\": \"Không nên. Tự nặn mụn bằng tay bẩn dễ gây nhiễm trùng sâu hơn, làm mụn sưng to và để lại sẹo thâm khó lành.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Nên nặn ngay để xẹp mụn nhanh chóng, dùng lực thật mạnh là được.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(736, 125, 'reflection', '{\"question\": \"Bạn đã xây dựng cho mình một chu trình rửa mặt đơn giản với sữa rửa mặt dịu nhẹ mỗi sáng và tối chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(737, 125, 'takeaway', '{\"items\": [\"Mụn chỉ là tạm thời, vết thâm do nặn mụn bừa bãi mới là vĩnh viễn. Hãy kiên nhẫn chăm sóc làn da.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(738, 126, 'hook', '{\"title\": \"Bạn cảm thấy thế nào khi bỗng dưng nhìn thấy lông nách, lông mu hoặc ria mép xuất hiện rậm rạp trên cơ thể mình?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(739, 126, 'explanation', '{\"bullets\": [\"Lông cơ thể phát triển ở vùng nách, vùng kín, chân, tay và mặt là dấu hiệu trưởng thành sinh dục bình thường.\", \"Lông có vai trò bảo vệ các vùng da nhạy cảm khỏi ma sát và vi khuẩn.\", \"Việc giữ lại hay cạo/tẩy lông hoàn toàn là sở thích cá nhân, không có đúng hay sai về mặt đạo đức.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(740, 126, 'scenario', '{\"title\": \"Ria mép mọc rậm\", \"body\": \"Thành bắt đầu mọc ria mép sẫm màu. Bạn bè trêu Thành trông giống ông cụ, khiến Thành cảm thấy rất tự ti.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(741, 126, 'sorting', '{\"instruction\": \"Phân loại các quan điểm về lông cơ thể tuổi dậy thì:\", \"leftBox\": {\"title\": \"Tôn trọng sở thích\"}, \"rightBox\": {\"title\": \"Áp đặt định kiến\"}, \"items\": [{\"text\": \"Cơ thể mình, mình có quyền quyết định cạo hay giữ lông nách\", \"correctBox\": \"left\"}, {\"text\": \"Con gái là tuyệt đối không được có lông chân, trông rất thô và xấu\", \"correctBox\": \"right\"}, {\"text\": \"Dùng các biện pháp tẩy lông an toàn, vệ sinh sạch sẽ nếu muốn cạo\", \"correctBox\": \"left\"}, {\"text\": \"Chế giễu bạn nam cùng lớp vì chưa mọc ria mép giống mọi người\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(742, 126, 'reflection', '{\"question\": \"Bạn có cảm thấy áp lực từ bạn bè hay mạng xã hội bắt buộc bạn phải cạo sạch lông cơ thể không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(743, 126, 'takeaway', '{\"items\": [\"Lông cơ thể là tấm khiên tự nhiên. Hãy quyết định số phận của chúng dựa trên sự thoải mái của chính bạn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(744, 127, 'hook', '{\"title\": \"Làm sao để tự tin đến trường học tập và vui chơi khi khuôn mặt đang trong giai đoạn bùng phát mụn?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(745, 127, 'explanation', '{\"bullets\": [\"Mụn dễ làm tụi mình cảm thấy tự ti, nghĩ rằng ai cũng đang nhìn chăm chăm vào khuyết điểm của mình.\", \"Thực tế, bạn bè xung quanh cũng đang bận rộn lo lắng về khuyết điểm của chính họ.\", \"Vẻ đẹp của bạn nằm ở thần thái, nụ cười và sự tự tin, không nằm ở một làn da không tì vết.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(746, 127, 'scenario', '{\"title\": \"Tự ti che mặt\", \"body\": \"Lan có nhiều mụn thâm trên má. Khi đi học, Lan luôn cúi gầm mặt, lấy tóc xõa che kín hai bên má và từ chối phát biểu trước lớp.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(747, 127, 'flashcard', '{\"front\": \"Lan nên làm gì để lấy lại sự tự tin trước đám đông dù da đang có mụn?\", \"back\": \"Tập trung vào thế mạnh học tập, mỉm cười thân thiện, ngẩng cao đầu và tự nhắc nhở: Mọi người yêu quý mình vì tính cách và tài năng, chứ không phải vì vài nốt mụn.\", \"notes\": \"Tình bạn đích thực không đo bằng mức độ mịn màng của làn da.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(748, 127, 'reflection', '{\"question\": \"Bạn có từng đánh giá hay bớt yêu quý một người bạn chỉ vì da mặt của bạn ấy có nhiều mụn không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(749, 127, 'takeaway', '{\"items\": [\"Tự tin là lớp trang điểm đẹp nhất. Đừng để những nốt mụn nhỏ che lấp đi ánh sáng rực rỡ của bạn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(750, 128, 'hook', '{\"title\": \"Bạn đã biết cách làm sạch cơ thể đúng điệu để luôn thơm tho và khỏe mạnh suốt cả ngày chưa?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(751, 128, 'explanation', '{\"bullets\": [\"Tắm rửa hàng ngày bằng sữa tắm dịu nhẹ, chú ý làm sạch các vùng da gấp nếp như nách, bẹn và vùng kín.\", \"Vùng kín cần được rửa nhẹ nhàng bằng nước sạch hoặc dung dịch vệ sinh phù hợp, tuyệt đối không thụt rửa sâu bên trong.\", \"Lau khô người bằng khăn sạch trước khi mặc quần áo để tránh nấm ngứa phát triển.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(752, 128, 'scenario', '{\"title\": \"Tắm lướt vội vàng\", \"body\": \"Bách thường tắm rất nhanh, chỉ dội nước qua loa và không dùng xà phòng, dẫn đến vùng lưng bắt đầu nổi nhiều mụn ngứa.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(753, 128, 'interaction', '{\"question\": \"Bách nên thay đổi thói quen tắm rửa thế nào cho đúng cách khoa học?\", \"choices\": [{\"text\": \"Tắm kỹ hơn, dùng sữa tắm dịu nhẹ chà sạch vùng lưng và lau khô cơ thể bằng khăn sạch sau khi tắm.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục tắm nhanh nhưng xịt thật nhiều nước hoa lên người sau khi tắm để lấn át mùi.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(754, 128, 'reflection', '{\"question\": \"Bạn có thói quen thay đồ lót sạch mỗi ngày sau khi tắm không? Đây là bước cực kỳ quan trọng để bảo vệ vùng kín đấy.\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(755, 128, 'takeaway', '{\"items\": [\"Chăm sóc cơ thể sạch sẽ là cách bạn thể hiện lòng trân trọng đối với ngôi nhà sinh học của mình.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(756, 129, 'hook', '{\"title\": \"Làm sao để hòa giải với những thay đổi thể chất đôi khi trông hơi kỳ cục của tuổi mới lớn?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(757, 129, 'explanation', '{\"bullets\": [\"Dậy thì có thể khiến tay chân bạn dài ra nhanh chóng trước khi thân người phát triển kịp, tạo cảm giác hơi lóng ngóng.\", \"Ngực của bạn gái có thể bên to bên nhỏ không đều, bạn trai có thể thấy hơi sưng đau ở núm vú.\", \"Trân trọng sự độc đáo của cơ thể mình thay vì ép nó phải giống một khuôn mẫu hoàn hảo nào đó.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(758, 129, 'scenario', '{\"title\": \"Cơ thể lóng ngóng\", \"body\": \"Hoàng dạo này lớn nhanh quá nên đi lại hay bị vấp ngã, ngực thì hơi sưng đau nhè nhẹ khiến cậu sợ hãi nghĩ mình bị ung thư.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(759, 129, 'sorting', '{\"instruction\": \"Phân loại các cách phản ứng với cơ thể đang thay đổi:\", \"leftBox\": {\"title\": \"Yêu thương chấp nhận\"}, \"rightBox\": {\"title\": \"Phủ nhận ghét bỏ\"}, \"items\": [{\"text\": \"Tự nhắc nhở: Sự bất cân đối cơ thể lúc dậy thì là tạm thời và bình thường\", \"correctBox\": \"left\"}, {\"text\": \"Dùng các đai nịt ngực quá chặt vì xấu hổ khi thấy ngực phát triển\", \"correctBox\": \"right\"}, {\"text\": \"Tập các bài tập giãn cơ nhẹ nhàng để thích nghi với chiều cao mới\", \"correctBox\": \"left\"}, {\"text\": \"Nhịn ăn giảm cân cực đoan vì thấy vóc dáng tròn trịa hơn trước\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(760, 129, 'reflection', '{\"question\": \"Có bộ phận nào trên cơ thể đang thay đổi khiến bạn thấy lo lắng không? Bạn có muốn tìm hiểu thêm về nó một cách khoa học?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(761, 129, 'takeaway', '{\"items\": [\"Cơ thể bạn là duy nhất và đang nỗ lực hết mình để lớn lên. Hãy kiên nhẫn đồng hành cùng nó nhé.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(762, 130, 'hook', '{\"title\": \"Bạn có biết bên trong cơ thể tụi mình đang diễn ra một cuộc tổng diễn tập âm thầm để chuẩn bị cho khả năng sinh sản không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(763, 130, 'explanation', '{\"bullets\": [\"Ở bạn gái, buồng trứng bắt đầu rụng trứng và tử cung chuẩn bị lớp niêm mạc giàu dinh dưỡng mỗi tháng.\", \"Ở bạn trai, tinh hoàn bắt đầu sản xuất hàng triệu tinh trùng và hormone testosterone mỗi ngày.\", \"Đây là hoạt động sinh học bình thường chuẩn bị cho vai trò làm cha mẹ trong tương lai xa.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(764, 130, 'scenario', '{\"title\": \"Đau bụng nhẹ\", \"body\": \"Thảo dạo này thỉnh thoảng thấy đau nhẹ ở vùng bụng dưới vào giữa tháng, cô bé lo sợ mình bị đau ruột thừa.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(765, 130, 'flashcard', '{\"front\": \"Cơ quan sinh sản bên trong hoạt động có gây ra cảm giác đau đớn gì bình thường không?\", \"back\": \"Bạn gái có thể thấy hơi đau bụng dưới nhẹ khi rụng trứng hoặc hành kinh; bạn trai có thể thấy hơi căng tức tinh hoàn nhẹ. Nếu đau dữ dội, hãy báo ngay cho người lớn.\", \"notes\": \"Lắng nghe tín hiệu cơ thể để biết khi nào cần nghỉ ngơi.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(766, 130, 'reflection', '{\"question\": \"Bạn đã từng học về cơ quan sinh sản trong môn Sinh học ở trường chưa? Bạn có câu hỏi nào chưa được giải đáp không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(767, 130, 'takeaway', '{\"items\": [\"Hệ sinh sản thức giấc là minh chứng rõ ràng nhất cho thấy bạn đang tiến gần hơn tới thế giới của người lớn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(768, 131, 'hook', '{\"title\": \"Làm sao để không hoảng loạn khi đột ngột thấy vệt máu trên quần chip hoặc thức dậy với chiếc quần ướt át?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(769, 131, 'explanation', '{\"bullets\": [\"Kinh nguyệt (Period) là hiện tượng lớp niêm mạc tử cung bong ra và thoát ra ngoài khi không có sự thụ tinh. Nó đánh dấu bạn gái có khả năng mang thai.\", \"Mộng tinh (Wet Dream) là hiện tượng xuất tinh tự nhiên không chủ ý khi đang ngủ ở bạn trai, giúp giải phóng lượng tinh dịch thừa.\", \"Cả hai hiện tượng này đều là cột mốc sinh lý tự nhiên bình thường đáng mừng!\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(770, 131, 'scenario', '{\"title\": \"Quần lót dính dịch\", \"body\": \"Duy thức dậy vào buổi sáng và phát hiện quần lót của mình bị ướt một khoảng lớn dính dính. Duy nghĩ mình bị bệnh nặng và vội vàng giấu chiếc quần lót đi vì xấu hổ.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(771, 131, 'interaction', '{\"question\": \"Duy nên hiểu hiện tượng này thế nào cho đúng khoa học?\", \"choices\": [{\"text\": \"Đây là hiện tượng mộng tinh hoàn toàn bình thường ở bạn trai dậy thì. Duy chỉ cần đem quần đi giặt sạch và không cần phải xấu hổ hay lo sợ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Chắc chắn Duy đã bị viêm đường tiết niệu nặng, cần phải đi mua thuốc kháng sinh tự uống ngay.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(772, 131, 'reflection', '{\"question\": \"Bạn gái đã chuẩn bị sẵn sàng tâm lý đón nhận kỳ kinh đầu tiên, và bạn trai đã hiểu về mộng tinh chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(773, 131, 'takeaway', '{\"items\": [\"Kinh nguyệt hay mộng tinh là những vị khách tự nhiên của tuổi dậy thì. Hãy đón tiếp chúng một cách bình tĩnh.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(774, 132, 'hook', '{\"title\": \"Tại sao nhiều người vẫn coi kinh nguyệt hay mộng tinh là điều gì đó dơ bẩn và ngại nhắc đến công khai?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(775, 132, 'explanation', '{\"bullets\": [\"Do những định kiến cũ kỹ và thiếu kiến thức khoa học nên xã hội từng coi đây là chủ đề cấm kỵ.\", \"Thực chất, máu kinh nguyệt hay tinh dịch là những chất dịch sinh học hoàn toàn sạch sẽ, không có gì tội lỗi.\", \"Nói chuyện cởi mở và khoa học giúp xóa bỏ sự kỳ thị và giúp đỡ nhau tốt hơn khi gặp sự cố.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(776, 132, 'scenario', '{\"title\": \"Băng vệ sinh rơi ra\", \"body\": \"Một miếng băng vệ sinh chưa dùng rơi ra từ cặp sách của Hân trong lớp, các bạn nam bắt đầu chỉ trỏ trêu chọc khiến Hân xấu hổ khóc nức nở.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(777, 132, 'sorting', '{\"instruction\": \"Phân loại các cách ứng xử đối với chủ đề kinh nguyệt/mộng tinh:\", \"leftBox\": {\"title\": \"Cởi mở văn minh\"}, \"rightBox\": {\"title\": \"Kỳ thị né tránh\"}, \"items\": [{\"text\": \"Vui vẻ cho bạn mượn băng vệ sinh khi bạn gặp sự cố khẩn cấp ở lớp\", \"correctBox\": \"left\"}, {\"text\": \"Cười cợt, trêu chọc khi thấy bạn gái vô tình bị dây máu kinh ra váy\", \"correctBox\": \"right\"}, {\"text\": \"Chủ động tìm hiểu kiến thức để chăm sóc bản thân và thấu cảm với bạn khác giới\", \"correctBox\": \"left\"}, {\"text\": \"Lấy từ mộng tinh ra để làm từ ngữ chửi bới, hạ nhục bạn bè\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(778, 132, 'reflection', '{\"question\": \"Bạn có thấy ngại ngùng khi đi mua băng vệ sinh ở tiệm tạp hóa không? Tại sao tụi mình lại có cảm giác đó nhỉ?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(779, 132, 'takeaway', '{\"items\": [\"Kinh nguyệt và sinh sản là cội nguồn của sự sống. Hãy tôn trọng và tự hào về cơ thể mình.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(780, 133, 'hook', '{\"title\": \"Làm sao để xử lý thật êm đẹp và bình tĩnh khi đột ngột bị đến tháng ngay trong giờ học mà không mang theo dụng cụ dự phòng?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(781, 133, 'explanation', '{\"bullets\": [\"Đừng hoảng loạn, đây là sự cố mà hầu như bạn gái nào cũng từng trải qua ít nhất một lần.\", \"Bạn có thể tạm thời lót giấy vệ sinh sạch vào quần chip và đi tìm sự trợ giúp ngay lập tức.\", \"Tình bạn và sự hỗ trợ từ các bạn gái khác hoặc cô giáo y tế là chiếc phao cứu sinh tuyệt vời.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(782, 133, 'scenario', '{\"title\": \"Vệt đỏ sau váy\", \"body\": \"Trong tiết Toán, Trang bỗng cảm thấy bụng dưới quặn đau và có dịch ẩm tràn ra. Khi đứng dậy phát hiện váy đồng phục phía sau đã bị thấm một vệt đỏ nhỏ. Trang vô cùng xấu hổ.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(783, 133, 'flashcard', '{\"front\": \"Bạn bè xung quanh nên giúp đỡ Trang thế nào trong tình huống này?\", \"back\": \"Bạn ngồi cạnh có thể cho Trang mượn áo khoác buộc ngang hông để che vệt đỏ, đưa cho Trang một miếng băng vệ sinh dự phòng và đi cùng Trang xuống phòng y tế trường.\", \"notes\": \"Sự tinh tế và giúp đỡ kịp thời của bạn là món quà vô giá giúp bạn mình đỡ tủi thân.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(784, 133, 'reflection', '{\"question\": \"Bạn luôn mang theo một miếng băng vệ sinh nhỏ trong ba lô đi học để dự phòng cho mình và bạn bè chứ?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(785, 133, 'takeaway', '{\"items\": [\"Giúp đỡ bạn bè khi gặp sự cố hành kinh là biểu hiện cao nhất của sự tinh tế và tử tế tuổi học trò.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(786, 134, 'hook', '{\"title\": \"Bạn đã biết cách lựa chọn và sử dụng băng vệ sinh đúng chuẩn để luôn khô thoáng, tự tin trong những ngày đèn đỏ chưa?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(787, 134, 'explanation', '{\"bullets\": [\"Bóc lớp giấy dán phía sau băng vệ sinh và dán chặt vào đáy quần chip, ôm khít cơ thể.\", \"Thay băng vệ sinh sau mỗi 3 đến 4 tiếng để ngăn ngừa vi khuẩn sinh sôi gây mùi và viêm nhiễm.\", \"Cuộn tròn băng vệ sinh đã dùng vào giấy gói sạch và bỏ vào thùng rác, tuyệt đối không vứt vào bồn cầu.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(788, 134, 'scenario', '{\"title\": \"Ngại thay băng vệ sinh\", \"body\": \"Mai nghĩ rằng máu kinh ra ít nên để nguyên một miếng băng vệ sinh suốt từ sáng đi học đến tối mịt mới thay, dẫn đến vùng kín bị ngứa ngáy.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(789, 134, 'interaction', '{\"question\": \"Mai đã mắc sai lầm gì trong việc sử dụng băng vệ sinh?\", \"choices\": [{\"text\": \"Mai để băng vệ sinh quá lâu không thay (quá 4 tiếng), tạo điều kiện cho vi khuẩn phát triển gây viêm nhiễm da.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Mai nên dùng nước xà phòng thụt rửa sâu bên trong âm đạo để làm sạch triệt để.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(790, 134, 'reflection', '{\"question\": \"Bạn có tự lập cho mình một chiếc túi nhỏ xinh đựng băng vệ sinh, quần chip dự phòng trong ba lô chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(791, 134, 'takeaway', '{\"items\": [\"Thay băng đúng giờ giúp bạn luôn khô thoáng, sạch sẽ và tràn đầy năng lượng hoạt động.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(792, 135, 'hook', '{\"title\": \"Làm sao để sống hòa bình và yêu thương hệ sinh sản của mình thay vì coi nó là nguồn cơn của những rắc rối?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(793, 135, 'explanation', '{\"bullets\": [\"Những cơn đau bụng kinh, sự ẩm ướt của mộng tinh hay mụn nội tiết đôi khi khiến bạn thấy ghét bỏ cơ thể.\", \"Nhưng hãy nhớ, hệ sinh sản đang làm việc ngày đêm để giúp bạn phát triển toàn diện cả về thể chất lẫn nội tiết tố.\", \"Học cách lắng nghe, chăm sóc và thấu cảm với những chu kỳ sinh học của bản thân.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(794, 135, 'scenario', '{\"title\": \"Cảm giác ghét bỏ cơ thể\", \"body\": \"Mỗi lần đến tháng đau bụng nằm bẹp một chỗ, Hoa lại cáu bẳn tự trách cơ thể mình phiền phức và ước gì mình sinh ra không có tử cung.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(795, 135, 'sorting', '{\"instruction\": \"Phân loại các thói quen chăm sóc sức khỏe sinh sản:\", \"leftBox\": {\"title\": \"Chăm sóc thông thái\"}, \"rightBox\": {\"title\": \"Gây hại cơ thể\"}, \"items\": [{\"text\": \"Ghi chép ngày bắt đầu kinh nguyệt vào ứng dụng điện thoại để theo dõi chu kỳ\", \"correctBox\": \"left\"}, {\"text\": \"Uống thuốc giảm đau bụng kinh vô tội vạ mà không hỏi ý kiến bác sĩ\", \"correctBox\": \"right\"}, {\"text\": \"Chườm ấm bụng dưới và uống nước ấm để giảm nhẹ cơn đau bụng kinh\", \"correctBox\": \"left\"}, {\"text\": \"Mặc quần lót ẩm ướt sau khi vận động thể thao vì lười thay\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(796, 135, 'reflection', '{\"question\": \"Bạn có đang sử dụng ứng dụng nào trên điện thoại để theo dõi chu kỳ kinh nguyệt của mình không? Nó rất tiện lợi đấy!\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(797, 135, 'takeaway', '{\"items\": [\"Thấu hiểu chu kỳ cơ thể giúp bạn làm chủ sức khỏe và tự tin bước qua tuổi dậy thì.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(798, 136, 'hook', '{\"title\": \"Có bao giờ bạn bỗng dưng muốn khóc hoặc nổi giận đùng đùng mà chính bản thân cũng không giải thích nổi lý do không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(799, 136, 'explanation', '{\"bullets\": [\"Tuổi dậy thì là thời kỳ nồng độ các hormone estrogen (ở nữ) và testosterone (ở nam) tăng vọt đột ngột.\", \"Những chất hóa học này tác động trực tiếp lên vùng não điều khiển cảm xúc, khiến tâm trạng của bạn biến đổi liên tục.\", \"Sự thay đổi tâm trạng này không phải do bạn hư, đó chỉ là phản ứng sinh lý tạm thời.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(800, 136, 'scenario', '{\"title\": \"Khóc vô cớ\", \"body\": \"Hạnh đang xem một chương trình hoạt hình vui nhộn bỗng dưng nước mắt trào ra dữ dội, cảm thấy buồn bã tột cùng mà không hiểu vì sao.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05');
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES
+(801, 136, 'flashcard', '{\"front\": \"Có phải cảm xúc thất thường tuổi dậy thì là do bạn cố tình gây sự hoặc không biết kiềm chế?\", \"back\": \"KHÔNG. Đó chủ yếu là do sự xáo trộn mạnh mẽ của các hormone trong não bộ gây ra. Cảm xúc này hoàn toàn có thật và bạn cần thời gian để làm quen.\", \"notes\": \"Hãy tự nói với mình: Cảm xúc này là tạm thời, mình sẽ bình tĩnh lại sớm thôi.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(802, 136, 'reflection', '{\"question\": \"Lần gần đây nhất bạn nổi cáu vô cớ với ai đó là khi nào? Bạn có nhận ra nguyên nhân lúc đó không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(803, 136, 'takeaway', '{\"items\": [\"Cơn bão cảm xúc chỉ là phản ứng của não bộ trước bản cập nhật hormone mới. Đừng quá khắt khe với bản thân.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(804, 137, 'hook', '{\"title\": \"Làm sao để nhận diện cơn giận trước khi nó bùng phát thành hành động làm tổn thương người khác?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(805, 137, 'explanation', '{\"bullets\": [\"Cơn giận thường gửi tín hiệu trên cơ thể trước: tim đập nhanh, mặt nóng bừng, nghiến răng.\", \"Nhận biết những tín hiệu báo động này giúp bạn kịp thời phanh lại trước khi nói ra những lời hối hận.\", \"Chấp nhận cảm xúc giận dữ nhưng học cách bày tỏ nó một cách văn minh, không phá hủy mối quan hệ.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(806, 137, 'scenario', '{\"title\": \"Vở vẽ bị đổ nước\", \"body\": \"Em trai vô tình làm đổ nước vào cuốn vở vẽ của Bình. Bình thấy máu nóng dồn lên mặt, tim đập thình thịch và định lao vào đánh em.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(807, 137, 'interaction', '{\"question\": \"Bình nên làm gì ngay lúc đó để xử lý cơn giận một cách Green Flag?\", \"choices\": [{\"text\": \"Hít thở sâu 3 nhịp, đi ra chỗ khác rửa mặt bằng nước lạnh để hạ nhiệt trước khi quay lại nói chuyện với em.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Lao vào giật tóc em và ném đồ đạc để em biết thế nào là lễ độ.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(808, 137, 'reflection', '{\"question\": \"Cơ thể bạn thường báo động điều gì đầu tiên khi bạn bắt đầu chuẩn bị nổi giận?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(809, 137, 'takeaway', '{\"items\": [\"Bạn có quyền cảm thấy giận dữ, nhưng bạn không có quyền dùng cơn giận để làm tổn thương người khác.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(810, 138, 'hook', '{\"title\": \"Tại sao tuổi dậy thì tụi mình lại cực kỳ nhạy cảm và dễ suy diễn trước những ánh mắt, lời nói của người xung quanh?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(811, 138, 'explanation', '{\"bullets\": [\"Bộ não tuổi teen đang tái cấu trúc, khiến bạn có xu hướng nghĩ rằng ai cũng đang nhìn và đánh giá mình.\", \"Một lời nhận xét vô tình của bạn bè cũng có thể bị bạn phóng đại lên thành sự chỉ trích, ghét bỏ.\", \"Hãy nhớ: hầu hết mọi người chỉ đang bận tâm đến bản thân họ, họ không soi xét bạn kỹ đâu.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(812, 138, 'scenario', '{\"title\": \"Cái nhìn của bạn cùng lớp\", \"body\": \"Vy đi ngang qua nhóm bạn đang thì thầm nói chuyện, thấy một bạn nhìn mình rồi quay đi cười. Vy lập tức nghĩ họ đang nói xấu chiếc quần bị bẩn của mình.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(813, 138, 'sorting', '{\"instruction\": \"Phân loại các suy nghĩ khi đối mặt với nhận xét của người khác:\", \"leftBox\": {\"title\": \"Suy nghĩ tỉnh táo\"}, \"rightBox\": {\"title\": \"Suy diễn phóng đại\"}, \"items\": [{\"text\": \"Bạn ấy nhìn mình chắc là vì áo mình có dính vết bẩn gì thôi, cứ hỏi thử xem sao\", \"correctBox\": \"left\"}, {\"text\": \"Thầy giáo không gọi mình phát biểu chắc chắn là vì thầy ghét mình và thấy mình dốt\", \"correctBox\": \"right\"}, {\"text\": \"Lời góp ý của bạn là để slide bài tập nhóm của mình tốt hơn, không có ý chê bai cá nhân\", \"correctBox\": \"left\"}, {\"text\": \"Mọi người đang cười nói khi mình đi qua chắc chắn là họ đang bàn tán nói xấu mình\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(814, 138, 'reflection', '{\"question\": \"Bạn có từng mất ngủ cả đêm chỉ vì một câu nói đùa vô tình của một người bạn cùng lớp chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(815, 138, 'takeaway', '{\"items\": [\"Đừng để chiếc kính lúp suy diễn bóp méo sự thật. Hãy nhìn mọi việc với lăng kính đơn giản hơn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(816, 139, 'hook', '{\"title\": \"Làm sao để bày tỏ mong muốn tự lập của mình mà không biến mọi cuộc trò chuyện với bố mẹ thành một trận cãi vã?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(817, 139, 'explanation', '{\"bullets\": [\"Mong muốn tự chủ tăng lên khiến bạn dễ cảm thấy bố mẹ kiểm soát quá đà, áp đặt hoặc không thấu hiểu mình.\", \"Tuy nhiên, cãi vã, đóng sầm cửa hay chiến tranh lạnh chỉ khiến khoảng cách thế hệ càng thêm xa.\", \"Dùng kỹ năng giao tiếp tôn trọng để bày tỏ suy nghĩ của bạn một cách trưởng thành.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(818, 139, 'scenario', '{\"title\": \"Chọn trang phục đi tiệc\", \"body\": \"Mẹ muốn Vy mặc chiếc váy ren xòe đi tiệc cưới họ hàng, nhưng Vy thích mặc quần jeans năng động hơn. Mẹ bảo Vy bướng bỉnh, Vy thấy uất ức.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(819, 139, 'flashcard', '{\"front\": \"Vy nên nói chuyện với mẹ thế nào để giữ được chính kiến mà không gây hỗn hào?\", \"back\": \"Vy có thể nói nhẹ nhàng: Mẹ ơi, con mặc quần jeans này trông vẫn rất lịch sự và con thấy thoải mái nhất khi di chuyển. Mẹ tôn trọng lựa chọn này của con nha mẹ?.\", \"notes\": \"Lời nói nhẹ nhàng nhưng kiên định luôn hiệu quả hơn tiếng la hét tức giận.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(820, 139, 'reflection', '{\"question\": \"Bạn có hay chọn cách la hét hay chọn cách im lặng lánh mặt khi bất đồng ý kiến với bố mẹ?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(821, 139, 'takeaway', '{\"items\": [\"Bày tỏ sự trưởng thành bằng cách giao tiếp tôn trọng, bố mẹ sẽ dễ lắng nghe tiếng nói của bạn hơn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(822, 140, 'hook', '{\"title\": \"Bạn đã tích lũy cho mình những bí kíp siêu dễ để kéo tâm trạng lên mỗi khi cảm thấy buồn bã hoặc stress chưa?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(823, 140, 'explanation', '{\"bullets\": [\"Viết nhật ký để trút bỏ mọi suy nghĩ lộn xộn ra trang giấy.\", \"Vận động thể thao nhẹ nhàng: đi bộ, đạp xe giúp cơ thể tiết ra hormone hạnh phúc.\", \"Dành 5 phút hít thở sâu hoặc nghe một bản nhạc êm dịu không lời để xoa dịu thần kinh.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(824, 140, 'scenario', '{\"title\": \"Áp lực thi cử\", \"body\": \"Hùng cảm thấy vô cùng áp lực trước kỳ thi học kỳ, đầu óc Hùng trống rỗng và Hùng bắt đầu thấy bồn chồn đau bụng dữ dội do lo âu.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(825, 140, 'interaction', '{\"question\": \"Hùng nên dùng phương pháp nào để xoa dịu sự lo âu ngay lúc này?\", \"choices\": [{\"text\": \"Tạm dừng học 15 phút, nhắm mắt hít thở sâu theo nhịp 4-7-8 và uống một ngụm nước ấm.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục cố ngồi học thêm 3 tiếng nữa dưới áp lực căng thẳng cao độ.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(826, 140, 'reflection', '{\"question\": \"Hoạt động nào thường giúp bạn lấy lại sự bình yên và năng lượng nhanh nhất mỗi khi gặp áp lực?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(827, 140, 'takeaway', '{\"items\": [\"Chăm sóc sức khỏe tinh thần cũng quan trọng như chăm sóc thể chất. Hãy cho phép bản thân nghỉ ngơi khi cần.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(828, 141, 'hook', '{\"title\": \"Học cách coi những xáo trộn cảm xúc tuổi dậy thì là một trải nghiệm phong phú của cuộc sống, tại sao không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(829, 141, 'explanation', '{\"bullets\": [\"Cảm xúc dù tiêu cực hay tích cực đều là những tín hiệu quý giá mách bảo về nhu cầu bên trong của bạn.\", \"Đừng cố đè nén hay phủ nhận nỗi buồn, cơn giận. Hãy gọi tên và đón nhận chúng.\", \"Đi qua những xáo trộn này sẽ giúp bạn trở thành một người trưởng thành có chiều sâu hơn.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(830, 141, 'scenario', '{\"title\": \"Đè nén giọt nước mắt\", \"body\": \"Nam cố nuốt nước mắt vào trong khi chú cún yêu quý qua đời vì sợ các bạn nam khác trêu mình là ẻo lả, yếu đuối.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(831, 141, 'sorting', '{\"instruction\": \"Phân loại các cách đối xử với cảm xúc cá nhân:\", \"leftBox\": {\"title\": \"Kết bạn cảm xúc\"}, \"rightBox\": {\"title\": \"Đè nén chối bỏ\"}, \"items\": [{\"text\": \"Khóc một trận thật to khi thấy buồn để giải tỏa hết uất ức\", \"correctBox\": \"left\"}, {\"text\": \"Cố gắng tỏ ra vui vẻ bên ngoài khi bên trong đang vô cùng đau khổ\", \"correctBox\": \"right\"}, {\"text\": \"Tự nhủ: Mình được phép buồn lúc này, ngày mai mình sẽ ổn hơn\", \"correctBox\": \"left\"}, {\"text\": \"Ghét bỏ bản thân vì thấy mình yếu đuối, dễ khóc trước mặt người khác\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(832, 141, 'reflection', '{\"question\": \"Bạn có đang cho phép mình được khóc hoặc tỏ ra yếu đuối khi thực sự mệt mỏi không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(833, 141, 'takeaway', '{\"items\": [\"Cảm xúc của bạn là hợp lệ. Hãy ôm ấp lấy cả những ngày mưa giông trong lòng mình.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(834, 142, 'hook', '{\"title\": \"Mỗi khi nhìn vào gương, bạn nhìn thấy điều gì đầu tiên: những khuyết điểm hay nét đẹp độc đáo?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(835, 142, 'explanation', '{\"bullets\": [\"Hình ảnh cơ thể (Body Image) là cách bạn suy nghĩ, cảm nhận và hình dung về ngoại hình của chính mình.\", \"Body image lành mạnh là khi bạn chấp nhận, trân trọng và thấy thoải mái với cơ thể thật của mình.\", \"Trân trọng cơ thể vì những gì nó giúp bạn làm (chạy nhảy, ôm ấp), chứ không chỉ vì trông nó thế nào.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(836, 142, 'scenario', '{\"title\": \"Ngắm mình trong gương\", \"body\": \"Hòa dành cả tiếng đồng hồ đứng trước gương để soi những chiếc mụn nhỏ và tự hỏi tại sao chân mình không được thon dài như các mẫu ảnh.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(837, 142, 'flashcard', '{\"front\": \"Ngoại hình của bạn có quyết định giá trị con người và hạnh phúc của bạn không?\", \"back\": \"Tuyệt đối KHÔNG. Giá trị của bạn nằm ở tâm hồn, tài năng, nhân cách và cách bạn đối xử với mọi người. Cơ thể chỉ là ngôi nhà chở che bạn thôi.\", \"notes\": \"Hãy trân trọng cơ thể vì những gì nó giúp bạn làm thay vì chỉ soi xét vẻ ngoài.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(838, 142, 'reflection', '{\"question\": \"Bạn thường nói những lời yêu thương hay những lời chê bai khi tự ngắm mình trong gương?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(839, 142, 'takeaway', '{\"items\": [\"Cơ thể bạn là duy nhất. Hãy trân trọng nó vì nó đang làm việc chăm chỉ để bảo vệ bạn mỗi ngày.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(840, 143, 'hook', '{\"title\": \"Những lời nhận xét có vẻ đùa vui như Dạo này béo thế! hay Cao như cái sào! thực chất là gì?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(841, 143, 'explanation', '{\"bullets\": [\"Body Shaming (Phán xét ngoại hình) là hành vi bình luận tiêu cực, chế giễu hoặc chê bai vóc dáng, ngoại hình của người khác.\", \"Nó thường được bao biện bằng câu nói: Chỉ đùa vui thôi mà làm gì căng thế?.\", \"Nhận diện sớm giúp bạn thiết lập ranh giới bảo vệ bản thân và tránh làm tổn thương người khác.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(842, 143, 'scenario', '{\"title\": \"Lời trêu chọc đùi to\", \"body\": \"Trong nhóm chat chung, một bạn đăng ảnh chụp lén Vân đang ăn bánh mì kèm chú thích: Ăn thế này bảo sao đùi to như cột đình!. Cả nhóm hùa vào thả icon cười cợt.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(843, 143, 'interaction', '{\"question\": \"Hành vi của nhóm bạn trong group chat đối với Vân là gì?\", \"choices\": [{\"text\": \"Hành vi Body Shaming gây tổn thương nghiêm trọng đến lòng tự trọng và tâm lý của Vân.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Một trò đùa vui nhộn lành mạnh giúp Vân có thêm động lực giảm cân.\", \"correct\": false, \"emoji\": \"🚩\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(844, 143, 'reflection', '{\"question\": \"Bạn có từng vô tình dùng từ ngữ chê bai ngoại hình để làm biệt danh trêu chọc một người bạn của mình chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(845, 143, 'takeaway', '{\"items\": [\"Tôn trọng ngoại hình của người khác là biểu hiện cơ bản nhất của một lối sống văn minh.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(846, 144, 'hook', '{\"title\": \"Bạn có bao giờ cảm thấy tự ti khi lướt mạng xã hội nhìn thấy những bức ảnh da trắng mịn của các hot teen?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(847, 144, 'explanation', '{\"bullets\": [\"Hầu hết hình ảnh trên mạng xã hội đã qua chỉnh sửa góc chụp, ánh sáng và vô số lớp filter làm đẹp.\", \"So sánh cơ thể thật của bạn với những hình ảnh ảo đã qua chỉnh sửa là một việc vô lý.\", \"Hãy follow những trang chia sẻ về vẻ đẹp tự nhiên đa dạng và tắt thông báo các tài khoản độc hại.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(848, 144, 'scenario', '{\"title\": \"Sống ảo hoàn hảo\", \"body\": \"Khánh dành 30 phút bóp eo, làm mịn da bằng các app chỉnh ảnh trước khi đăng lên mạng xã hội, rồi ngồi lo sợ nếu các bạn gặp mình ngoài đời sẽ chê xấu.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(849, 144, 'sorting', '{\"instruction\": \"Phân loại các hành vi sử dụng mạng xã hội lành mạnh cho tâm lý:\", \"leftBox\": {\"title\": \"Bảo vệ tinh thần\"}, \"rightBox\": {\"title\": \"Rơi vào tự ti\"}, \"items\": [{\"text\": \"Tự nhắc nhở bản thân: Ảnh trên mạng chỉ là sản phẩm của góc chụp và filter\", \"correctBox\": \"left\"}, {\"text\": \"Tìm mọi cách ăn kiêng hà khắc để có được vòng eo giống idol trên mạng\", \"correctBox\": \"right\"}, {\"text\": \"Nhấn nút hủy theo dõi các tài khoản luôn khiến mình thấy tự ti về cơ thể\", \"correctBox\": \"left\"}, {\"text\": \"Liên tục sử dụng các app chỉnh ảnh bóp méo vóc dáng thật trước khi đăng bài\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(850, 144, 'reflection', '{\"question\": \"Bạn có thấy thoải mái hơn khi đăng một bức ảnh mặt mộc mỉm cười tự nhiên của mình lên mạng không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(851, 144, 'takeaway', '{\"items\": [\"Cuộc sống thật có khuyết điểm và khuyết điểm làm nên sự độc bản đáng quý của bạn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(852, 145, 'hook', '{\"title\": \"Làm sao để giữ vững sự tự tin khi ai đó bất ngờ chê bai ngoại hình của bạn ngay trước mặt đám đông?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(853, 145, 'explanation', '{\"bullets\": [\"Khi bị chê bai công khai, phản ứng tự nhiên của chúng ta là xấu hổ, tức giận hoặc muốn thu mình lại.\", \"Lối sống ứng xử vô duyên hay lịch sự nằm ở người nhận xét, không nằm ở cơ thể bạn.\", \"Phản hồi kiên định, lịch sự và rời khỏi cuộc trò chuyện mang lại năng lượng tiêu cực.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(854, 145, 'scenario', '{\"title\": \"Họ hàng nhận xét\", \"body\": \"Tại buổi họp gia đình, một người họ hàng nói lớn: Ơ hay dạo này Vy ăn gì béo thế con? Con gái con lứa phải biết giữ dáng chứ!. Mọi người bắt đầu cười.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(855, 145, 'flashcard', '{\"front\": \"Vy nên ứng phó thế nào trước lời nhận xét kém tinh tế của người họ hàng?\", \"back\": \"Vy có thể mỉm cười nhẹ và nói bình thản: Dạ dạo này con đang dậy thì nên cơ thể phát triển khỏe mạnh là tốt rồi ạ bác. rồi xin phép đi lấy nước để tránh đôi co.\", \"notes\": \"Tự tin bảo vệ ranh giới cơ thể mình bằng thái độ lịch sự nhưng cứng rắn.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(856, 145, 'reflection', '{\"question\": \"Bạn đã từng dũng cảm lên tiếng bảo vệ bản thân khi bị người lớn hoặc bạn bè chê bai ngoại hình chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(857, 145, 'takeaway', '{\"items\": [\"Giá trị của bạn không được định nghĩa bởi thước đo của người khác. Hãy tự tin tỏa sáng theo cách riêng.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(858, 146, 'hook', '{\"title\": \"Làm sao để biến những lời chê bai ngoại hình thành cơ hội để xây dựng lòng yêu thương bản thân?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(859, 146, 'explanation', '{\"bullets\": [\"Học cách lọc thông tin: chỉ lắng nghe lời khuyên y khoa lành mạnh từ chuyên gia hoặc người thực sự quan tâm đến sức khỏe.\", \"Bỏ qua các lời chỉ trích công kích mang tính hạ nhục trên mạng bằng cách chặn (block) và báo cáo (report).\", \"Thực hành viết những điều bạn yêu thích nhất về cơ thể mình để củng cố tự tin bên trong.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(860, 146, 'scenario', '{\"title\": \"Comment chế giễu chiều cao\", \"body\": \"Hùng bị một số tài khoản ảo trên mạng để lại bình luận chế giễu chiều cao khiêm tốn dưới bức ảnh chụp chung với đội bóng rổ của trường.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(861, 146, 'interaction', '{\"question\": \"Hùng nên xử lý thế nào để bảo vệ sức khỏe tinh thần của mình?\", \"choices\": [{\"text\": \"Chặn các tài khoản đó, báo cáo bình luận và tự nhắc mình: Mình chơi bóng rổ tốt bằng kỹ thuật và sự nhanh nhẹn, chiều cao không định nghĩa được tài năng.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Nhắn tin cãi nhau tay đôi với họ suốt đêm để chứng minh mình không yếu đuối.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(862, 146, 'reflection', '{\"question\": \"Bạn có thể viết ra ngay bây giờ 3 điều cơ thể bạn đã giúp bạn làm được và bạn thấy trân trọng nhất không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(863, 146, 'takeaway', '{\"items\": [\"Chặn đi những năng lượng độc hại để nhường chỗ cho sự phát triển an lành của bản thân.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(864, 147, 'hook', '{\"title\": \"Sẽ thế nào nếu thế giới này tất cả mọi người đều có vóc dáng giống hệt như những ma-nơ-canh?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(865, 147, 'explanation', '{\"bullets\": [\"Sự đa dạng về hình dáng, màu da và kích thước chính là điều làm nên vẻ đẹp phong phú của thế giới loài người.\", \"Không có một cơ thể nào được coi là chuẩn mực duy nhất để phán xét các cơ thể khác.\", \"Tôn trọng sự đa dạng cơ thể giúp xây dựng học đường không bạo lực và đầy lòng nhân ái.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(866, 147, 'scenario', '{\"title\": \"Cô bạn cơ bắp\", \"body\": \"Một số bạn trêu chọc Hà trông như đàn ông vì Hà có bắp tay cơ bắp săn chắc do tập võ bơi lội, khiến Hà e dè không dám mặc áo ngắn tay.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(867, 147, 'sorting', '{\"instruction\": \"Phân loại các hành vi ứng xử tôn trọng sự đa dạng cơ thể:\", \"leftBox\": {\"title\": \"Tôn trọng đa dạng\"}, \"rightBox\": {\"title\": \"Áp đặt khuôn mẫu\"}, \"items\": [{\"text\": \"Khen ngợi nụ cười rạng rỡ của bạn thay vì nhận xét bạn béo hay gầy\", \"correctBox\": \"left\"}, {\"text\": \"Đánh giá một bạn nữ là không nữ tính chỉ vì bạn ấy có cơ bắp khỏe mạnh\", \"correctBox\": \"right\"}, {\"text\": \"Chào đón tất cả các bạn có vóc dáng khác nhau tham gia chơi trò chơi tập thể\", \"correctBox\": \"left\"}, {\"text\": \"Bắt người yêu phải giảm cân để có được thân hình thon gọn giống các mẫu ảnh\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(868, 147, 'reflection', '{\"question\": \"Bạn có sẵn sàng yêu thương cơ thể mình ngay cả khi nó không hoàn hảo theo tiêu chuẩn của đám đông không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(869, 147, 'takeaway', '{\"items\": [\"Bạn là một tác phẩm nghệ thuật độc bản của tự nhiên. Hãy tự hào và trân trọng chiếc body duy nhất của mình.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(870, 148, 'hook', '{\"title\": \"Bạn có biết cơ thể bạn đang tiêu tốn nhiều năng lượng để phát triển ở tuổi dậy thì tương đương một vận động viên không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(871, 148, 'explanation', '{\"bullets\": [\"Tuổi dậy thì đòi hỏi một lượng dinh dưỡng phong phú: đạm xây dựng cơ, canxi phát triển xương và các vitamin.\", \"Bỏ bữa, ăn kiêng cực đoan dễ khiến cơ thể bị thiếu hụt năng lượng hoặc mất cân bằng nội tiết.\", \"Hãy lắng nghe cơn đói của cơ thể và nạp năng lượng bằng những thực phẩm lành mạnh.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(872, 148, 'scenario', '{\"title\": \"Nhịn ăn giảm cân\", \"body\": \"Phương nhịn ăn trưa để mong có thân hình thon gọn như thần tượng Hàn Quốc, dẫn đến việc bị hạ đường huyết ngất xỉu trong giờ thể dục.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(873, 148, 'flashcard', '{\"front\": \"Nhịn ăn để giảm cân nhanh chóng ở tuổi dậy thì có phải là ý tưởng tốt không?\", \"back\": \"Tuyệt đối KHÔNG. Nhịn ăn làm cản trở sự phát triển chiều cao, gây mệt mỏi, suy giảm trí nhớ và xáo trộn nội tiết tố nghiêm trọng.\", \"notes\": \"Hãy chọn ăn uống đầy đủ chất dinh dưỡng kết hợp vận động thể thao để có cơ thể khỏe mạnh tự nhiên.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(874, 148, 'reflection', '{\"question\": \"Bạn có hay bỏ bữa sáng vì vội đi học không? Bữa sáng chính là xăng để khởi động ngày mới của bạn đấy!\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(875, 148, 'takeaway', '{\"items\": [\"Ăn uống đủ chất là cách bạn tiếp thêm sức mạnh cho hành trình lớn lên của cơ thể.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(876, 149, 'hook', '{\"title\": \"Tại sao tụi mình thường được khuyên phải ngủ đủ 8 đến 10 tiếng mỗi đêm ở tuổi mới lớn?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(877, 149, 'explanation', '{\"bullets\": [\"Khi bạn ngủ sâu, tuyến yên trong não sẽ giải phóng hormone tăng trưởng (GH) nhiều nhất để giúp cao lớn và hồi phục.\", \"Thiếu ngủ kéo dài dẫn đến mất tập trung học tập, nổi mụn và tâm trạng dễ cáu bẳn bực dọc.\", \"Tránh xa màn hình điện thoại ít nhất 30 phút trước khi ngủ để có giấc ngủ sâu chất lượng.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(878, 149, 'scenario', '{\"title\": \"Rank game thâu đêm\", \"body\": \"Bách thường xuyên thức khuya đến 2h sáng để cày rank game. Sáng hôm sau đi học, Bách luôn trong tình trạng lờ đờ và ngủ gật trong lớp.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(879, 149, 'interaction', '{\"question\": \"Bách nên thay đổi thói quen ngủ thế nào để hỗ trợ cơ thể phát triển tốt nhất?\", \"choices\": [{\"text\": \"Thiết lập giờ ngủ cố định trước 11h đêm, để điện thoại ở xa giường và ngủ đủ 8-9 tiếng mỗi ngày.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục thức khuya cày game, bù lại bằng cách ngủ bù 12 tiếng vào ngày chủ nhật là được.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(880, 149, 'reflection', '{\"question\": \"Bạn có thói quen mang điện thoại lên giường lướt mạng trước khi đi ngủ không? Điều này có ảnh hưởng đến giấc ngủ của bạn?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(881, 149, 'takeaway', '{\"items\": [\"Giấc ngủ sâu là phòng thí nghiệm thần kỳ nơi cơ thể âm thầm sửa chữa và cao lớn lên mỗi đêm.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(882, 150, 'hook', '{\"title\": \"Làm sao để nhận biết khi cơ thể đang phát tín hiệu cầu cứu vì bị làm việc hoặc học tập quá tải?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(883, 150, 'explanation', '{\"bullets\": [\"Tín hiệu báo động bao gồm: mỏi mắt, đau đầu liên tục, uể oải chán ăn, hoặc bồn chồn lo lắng ở bụng.\", \"Nhiều bạn trẻ thường bỏ qua các tín hiệu này, cố gắng gồng mình học tập vì áp lực thành tích.\", \"Lắng nghe và cho phép cơ thể nghỉ ngơi chính là biểu hiện của sự tự chăm sóc thông thái.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(884, 150, 'scenario', '{\"title\": \"Mệt mỏi trước kỳ thi\", \"body\": \"Đầu óc nhức nhối quay cuồng trước kỳ thi học kỳ, nhưng Nam vẫn cố bấm điện thoại đọc tài liệu đến 1h sáng vì sợ trượt.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(885, 150, 'sorting', '{\"instruction\": \"Phân loại các phản ứng trước tín hiệu mệt mỏi của cơ thể:\", \"leftBox\": {\"title\": \"Lắng nghe thông thái\"}, \"rightBox\": {\"title\": \"Phớt lờ gượng ép\"}, \"items\": [{\"text\": \"Tạm dừng học, đi bộ xung quanh sân nhà 10 phút để thư giãn gân cốt\", \"correctBox\": \"left\"}, {\"text\": \"Uống thêm 1 lon nước ngọt/cafe đậm đặc để cố thức đêm cày bài dù đầu đang nhức\", \"correctBox\": \"right\"}, {\"text\": \"Nằm nghỉ ngơi thả lỏng cơ thể khi cảm thấy bụng dưới đau âm ỉ do kinh nguyệt\", \"correctBox\": \"left\"}, {\"text\": \"Cố gắng chạy bộ thêm 5km dù chân đang bị căng cơ đau nhói để đạt chỉ tiêu\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(886, 150, 'reflection', '{\"question\": \"Bạn có từng cố học tập hay làm việc đến kiệt sức chỉ vì sợ bị đánh giá là lười biếng chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(887, 150, 'takeaway', '{\"items\": [\"Cơ thể là người bạn đồng hành trung thực. Hãy nghỉ ngơi khi bạn ấy lên tiếng báo động mệt mỏi nhé.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(888, 151, 'hook', '{\"title\": \"Làm sao để chiến thắng sức hấp dẫn của chiếc màn hình điện thoại rực rỡ vào lúc nửa đêm?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(889, 151, 'explanation', '{\"bullets\": [\"Ánh sáng xanh từ điện thoại ngăn cản cơ thể tiết hormone melatonin gây buồn ngủ.\", \"Lướt mạng xã hội vào ban đêm dễ kéo bạn vào những luồng suy nghĩ lo âu, so sánh tiêu cực.\", \"Thiết lập ranh giới rõ ràng với công nghệ là bước tự chăm sóc bản thân khôn ngoan nhất.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(890, 151, 'scenario', '{\"title\": \"Tiktok nửa đêm\", \"body\": \"Linh định chỉ lướt Tiktok 15 phút trước khi ngủ lúc 10h tối, nhưng các video ngắn lôi cuốn cuốn Linh đi liên tục khiến Linh thức đến 1h sáng.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(891, 151, 'flashcard', '{\"front\": \"Linh nên làm thế nào để tránh tình trạng lướt điện thoại quên giờ giấc vào ban đêm?\", \"back\": \"Bật chế độ không làm phiền (Do Not Disturb), cài đặt giới hạn thời gian sử dụng app và đặt điện thoại ngoài tầm với của tay khi đã lên giường ngủ.\", \"notes\": \"Phòng ngủ nên là thánh đường của sự nghỉ ngơi, không phải là nơi lướt mạng thâu đêm.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(892, 151, 'reflection', '{\"question\": \"Bạn có sẵn sàng tắt kết nối wifi điện thoại sau 10h30 tối để dành không gian yên tĩnh cho tâm trí nghỉ ngơi không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(893, 151, 'takeaway', '{\"items\": [\"Tắt điện thoại, mở giấc ngủ ngon. Đó là món quà tuyệt vời nhất bạn dành tặng cho sức khỏe của mình.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(894, 152, 'hook', '{\"title\": \"Làm thế nào để cân bằng giữa việc học tập bận rộn ở trường và thời gian chăm sóc bản thân mỗi ngày?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(895, 152, 'explanation', '{\"bullets\": [\"Tự chăm sóc bản thân (Self-care) không cần những việc đắt đỏ, nó là những thói quen nhỏ đều đặn.\", \"Lập một thời gian biểu có xen kẽ thời gian học tập, thời gian thể thao và khoảng thời gian không làm gì cả.\", \"Học cách nói không với các yêu cầu không quan trọng khi bạn cần ưu tiên nghỉ ngơi.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(896, 152, 'scenario', '{\"title\": \"Vy không còn thời gian vẽ\", \"body\": \"Vy có lịch học thêm dày đặc cả tuần, không có lấy một buổi tối rảnh rỗi để vẽ tranh (sở thích lớn nhất của Vy), khiến Vy thấy uể oải.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(897, 152, 'interaction', '{\"question\": \"Vy nên sắp xếp lại lịch sinh hoạt thế nào cho cân bằng cảm xúc?\", \"choices\": [{\"text\": \"Xin phép bố mẹ bớt một buổi học thêm không quá cấp thiết để dành tối thứ 7 cho sở thích vẽ tranh cá nhân.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục cố học hết công suất, đợi đến kỳ nghỉ hè mới bắt đầu vẽ tranh lại.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(898, 152, 'reflection', '{\"question\": \"Bạn có đang dành ra ít nhất 30 phút mỗi ngày cho một sở thích lành mạnh mang lại niềm vui thuần khiết không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(899, 152, 'takeaway', '{\"items\": [\"Tự chăm sóc không phải là ích kỷ, đó là cách bạn sạc đầy pin để học tập và yêu thương cuộc sống tốt hơn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(900, 153, 'hook', '{\"title\": \"Tự chăm sóc bản thân có phải là việc chỉ làm một lần khi thấy mệt rồi thôi không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(901, 153, 'explanation', '{\"bullets\": [\"Tự chăm sóc là một phong cách sống bền vững, là sự cam kết lắng nghe và tôn trọng cơ thể mình mỗi ngày.\", \"Sẽ có những ngày bạn ăn uống không lành mạnh, đừng tự trách móc quá mức. Hãy bắt đầu lại vào ngày mai.\", \"Hãy kiên nhẫn và bao dung với chính mình trên hành trình học cách trưởng thành.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(902, 153, 'scenario', '{\"title\": \"Tự trách vì lười biếng\", \"body\": \"Hân tự sỉ vả mình vô dụng cả ngày vì lỡ dành cả buổi chiều thứ bảy nằm ngủ lười biếng thay vì đi học nhóm.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(903, 153, 'sorting', '{\"instruction\": \"Phân loại các quan niệm đúng đắn về hành trình tự chăm sóc bản thân:\", \"leftBox\": {\"title\": \"Lành mạnh lâu dài\"}, \"rightBox\": {\"title\": \"Sai lầm nhất thời\"}, \"items\": [{\"text\": \"Tự chăm sóc là thói quen nhỏ hàng ngày: uống đủ nước, ngủ đủ giấc\", \"correctBox\": \"left\"}, {\"text\": \"Chỉ tự chăm sóc bản thân bằng cách đi mua sắm những món đồ hiệu thật đắt tiền\", \"correctBox\": \"right\"}, {\"text\": \"Chấp nhận những ngày mình mệt mỏi và cho phép bản thân nghỉ ngơi không áy náy\", \"correctBox\": \"left\"}, {\"text\": \"Ép bản thân phải luôn vui vẻ tích cực 24/7 và không được phép buồn\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(904, 153, 'reflection', '{\"question\": \"Bạn có đang bao dung và nhẹ nhàng với chính mình mỗi khi gặp thất bại hay phạm sai lầm không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(905, 153, 'takeaway', '{\"items\": [\"Tự chăm sóc là hành trình trọn đời. Hãy bước đi thong thả với lòng bao dung dành cho bản thân mình.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(906, 154, 'hook', '{\"title\": \"Bạn có tin vào lời đồn rằng qua tuổi dậy thì là chiều cao của bạn sẽ vĩnh viễn đứng yên không?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(907, 154, 'explanation', '{\"bullets\": [\"Chiều cao chịu ảnh hưởng di truyền, nhưng dinh dưỡng, giấc ngủ và thể thao đóng vai trò quyết định.\", \"Xương của bạn vẫn tiếp tục phát triển và chỉ thực sự đóng khớp hoàn toàn vào khoảng tuổi 20 đến 22.\", \"Đừng vội bỏ cuộc hay lo lắng, bạn vẫn còn thời gian để cải thiện chiều cao khoa học.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(908, 154, 'scenario', '{\"title\": \"Nỗi lo lùn tịt\", \"body\": \"Huy 14 tuổi nhưng lùn nhất nhóm bạn nam, cậu sợ hãi nghĩ mình sẽ lùn tịt cả đời và định mua thực phẩm chức năng tăng chiều cao cấp tốc.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(909, 154, 'flashcard', '{\"front\": \"Có phải uống sữa tăng chiều cao thần tốc trên quảng cáo là cách duy nhất để cao lên không?\", \"back\": \"KHÔNG. Không có sữa hay thuốc thần kỳ nào giúp cao vọt ngay lập tức. Cần ăn uống đủ chất, ngủ sớm trước 11h đêm và tập luyện thể thao (bơi lội, bóng rổ).\", \"notes\": \"Hãy cảnh giác với các sản phẩm tăng chiều cao thần tốc không rõ nguồn gốc.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(910, 154, 'reflection', '{\"question\": \"Bạn có đang duy trì một môn thể thao vận động kéo giãn cơ thể nào đều đặn mỗi tuần không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(911, 154, 'takeaway', '{\"items\": [\"Sự cao lớn cần thời gian và thói quen sinh hoạt lành mạnh bền bỉ, không có đường tắt nào cả.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(912, 155, 'hook', '{\"title\": \"Liệu hành vi tự khám phá cơ thể (thủ dâm) có gây ra những tác hại đáng sợ như lời đồn thổi?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(913, 155, 'explanation', '{\"bullets\": [\"Thủ dâm (Masturbation) là hành vi tự kích thích cơ quan sinh dục của mình để tìm kiếm cảm giác thư giãn.\", \"Về mặt y học, đây là hành vi sinh lý hoàn toàn bình thường, lành mạnh và an toàn để khám phá cơ thể.\", \"Nó chỉ bất ổn khi bạn làm quá thường xuyên gây ảnh hưởng cuộc sống hoặc làm ở nơi công cộng.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(914, 155, 'scenario', '{\"title\": \"Nỗi sợ vô căn cứ\", \"body\": \"Bách nghe các bạn nam rỉ tai nhau rằng thủ dâm sẽ làm suy giảm trí nhớ, gây vô sinh. Bách vô cùng hoang mang lo sợ.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(915, 155, 'interaction', '{\"question\": \"Bách nên hiểu đúng về hành vi tự khám phá cơ thể thế nào cho khoa học?\", \"choices\": [{\"text\": \"Đây là hiện tượng sinh lý bình thường của tuổi dậy thì, không gây ra các tác hại ghê gớm nếu thực hiện điều độ, kín đáo và vệ sinh sạch sẽ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Chắc chắn lời đồn là đúng, Bách nên đi khám bác sĩ tâm thần để điều trị ngay lập tức.\", \"correct\": false, \"emoji\": \"🛑\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(916, 155, 'reflection', '{\"question\": \"Bạn có cảm thấy bớt lo lắng và tội lỗi hơn sau khi hiểu rõ góc nhìn khoa học về hành vi này chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(917, 155, 'takeaway', '{\"items\": [\"Khám phá cơ thể là bình thường. Hãy thực hiện nó với thái độ tôn trọng cơ thể, kín đáo và giữ vệ sinh sạch sẽ.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(918, 156, 'hook', '{\"title\": \"Tại sao tụi mình thường chọn cách âm thầm lên Google tra cứu hoặc tin vào lời đồn hơn là hỏi trực tiếp chuyên gia?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(919, 156, 'explanation', '{\"bullets\": [\"Cảm giác xấu hổ, sợ bị người lớn phán xét, mắng mỏ khiến tụi mình ngại ngùng che giấu.\", \"Nhưng tìm kiếm thông tin không chính thống dễ dẫn đến hiểu biết sai lệch, gây ra nỗi sợ vô lý.\", \"Vượt qua sự ngại ngùng để tìm kiếm những nguồn tin khoa học chính là cách bạn tự bảo vệ mình.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(920, 156, 'scenario', '{\"title\": \"Search Google giật gân\", \"body\": \"Vy băn khoăn về khí hư có màu trắng đục, cô bé tự search Google và đọc trúng bài viết bảo mình đã bị ung thư cổ tử cung khiến Vy khóc lóc tuyệt vọng.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(921, 156, 'sorting', '{\"instruction\": \"Phân loại các nguồn tìm kiếm thông tin sức khỏe tuổi dậy thì:\", \"leftBox\": {\"title\": \"Nguồn tin tin cậy\"}, \"rightBox\": {\"title\": \"Nguồn tin rác\"}, \"items\": [{\"text\": \"Website giáo dục giới tính uy tín như Scarleteen hoặc của tổ chức WHO, UNICEF\", \"correctBox\": \"left\"}, {\"text\": \"Các video ngắn không rõ nguồn gốc, giật tít câu view trên mạng xã hội\", \"correctBox\": \"right\"}, {\"text\": \"Bác sĩ nhi khoa, chuyên gia tâm lý hoặc giáo viên sinh học tại trường\", \"correctBox\": \"left\"}, {\"text\": \"Các diễn đàn mạng ẩn danh chuyên chia sẻ các mẹo truyền miệng dân gian trị bệnh\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(922, 156, 'reflection', '{\"question\": \"Bạn có từng đọc được một thông tin sức khỏe giật gân trên mạng khiến bạn vô cùng hoảng sợ chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(923, 156, 'takeaway', '{\"items\": [\"Đặt câu hỏi không có gì là xấu. Hãy tìm kiếm câu trả lời từ những nguồn tin khoa học và đáng tin cậy.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(924, 157, 'hook', '{\"title\": \"Làm sao ứng phó khi bạn bè truyền tai nhau những thông tin sai lệch về tình dục hay thủ dâm ngay tại trường học?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(925, 157, 'explanation', '{\"bullets\": [\"Áp lực đồng trang lứa và sự tò mò khiến các tin đồn nhảm tuổi dậy thì lan truyền rất nhanh ở trường học.\", \"Bạn không cần phải hùa theo đám đông để tỏ ra sành sỏi, cũng không cần tranh cãi làm mất lòng bạn bè.\", \"Giữ cho mình đầu óc tỉnh táo, tin vào kiến thức khoa học đã học.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(926, 157, 'scenario', '{\"title\": \"Rỉ tai phòng học\", \"body\": \"Trong giờ ra chơi, một nhóm bạn đang bàn tán xôn xao rằng chỉ cần ôm nhau thôi bạn gái cũng có thể mang thai. Khánh đứng bên nghe thấy lo sợ tột cùng vì hôm qua vừa ôm một bạn nữ.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(927, 157, 'flashcard', '{\"front\": \"Khánh nên xử lý nỗi sợ hãi của mình thế nào trước lời đồn của bạn bè?\", \"back\": \"Khánh nên tự trấn an: Ôm nhau không thể mang thai được. Sau đó, Khánh có thể đọc lại sách y khoa hoặc hỏi mẹ để giải tỏa hoàn toàn nỗi lo sợ ngớ ngẩn này.\", \"notes\": \"Đừng để những lời rỉ tai vô căn cứ kiểm soát tâm trạng và hành vi của bạn.\"}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(928, 157, 'reflection', '{\"question\": \"Bạn có thói quen đối chiếu lại những thông tin nghe được từ bạn bè với sách giáo khoa không?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(929, 157, 'takeaway', '{\"items\": [\"Kiến thức khoa học là chiếc la bàn tốt nhất giúp bạn vượt qua những sương mù tin đồn tuổi mới lớn.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(930, 158, 'hook', '{\"title\": \"Làm sao để rèn luyện tư duy phản biện, tự biến mình thành một bộ lọc thông tin thông thái trước biển kiến thức?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(931, 158, 'explanation', '{\"bullets\": [\"Áp dụng quy tắc kiểm chứng thông tin: Ai viết? (Nguồn uy tín?), Dựa trên cơ sở nào? (Cơ sở y khoa?), Mục đích làm gì? (Giáo dục hay bán hàng?).\", \"Tránh chia sẻ những thông tin giật gân, chưa kiểm chứng lên mạng vì dễ gây hoang mang cho người khác.\", \"Luôn giữ thái độ cởi mở nhưng tỉnh táo trước mọi thông tin mới.\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(932, 158, 'scenario', '{\"title\": \"Vy định share bài dứa\", \"body\": \"Vy đọc được bài viết trên Tiktok bảo rằng ăn nhiều dứa giúp ngày hành kinh thơm tho và không bị đau bụng, cô bé định chia sẻ ngay về trang cá nhân.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(933, 158, 'interaction', '{\"question\": \"Vy nên làm gì trước khi nhấn nút chia sẻ bài viết đó?\", \"choices\": [{\"text\": \"Tìm kiếm lại từ khóa đó trên các trang y khoa uy tín để xác nhận tính chính xác của mẹo dân gian này trước khi chia sẻ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Chia sẻ ngay lập tức vì thấy mẹo này rất thú vị và có ích cho các bạn gái khác.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(934, 158, 'reflection', '{\"question\": \"Bạn có bao giờ dừng lại suy ngẫm về tính chính xác của một thông tin trước khi nhấn nút share trên mạng chưa?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(935, 158, 'takeaway', '{\"items\": [\"Hãy là một Netizen thông thái, biết lọc sạch thông tin trước khi nạp vào đầu và lan tỏa cho người khác.\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(936, 159, 'hook', '{\"title\": \"Bạn đã sẵn sàng khép lại chương học này để tự tin làm chủ hành trình dậy thì thành công của mình chưa?\"}', 1, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(937, 159, 'explanation', '{\"bullets\": [\"Dậy thì không đáng sợ khi bạn đã trang bị đầy đủ kiến thức khoa học và lòng yêu thương bản thân.\", \"Chúc mừng bạn đã hoàn thành khóa học và tích lũy được những kỹ năng quan trọng để bảo vệ, chăm sóc cơ thể cũng như cảm xúc.\", \"Hãy tiếp tục bước đi trên con đường lớn lên với sự tự tin và tràn đầy năng lượng tích cực!\"]}', 2, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(938, 159, 'scenario', '{\"title\": \"Nhìn lại hành trình\", \"body\": \"Khánh dạo này không còn hoảng hốt khi thấy da nổi mụn, biết tự giác ngủ sớm trước 11h và sẵn sàng tâm sự khó khăn sức khỏe với bố mẹ.\"}', 3, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(939, 159, 'sorting', '{\"instruction\": \"Phân loại các hành vi thể hiện sự sẵn sàng làm chủ tuổi dậy thì:\", \"leftBox\": {\"title\": \"Dậy thì thành công\"}, \"rightBox\": {\"title\": \"Chưa sẵn sàng lớn\"}, \"items\": [{\"text\": \"Tự tin chăm sóc vệ sinh cá nhân sạch sẽ và ăn uống đủ chất hàng ngày\", \"correctBox\": \"left\"}, {\"text\": \"Trốn tránh không dám nói chuyện với ai khi cơ thể gặp sự cố khó chịu\", \"correctBox\": \"right\"}, {\"text\": \"Tôn trọng sự đa dạng vóc dáng và cảm xúc thay đổi của bản thân, bạn bè\", \"correctBox\": \"left\"}, {\"text\": \"Tiếp tục tin vào những lời đồn thổi phản khoa học của bạn bè cùng lớp\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(940, 159, 'reflection', '{\"question\": \"Sau khóa học này, bạn cảm thấy mình đã tự tin hơn bao nhiêu phần trăm để đối mặt với những thay đổi của tuổi dậy thì?\"}', 5, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(941, 159, 'takeaway', '{\"items\": [\"Bạn đã sẵn sàng và đầy bản lĩnh. Hãy tự tin bước ra thế giới và tỏa sáng theo cách riêng của mình!\"]}', 6, '2026-06-05 13:58:05', '2026-06-05 13:58:05'),
+(942, 160, 'hook', '{\"title\": \"Bạn có bao giờ bỗng dưng thấy muốn \'gầm rú\' hoặc khóc ngon lành chỉ vì một chuyện nhỏ xíu không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(943, 160, 'explanation', '{\"bullets\": [\"Ở tuổi dậy thì, các hormone (như estrogen và testosterone) tăng vọt như biểu đồ chứng khoán.\", \"Chúng kích hoạt vùng hạch hạnh nhân trong não, nơi kiểm soát cảm xúc, làm bạn nhạy cảm hơn bình thường gấp nhiều lần.\", \"Đây là một phản ứng sinh học hoàn toàn tự nhiên, không phải do bạn \'khó ưa\' hay \'bất trị\' đâu nha!\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(944, 160, 'scenario', '{\"title\": \"Cơn giận vô cớ\", \"body\": \"Nam đang ngồi xem phim hoạt hình bình thường, bỗng dưng bố nhắc Nam đi đổ rác. Thế là Nam nổi đóa, quát lại bố rồi chạy vào phòng đóng sập cửa. Sau đó Nam lại thấy hối hận và tự trách mình vì phản ứng quá đà.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(945, 160, 'flashcard', '{\"front\": \"Có phải cảm xúc thất thường là dấu hiệu của việc mình đang biến thành người xấu?\", \"back\": \"Tuyệt đối không! Đó chỉ là tín hiệu bộ não và hormone của bạn đang học cách trưởng thành cùng nhau.\", \"notes\": \"Hãy xem nó giống như một bản chạy thử phần mềm mới (Beta test), thỉnh thoảng có lỗi (lag/bug) là chuyện thường.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(946, 160, 'reflection', '{\"question\": \"Gần đây bạn có phản ứng thái quá với ai đó chỉ vì một chuyện nhỏ không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(947, 160, 'takeaway', '{\"items\": [\"Cảm xúc thay đổi là chuyện bình thường của tuổi dậy thì. Hãy cho bản thân thời gian để thích nghi.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(948, 161, 'hook', '{\"title\": \"Làm thế nào để biết mình đang thực sự cảm thấy thế nào khi trong lòng là một đống hỗn độn?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(949, 161, 'explanation', '{\"bullets\": [\"Có những ngày bạn cảm thấy vừa giận, vừa buồn, vừa lo lắng đan xen lẫn nhau.\", \"Việc gọi tên chính xác cảm xúc (ví dụ: thất vọng, ghen tị, bất an) giúp não bộ hạ nhiệt ngay lập tức.\", \"Hãy thử dừng lại 3 giây và tự hỏi: \'Mình đang thuộc \'hệ\' cảm xúc nào lúc này?\'\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(950, 161, 'scenario', '{\"title\": \"Cảm giác lẫn lộn\", \"body\": \"Lan thấy bạn thân của mình đi chơi riêng với một bạn khác mà không rủ mình. Lan thấy ngực nghẹn lại, mặt nóng bừng và muốn viết một tin nhắn giận dữ. Lan không rõ mình đang giận hay đang buồn tủi.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(951, 161, 'interaction', '{\"question\": \"Trong tình huống của Lan, cảm xúc thực chất đằng sau cơn giận là gì?\", \"choices\": [{\"text\": \"Lan đang cảm thấy bị bỏ rơi và lo sợ tình bạn của mình đang bị rạn nứt.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Lan chỉ đang ghét bạn kia và muốn gây sự cho vui thôi.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(952, 161, 'reflection', '{\"question\": \"Khi tức giận, bạn thường cảm thấy cơ thể mình có những biểu hiện gì đầu tiên (nóng mặt, run tay, nghẹn ngực)?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(953, 161, 'takeaway', '{\"items\": [\"Gọi tên được cảm xúc là bạn đã đi được một nửa chặng đường để làm chủ nó.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(954, 162, 'hook', '{\"title\": \"Bạn có từng cảm thấy tội lỗi hoặc cố tỏ ra vui vẻ khi trong lòng đang buồn héo úa không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(955, 162, 'explanation', '{\"bullets\": [\"Xã hội thường bảo tụi mình phải luôn tích cực, nhưng thực tế, buồn bã, lo âu hay giận dữ cũng là những cảm xúc có ích.\", \"Nỗi buồn giúp ta biết điều gì là quan trọng; nỗi sợ giúp ta tránh nguy hiểm; cơn giận báo hiệu ranh giới của ta bị xâm phạm.\", \"Đè nén cảm xúc tiêu cực chỉ làm chúng phình to ra như quả bóng bay sắp nổ mà thôi.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(956, 162, 'scenario', '{\"title\": \"Tỏ vẻ ổn bên ngoài\", \"body\": \"Minh trượt đội tuyển bóng rổ của trường. Dù rất buồn và muốn khóc, nhưng khi gặp bạn bè, Minh vẫn cười nói hớn hở: \'Ối dào, tớ có thèm vào đâu!\'. Tối về nhà, Minh cảm thấy cô đơn và trống rỗng tột cùng.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(957, 162, 'sorting', '{\"instruction\": \"Phân loại các phản ứng với cảm xúc tiêu cực:\", \"leftBox\": {\"title\": \"Đón nhận lành mạnh\"}, \"rightBox\": {\"title\": \"Chối bỏ, đè nén\"}, \"items\": [{\"text\": \"Cho phép bản thân khóc và buồn khi gặp thất bại\", \"correctBox\": \"left\"}, {\"text\": \"Cố tỏ ra vui cười để người khác không thấy mình yếu đuối\", \"correctBox\": \"right\"}, {\"text\": \"Tự nhủ: Buồn một chút cũng được, mai mình sẽ tính tiếp\", \"correctBox\": \"left\"}, {\"text\": \"Cáu gắt với người nhà để trút bỏ sự khó chịu trong lòng\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(958, 162, 'reflection', '{\"question\": \"Bạn có từng giả vờ ổn trước mặt người khác để tránh bị coi là yếu đuối chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(959, 162, 'takeaway', '{\"items\": [\"Mọi cảm xúc đều có giá trị và quyền được tồn tại. Đừng bắt bản thân phải luôn hoàn hảo.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(960, 163, 'hook', '{\"title\": \"Có những ngày ngủ dậy, bạn thấy cả thế giới bỗng nhiên xám xịt và chán ghét mọi thứ mà không hiểu vì sao?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(961, 163, 'explanation', '{\"bullets\": [\"Đôi khi tâm trạng đi xuống không cần một lý do cụ thể nào cả. Nó có thể do thiếu ngủ, thay đổi thời tiết, hoặc đơn giản là cơ thể đang quá tải.\", \"Những lúc này, việc ép mình phải làm việc hoặc vui vẻ chỉ khiến bạn thêm kiệt sức.\", \"Hãy chấp nhận rằng hôm nay là một ngày \'low-energy\' (năng lượng thấp) và đối xử nhẹ nhàng với bản thân hơn.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(962, 163, 'scenario', '{\"title\": \"Chán chường ngày cuối tuần\", \"body\": \"Hòa thức dậy vào ngày chủ nhật với cảm giác uể oải, không muốn ăn, không muốn nhắn tin với bạn bè và chỉ muốn nằm dài trên giường. Hòa tự trách mình là lười biếng và vô dụng.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(963, 163, 'flashcard', '{\"front\": \"Hòa nên làm gì để vượt qua ngày năng lượng thấp này một cách thoải mái nhất?\", \"back\": \"Cho phép bản thân nghỉ ngơi, làm những việc siêu nhỏ như uống một cốc nước ấm, nghe một bản nhạc nhẹ, và đừng tự phán xét mình.\", \"notes\": \"Điện thoại còn có lúc cần sạc pin, cơ thể và tâm trí bạn cũng vậy thôi!\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(964, 163, 'reflection', '{\"question\": \"Bạn thường làm gì để sạc lại năng lượng cho những ngày \'tụt mood\' không lý do?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(965, 163, 'takeaway', '{\"items\": [\"Năng lượng thấp không phải là lười biếng. Đó là tiếng nói của cơ thể cần được nghỉ ngơi.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(966, 164, 'hook', '{\"title\": \"Bạn sẽ làm gì khi cơn tức giận hoặc nỗi lo lắng ập đến như một vị khách không mời mà tới?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(967, 164, 'explanation', '{\"bullets\": [\"Thay vì cố đẩy \'vị khách\' cảm xúc khó chịu đi, hãy học cách ngồi xuống quan sát nó.\", \"Nhận biết cảm giác đó trên cơ thể: tim đập nhanh, thở nông, hay tay bóp chặt.\", \"Sử dụng các kỹ thuật như hít thở sâu, đi bộ, hoặc viết ra để giúp cảm xúc đó trôi qua một cách tự nhiên.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(968, 164, 'scenario', '{\"title\": \"Trước thềm thuyết trình\", \"body\": \"Khi chuẩn bị lên thuyết trình trước lớp, Vy cảm thấy tim đập thình thịch, tay run rẩy và đầu óc trống rỗng vì quá lo sợ. Vy muốn chạy trốn khỏi lớp học.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15');
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES
+(969, 164, 'interaction', '{\"question\": \"Hành động nào giúp Vy bình tĩnh lại nhanh nhất lúc này?\", \"choices\": [{\"text\": \"Hít vào thật sâu bằng mũi trong 4 giây, giữ hơi 7 giây, và thở ra từ từ bằng miệng trong 8 giây.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Cố gắng uống thật nhiều nước ngọt có ga và chạy nhảy xung quanh lớp.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(970, 164, 'reflection', '{\"question\": \"Mẹo nhỏ nào bạn thường dùng để giữ bình tĩnh trước các sự kiện quan trọng?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(971, 164, 'takeaway', '{\"items\": [\"Bạn không thể ngăn cơn sóng cảm xúc ập đến, nhưng bạn có thể học cách lướt sóng.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(972, 165, 'hook', '{\"title\": \"Làm thế nào để dọn dẹp đống suy nghĩ ngổn ngang trong đầu trước khi đi ngủ?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(973, 165, 'explanation', '{\"bullets\": [\"Viết ra giấy hoặc ghi chú trên điện thoại là cách tuyệt vời để \'xuất khẩu\' những lo âu ra ngoài bộ não.\", \"Bạn không cần phải viết một bài văn hay, chỉ cần viết tự do tất cả những gì đang có trong đầu.\", \"Việc này giúp bạn nhìn nhận lại mọi việc một cách khách quan và giải tỏa áp lực tinh thần cực kỳ hiệu quả.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(974, 165, 'scenario', '{\"title\": \"Ấm ức trong đêm\", \"body\": \"Tú cảm thấy ấm ức vì bị bạn bè hiểu lầm. Cả tối Tú nằm trằn trọc không ngủ được, đầu óc liên tục tua đi tua lại cuộc cãi vã và tự nghĩ ra những lời cãi cọ sắc bén hơn.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(975, 165, 'sorting', '{\"instruction\": \"Phân loại các thói quen giải tỏa suy nghĩ trước khi ngủ:\", \"leftBox\": {\"title\": \"Dọn dẹp trí óc\"}, \"rightBox\": {\"title\": \"Overthinking\"}, \"items\": [{\"text\": \"Viết hết nỗi bực bội ra giấy nháp rồi xé bỏ\", \"correctBox\": \"left\"}, {\"text\": \"Nằm tua đi tua lại cuộc cãi vã trong đầu\", \"correctBox\": \"right\"}, {\"text\": \"Liệt kê 3 điều bạn thấy biết ơn trong ngày hôm nay\", \"correctBox\": \"left\"}, {\"text\": \"Lướt mạng xã hội xem đối phương có đăng bài viết bóng gió gì không\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(976, 165, 'reflection', '{\"question\": \"Bạn đã từng thử viết ra những suy nghĩ của mình khi tức giận chưa? Cảm giác lúc đó thế nào?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(977, 165, 'takeaway', '{\"items\": [\"Đầu óc dùng để suy nghĩ chứ không phải để lưu trữ lo âu. Hãy trút bỏ chúng ra trang giấy.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(978, 166, 'hook', '{\"title\": \"Có phải tự tin là lúc nào cũng phải nói to, nổi bật và không bao giờ biết sợ hãi?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(979, 166, 'explanation', '{\"bullets\": [\"Tự tin thực sự (Self-esteem) là việc bạn chấp nhận bản thân với cả ưu điểm lẫn khuyết điểm, cảm thấy mình xứng đáng được tôn trọng.\", \"Tự tin \'fake\' là khi bạn cố gồng mình tỏ ra hoàn hảo, lấn lướt người khác để che giấu sự bất an bên trong.\", \"Người tự tin thực sự không cần phải so sánh mình với ai để cảm thấy mình có giá trị.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(980, 166, 'scenario', '{\"title\": \"Gồng mình làm trung tâm\", \"body\": \"Hoàng luôn cố gắng chen vào mọi cuộc trò chuyện, khoe khoang về những món đồ hiệu mình có và cười cợt các bạn học kém hơn để chứng tỏ mình \'đẳng cấp\'. Nhưng khi ở một mình, Hoàng luôn sợ bị các bạn tẩy chay.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(981, 166, 'flashcard', '{\"front\": \"Làm sao để nhận diện một người có lòng tự tin thực sự và lành mạnh?\", \"back\": \"Họ biết lắng nghe, sẵn sàng thừa nhận khi mình sai, tôn trọng ranh giới của người khác và không cần dìm người khác xuống để nâng mình lên.\", \"notes\": \"Tự tin là một chiếc cúp nằm trong lòng, chứ không phải cái loa phát thanh ra bên ngoài.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(982, 166, 'reflection', '{\"question\": \"Bạn có bao giờ cố tỏ ra \'ngầu\' trước mặt người khác dù bên trong đang rất run không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(983, 166, 'takeaway', '{\"items\": [\"Tự tin thực sự bắt đầu từ việc chấp nhận con người thật của chính mình.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(984, 167, 'hook', '{\"title\": \"Làm sao để chia sẻ niềm vui chiến thắng của mình mà không bị bạn bè coi là kẻ kiêu ngạo, hợm hĩnh?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(985, 167, 'explanation', '{\"bullets\": [\"Bạn hoàn toàn có quyền tự hào và ăn mừng những nỗ lực, thành quả của bản thân (Self-worth).\", \"Điểm khác biệt là: Tự hào đi kèm lòng biết ơn và sự tôn trọng người khác, còn \'flexing\' (khoe khoang) mục đích là để chứng tỏ mình giỏi hơn mọi người.\", \"Đừng ngại công nhận sự cố gắng của chính mình nhé!\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(986, 167, 'scenario', '{\"title\": \"Đăng ảnh nhận giải\", \"body\": \"Khánh vừa đạt giải nhất cuộc thi vẽ cấp trường. Khánh muốn đăng ảnh bức tranh lên mạng xã hội nhưng sợ các bạn bảo mình là kẻ hợm hĩnh, thích thể hiện.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(987, 167, 'interaction', '{\"question\": \"Khánh nên viết caption như thế nào để vừa thể hiện sự tự hào vừa văn minh, khiêm tốn?\", \"choices\": [{\"text\": \"\'Bức tranh này là kết quả của 3 tuần thức đêm vẽ liên tục của tớ. Cảm ơn thầy cô và các bạn đã cổ vũ tớ rất nhiều!\'\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"\'Cuối cùng giải nhất cũng thuộc về người xứng đáng nhất. Vẽ vời thế này thì các bạn khác chạy theo dài dài nhé!\'\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(988, 167, 'reflection', '{\"question\": \"Lần gần nhất bạn tự khen ngợi bản thân vì đã hoàn thành tốt một việc gì đó là khi nào?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(989, 167, 'takeaway', '{\"items\": [\"Công nhận nỗ lực của bản thân không phải là kiêu ngạo. Đó là sự tử tế tối thiểu dành cho chính mình.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(990, 168, 'hook', '{\"title\": \"Tại sao việc so sánh bản thân với người khác lại là cách nhanh nhất để hủy hoại niềm vui của bạn?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(991, 168, 'explanation', '{\"bullets\": [\"Não bộ chúng ta có xu hướng so sánh điểm yếu nhất của mình với điểm mạnh nhất của người khác.\", \"Mạng xã hội hay những lời so sánh của bố mẹ vô tình củng cố cảm giác \'mình không bao giờ đủ giỏi\'.\", \"Mỗi người có một xuất phát điểm và một lộ trình phát triển hoàn toàn khác nhau.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(992, 168, 'scenario', '{\"title\": \"Cảm giác kém cỏi\", \"body\": \"Vy lướt mạng xã hội thấy bạn cùng lớp đăng ảnh nhận học bổng tiếng Anh, đi du lịch nước ngoài cực kỳ sang chảnh. Nhìn lại mình, Vy thấy mình thật kém cỏi, vô dụng và chỉ muốn xóa app.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(993, 168, 'sorting', '{\"instruction\": \"Phân loại các suy nghĩ khi đối mặt với thành công của người khác:\", \"leftBox\": {\"title\": \"Tập trung vào mình\"}, \"rightBox\": {\"title\": \"Bẫy so sánh\"}, \"items\": [{\"text\": \"Chúc mừng bạn và tự nhủ: Mình cũng đang nỗ lực trên con đường riêng\", \"correctBox\": \"left\"}, {\"text\": \"Tự trách bản thân tại sao lười biếng và không được giỏi như bạn\", \"correctBox\": \"right\"}, {\"text\": \"Hạn chế thời gian lướt mạng xã hội khi thấy tâm trạng không tốt\", \"correctBox\": \"left\"}, {\"text\": \"Nghi ngờ năng lực của mình và bỏ cuộc không muốn học nữa\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(994, 168, 'reflection', '{\"question\": \"Bạn có đang tự so sánh mình với ai khác gần đây không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(995, 168, 'takeaway', '{\"items\": [\"Đừng so sánh chương 1 của mình với chương 10 của người khác.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(996, 169, 'hook', '{\"title\": \"Bạn có bao giờ cảm thấy mình là một kẻ thất bại thảm hại chỉ vì nhận được một điểm số không như ý muốn?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(997, 169, 'explanation', '{\"bullets\": [\"Điểm số chỉ phản ánh mức độ hiểu bài của bạn ở một thời điểm cụ thể, chứ không đo lường được giá trị con người bạn.\", \"Thất bại hay điểm kém chỉ là thông tin phản hồi (feedback) để bạn biết mình cần cải thiện chỗ nào.\", \"Tách biệt hành vi (bị điểm kém) khỏi giá trị bản thân (mình là người kém cỏi) giúp bạn có động lực để học tập.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(998, 169, 'scenario', '{\"title\": \"Trải nghiệm điểm 4\", \"body\": \"Bình nhận bài kiểm tra Toán chỉ được 4 điểm. Cậu cảm thấy vô cùng xấu hổ, nghĩ rằng mình học dốt bẩm sinh và bố mẹ sẽ không còn yêu thương mình nữa.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(999, 169, 'flashcard', '{\"front\": \"Bình nên nói gì với bản thân để lấy lại động lực học tập thay vì tự dằn vặt?\", \"back\": \"Bài kiểm tra này mình làm chưa tốt vì chưa ôn kỹ phần hình học. Mình sẽ nhờ bạn chỉ lại bài và cố gắng hơn ở lần sau.\", \"notes\": \"Điểm số là thước đo bài làm, không phải thước đo nhân cách hay tương lai của bạn.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1000, 169, 'reflection', '{\"question\": \"Khi gặp thất bại trong học tập, bạn thường tự trách móc bản thân hay tìm cách khắc phục?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1001, 169, 'takeaway', '{\"items\": [\"Điểm số thấp chỉ là tạm thời. Giá trị và khả năng học hỏi của bạn mới là vĩnh viễn.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1002, 170, 'hook', '{\"title\": \"Nếu bạn nói chuyện với bạn thân bằng giọng điệu mà bạn đang tự nói với chính mình, liệu hai người có còn chơi với nhau không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1003, 170, 'explanation', '{\"bullets\": [\"Nhiều bạn trẻ có xu hướng tự chỉ trích bản thân rất khắc nghiệt (như: \'Mày ngốc quá\', \'Mày luôn làm hỏng mọi chuyện\').\", \"Hãy tập thói quen sử dụng lòng tự trắc ẩn (Self-compassion) - trò chuyện với bản thân như cách bạn khuyên bảo một người bạn thân.\", \"Sử dụng những câu nói nâng đỡ thay vì những lời phán xét cay độc.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1004, 170, 'scenario', '{\"title\": \"Sự cố bài tập nhóm\", \"body\": \"Mai vô tình làm đổ nước vào bài tập nhóm của cả tổ. Cô bạn bắt đầu hoảng loạn, liên tục tự chửi mình trong đầu: \'Đồ hậu đậu dốt nát, mày lúc nào cũng phá hoại mọi thứ!\'.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1005, 170, 'interaction', '{\"question\": \"Mai nên thay đổi câu độc thoại nội tâm thế nào để bình tĩnh giải quyết sự cố?\", \"choices\": [{\"text\": \"\'Mình chỉ vô tình thôi, ai cũng có lúc bất cẩn mà. Giờ mình cùng các bạn chép lại hoặc xin lỗi tổ nhé.\'\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"\'Mình đúng là quả tạ của nhóm, tốt nhất lần sau không nên tham gia làm gì nữa.\'\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1006, 170, 'reflection', '{\"question\": \"Lời nói khắc nghiệt nhất bạn từng tự nói với bản thân là gì?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1007, 170, 'takeaway', '{\"items\": [\"Hãy dịu dàng với bản thân. Bạn đang làm tốt nhất những gì có thể rồi.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1008, 171, 'hook', '{\"title\": \"Tại sao việc cố gắng trở nên hoàn hảo 100% trong mắt tất cả mọi người lại là một nhiệm vụ bất khả thi?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1009, 171, 'explanation', '{\"bullets\": [\"Không ai trên đời này hoàn hảo cả. Những khuyết điểm hay lỗi lầm nhỏ chính là thứ làm nên sự độc bản của bạn.\", \"Học cách chấp nhận những điều không hoàn hảo của mình (Self-acceptance) giúp bạn giải phóng một lượng lớn áp lực tinh thần.\", \"Cho phép bản thân được sai sót và lớn lên từ những sai sót đó.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1010, 171, 'scenario', '{\"title\": \"Áp lực hoàn mỹ\", \"body\": \"Hải luôn cảm thấy căng thẳng vì muốn mình phải học giỏi nhất lớp, chơi thể thao hay nhất, và luôn ăn mặc thời trang nhất. Chỉ cần một ngày bị điểm 8 hay mặc bộ quần áo hơi lỗi mốt, Hải sẽ thấy vô cùng tồi tệ.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1011, 171, 'sorting', '{\"instruction\": \"Phân loại các thái độ đối với khuyết điểm cá nhân:\", \"leftBox\": {\"title\": \"Chấp nhận bao dung\"}, \"rightBox\": {\"title\": \"Cầu toàn cực đoan\"}, \"items\": [{\"text\": \"Coi lỗi sai là cơ hội để học hỏi và rút kinh nghiệm\", \"correctBox\": \"left\"}, {\"text\": \"Mất ăn mất ngủ cả tuần chỉ vì nói vấp một câu trước đám đông\", \"correctBox\": \"right\"}, {\"text\": \"Yêu mến cả những vết sẹo hay nốt tàn nhang trên cơ thể mình\", \"correctBox\": \"left\"}, {\"text\": \"Liên tục dằn vặt bản thân vì không đạt vị trí dẫn đầu\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1012, 171, 'reflection', '{\"question\": \"Khuyết điểm nào của bản thân mà bạn đang tập cách làm quen và chấp nhận gần đây?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1013, 171, 'takeaway', '{\"items\": [\"Hoàn hảo là một ảo ảnh. Không hoàn hảo mới là cuộc sống thực tế.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1014, 172, 'hook', '{\"title\": \"Bạn có từng thấy buồn bã vì làn da của mình ngoài đời không được mịn màng, trắng sáng như những bức ảnh trên mạng xã hội?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1015, 172, 'explanation', '{\"bullets\": [\"Hầu hết hình ảnh của người nổi tiếng hoặc các hot teen trên mạng xã hội đều đã qua chỉnh sửa, sử dụng filter và góc chụp chuyên nghiệp.\", \"Việc so sánh cơ thể thật của mình với một hình ảnh đã qua chỉnh sửa kỹ thuật số là hoàn toàn không công bằng.\", \"Làn da có lỗ chân lông, mụn, hay vết rạn đều là những đặc tính sinh học tự nhiên và bình thường.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1016, 172, 'scenario', '{\"title\": \"Chụp ảnh selfie\", \"body\": \"Linh dành cả tiếng đồng hồ để chụp ảnh tự sướng, thử hàng chục filter chỉnh mặt thon, da trắng mịn mới dám đăng bài. Khi nhìn vào gương thấy những nốt mụn và làn da hơi ngăm của mình, Linh cảm thấy rất ghét bỏ khuôn mặt thật.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1017, 172, 'flashcard', '{\"front\": \"Làm thế nào để bảo vệ sức khỏe tinh thần trước những hình ảnh \'hoàn hảo\' trên mạng xã hội?\", \"back\": \"Tự nhắc nhở bản thân: Mạng xã hội là sàn diễn, đời thực mới là cuộc sống. Nhấn nút hủy theo dõi những tài khoản khiến bạn thấy tự ti về ngoại hình.\", \"notes\": \"Đừng so sánh cuộc sống thô (raw) của bạn với sản phẩm đã qua biên tập (edit) của người khác.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1018, 172, 'reflection', '{\"question\": \"Bạn có hay dùng app chỉnh sửa ảnh trước khi đăng lên mạng xã hội không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1019, 172, 'takeaway', '{\"items\": [\"Làn da thật có kết cấu và khuyết điểm. Đó mới là biểu hiện của một cơ thể đang sống.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1020, 173, 'hook', '{\"title\": \"Tại sao xã hội lại cứ phải đặt ra những tiêu chuẩn như \'con gái phải gầy, con trai phải cơ bắp\' trong khi gen của chúng ta lại hoàn toàn khác nhau?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1021, 173, 'explanation', '{\"bullets\": [\"Gen di truyền quyết định khung xương, chiều cao và phân bổ mỡ tự nhiên của mỗi người.\", \"Có những người sinh ra đã có vóc dáng đậm đà, có người lại cao gầy dù ăn uống thế nào đi nữa.\", \"Sức khỏe và sự dẻo dai quan trọng hơn rất nhiều so với việc ép cơ thể vào một size quần áo nhất định.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1022, 173, 'scenario', '{\"title\": \"Áp lực tăng cơ bắp\", \"body\": \"Đức cao 1m70 nhưng nặng chỉ 50kg, trông khá gầy. Cậu cố gắng ăn thật nhiều và tập tạ nặng quá sức để mong có cơ bắp như các idol trên mạng, dẫn đến chấn thương cơ vai.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1023, 173, 'interaction', '{\"question\": \"Đức nên thay đổi mục tiêu luyện tập thế nào để bảo vệ sức khỏe và yêu thương cơ thể?\", \"choices\": [{\"text\": \"Tập trung vào các bài tập vừa sức để tăng sự dẻo dai, bền bỉ và ăn uống đủ chất theo nhịp độ tự nhiên của cơ thể.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục nhịn ăn hoặc uống các loại sữa tăng cơ thần tốc không rõ nguồn gốc để đạt mục tiêu nhanh nhất.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1024, 173, 'reflection', '{\"question\": \"Bạn có đang yêu thích một đặc điểm khỏe mạnh nào trên cơ thể mình lúc này không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1025, 173, 'takeaway', '{\"items\": [\"Cơ thể bạn là phương tiện để bạn trải nghiệm cuộc sống, không phải là món đồ trang trí để người khác ngắm nhìn.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1026, 174, 'hook', '{\"title\": \"Bạn có bao giờ vô tình buột miệng nhận xét \'Dạo này béo thế?\' hay \'Sao đen thế?\' với bạn bè như một lời chào hỏi thông thường chưa?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1027, 174, 'explanation', '{\"bullets\": [\"Phán xét ngoại hình người khác đôi khi bắt nguồn từ việc chúng ta tự ti về chính mình hoặc do thói quen giao tiếp thiếu tinh tế.\", \"Những câu đùa cợt vô ý về ngoại hình có thể để lại tổn thương tâm lý rất sâu sắc cho người nghe.\", \"Tập thói quen khen ngợi năng lực, tính cách thay vì tập trung vào diện mạo bên ngoài của người khác.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1028, 174, 'scenario', '{\"title\": \"Câu trêu đùa vô duyên\", \"body\": \"Trong buổi họp lớp, nhóm bạn nam cười hố hố trêu chọc Tuấn vì dạo này Tuấn mọc ria mép và trông béo ra: \'Nhìn như ông chú trung niên ấy nhỉ!\'. Tuấn chỉ biết cười trừ nhưng trong lòng thấy rất khó chịu.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1029, 174, 'sorting', '{\"instruction\": \"Phân loại các câu mở đầu cuộc trò chuyện văn minh và lịch sự:\", \"leftBox\": {\"title\": \"Nói lời tinh tế\"}, \"rightBox\": {\"title\": \"Phán xét ngoại hình\"}, \"items\": [{\"text\": \"Dạo này cậu có dự án hay sở thích gì mới không?\", \"correctBox\": \"left\"}, {\"text\": \"Kìa, sao dạo này mọc nhiều mụn thế kia?\", \"correctBox\": \"right\"}, {\"text\": \"Tớ rất thích màu áo này của cậu, trông rất năng động!\", \"correctBox\": \"left\"}, {\"text\": \"Sao dạo này gầy gò ốm yếu thế, không ăn uống gì à?\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1030, 174, 'reflection', '{\"question\": \"Bạn từng cảm thấy thế nào khi nhận được một lời nhận xét không mấy tích cực về ngoại hình của mình?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1031, 174, 'takeaway', '{\"items\": [\"Lời nói có sức nặng. Hãy dùng ngôn từ để sưởi ấm thay vì làm tổn thương ngoại hình của nhau.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1032, 175, 'hook', '{\"title\": \"Có bộ phận nào trên cơ thể khiến bạn cảm thấy không hài lòng mỗi khi nhìn vào gương không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1033, 175, 'explanation', '{\"bullets\": [\"Việc không thích một vài điểm trên cơ thể (như mũi tẹt, đùi to, mắt một mí) là tâm lý rất phổ biến ở tuổi teen.\", \"Tuy nhiên, những đặc điểm đó không làm giảm đi sự đáng yêu và giá trị tổng thể của bạn.\", \"Thay vì cố sửa đổi bằng mọi giá, hãy thử học cách sống hòa bình với những đặc điểm \'lệch chuẩn\' đó.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1034, 175, 'scenario', '{\"title\": \"Tìm cách che khuyết điểm\", \"body\": \"Trang rất tự ti vì có chiếc mũi hơi tẹt và cánh mũi to. Mỗi lần chụp ảnh nhóm, cô bạn đều cố né tránh ống kính hoặc lấy tay che mũi vì sợ các bạn chê xấu.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1035, 175, 'flashcard', '{\"front\": \"Trang nên làm gì để bớt áp lực về chiếc mũi lệch chuẩn của mình?\", \"back\": \"Tập trung vào những nét đẹp khác như nụ cười rạng rỡ, đôi mắt sáng, và tự nhắc nhở: Chiếc mũi này thừa hưởng từ bố mẹ, nó là một phần nguồn gốc đáng tự hào của mình.\", \"notes\": \"Nụ cười tự tin chính là lớp trang điểm đẹp nhất làm mờ đi mọi khuyết điểm ngoại hình.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1036, 175, 'reflection', '{\"question\": \"Bạn có thể liệt kê 3 điều bạn yêu thích về cơ thể mình lúc này không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1037, 175, 'takeaway', '{\"items\": [\"Bạn không cần có một cơ thể hoàn hảo để sống một cuộc đời tuyệt vời.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1038, 176, 'hook', '{\"title\": \"Bạn sẽ phản ứng thế nào khi bị ai đó nhận xét khiếm nhã về ngoại hình ngay trước đám đông?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1039, 176, 'explanation', '{\"bullets\": [\"Im lặng chịu đựng hoặc tức giận cãi vã đôi khi không phải là cách giải quyết tối ưu.\", \"Bạn có quyền thiết lập ranh giới rõ ràng và thể hiện sự không thoải mái của mình một cách kiên định, lịch sự.\", \"Phản hồi bình thản giúp bạn giữ được thế chủ động và làm đối phương phải tự xem lại cách cư xử của họ.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1040, 176, 'scenario', '{\"title\": \"Nhận xét vô ý tại bàn ăn\", \"body\": \"Tại bàn ăn gia đình, một người họ hàng xa nhận xét lớn tiếng: \'Chà, con gái con lứa mà đùi to như cột đình thế kia thì sau này ai thèm yêu!\'. Cả nhà im lặng nhìn Mai.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1041, 176, 'interaction', '{\"question\": \"Mai nên phản hồi thế nào để bảo vệ ranh giới của mình một cách văn minh, tự tin?\", \"choices\": [{\"text\": \"Nhìn thẳng vào họ và nói nhẹ nhàng: \'Cháu thấy đùi cháu khỏe khoắn để tập thể thao rất tốt ạ. Chúng ta nói chuyện khác vui hơn cô nhé!\'\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Bỏ đũa xuống khóc lóc chạy lên phòng hoặc hét to: \'Cô vô duyên vừa thôi chứ!\'\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1042, 176, 'reflection', '{\"question\": \"Bạn đã từng thiết lập ranh giới thành công trước một lời chê bai ngoại hình chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1043, 176, 'takeaway', '{\"items\": [\"Ý kiến của người khác về cơ thể bạn là việc của họ, không phải là sự thật về bạn.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1044, 177, 'hook', '{\"title\": \"Đã bao giờ bạn dừng lại để cảm ơn cơ thể mình vì đã giúp bạn hít thở, chạy nhảy và học hỏi chưa?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1045, 177, 'explanation', '{\"bullets\": [\"Cơ thể bạn không phải là một món đồ để trưng bày, nó là một cỗ máy sinh học kỳ diệu đang làm việc 24/7 để giữ bạn sống sót.\", \"Chuyển sự chú ý từ diện mạo bên ngoài (nhìn trông thế nào) sang chức năng bên trong (làm được những gì) là chìa khóa của sự tự chấp nhận.\", \"Đối xử tử tế với cơ thể bằng cách cho nó ăn ngon, ngủ đủ và vận động nhẹ nhàng.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1046, 177, 'scenario', '{\"title\": \"Phút tĩnh lặng cuối ngày\", \"body\": \"Sau một ngày học tập mệt mỏi, An nằm dài ra giường, nghe nhịp đập của tim, cảm nhận đôi chân mỏi nhừ sau buổi tập thể dục và chợt nhận ra cơ thể mình đã vất vả thế nào suốt cả ngày.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1047, 177, 'sorting', '{\"instruction\": \"Phân loại các hành động thể hiện sự trân trọng cơ thể:\", \"leftBox\": {\"title\": \"Yêu thương cơ thể\"}, \"rightBox\": {\"title\": \"Ngược đãi cơ thể\"}, \"items\": [{\"text\": \"Uống đủ nước và ngủ trước 11h đêm để các cơ quan phục hồi\", \"correctBox\": \"left\"}, {\"text\": \"Nhịn ăn bỏ bữa để ép cân nặng giảm nhanh chóng\", \"correctBox\": \"right\"}, {\"text\": \"Tập các bài yoga nhẹ nhàng giúp giãn cơ sau giờ học căng thẳng\", \"correctBox\": \"left\"}, {\"text\": \"Tiếp tục chạy bộ quá sức dù chân đang bị đau khớp sưng đỏ\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1048, 177, 'reflection', '{\"question\": \"Hôm nay, bạn muốn gửi lời cảm ơn đến bộ phận nào trên cơ thể mình nhất?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1049, 177, 'takeaway', '{\"items\": [\"Cơ thể là ngôi nhà duy nhất bạn có. Hãy yêu thương và chăm sóc nó chu đáo.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1050, 178, 'hook', '{\"title\": \"Bạn có biết stress không chỉ nằm trong đầu mà nó còn biểu hiện rất rõ ràng trên cơ thể của bạn không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1051, 178, 'explanation', '{\"bullets\": [\"Khi bạn lo lắng hoặc gặp áp lực, não bộ sẽ giải phóng các hormone stress như cortisol và adrenaline.\", \"Các cơ của bạn sẽ căng lên, tim đập nhanh hơn, dạ dày co bóp mạnh gây đau bụng, và bạn có thể bị mất ngủ.\", \"Những triệu chứng thể chất này là tín hiệu \'SOS\' nhắc nhở bạn: Cơ thể đang quá tải rồi!\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1052, 178, 'scenario', '{\"title\": \"Áp lực thi cử\", \"body\": \"Chuẩn bị đến kỳ thi học kỳ, Khoa liên tục bị đau bụng âm ỉ, vai gáy mỏi nhừ, tối nằm trằn trọc mãi không ngủ được và sáng dậy với cảm giác mệt mỏi rã rời.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1053, 178, 'flashcard', '{\"front\": \"Làm thế nào để nhận biết cơ thể mình đang bị stress quá mức?\", \"back\": \"Các biểu hiện phổ biến: Đau đầu, đau dạ dày vô cớ, nổi mụn đột ngột, nghiến răng khi ngủ, dễ nổi cáu và khó tập trung.\", \"notes\": \"Đau bụng trước giờ kiểm tra không phải do bạn giả vờ, đó là phản ứng sinh học thực tế của stress.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1054, 178, 'reflection', '{\"question\": \"Bộ phận nào trên cơ thể bạn thường \'lên tiếng\' đầu tiên mỗi khi bạn gặp áp lực lớn?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1055, 178, 'takeaway', '{\"items\": [\"Lắng nghe tín hiệu từ cơ thể. Nó đang nói với bạn khi nào cần dừng lại để nghỉ ngơi.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1056, 179, 'hook', '{\"title\": \"Có phải tất cả mọi căng thẳng đều xấu và chúng ta nên triệt tiêu stress hoàn toàn khỏi cuộc sống?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1057, 179, 'explanation', '{\"bullets\": [\"Stress tích cực (Eustress) ở mức độ vừa phải giúp bạn tập trung hơn, nhạy bén hơn để hoàn thành mục tiêu ngắn hạn (như ôn thi, thuyết trình).\", \"Stress độc hại (Distress) kéo dài liên tục mà không có thời gian nghỉ ngơi sẽ làm suy yếu hệ miễn dịch và gây kiệt quệ tinh thần.\", \"Mục tiêu là kiểm soát và cân bằng stress chứ không phải trốn tránh nó hoàn toàn.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1058, 179, 'scenario', '{\"title\": \"Hai thái cực căng thẳng\", \"body\": \"Tâm cảm thấy hơi hồi hộp trước trận đấu bóng rổ, nhưng cảm giác này giúp cậu chạy nhanh và tập trung hơn. Ngược lại, Hải lo lắng về kỳ thi suốt 3 tháng trời, không đêm nào ngủ ngon và luôn thấy kiệt sức.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1059, 179, 'interaction', '{\"question\": \"Cảm giác căng thẳng của bạn nào trong kịch bản trên là stress độc hại cần can thiệp?\", \"choices\": [{\"text\": \"Của bạn Hải, vì sự căng thẳng kéo dài liên tục gây ảnh hưởng nghiêm trọng đến giấc ngủ và thể chất.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Của bạn Tâm, vì hồi hộp trước trận đấu là biểu hiện của sự yếu đuối, nhút nhát.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1060, 179, 'reflection', '{\"question\": \"Bạn đã từng trải qua khoảnh khắc nào mà sự căng thẳng giúp bạn làm việc năng suất hơn chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1061, 179, 'takeaway', '{\"items\": [\"Một chút áp lực giúp ta tiến lên, nhưng quá nhiều áp lực sẽ làm ta đổ gục. Hãy biết giới hạn của mình.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1062, 180, 'hook', '{\"title\": \"Bạn thường làm gì khi gặp áp lực: Đối mặt giải quyết hay trốn vào game, mạng xã hội để quên đi thực tại?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1063, 180, 'explanation', '{\"bullets\": [\"Trốn tránh (Avoidance) bằng cách lướt điện thoại hay chơi game chỉ mang lại cảm giác dễ chịu tạm thời, nhưng vấn đề vẫn còn nguyên và stress sẽ quay lại lớn hơn.\", \"Đối mặt chủ động bằng cách chia nhỏ công việc, lên kế hoạch từng bước giúp bạn giải quyết gốc rễ của sự lo âu.\", \"Sử dụng chiến thuật \'tạm nghỉ\' để sạc pin chứ không phải để chạy trốn vĩnh viễn.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1064, 180, 'scenario', '{\"title\": \"Bẫy lảng tránh\", \"body\": \"Đức có bài tập lớn cần nộp vào ngày mai. Càng lo lắng, Đức càng không muốn làm, cậu mở điện thoại ra chơi game suốt 5 tiếng liên tục để trốn tránh cảm giác tội lỗi. Đến tối muộn, Đức càng hoảng loạn hơn.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1065, 180, 'sorting', '{\"instruction\": \"Phân loại các cách ứng phó khi gặp núi công việc áp lực:\", \"leftBox\": {\"title\": \"Đối mặt chủ động\"}, \"rightBox\": {\"title\": \"Trốn tránh thụ động\"}, \"items\": [{\"text\": \"Viết danh sách các việc cần làm và thực hiện việc nhỏ nhất trước\", \"correctBox\": \"left\"}, {\"text\": \"Nằm lướt TikTok liên tục để không phải nghĩ về đống bài tập\", \"correctBox\": \"right\"}, {\"text\": \"Nhờ bạn bè hoặc thầy cô chỉ dẫn những phần bài quá khó\", \"correctBox\": \"left\"}, {\"text\": \"Tự nhủ: Cứ để mai tính, giờ đi chơi game cho đỡ mệt đầu\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1066, 180, 'reflection', '{\"question\": \"Món đồ hay ứng dụng nào bạn thường tìm đến nhiều nhất mỗi khi muốn trốn tránh áp lực?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1067, 180, 'takeaway', '{\"items\": [\"Chia nhỏ thử thách giúp biến nỗi sợ hãi khổng lồ thành những bước đi khả thi.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1068, 181, 'hook', '{\"title\": \"Làm thế nào để sinh tồn qua những tuần lễ thi cử dồn dập mà không bị rơi vào trạng thái hoảng loạn tinh thần?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1069, 181, 'explanation', '{\"bullets\": [\"Mùa thi cử là thời điểm nhạy cảm dễ kích hoạt stress độc hại nhất ở học sinh.\", \"Quản lý thời gian học tập khoa học kết hợp nghỉ giải lao hợp lý (như phương pháp Pomodoro) giúp não bộ ghi nhớ tốt hơn.\", \"Đừng quên rằng bộ não của bạn cần oxy, nước và giấc ngủ để hoạt động, chứ không chỉ cần nhồi nhét kiến thức.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1070, 181, 'scenario', '{\"title\": \"Cố quá sức trước ngày thi\", \"body\": \"Vy ôn thi bằng cách thức trắng đêm đến 3h sáng, uống nước tăng lực liên tục và nhịn ăn sáng. Đến giờ thi, đầu óc Vy bỗng dưng trống rỗng, tay chân bủn rủn dù đã học rất nhiều.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1071, 181, 'flashcard', '{\"front\": \"Làm thế nào để ôn thi hiệu quả mà vẫn giữ được sức khỏe tinh thần ổn định?\", \"back\": \"Học 25 phút nghỉ giải lao 5 phút, uống đủ nước, ngủ ít nhất 7 tiếng trước ngày thi, và ăn sáng đầy đủ để cung cấp năng lượng cho não bộ.\", \"notes\": \"Một bộ não được nghỉ ngơi đầy đủ sẽ làm bài tốt hơn một bộ nhồi nhét mệt mỏi.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1072, 181, 'reflection', '{\"question\": \"Bạn đã từng bị \'đóng băng\' đầu óc trong phòng thi vì quá căng thẳng chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1073, 181, 'takeaway', '{\"items\": [\"Kết quả thi cử rất quan trọng, nhưng sức khỏe và sự bình an của bạn còn quan trọng hơn.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1074, 182, 'hook', '{\"title\": \"Bạn có muốn học một mẹo nhỏ có thể giúp bạn bình tĩnh lại ngay lập tức chỉ trong vòng 60 giây không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1075, 182, 'explanation', '{\"bullets\": [\"Hít thở nông và nhanh khi lo lắng sẽ kích hoạt hệ thần kinh giao cảm duy trì trạng thái hoảng sợ.\", \"Kỹ thuật thở 4-7-8 giúp kích hoạt hệ thần kinh đối giao cảm, gửi tín hiệu \'an toàn\' đến não để làm chậm nhịp tim và thư giãn cơ bắp.\", \"Cách làm: Hít vào bằng mũi (4s), giữ hơi (7s), thở ra bằng miệng (8s). Lặp lại 4 lần.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1076, 182, 'scenario', '{\"title\": \"Căng thẳng thi nói\", \"body\": \"Trước khi bước vào phòng thi vấn đáp tiếng Anh, tim của Chi đập thình thịch như muốn nhảy ra ngoài, mồ hôi tay vã ra. Chi quyết định dừng lại, nhắm mắt và thực hiện 3 chu kỳ thở 4-7-8.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1077, 182, 'interaction', '{\"question\": \"Tại sao Chi lại cảm thấy bình tĩnh hơn sau khi thực hiện bài tập thở sâu?\", \"choices\": [{\"text\": \"Thở sâu làm giảm nồng độ hormone stress và báo cho bộ não biết cơ thể đang ở trạng thái an toàn.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Thở sâu chỉ là một mẹo tâm lý tự lừa bản thân chứ không có tác dụng sinh học nào.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1078, 182, 'reflection', '{\"question\": \"Hãy cùng thực hành ngay một chu kỳ thở 4-7-8 lúc này. Bạn cảm thấy cơ thể nhẹ nhõm hơn không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1079, 182, 'takeaway', '{\"items\": [\"Hơi thở là chiếc mỏ neo giúp bạn định vị bản thân giữa cơn bão lo âu.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1080, 183, 'hook', '{\"title\": \"Bạn có chuẩn bị sẵn cho mình một danh sách những hoạt động \'cứu hộ\' mỗi khi áp lực cuộc sống tăng lên quá cao không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1081, 183, 'explanation', '{\"bullets\": [\"Giống như nồi áp suất, bộ não bạn cần một chiếc \'van xả\' để giải phóng bớt căng thẳng tích tụ.\", \"Van xả lành mạnh là những hoạt động giúp bạn ngắt kết nối với nguồn gây stress và nạp lại năng lượng (như vẽ tranh, chơi thể thao, nghe nhạc, trò chuyện).\", \"Tránh các van xả độc hại như ăn uống quá độ, thức khuya xem phim hay cáu gắt với người khác.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1082, 183, 'scenario', '{\"title\": \"Thói quen xả nhiệt\", \"body\": \"Mỗi khi cảm thấy quá tải vì bài vở, Nguyên thường đi tắm nước ấm, sau đó ra ban công ngồi nghe một bài hát yêu thích trong 10 phút trước khi quay lại bàn học.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1083, 183, 'sorting', '{\"instruction\": \"Phân loại các hoạt động xả stress:\", \"leftBox\": {\"title\": \"Van xả lành mạnh\"}, \"rightBox\": {\"title\": \"Van xả độc hại\"}, \"items\": [{\"text\": \"Vận động nhẹ nhàng hoặc đi bộ xung quanh công viên\", \"correctBox\": \"left\"}, {\"text\": \"Ăn thật nhiều đồ ngọt và đồ ăn nhanh để giải tỏa tâm trạng\", \"correctBox\": \"right\"}, {\"text\": \"Tâm sự nỗi lòng với một người bạn thân đáng tin cậy\", \"correctBox\": \"left\"}, {\"text\": \"Trút giận bằng cách quát mắng em nhỏ hoặc đập phá đồ đạc\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1084, 183, 'reflection', '{\"question\": \"Chiếc \'van xả stress\' yêu thích và lành mạnh nhất của bạn lúc này là gì?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1085, 183, 'takeaway', '{\"items\": [\"Chủ động xả áp suất trước khi bộ não của bạn bị \'chập mạch\' vì quá tải.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1086, 184, 'hook', '{\"title\": \"Tại sao hình bóng của một ai đó bỗng dưng lại chiếm sóng toàn bộ tâm trí bạn, khiến bạn vừa vui sướng vừa bồn chồn khó tả?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1087, 184, 'explanation', '{\"bullets\": [\"Rung động đầu đời (Crush) là trải nghiệm sinh lý và cảm xúc cực kỳ mạnh mẽ khi cơ thể sản xuất nhiều dopamine (hormone hạnh phúc).\", \"Bạn có thể mơ mộng về đối phương, đỏ mặt khi chạm mắt, và luôn muốn xuất hiện thật hoàn hảo trước họ.\", \"Đây là bước phát triển cảm xúc hoàn toàn tự nhiên để bạn học cách kết nối sâu sắc hơn với người khác.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1088, 184, 'scenario', '{\"title\": \"Theo dõi thầm lặng\", \"body\": \"Khánh phát hiện mình luôn lén nhìn Vy trong giờ học, tim đập thình thịch mỗi khi Vy đi qua hành lang và liên tục kiểm tra điện thoại xem Vy có đăng story mới không.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1089, 184, 'flashcard', '{\"front\": \"Làm thế nào để tận hưởng cơn \'say nắng\' một cách lành mạnh và không bị ảnh hưởng đến học tập?\", \"back\": \"Chấp nhận cảm xúc bâng khuâng đó, coi nó là động lực học tốt hơn, nhưng đừng để việc theo dõi họ làm bạn bỏ quên các mối quan hệ bạn bè và cuộc sống riêng.\", \"notes\": \"Say nắng giống như ăn một cây kem ngọt ngào, hãy thưởng thức nó chứ đừng để nó làm bạn bị tê buốt răng nhé.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1090, 184, 'reflection', '{\"question\": \"Bạn có đang \'say nắng\' ai đó ở trường hoặc trên mạng lúc này không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1091, 184, 'takeaway', '{\"items\": [\"Rung động đầu đời là một gia vị ngọt ngào của tuổi trẻ. Hãy trân trọng cảm xúc trong trẻo đó.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1092, 185, 'hook', '{\"title\": \"Làm sao để biết khi nào tình cảm của mình là đơn phương và đối phương chỉ coi mình là một người bạn xã giao?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1093, 185, 'explanation', '{\"bullets\": [\"Tình cảm lành mạnh cần sự tương tác hai chiều và sự hào hứng từ cả hai phía.\", \"Dấu hiệu tình cảm một chiều: Bạn luôn là người chủ động nhắn tin trước, câu trả lời của họ rất ngắn gọn/hờ hững, hoặc họ né tránh các buổi hẹn riêng.\", \"Nhận ra điều này sớm giúp bạn bảo vệ lòng tự trọng và tránh đầu tư quá nhiều kỳ vọng.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1094, 185, 'scenario', '{\"title\": \"Đợi chờ tin nhắn\", \"body\": \"Lan liên tục nhắn tin hỏi han Lâm mỗi ngày. Lâm thường trả lời rất muộn bằng những câu cộc lốc như \'Ừ\', \'Ok\', hoặc thả emoji. Lan tự biện hộ là Lâm đang bận học.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1095, 185, 'interaction', '{\"question\": \"Lan nên hiểu phản hồi của Lâm thế nào cho đúng thực tế?\", \"choices\": [{\"text\": \"Lâm không thực sự hào hứng và quan tâm đến cuộc trò chuyện với Lan. Lan nên dừng việc chủ động nhắn tin liên tục.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Lâm đang thử thách lòng kiên nhẫn của Lan, Lan cần nhắn tin nhiều hơn nữa để Lâm cảm động.\", \"correct\": false, \"emoji\": \"🙁\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1096, 185, 'reflection', '{\"question\": \"Bạn đã từng ở trong một mối quan hệ mà bạn luôn là người phải chủ động cố gắng chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1097, 185, 'takeaway', '{\"items\": [\"Bạn xứng đáng với một tình cảm được đón nhận và trân trọng từ cả hai phía.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1098, 186, 'hook', '{\"title\": \"Tại sao cảm giác bị từ chối tình cảm lại mang đến nỗi đau thể xác thực tế ở lồng ngực như bị ai bóp nghẹt?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1099, 186, 'explanation', '{\"bullets\": [\"Nghiên cứu não bộ cho thấy, sự từ chối kích hoạt cùng một vùng não xử lý nỗi đau thể xác (vùng vỏ não đai trước).\", \"Điều này giải thích tại sao bạn cảm thấy đau nhói ở ngực, hụt hẫng và trống rỗng sau khi bị từ chối.\", \"Nỗi đau này là có thật về mặt sinh học, vì vậy đừng tự trách mình là quá nhạy cảm hay yếu đuối.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1100, 186, 'scenario', '{\"title\": \"Cảm giác hụt hẫng lớn\", \"body\": \"Hoàng bị bạn gái cùng khóa từ chối lời tỏ tình. Cậu cảm thấy lồng ngực mình đau thắt lại, chán ăn, và thấy xấu hổ như thể mình là người tồi tệ nhất thế giới.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1101, 186, 'sorting', '{\"instruction\": \"Phân loại các nhận thức đúng đắn về sự từ chối:\", \"leftBox\": {\"title\": \"Nhìn nhận lành mạnh\"}, \"rightBox\": {\"title\": \"Suy nghĩ tiêu cực\"}, \"items\": [{\"text\": \"Bị từ chối nghĩa là hai người không phù hợp ở thời điểm này\", \"correctBox\": \"left\"}, {\"text\": \"Bị từ chối chứng tỏ mình là kẻ kém cỏi, xấu xí và không ai yêu\", \"correctBox\": \"right\"}, {\"text\": \"Đối phương có quyền tự do lựa chọn tình cảm của họ\", \"correctBox\": \"left\"}, {\"text\": \"Cố gắng bám đuôi hoặc ép buộc họ phải thay đổi ý định\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1102, 186, 'reflection', '{\"question\": \"Nỗi lo sợ bị từ chối có từng ngăn cản bạn bày tỏ suy nghĩ thật của mình với ai đó không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1103, 186, 'takeaway', '{\"items\": [\"Đau lòng khi bị từ chối là phản ứng sinh học bình thường. Hãy ôm lấy nỗi đau đó và cho nó thời gian lành lại.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1104, 187, 'hook', '{\"title\": \"Làm thế nào để giữ vững phong độ và sự tự tin khi đối phương nói lời từ chối tình cảm của bạn?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1105, 187, 'explanation', '{\"bullets\": [\"Tỏ tình là một hành động dũng cảm thể hiện bạn dám sống thật với cảm xúc của mình.\", \"Từ chối là một phần của cuộc sống, không phải là một bản án định tội giá trị của bạn.\", \"Cách bạn ứng phó với sự từ chối thể hiện mức độ trưởng thành và sự tôn trọng đối phương.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1106, 187, 'scenario', '{\"title\": \"Lời từ chối nhẹ nhàng\", \"body\": \"Tú hẹn Vy ra công viên để tặng quà và tỏ tình. Vy từ chối nhẹ nhàng: \'Tớ chỉ muốn tụi mình là bạn tốt thôi\'. Tú cảm thấy mặt nóng bừng, tai lùng bùng.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1107, 187, 'flashcard', '{\"front\": \"Tú nên ứng xử thế nào để giữ sự văn minh và tôn trọng ranh giới của Vy?\", \"back\": \"Tú có thể hít thở sâu, mỉm cười nhẹ và nói: \'Tớ hiểu rồi. Cảm ơn cậu đã chia sẻ thẳng thắn nhé. Tớ hơi buồn chút nhưng tớ tôn trọng quyết định của cậu\'.\", \"notes\": \"Cách ứng xử đẹp sau khi bị từ chối chính là biểu hiện cao nhất của sự trưởng thành.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1108, 187, 'reflection', '{\"question\": \"Nếu bạn là người phải từ chối tình cảm của ai đó, bạn muốn họ phản ứng như thế nào để cả hai bớt khó xử?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1109, 187, 'takeaway', '{\"items\": [\"Từ chối không làm giảm đi giá trị của bạn. Nó chỉ mở ra hướng đi mới phù hợp hơn.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1110, 188, 'hook', '{\"title\": \"Bạn sẽ làm gì để kéo mình ra khỏi vũng lầy buồn bã và phục hồi lại năng lượng tinh thần sau một cú sốc tình cảm?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1111, 188, 'explanation', '{\"bullets\": [\"Cho phép bản thân buồn và khóc trong vài ngày đầu để giải tỏa bớt áp lực cảm xúc.\", \"Sau đó, hãy chủ động ngắt kết nối: Hạn chế vào trang cá nhân của họ, cất đi những món quà kỷ niệm gây gợi nhớ.\", \"Tập trung vào các mục tiêu cá nhân và dành thời gian bên những người bạn mang lại cho bạn tiếng cười.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1112, 188, 'scenario', '{\"title\": \"Vòng lặp buồn bã\", \"body\": \"Mai sau khi bị crush từ chối liên tục nằm trong phòng khóc lóc, nghe những bài hát thất tình và liên tục check xem cậu ấy đang online hay đi chơi với ai.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1113, 188, 'interaction', '{\"question\": \"Hành động nào giúp Mai \'F5\' lại tâm trạng hiệu quả nhất lúc này?\", \"choices\": [{\"text\": \"Cất những món quà liên quan đến crush, tắt thông báo từ tài khoản của họ và hẹn hội bạn thân đi ăn kem, xem phim.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Tiếp tục đăng những status buồn bã, trách móc lên mạng xã hội để mong đối phương đọc được và hối hận.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1114, 188, 'reflection', '{\"question\": \"Hoạt động nào thường giúp bạn quên đi nỗi buồn nhanh nhất mỗi khi gặp chuyện thất vọng?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1115, 188, 'takeaway', '{\"items\": [\"Đóng lại một trang sách cũ là cách duy nhất để bạn bắt đầu viết nên những chương mới tươi sáng.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1116, 189, 'hook', '{\"title\": \"Làm sao để nhận ra rằng trải nghiệm bị từ chối thực chất là một bài học đắt giá giúp bạn mạnh mẽ hơn trong tương lai?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1117, 189, 'explanation', '{\"bullets\": [\"Khả năng phục hồi cảm xúc (Resilience) được xây dựng sau mỗi lần bạn đối mặt với thất bại và tự đứng dậy.\", \"Việc bạn dám bày tỏ tình cảm đã là một chiến thắng của lòng dũng cảm.\", \"Bạn nhận ra rằng mình có thể vượt qua nỗi đau lòng và vẫn giữ nguyên giá trị bản thân.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1118, 189, 'scenario', '{\"title\": \"Thời gian chữa lành\", \"body\": \"Ba tháng sau khi bị từ chối, An nhìn lại bức tranh cũ, mỉm cười nhận ra mình không còn cảm thấy nhói lòng nữa. An thấy mình tự tin hơn, học tập tiến bộ và kết giao thêm nhiều bạn mới.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1119, 189, 'sorting', '{\"instruction\": \"Phân loại các bài học rút ra từ trải nghiệm rung động đầu đời:\", \"leftBox\": {\"title\": \"Bài học trưởng thành\"}, \"rightBox\": {\"title\": \"Tiêu cực tự ti\"}, \"items\": [{\"text\": \"Mình biết cách bày tỏ cảm xúc thật của mình một cách dũng cảm\", \"correctBox\": \"left\"}, {\"text\": \"Mình sẽ không bao giờ mở lòng yêu thương hay tin tưởng ai nữa\", \"correctBox\": \"right\"}, {\"text\": \"Mình hiểu rõ hơn về những tiêu chuẩn tình cảm mà mình mong đợi\", \"correctBox\": \"left\"}, {\"text\": \"Ngoại hình mình xấu xí nên chắc chắn cả đời này sẽ bị cô độc\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1120, 189, 'reflection', '{\"question\": \"Bạn có tự hào về lòng dũng cảm của mình sau những lần đối mặt với thử thách cảm xúc đã qua không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1121, 189, 'takeaway', '{\"items\": [\"Những vết xước cảm xúc hôm nay chính là chất liệu tạo nên sự kiên cường của bạn ngày mai.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1122, 190, 'hook', '{\"title\": \"Bạn có bao giờ tự hỏi điều gì làm nên một tình bạn giúp bạn luôn thấy an tâm, được là chính mình thay vì phải gồng mình diễn?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1123, 190, 'explanation', '{\"bullets\": [\"Tình bạn lành mạnh (Green Flag) được xây dựng trên sự tôn trọng, lòng tin và sự bình đẳng.\", \"Bạn bè \'Green Flag\' sẽ lắng nghe không phán xét, ủng hộ ước mơ của bạn, và tôn trọng những quyết định cá nhân (ranh giới) của bạn.\", \"Họ vui mừng khi thấy bạn thành công chứ không có sự ghen tị ngầm hay nói xấu sau lưng.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1124, 190, 'scenario', '{\"title\": \"Ủng hộ ước mơ\", \"body\": \"Khi Vy chia sẻ rằng mình muốn tham gia câu lạc bộ kịch, Hà hào hứng ủng hộ: \'Cậu đóng kịch hợp lắm đó, để tớ đi xem cậu diễn thử nhé!\'. Vy cảm thấy rất ấm áp.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1125, 190, 'flashcard', '{\"front\": \"Những dấu hiệu cơ bản của một người bạn \'Green Flag\' trong giao tiếp hàng ngày là gì?\", \"back\": \"Họ giữ bí mật của bạn, biết nói lời xin lỗi khi làm bạn buồn, không ép bạn làm điều bạn ghét, và luôn sẵn sàng hỗ trợ khi bạn gặp khó khăn.\", \"notes\": \"Một người bạn tốt giống như một làn gió mát nâng đỡ bạn bay cao hơn.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1126, 190, 'reflection', '{\"question\": \"Người bạn thân nhất của bạn đã từng làm điều gì khiến bạn cảm thấy được tôn trọng và yêu quý nhất?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1127, 190, 'takeaway', '{\"items\": [\"Tình bạn đích thực là nơi bạn được cởi bỏ mọi chiếc mặt nạ để sống chân thật nhất.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1128, 191, 'hook', '{\"title\": \"Có bao giờ bạn thấy mình luôn là người phải xin lỗi và cảm thấy tội lỗi trong các cuộc tranh cãi dù mình không làm gì sai?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1129, 191, 'explanation', '{\"bullets\": [\"Thao túng cảm xúc (như Gaslighting) là hành vi làm bạn nghi ngờ chính suy nghĩ, cảm xúc và trí nhớ của bản thân.\", \"Kẻ thao túng thường đổ lỗi ngược lại cho bạn: \'Cậu nhạy cảm quá rồi đấy\', \'Vì cậu nên tớ mới phải làm thế\', hoặc dùng chiến tranh lạnh im lặng để trừng phạt bạn.\", \"Nhận diện sớm cờ đỏ này để bảo vệ sức khỏe tinh thần của bản thân.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1130, 191, 'scenario', '{\"title\": \"Viện cớ kiểm soát\", \"body\": \"Lâm tự ý đọc tin nhắn điện thoại của Lan. Khi Lan phản đối, Lâm nổi giận quát: \'Vì tớ yêu cậu nên tớ mới xem chứ! Cậu có gì giấu giếm tớ đúng không?\'. Lan thấy bối rối và tự trách mình vì đã làm Lâm giận.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1131, 191, 'interaction', '{\"question\": \"Lâm đang có hành vi gì đối với Lan trong tình huống trên?\", \"choices\": [{\"text\": \"Thao túng cảm xúc và vi phạm ranh giới riêng tư của Lan dưới danh nghĩa tình yêu.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Thể hiện tình yêu thương chân thành và sự quan tâm sâu sắc đến đối phương.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1132, 191, 'reflection', '{\"question\": \"Bạn có từng nghe ai nói câu: \'Nếu thực sự coi tớ là bạn, cậu phải làm việc này...\' chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1133, 191, 'takeaway', '{\"items\": [\"Yêu thương không bao giờ đi kèm với sự kiểm soát và làm bạn cảm thấy tội lỗi vì đã đặt ranh giới.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15');
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES
+(1134, 192, 'hook', '{\"title\": \"Tại sao việc mở lời tâm sự với ai đó về những lo âu, tổn thương của bản thân lại khó khăn hơn việc chia sẻ niềm vui rất nhiều?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1135, 192, 'explanation', '{\"bullets\": [\"Chia sẻ tổn thương (Vulnerability) khiến ta cảm thấy như đang cởi bỏ áo giáp, lo sợ bị đánh giá, từ chối hoặc coi là yếu đuối.\", \"Tuy nhiên, sự tổn thương chính là chiếc cầu nối mạnh mẽ nhất để xây dựng lòng tin và sự thấu cảm sâu sắc giữa người với người.\", \"Chọn lựa đối tượng đáng tin cậy để mở lòng là bước đi dũng cảm và cần thiết.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1136, 192, 'scenario', '{\"title\": \"Ngại ngùng chia sẻ\", \"body\": \"Khải gặp chuyện buồn trong gia đình. Cậu rất muốn tâm sự với bạn thân nhưng lại ngập ngừng sợ bạn sẽ nghĩ mình phiền phức, yếu đuối, nên lại thôi và giả vờ như không có chuyện gì.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1137, 192, 'sorting', '{\"instruction\": \"Phân loại các phản ứng khi bạn bè chia sẻ câu chuyện buồn thầm kín:\", \"leftBox\": {\"title\": \"Thấu cảm lắng nghe\"}, \"rightBox\": {\"title\": \"Phán xét gạt đi\"}, \"items\": [{\"text\": \"Tớ luôn ở đây sẵn sàng nghe cậu kể khi cậu thấy thoải mái nhé\", \"correctBox\": \"left\"}, {\"text\": \"Ối dào, chuyện nhỏ nhặt thế có gì đâu mà phải buồn!\", \"correctBox\": \"right\"}, {\"text\": \"Im lặng ngồi bên cạnh và ôm nhẹ để bạn biết bạn không cô đơn\", \"correctBox\": \"left\"}, {\"text\": \"Chuyển chủ đề trò chuyện sang kể về những chuyện vui của mình\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1138, 192, 'reflection', '{\"question\": \"Ai là người bạn cảm thấy an toàn nhất để khóc hoặc chia sẻ những bí mật thầm kín?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1139, 192, 'takeaway', '{\"items\": [\"Chia sẻ tổn thương không phải là yếu đuối. Đó là lòng dũng cảm để kết nối chân thật.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1140, 193, 'hook', '{\"title\": \"Bạn sẽ làm gì khi nhận ra người bạn thân lâu năm dạo gần đây bắt đầu nói xấu sau lưng và cô lập bạn khỏi tập thể?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1141, 193, 'explanation', '{\"bullets\": [\"Không phải mọi tình bạn đều kéo dài mãi mãi. Mọi người thay đổi và các mối quan hệ cũng có hạn sử dụng.\", \"Các cờ đỏ (Red Flag) trong tình bạn: Thường xuyên chê bai bạn, tiết lộ bí mật của bạn cho người khác, hoặc chỉ tìm đến bạn khi cần nhờ vả.\", \"Chấp nhận buông bỏ một tình bạn độc hại là cách bạn tự bảo vệ sự bình yên của bản thân.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1142, 193, 'scenario', '{\"title\": \"Nhóm chat nói xấu\", \"body\": \"Vy phát hiện nhóm chat riêng của hội bạn thân dạo này thường xuyên chụp ảnh dìm và nói xấu Vy một cách công khai. Khi Vy hỏi, họ bảo: \'Đùa tí cho vui thôi mà, làm gì căng thế!\'.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1143, 193, 'flashcard', '{\"front\": \"Vy nên làm gì để xử lý tình huống tình bạn độc hại này một cách dũng cảm nhất?\", \"back\": \"Thiết lập khoảng cách với nhóm bạn đó, ngừng chia sẻ thông tin cá nhân và tìm kiếm những người bạn mới tôn trọng mình hơn.\", \"notes\": \"Đùa chỉ vui khi tất cả mọi người cùng cười, nếu có một người đau lòng thì đó là bắt nạt cảm xúc.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1144, 193, 'reflection', '{\"question\": \"Bạn đã từng phải đưa ra quyết định dừng chơi với một người bạn chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1145, 193, 'takeaway', '{\"items\": [\"Bạn thà có một người bạn chân thành còn hơn có một nhóm bạn luôn khiến bạn thấy bất an.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1146, 194, 'hook', '{\"title\": \"Bạn có biết khi những rắc rối cảm xúc vượt quá khả năng tự giải quyết, ai sẽ là người sẵn sàng lắng nghe và nâng đỡ bạn không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1147, 194, 'explanation', '{\"bullets\": [\"Giữ mọi gánh nặng tinh thần một mình dễ dẫn đến kiệt sức và các vấn đề tâm lý nghiêm trọng.\", \"Tìm kiếm hỗ trợ (Seeking support) là biểu hiện của sự thông thái và tự bảo vệ bản thân.\", \"Đồng minh đáng tin cậy: Bố mẹ, thầy cô y tế học đường, chuyên gia tâm lý, hoặc các tổng đài hỗ trợ trẻ em quốc gia (như Tổng đài 111).\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1148, 194, 'scenario', '{\"title\": \"Bắt nạt qua mạng\", \"body\": \"Nguyên bị một nhóm bạn trên mạng liên tục gửi tin nhắn đe dọa, xúc phạm danh dự. Cậu vô cùng hoảng sợ, không thể tập trung học tập, bị sụt cân và có những suy nghĩ tự hại mình.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1149, 194, 'interaction', '{\"question\": \"Nguyên nên thực hiện hành động khẩn cấp nào lúc này để tự bảo vệ mình?\", \"choices\": [{\"text\": \"Chụp lại bằng chứng tin nhắn, báo ngay cho bố mẹ hoặc thầy cô giáo tin cậy và liên hệ tổng đài 111 để được tư vấn bảo vệ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Im lặng tự chịu đựng, cố gắng thương lượng thỏa hiệp với nhóm bắt nạt mạng đó.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1150, 194, 'reflection', '{\"question\": \"Bạn đã lưu số điện thoại khẩn cấp hoặc biết cách liên hệ với phòng tư vấn tâm lý trường mình chưa?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1151, 194, 'takeaway', '{\"items\": [\"Tìm kiếm sự giúp đỡ không phải là đầu hàng. Đó là cách bạn chọn để chiến thắng khó khăn.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1152, 195, 'hook', '{\"title\": \"Làm thế nào để tạo ra một môi trường xung quanh toàn những mối quan hệ tích cực nâng đỡ tinh thần bạn mỗi ngày?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1153, 195, 'explanation', '{\"bullets\": [\"Mạng lưới hỗ trợ (Support network) giống như một tấm đệm an toàn giúp bạn giảm chấn thương khi bị ngã trong cuộc sống.\", \"Chủ động nuôi dưỡng tình bạn tốt bằng cách lắng nghe và giúp đỡ họ trước.\", \"Đặt ra ranh giới rõ ràng với những mối quan hệ độc hại để dành không gian cho những người thực sự trân trọng bạn.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1154, 195, 'scenario', '{\"title\": \"Môi trường kết nối mới\", \"body\": \"Sau khi cắt đứt liên lạc với nhóm bạn xấu, Minh bắt đầu tham gia câu lạc bộ ghi-ta, quen được những người bạn vui vẻ, cùng tập đàn và động viên nhau học tập.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1155, 195, 'sorting', '{\"instruction\": \"Phân loại các hành động để xây dựng mạng lưới hỗ trợ an toàn:\", \"leftBox\": {\"title\": \"Nuôi dưỡng kết nối tốt\"}, \"rightBox\": {\"title\": \"Dung dưỡng độc hại\"}, \"items\": [{\"text\": \"Chủ động nhắn tin hỏi han khi thấy bạn mình có vẻ buồn bã\", \"correctBox\": \"left\"}, {\"text\": \"Chấp nhận những lời xúc phạm của bạn bè vì sợ bị cô đơn\", \"correctBox\": \"right\"}, {\"text\": \"Cùng bạn lập nhóm học tập tiến bộ, chia sẻ tài liệu hay\", \"correctBox\": \"left\"}, {\"text\": \"Bỏ qua các cảnh báo bất an trong lòng để cố hòa nhập nhóm xấu\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1156, 195, 'reflection', '{\"question\": \"Ai là những cái tên đầu tiên bạn sẽ đưa vào danh sách \'Biệt đội giải cứu cảm xúc\' của mình?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1157, 195, 'takeaway', '{\"items\": [\"Được bao quanh bởi những người tử tế là liều thuốc chữa lành tốt nhất cho tâm hồn.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1158, 196, 'hook', '{\"title\": \"Có phải tự chăm sóc bản thân chỉ đơn giản là đi mua sắm những món đồ đắt tiền, ăn uống sang chảnh hay đắp mặt nạ dưỡng da?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1159, 196, 'explanation', '{\"bullets\": [\"Tự chăm sóc (Self-care) thực chất là những thói quen nhỏ hàng ngày giúp bảo vệ sức khỏe thể chất và tinh thần của bạn.\", \"Nó bao gồm việc uống đủ nước, ngủ đủ giấc, ăn uống đủ chất, và cho phép bản thân nghỉ ngơi khi quá tải.\", \"Đôi khi, tự chăm sóc chỉ đơn giản là tắt điện thoại đi ngủ sớm sau một ngày mệt mỏi.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1160, 196, 'scenario', '{\"title\": \"Hiểu lầm về self-care\", \"body\": \"Lan nghĩ rằng self-care là phải đi spa và mua trà sữa uống mỗi ngày. Nhưng cô bạn vẫn thức khuya đến 2h sáng lướt điện thoại và luôn đi học muộn với gương mặt phờ phạc.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1161, 196, 'flashcard', '{\"front\": \"Thế nào là một hành động tự chăm sóc bản thân thực sự lành mạnh và hiệu quả?\", \"back\": \"Những hành động giúp cơ thể và tâm trí bạn khỏe mạnh lâu dài: Ngủ đúng giờ, ăn sáng đầy đủ, tập thể thao vừa sức, và đặt ranh giới bảo vệ cảm xúc.\", \"notes\": \"Self-care không phải là trốn chạy thực tại, mà là chuẩn bị năng lượng tốt nhất để đối mặt với thực tại.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1162, 196, 'reflection', '{\"question\": \"Hành động tự chăm sóc bản thân đơn giản nhất bạn có thể làm ngay tối hôm nay là gì?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1163, 196, 'takeaway', '{\"items\": [\"Yêu bản thân bắt đầu từ những thói quen nhỏ nhất chăm sóc cơ thể sinh học của mình.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1164, 197, 'hook', '{\"title\": \"Làm thế nào để tạo ra một danh sách những việc siêu đơn giản có thể giúp bạn lấy lại nụ cười chỉ trong vài phút?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1165, 197, 'explanation', '{\"bullets\": [\"Chiếc \'menu sạc pin\' (Self-care menu) chứa các hoạt động nhỏ giúp kích hoạt các hormone tích cực (dopamine, serotonin).\", \"Hãy chuẩn bị sẵn các lựa chọn phù hợp với thời gian bạn có: 5 phút, 15 phút hay 1 tiếng.\", \"Đây sẽ là chiếc phao cứu sinh đắc lực mỗi khi bạn cảm thấy kiệt sức hoặc buồn chán.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1166, 197, 'scenario', '{\"title\": \"Tưới cây thư giãn\", \"body\": \"Khánh cảm thấy rất mệt mỏi sau tiết học căng thẳng. Cậu xem chiếc menu tự chế của mình và chọn hoạt động 5 phút: Ra ban công tưới cây và vươn vai hít thở sâu.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1167, 197, 'interaction', '{\"question\": \"Hoạt động nào dưới đây phù hợp nhất để đưa vào danh mục \'sạc pin nhanh 5 phút\'?\", \"choices\": [{\"text\": \"Vươn vai kéo giãn cơ thể, uống một cốc nước mát và hít thở sâu ngoài cửa sổ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Xem trọn vẹn một bộ phim điện ảnh dài tập trên điện thoại.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1168, 197, 'reflection', '{\"question\": \"Nếu tự làm một chiếc menu sạc pin cho mình, bạn sẽ viết những hoạt động nào vào đó?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1169, 197, 'takeaway', '{\"items\": [\"Chuẩn bị sẵn năng lượng tích cực để chủ động cứu hộ bản thân khi cần.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1170, 198, 'hook', '{\"title\": \"Bạn có bao giờ cảm thấy cắn rứt, tội lỗi khi dành cả một buổi chiều chủ nhật chỉ để nằm lười biếng mà không học tập hay làm việc gì không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1171, 198, 'explanation', '{\"bullets\": [\"Xã hội hiện đại luôn đề cao sự bận rộn (hustle culture), khiến chúng ta nghĩ rằng lúc nào cũng phải làm việc mới có giá trị.\", \"Nghỉ ngơi tích cực (Rest) không phải là lãng phí thời gian, nó là bước đệm cần thiết để các tế bào thần kinh tái tạo.\", \"Bạn không cần phải \'kiếm tìm\' hay \'xứng đáng\' mới được quyền nghỉ ngơi; đó là nhu cầu sinh học tối thiểu.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1172, 198, 'scenario', '{\"title\": \"Áy náy khi giải trí\", \"body\": \"Mai cảm thấy vô cùng áy náy và lo lắng khi dành ngày nghỉ để xem phim. Cô bạn liên tục nhìn đống sách vở, thấy có lỗi với bố mẹ và không thể tận hưởng trọn vẹn bộ phim.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1173, 198, 'sorting', '{\"instruction\": \"Phân loại các suy nghĩ về việc nghỉ ngơi giải lao:\", \"leftBox\": {\"title\": \"Nghỉ ngơi không tội lỗi\"}, \"rightBox\": {\"title\": \"Áy náy ép buộc\"}, \"items\": [{\"text\": \"Cho phép bản thân ngủ nướng một chút vào ngày cuối tuần để phục hồi\", \"correctBox\": \"left\"}, {\"text\": \"Vừa nằm nghỉ vừa tự trách mình lười biếng và thua kém bạn bè\", \"correctBox\": \"right\"}, {\"text\": \"Tự nhủ: Cơ thể mình đã vất vả cả tuần và xứng đáng được thư giãn\", \"correctBox\": \"left\"}, {\"text\": \"Cố học tiếp dù đầu đang đau nhức vì sợ bị điểm kém\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1174, 198, 'reflection', '{\"question\": \"Bạn có thường cảm thấy tội lỗi khi cho phép bản thân nghỉ ngơi không?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1175, 198, 'takeaway', '{\"items\": [\"Nghỉ ngơi là để tái tạo, không phải là sự lười biếng cần phải trừng phạt.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1176, 199, 'hook', '{\"title\": \"Tại sao việc từ chối lời nhờ vả của bạn bè lại khó khăn đến thế, ngay cả khi bạn đang vô cùng bận rộn và kiệt sức?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1177, 199, 'explanation', '{\"bullets\": [\"Hội chứng \'người tốt làm hài lòng tất cả\' (People-pleaser) bắt nguồn từ nỗi sợ bị ghét bỏ hoặc tẩy chay.\", \"Khi bạn luôn nói \'Có\' với yêu cầu của người khác, bạn đang gián tiếp nói \'Không\' với sự bình yên và sức khỏe của chính mình.\", \"Thiết lập ranh giới lịch sự giúp bạn bảo vệ năng lượng cá nhân và giữ gìn các mối quan hệ bền vững hơn.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1178, 199, 'scenario', '{\"title\": \"Không dám từ chối\", \"body\": \"Hải đang ngập đầu trong đống bài tập cần nộp. Tuy nhiên, khi một bạn trong lớp nhờ Hải làm hộ slide thuyết trình nhóm của bạn ấy, Hải không dám từ chối vì sợ bạn sẽ giận.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1179, 199, 'flashcard', '{\"front\": \"Hải nên từ chối lời nhờ vả của bạn thế nào để vừa lịch sự vừa giữ được ranh giới?\", \"back\": \"Hải có thể nói: \'Tớ rất muốn giúp nhưng tối nay tớ cũng có bài tập lớn cần hoàn thành gấp rồi. Để dịp khác nha cậu!\'.\", \"notes\": \"Người thực sự trân trọng bạn sẽ hiểu và tôn trọng lời từ chối của bạn.\"}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1180, 199, 'reflection', '{\"question\": \"Gần đây nhất bạn đã nói \'Có\' với ai đó trong khi lòng bạn đang vô cùng muốn từ chối là khi nào?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1181, 199, 'takeaway', '{\"items\": [\"Bạn không cần phải làm hài lòng tất cả mọi người bằng cách bỏ qua cảm xúc của chính mình.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1182, 200, 'hook', '{\"title\": \"Làm thế nào để nói lời từ chối một cách kiên định mà không gây cảm giác cộc lốc, thô lộ với người đối diện?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1183, 200, 'explanation', '{\"bullets\": [\"Từ chối lịch sự (Polite refusal) cần sự rõ ràng, dứt khoát và đi kèm một lời giải thích ngắn gọn (không cần phải dông dài bao biến).\", \"Sử dụng cấu trúc: Lời cảm ơn/ghi nhận -> Lời từ chối rõ ràng -> Đề xuất thay thế (nếu muốn).\", \"Thực hành nói \'Không\' giúp bạn tăng sự tự tin và lòng tự trọng lên rất nhiều.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1184, 200, 'scenario', '{\"title\": \"Lời rủ rê tối muộn\", \"body\": \"Hội bạn thân rủ Trang đi trà sữa vào tối muộn trước ngày thi. Trang cảm thấy mệt mỏi và muốn đi ngủ sớm để giữ sức nhưng chưa biết từ chối sao cho khéo.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1185, 200, 'interaction', '{\"question\": \"Trang nên nhắn tin từ chối nhóm bạn thế nào cho tự nhiên, Gen Z?\", \"choices\": [{\"text\": \"\'Thèm đi cùng các cậu quá nhưng tối nay tớ muốn đi ngủ sớm dưỡng sức thi mai. Chúc cả hội đi chơi vui vẻ, mai thi xong tụi mình bù nha!\'\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Im lặng không trả lời tin nhắn của nhóm, hôm sau đi thi giả vờ bị mất điện thoại.\", \"correct\": false, \"emoji\": \"☹️\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1186, 200, 'reflection', '{\"question\": \"Bạn thấy việc nói lời từ chối với bố mẹ, bạn bè hay thầy cô là khó khăn nhất?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1187, 200, 'takeaway', '{\"items\": [\"Nói \'Không\' với điều không phù hợp là cách bạn nói \'Có\' với sức khỏe tinh thần của chính mình.\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1188, 201, 'hook', '{\"title\": \"Bạn có tin rằng việc thay đổi những thói quen siêu nhỏ mỗi ngày có thể tạo nên bước ngoặt lớn cho sự phát triển của bạn sau một năm không?\"}', 1, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1189, 201, 'explanation', '{\"bullets\": [\"Phát triển bản thân (Personal growth) không phải là sự thay đổi chấn động qua một đêm, mà là sự kiên trì tích lũy.\", \"Thiết lập các mục tiêu siêu nhỏ dễ đạt được (như đọc 2 trang sách, uống thêm 1 cốc nước, ngủ sớm hơn 10 phút).\", \"Tự thưởng cho bản thân mỗi khi hoàn thành thói quen nhỏ để tạo động lực tiếp tục hành trình lớn lên đầy tự hào.\"]}', 2, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1190, 201, 'scenario', '{\"title\": \"Duy trì giấc ngủ ngon\", \"body\": \"Khải quyết định cải thiện sức khỏe bằng cách đi ngủ lúc 11h thay vì 12h đêm. Sau một tháng, cậu nhận thấy mình tỉnh táo hơn trong giờ học, da mặt bớt mụn và tinh thần luôn vui tươi.\"}', 3, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1191, 201, 'sorting', '{\"instruction\": \"Phân loại các mục tiêu thói quen thiết lập hàng ngày:\", \"leftBox\": {\"title\": \"Mục tiêu nhỏ khả thi\"}, \"rightBox\": {\"title\": \"Mục tiêu quá tải\"}, \"items\": [{\"text\": \"Đọc 2 trang sách trước khi đi ngủ mỗi tối\", \"correctBox\": \"left\"}, {\"text\": \"Ép bản thân phải học liên tục 10 tiếng không nghỉ\", \"correctBox\": \"right\"}, {\"text\": \"Tập thể dục nhẹ nhàng 10 phút sau khi thức dậy\", \"correctBox\": \"left\"}, {\"text\": \"Thay đổi toàn bộ chế độ ăn kiêng hà khắc ngay lập tức\", \"correctBox\": \"right\"}]}', 4, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1192, 201, 'reflection', '{\"question\": \"Một thói quen nhỏ, tích cực nào bạn muốn bắt đầu thiết lập ngay từ ngày mai?\"}', 5, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
+(1193, 201, 'takeaway', '{\"items\": [\"Những bước đi nhỏ mỗi ngày sẽ đưa bạn đi được một hành trình rất xa. Hãy kiên trì nhé!\"]}', 6, '2026-06-05 15:00:15', '2026-06-05 15:00:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `micro_lesson_progress`
+--
+
+CREATE TABLE `micro_lesson_progress` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `micro_lesson_id` bigint(20) NOT NULL,
+  `completed` tinyint(1) DEFAULT 0,
+  `completed_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `micro_lesson_progress`
+--
+
+INSERT INTO `micro_lesson_progress` (`id`, `user_id`, `micro_lesson_id`, `completed`, `completed_at`) VALUES
+(9, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 13, 1, '2026-06-04 18:39:19'),
+(10, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 20, 1, '2026-06-04 18:42:42'),
+(11, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 14, 1, '2026-06-05 00:02:33'),
+(12, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 15, 1, '2026-06-05 00:03:00'),
+(13, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 16, 1, '2026-06-05 00:03:15'),
+(14, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 17, 1, '2026-06-05 00:03:24'),
+(15, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 18, 1, '2026-06-05 00:03:32');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mood_entries`
+--
+
+CREATE TABLE `mood_entries` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `mood_code` varchar(30) NOT NULL,
+  `note` text DEFAULT NULL,
+  `entry_date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `type`, `title`, `message`, `is_read`, `created_at`) VALUES
+(1, '73de86a9-8662-49be-bb39-78588d6c4e91', 'chat', 'crewBot vừa phản hồi', 'crewBot đã gửi trả lời mới trong phòng chat của bạn.', 0, '2026-05-20 00:37:00'),
+(2, '73de86a9-8662-49be-bb39-78588d6c4e91', 'chat', 'crewBot vừa phản hồi', 'crewBot đã gửi trả lời mới trong phòng chat của bạn.', 0, '2026-05-20 00:37:30'),
+(3, '73de86a9-8662-49be-bb39-78588d6c4e91', 'chat', 'crewBot vừa phản hồi', 'crewBot đã gửi trả lời mới trong phòng chat của bạn.', 0, '2026-05-20 00:37:46'),
+(4, '73de86a9-8662-49be-bb39-78588d6c4e91', 'chat', 'crewBot vừa phản hồi', 'crewBot đã gửi trả lời mới trong phòng chat của bạn.', 0, '2026-05-20 00:38:12'),
+(5, '73de86a9-8662-49be-bb39-78588d6c4e91', 'chat', 'crewBot vừa phản hồi', 'crewBot đã gửi trả lời mới trong phòng chat của bạn.', 0, '2026-05-20 00:39:10'),
+(6, '73de86a9-8662-49be-bb39-78588d6c4e91', 'chat', 'crewBot vừa phản hồi', 'crewBot đã gửi trả lời mới trong phòng chat của bạn.', 0, '2026-05-20 00:39:34'),
+(7, '73de86a9-8662-49be-bb39-78588d6c4e91', 'lesson', 'Lesson completed', 'You completed Hiểu về tuổi teen and earned 50 XP.', 0, '2026-05-20 00:40:52'),
+(8, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'lesson', 'Lesson completed', 'You completed Consent là gì (và KHÔNG phải là gì) and earned 50 XP.', 0, '2026-05-28 05:22:43'),
+(9, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'lesson', 'Lesson completed', 'You completed Từ chối không phải “ác”: Kỹ năng nói “không” mà vẫn ổn and earned 50 XP.', 0, '2026-05-28 06:12:40'),
+(10, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 01:55:30'),
+(11, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 01:56:22'),
+(12, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 03:39:29'),
+(13, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 03:44:29'),
+(14, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 05:07:29'),
+(15, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 05:08:49'),
+(16, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 06:38:46'),
+(17, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 06:39:20'),
+(18, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 09:09:55'),
+(19, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 09:17:01'),
+(20, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 10:03:51'),
+(21, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-01 23:29:26'),
+(22, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-02 00:10:40'),
+(23, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-02 00:58:58'),
+(24, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'lesson', 'Lesson completed', 'You completed Luật đi đường - Đồng thuận là gì? and earned 50 XP.', 0, '2026-06-04 18:39:00'),
+(25, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-04 18:39:19'),
+(26, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-04 18:42:42'),
+(27, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'lesson', 'Lesson completed', 'You completed Lắc đầu không sao cả - Đối diện với từ chối and earned 50 XP.', 0, '2026-06-04 18:48:26'),
+(28, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-05 00:02:33'),
+(29, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-05 00:03:00'),
+(30, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-05 00:03:15'),
+(31, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-05 00:03:24'),
+(32, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'micro-lesson', 'Micro lesson completed', 'You completed a section and earned 10 XP.', 0, '2026-06-05 00:03:32'),
+(33, '16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'lesson', 'Lesson completed', 'You completed Luật đi đường - Đồng thuận là gì? and earned 50 XP.', 0, '2026-06-05 00:03:33');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_attempts`
+--
+
+CREATE TABLE `quiz_attempts` (
+  `id` bigint(20) NOT NULL,
+  `user_id` varchar(36) DEFAULT NULL,
+  `mode` varchar(20) NOT NULL,
+  `total_questions` int(11) NOT NULL,
+  `correct_answers` int(11) NOT NULL,
+  `score` int(11) NOT NULL,
+  `xp_awarded` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_questions`
+--
+
+CREATE TABLE `quiz_questions` (
+  `id` bigint(20) NOT NULL,
+  `slug` varchar(160) NOT NULL,
+  `prompt` text NOT NULL,
+  `category` varchar(120) NOT NULL,
+  `difficulty` varchar(40) NOT NULL,
+  `question_type` varchar(40) NOT NULL DEFAULT 'MULTIPLE_CHOICE',
+  `options_json` text NOT NULL,
+  `correct_index` int(11) NOT NULL,
+  `explanation` text DEFAULT NULL,
+  `sort_order` int(11) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `quiz_questions`
+--
+
+INSERT INTO `quiz_questions` (`id`, `slug`, `prompt`, `category`, `difficulty`, `question_type`, `options_json`, `correct_index`, `explanation`, `sort_order`, `is_active`, `created_at`, `updated_at`) VALUES
+(26, 'quiz-bank-026', 'Không gian học tập nào thường hỗ trợ tập trung hơn?', 'Học tập', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Nơi đủ sáng, gọn và ít xao nhãng\",\"Mở nhiều video cùng lúc\",\"Vừa học vừa lướt mạng liên tục\",\"Chỗ quá tối để đỡ mỏi mắt\"]', 0, 'Môi trường rõ ràng, đủ sáng và ít xao nhãng giúp học hiệu quả hơn.', 26, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(27, 'quiz-bank-027', 'Nếu vừa học vừa thấy đầu óc không vào, nên thử điều gì trước?', 'Học tập', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Đổi sang một mục tiêu nhỏ hơn hoặc nghỉ ngắn\",\"Tự ép đến khi kiệt sức\",\"Bỏ hẳn việc học nhiều ngày\",\"So sánh mình với người khác\"]', 0, 'Điều chỉnh nhịp học thực tế giúp bạn quay lại hiệu quả hơn.', 27, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(28, 'quiz-bank-028', 'Việc hỏi thầy cô hay bạn bè khi không hiểu bài thể hiện điều gì?', 'Học tập', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Thiếu năng lực\",\"Chủ động học và biết tìm hỗ trợ\",\"Làm phiền người khác vô ích\",\"Không tự lập\"]', 1, 'Tìm trợ giúp đúng lúc là kỹ năng học tập tích cực.', 28, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(29, 'quiz-bank-029', 'Một kế hoạch học tốt thường có đặc điểm nào?', 'Học tập', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Rõ mục tiêu, có thời gian nghỉ và đủ linh hoạt\",\"Càng kín lịch càng tốt\",\"Không cần ưu tiên gì cả\",\"Chỉ tập trung vào môn dễ\"]', 0, 'Kế hoạch hiệu quả cần rõ ràng nhưng vẫn có khoảng thở và khả năng điều chỉnh.', 29, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(30, 'quiz-bank-030', 'Điều gì giúp giảm áp lực trước kỳ kiểm tra?', 'Học tập', 'Nâng cao', 'MULTIPLE_CHOICE', '[\"Ôn đều từ sớm và giữ sinh hoạt ổn định\",\"Thức trắng đêm ôn phút cuối\",\"Tự dọa mình phải hoàn hảo\",\"Đọc đáp án ngay trước giờ vào phòng\"]', 0, 'Ôn đều và ngủ nghỉ hợp lý giúp bạn vào bài thi với trạng thái vững hơn.', 30, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(31, 'quiz-bank-031', 'Giấc ngủ đủ quan trọng với tuổi teen vì lý do nào?', 'Sức khỏe', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Giúp não bộ, cảm xúc và cơ thể phục hồi\",\"Chỉ để không bị buồn ngủ trong lớp\",\"Không liên quan đến tâm trạng\",\"Chỉ cần ngủ bù cuối tuần là đủ\"]', 0, 'Giấc ngủ ảnh hưởng trực tiếp đến học tập, cảm xúc và sức khỏe tổng thể.', 31, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(32, 'quiz-bank-032', 'Khi bỏ bữa sáng thường xuyên, điều gì dễ xảy ra?', 'Sức khỏe', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Dễ mệt, khó tập trung hơn\",\"Thông minh hơn vì bụng nhẹ\",\"Ngủ ngon hơn ngay lập tức\",\"Tự nhiên cao nhanh hơn\"]', 0, 'Bỏ bữa có thể khiến cơ thể thiếu năng lượng cho học tập và sinh hoạt.', 32, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(33, 'quiz-bank-033', 'Thói quen nào hỗ trợ sức khỏe tinh thần mỗi ngày?', 'Sức khỏe', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Dành thời gian vận động nhẹ và nghỉ ngơi hợp lý\",\"Lướt điện thoại tới khuya\",\"Giữ mọi áp lực trong lòng\",\"Bỏ hoàn toàn các mối quan hệ tích cực\"]', 0, 'Vận động và nghỉ ngơi điều độ giúp tinh thần ổn định hơn.', 33, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(34, 'quiz-bank-034', 'Khi cơ thể có dấu hiệu mệt kéo dài, điều nên làm là gì?', 'Sức khỏe', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Quan sát thêm và nói với người lớn hoặc chuyên gia khi cần\",\"Mặc kệ vì chắc tự hết\",\"Tự dùng thuốc theo lời đồn\",\"Cố hoạt động nhiều hơn để quên mệt\"]', 0, 'Lắng nghe cơ thể và tìm hỗ trợ đúng lúc là điều quan trọng.', 34, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(35, 'quiz-bank-035', 'Uống đủ nước giúp ích điều gì?', 'Sức khỏe', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Hỗ trợ cơ thể hoạt động và giảm mệt mỏi\",\"Làm thay được việc ăn uống\",\"Không ảnh hưởng gì rõ rệt\",\"Chỉ cần khi chơi thể thao\"]', 0, 'Nước cần thiết cho nhiều hoạt động cơ bản của cơ thể trong ngày.', 35, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(36, 'quiz-bank-036', 'Nếu stress làm bạn đau đầu và khó ngủ, điều nào nên thử trước?', 'Sức khỏe', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Sắp xếp lại nhịp sinh hoạt và tìm người tin cậy để chia sẻ\",\"Uống nước ngọt liên tục\",\"Cố thức thêm để làm việc cho xong\",\"Tránh nói với bất kỳ ai\"]', 0, 'Căng thẳng kéo dài cần được nhìn nhận và điều chỉnh bằng thói quen lành mạnh.', 36, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(37, 'quiz-bank-037', 'Tập thể dục phù hợp với tuổi teen nên được hiểu như thế nào?', 'Sức khỏe', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Là vận động đều đặn phù hợp thể trạng, không cần quá cực đoan\",\"Phải luyện rất nặng mới có ích\",\"Chỉ cần khi muốn giảm cân\",\"Không liên quan đến tinh thần\"]', 0, 'Điều quan trọng là sự đều đặn và phù hợp, không phải cực đoan.', 37, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(38, 'quiz-bank-038', 'Điều gì giúp hạn chế mệt mỏi do dùng màn hình quá lâu?', 'Sức khỏe', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Nghỉ mắt định kỳ và thay đổi tư thế\",\"Tăng độ sáng tối đa liên tục\",\"Ngồi yên một tư thế nhiều giờ\",\"Càng khuya càng dùng dễ tập trung\"]', 0, 'Cho mắt và cơ thể nghỉ định kỳ giúp giảm mỏi và khó chịu.', 38, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(39, 'quiz-bank-039', 'Khi nghe lời khuyên về sức khỏe trên mạng, nên làm gì?', 'Sức khỏe', 'Nâng cao', 'MULTIPLE_CHOICE', '[\"Kiểm tra nguồn đáng tin cậy trước khi làm theo\",\"Tin ngay nếu nhiều người chia sẻ\",\"Thử hết mọi cách càng sớm càng tốt\",\"Chỉ nghe người nổi tiếng\"]', 0, 'Thông tin sức khỏe cần được kiểm tra kỹ để tránh gây hại.', 39, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(40, 'quiz-bank-040', 'Một thói quen ăn uống cân bằng có nghĩa là gì?', 'Sức khỏe', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Đa dạng thực phẩm và không cực đoan với bản thân\",\"Nhịn hẳn món mình thích\",\"Chỉ ăn một nhóm thực phẩm mỗi ngày\",\"Ăn thật ít để dễ kiểm soát\"]', 0, 'Cân bằng là đa dạng, điều độ và phù hợp với nhu cầu cơ thể.', 40, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(41, 'quiz-bank-041', 'Khi bất đồng với bố mẹ, mục tiêu tốt nhất của cuộc trò chuyện là gì?', 'Gia đình', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Hiểu nhau rõ hơn và tìm điểm chung\",\"Phải thắng bằng mọi giá\",\"Làm đối phương im lặng\",\"Tránh nói chuyện mãi mãi\"]', 0, 'Trong gia đình, hiểu nhau thường quan trọng hơn việc ai thắng ai.', 41, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(42, 'quiz-bank-042', 'Nếu muốn bố mẹ hiểu áp lực của mình, cách mở lời nào phù hợp hơn?', 'Gia đình', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Con muốn chia sẻ để cả nhà hiểu con hơn\",\"Bố mẹ chẳng bao giờ hiểu gì cả\",\"Con không nói nữa đâu\",\"Ai cũng đang làm con khó chịu\"]', 0, 'Một cách mở lời bình tĩnh giúp cuộc trò chuyện dễ tiếp tục hơn.', 42, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(43, 'quiz-bank-043', 'Điều gì giúp xây dựng niềm tin trong gia đình?', 'Gia đình', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Trao đổi trung thực và giữ lời trong khả năng của mình\",\"Giấu mọi chuyện để đỡ bị hỏi\",\"Chỉ nói khi bị phát hiện\",\"Nổi nóng để người khác sợ\"]', 0, 'Niềm tin lớn dần từ những hành động đáng tin và sự trung thực.', 43, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(44, 'quiz-bank-044', 'Nếu người lớn góp ý làm bạn khó chịu, phản ứng nào lành mạnh hơn?', 'Gia đình', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Xin thời gian bình tĩnh rồi trao đổi lại\",\"Cắt ngang và bỏ đi ngay\",\"Giữ ấm ức nhiều ngày nhưng không nói\",\"Đáp trả bằng lời gây tổn thương\"]', 0, 'Xin thời gian bình tĩnh giúp giảm xung đột và nói chuyện rõ hơn sau đó.', 44, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(45, 'quiz-bank-045', 'Trong gia đình, việc lắng nghe có vai trò gì?', 'Gia đình', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Giúp mỗi người cảm thấy mình được tôn trọng\",\"Chỉ để nghe cho có\",\"Không cần nếu người kia lớn tuổi hơn\",\"Chỉ cần khi xảy ra cãi nhau\"]', 0, 'Lắng nghe là nền tảng để hiểu cảm xúc và nhu cầu của nhau.', 45, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(46, 'quiz-bank-046', 'Nếu trong nhà có căng thẳng kéo dài, bạn nên ưu tiên điều gì?', 'Gia đình', 'Nâng cao', 'MULTIPLE_CHOICE', '[\"Giữ an toàn cho mình và tìm người lớn đáng tin để hỗ trợ\",\"Tự chịu đựng hoàn toàn một mình\",\"Ghi âm đăng lên mạng cho mọi người xem\",\"Bỏ học để tránh về nhà\"]', 0, 'An toàn và hỗ trợ phù hợp luôn là ưu tiên khi môi trường gia đình quá căng thẳng.', 46, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(47, 'quiz-bank-047', 'Một cách thể hiện quan tâm trong gia đình là gì?', 'Gia đình', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Hỏi han và hỗ trợ nhau bằng việc nhỏ mỗi ngày\",\"Chờ đến khi có việc lớn mới nói chuyện\",\"Giữ khoảng cách hoàn toàn\",\"Chỉ quan tâm khi cần nhờ vả\"]', 0, 'Sự quan tâm bền vững thường đến từ những việc nhỏ hằng ngày.', 47, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(48, 'quiz-bank-048', 'Khi muốn xin thêm quyền tự chủ, điều gì giúp lời đề nghị dễ được lắng nghe hơn?', 'Gia đình', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Trình bày rõ lý do và cho thấy mình có trách nhiệm\",\"Nổi nóng để tạo áp lực\",\"So sánh bố mẹ với nhà khác\",\"Bỏ qua mọi quy ước hiện tại\"]', 0, 'Sự rõ ràng và trách nhiệm làm tăng khả năng được tin tưởng.', 48, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(49, 'quiz-bank-049', 'Nếu người thân đang mệt và cáu, điều gì có thể giúp không khí dịu lại?', 'Gia đình', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Chọn thời điểm khác để nói chuyện quan trọng\",\"Ép họ trả lời ngay\",\"Đáp lại bằng giọng lớn hơn\",\"Coi như mình phải chịu lỗi hết\"]', 0, 'Chọn đúng thời điểm giúp cuộc nói chuyện có cơ hội tích cực hơn.', 49, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(50, 'quiz-bank-050', 'Bài học quan trọng khi sống cùng gia đình là gì?', 'Gia đình', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Khác biệt quan điểm không có nghĩa là hết yêu thương\",\"Ai cũng phải nghĩ giống nhau\",\"Im lặng là cách tốt nhất cho mọi vấn đề\",\"Tình cảm chỉ có khi không xung đột\"]', 0, 'Gia đình vẫn có thể gắn bó dù có lúc khác nhau về cách nghĩ.', 50, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(51, 'quiz-bank-051', 'Một tình bạn lành mạnh thường có đặc điểm nào?', 'Tình bạn', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Tôn trọng, lắng nghe và không ép buộc nhau\",\"Luôn kiểm soát nhau mọi lúc\",\"Phải giống nhau hoàn toàn\",\"Chỉ vui khi có lợi ích\"]', 0, 'Tình bạn lành mạnh dựa trên sự tôn trọng và an toàn.', 51, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(52, 'quiz-bank-052', 'Nếu bạn bè rủ làm điều khiến bạn không thoải mái, bạn nên làm gì?', 'Tình bạn', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Nói rõ mình không muốn tham gia\",\"Làm theo để khỏi bị chê\",\"Im lặng chịu đựng\",\"Rủ thêm người khác cùng làm\"]', 0, 'Nói rõ ranh giới là cách bảo vệ bản thân và mối quan hệ lành mạnh.', 52, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(53, 'quiz-bank-053', 'Khi bạn thân có chuyện riêng, cách cư xử phù hợp là gì?', 'Tình bạn', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Giữ kín nếu không liên quan đến an toàn\",\"Kể lại cho nhóm để xin ý kiến\",\"Đem ra đùa cho nhẹ không khí\",\"Dùng làm điểm yếu khi giận nhau\"]', 0, 'Tôn trọng sự riêng tư giúp nuôi dưỡng niềm tin.', 53, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(54, 'quiz-bank-054', 'Dấu hiệu nào cho thấy một mối quan hệ bạn bè có thể không lành mạnh?', 'Tình bạn', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Bạn thường xuyên thấy mình bị ép và có lỗi vô lý\",\"Cả hai cùng vui khi gặp nhau\",\"Hai người biết xin lỗi khi cần\",\"Có lúc khác ý nhưng vẫn tôn trọng nhau\"]', 0, 'Cảm giác bị ép buộc và thao túng là tín hiệu cần chú ý.', 54, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(55, 'quiz-bank-055', 'Khi xảy ra hiểu lầm với bạn, điều gì nên làm trước?', 'Tình bạn', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Hỏi lại để hiểu đúng trước khi kết luận\",\"Đăng trạng thái mỉa mai\",\"Nói xấu với người khác\",\"Cắt đứt ngay không giải thích\"]', 0, 'Làm rõ thông tin trước giúp tránh làm căng vấn đề không cần thiết.', 55, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(56, 'quiz-bank-056', 'Một người bạn tốt không có nghĩa là người đó phải như thế nào?', 'Tình bạn', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Luôn đồng ý với mình mọi chuyện\",\"Biết lắng nghe\",\"Tôn trọng cảm xúc của mình\",\"Có thể góp ý khi cần\"]', 0, 'Bạn tốt không phải lúc nào cũng đồng ý, mà là chân thành và tôn trọng.', 56, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(57, 'quiz-bank-057', 'Nếu thấy mình luôn mệt sau khi chơi với một nhóm bạn, điều đó có thể nói lên điều gì?', 'Tình bạn', 'Nâng cao', 'MULTIPLE_CHOICE', '[\"Mối quan hệ đó có thể đang không phù hợp hoặc thiếu an toàn\",\"Mình bắt buộc phải cố hòa nhập hơn\",\"Đó là chuyện bình thường nên bỏ qua\",\"Mình không xứng đáng có bạn\"]', 0, 'Cảm giác kiệt sức kéo dài là tín hiệu nên xem lại chất lượng mối quan hệ.', 57, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(58, 'quiz-bank-058', 'Khi một người bạn thành công, phản ứng nào giúp tình bạn đẹp hơn?', 'Tình bạn', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Chúc mừng họ chân thành\",\"Lảng tránh vì thấy tự ti\",\"Nói rằng họ chỉ gặp may\",\"So sánh bản thân thật gay gắt\"]', 0, 'Chúc mừng chân thành giúp duy trì sự tích cực trong tình bạn.', 58, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(59, 'quiz-bank-059', 'Điều gì giúp kết bạn mới tự nhiên hơn?', 'Tình bạn', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Bắt đầu từ một câu hỏi đơn giản và sự chân thành\",\"Tỏ ra hoàn hảo mọi lúc\",\"Nói thật nhiều về mình ngay lập tức\",\"Đợi người khác làm hết\"]', 0, 'Sự chân thành và cởi mở vừa phải thường tạo cảm giác dễ gần.', 59, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(60, 'quiz-bank-060', 'Khi bạn bè trêu chọc quá mức, cách phản hồi nào phù hợp?', 'Tình bạn', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Nói rõ rằng điều đó làm mình không thoải mái\",\"Cười cho qua dù rất buồn\",\"Trả đũa bằng điều nặng nề hơn\",\"Im lặng mãi để không mất bạn\"]', 0, 'Gọi tên điều khiến bạn khó chịu giúp người khác hiểu ranh giới của bạn.', 60, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(61, 'quiz-bank-061', 'Khi nhận được đường link lạ yêu cầu đăng nhập tài khoản, bạn nên làm gì?', 'An toàn trên mạng', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Không bấm vào khi chưa xác minh nguồn\",\"Đăng nhập thử xem có gì\",\"Gửi tiếp cho bạn bè cùng kiểm tra\",\"Nhập mật khẩu cũ cho đỡ lo\"]', 0, 'Không mở link lạ là bước cơ bản để tránh mất tài khoản.', 61, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(62, 'quiz-bank-062', 'Thông tin nào không nên công khai trên mạng xã hội?', 'An toàn trên mạng', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Địa chỉ nhà và lịch trình riêng\",\"Một sở thích của bạn\",\"Tên bài hát yêu thích\",\"Màu sắc bạn thích\"]', 0, 'Thông tin riêng tư có thể ảnh hưởng trực tiếp đến an toàn cá nhân.', 62, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(63, 'quiz-bank-063', 'Một mật khẩu mạnh thường có đặc điểm nào?', 'An toàn trên mạng', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Khó đoán và khác nhau giữa các tài khoản\",\"Chỉ gồm ngày sinh cho dễ nhớ\",\"Giống nhau hết cho tiện\",\"Càng ngắn càng tốt\"]', 0, 'Mật khẩu mạnh cần khó đoán và không dùng chung nhiều nơi.', 63, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(64, 'quiz-bank-064', 'Nếu bị mạo danh trên mạng, việc nên làm đầu tiên là gì?', 'An toàn trên mạng', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Lưu bằng chứng và báo cáo tài khoản giả\",\"Mặc kệ vì rồi sẽ tự hết\",\"Tạo tài khoản khác để cãi lại\",\"Đăng số điện thoại của người kia\"]', 0, 'Lưu bằng chứng giúp bạn xử lý sự việc rõ ràng và an toàn hơn.', 64, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(65, 'quiz-bank-065', 'Tại sao nên cẩn trọng với ảnh hoặc tin nhắn đã gửi?', 'An toàn trên mạng', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Vì nội dung số có thể bị lưu lại hoặc chia sẻ tiếp\",\"Vì gửi rồi thì luôn biến mất\",\"Vì chỉ người tốt mới xem được\",\"Vì mạng xã hội luôn tự bảo vệ mình\"]', 0, 'Nội dung số rất dễ bị lưu và lan truyền ngoài ý muốn.', 65, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(66, 'quiz-bank-066', 'Nếu ai đó nhắn tin đe dọa khiến bạn sợ hãi, bạn nên làm gì?', 'An toàn trên mạng', 'Nâng cao', 'MULTIPLE_CHOICE', '[\"Lưu lại bằng chứng và nói với người lớn đáng tin\",\"Xóa ngay và giữ kín một mình\",\"Gửi lời đe dọa lại\",\"Chấp nhận yêu cầu của họ\"]', 0, 'Trong tình huống đe dọa, bạn cần hỗ trợ thật thay vì đối đầu một mình.', 66, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(67, 'quiz-bank-067', 'Cài đặt quyền riêng tư trên ứng dụng giúp ích điều gì?', 'An toàn trên mạng', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Giúp bạn kiểm soát ai xem và ai liên hệ với mình\",\"Tăng tốc mạng cho điện thoại\",\"Tự chặn hết mọi nguy cơ\",\"Làm tài khoản nổi bật hơn\"]', 0, 'Quyền riêng tư tốt giúp bạn chủ động hơn trong việc chia sẻ.', 67, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(68, 'quiz-bank-068', 'Khi quen một người chỉ qua mạng và họ muốn gặp riêng, điều gì là an toàn hơn?', 'An toàn trên mạng', 'Nâng cao', 'MULTIPLE_CHOICE', '[\"Nói với người lớn đáng tin và không đi một mình\",\"Đi ngay để chứng minh mình dũng cảm\",\"Giấu gia đình để khỏi bị cấm\",\"Chỉ cần nhắn vị trí sau khi tới nơi\"]', 0, 'Các cuộc gặp ngoài đời cần sự chuẩn bị và hỗ trợ từ người lớn đáng tin.', 68, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(69, 'quiz-bank-069', 'Điều gì nên làm khi xem thấy thử thách nguy hiểm đang lan truyền trên mạng?', 'An toàn trên mạng', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Không làm theo và tránh chia sẻ tiếp\",\"Thử một lần cho biết\",\"Quay video tham gia cho vui\",\"Rủ thêm bạn cùng làm\"]', 0, 'Không tham gia và không lan truyền giúp giảm nguy cơ cho mình và người khác.', 69, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(70, 'quiz-bank-070', 'Một tài khoản đáng nghi thường có dấu hiệu nào?', 'An toàn trên mạng', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Hối thúc cung cấp thông tin riêng hoặc tiền bạc\",\"Có ảnh đại diện rõ ràng\",\"Nhắn hỏi thăm lịch sự\",\"Có tên tài khoản ngắn\"]', 0, 'Sự thúc ép bất thường là dấu hiệu bạn cần cảnh giác.', 70, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(71, 'quiz-bank-071', 'Ranh giới cá nhân có nghĩa là gì?', 'Ranh giới cá nhân', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Những điều mình thấy an toàn và không thoải mái cần được tôn trọng\",\"Luôn từ chối tất cả mọi người\",\"Làm theo người khác để hòa hợp\",\"Không bao giờ thay đổi ý kiến\"]', 0, 'Ranh giới cá nhân giúp bạn biết điều gì phù hợp với mình.', 71, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(72, 'quiz-bank-072', 'Nếu ai đó đụng chạm khiến bạn khó chịu, phản ứng nào phù hợp?', 'Ranh giới cá nhân', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Nói dừng lại và lùi về khoảng cách an toàn\",\"Cố chịu để khỏi mất lòng\",\"Cười cho qua rồi im lặng\",\"Tự trách mình quá nhạy cảm\"]', 0, 'Bạn có quyền nói không với mọi hành vi khiến mình không thoải mái.', 72, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(73, 'quiz-bank-073', 'Một câu nói thể hiện ranh giới rõ ràng là gì?', 'Ranh giới cá nhân', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Mình không thoải mái với điều này\",\"Thôi cũng được, tùy bạn hết\",\"Chắc do mình khó tính quá\",\"Sao cũng xong\"]', 0, 'Câu nói rõ ràng giúp người khác hiểu giới hạn của bạn.', 73, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(74, 'quiz-bank-074', 'Điều gì không phải là dấu hiệu của một mối quan hệ tôn trọng ranh giới?', 'Ranh giới cá nhân', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Liên tục ép bạn thay đổi quyết định\",\"Lắng nghe khi bạn nói không\",\"Tôn trọng không gian riêng\",\"Hỏi ý kiến trước khi chạm vào đồ của bạn\"]', 0, 'Ép buộc lặp lại cho thấy ranh giới của bạn không được tôn trọng.', 74, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(75, 'quiz-bank-075', 'Tại sao việc luyện nói không lại quan trọng?', 'Ranh giới cá nhân', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Giúp bạn tự bảo vệ mình trong nhiều tình huống\",\"Khiến người khác ghét mình\",\"Chỉ dành cho người lạnh lùng\",\"Không có tác dụng gì thực tế\"]', 0, 'Biết từ chối đúng lúc là kỹ năng tự bảo vệ quan trọng.', 75, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(76, 'quiz-bank-076', 'Nếu thấy khó nói không trực tiếp, bước khởi đầu nào dễ hơn?', 'Ranh giới cá nhân', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Tập một câu ngắn rõ ràng trước gương hoặc với người tin cậy\",\"Cố làm hài lòng người khác trước\",\"Đợi đến khi chịu không nổi mới nói\",\"Nhắn những câu mơ hồ rồi hy vọng người kia tự hiểu\"]', 0, 'Tập trước giúp bạn bớt run và rõ ràng hơn khi cần nói thật.', 76, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(77, 'quiz-bank-077', 'Một người tôn trọng ranh giới của bạn thường sẽ làm gì?', 'Ranh giới cá nhân', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Dừng lại khi bạn từ chối hoặc bày tỏ khó chịu\",\"Cố thuyết phục thêm cho đến khi bạn đồng ý\",\"Chế giễu giới hạn của bạn\",\"Gây áp lực để bạn thấy có lỗi\"]', 0, 'Sự tôn trọng thể hiện ở việc biết dừng đúng lúc.', 77, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(78, 'quiz-bank-078', 'Khi chính bạn lỡ vượt ranh giới của người khác, điều nên làm là gì?', 'Ranh giới cá nhân', 'Trung bình', 'MULTIPLE_CHOICE', '[\"Xin lỗi, dừng lại và điều chỉnh hành vi\",\"Giải thích thật nhiều để biện minh\",\"Nói họ quá nhạy cảm\",\"Lặp lại vì nghĩ không nghiêm trọng\"]', 0, 'Nhận lỗi và điều chỉnh là cách ứng xử trưởng thành.', 78, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(79, 'quiz-bank-079', 'Điều gì giúp bạn nhận ra ranh giới của bản thân rõ hơn?', 'Ranh giới cá nhân', 'Nâng cao', 'MULTIPLE_CHOICE', '[\"Chú ý đến cảm giác khó chịu, căng thẳng hoặc bị ép buộc\",\"Chỉ làm theo số đông\",\"Bỏ qua tín hiệu cơ thể\",\"Chờ người khác quyết định hộ\"]', 0, 'Cơ thể và cảm xúc thường báo trước khi ranh giới bị chạm tới.', 79, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39'),
+(80, 'quiz-bank-080', 'Ranh giới cá nhân là cố định hoàn toàn hay có thể thay đổi theo thời gian?', 'Ranh giới cá nhân', 'Cơ bản', 'MULTIPLE_CHOICE', '[\"Có thể thay đổi khi bạn hiểu mình hơn\",\"Phải giữ y nguyên mãi mãi\",\"Không hề cần thiết\",\"Chỉ có khi bạn lớn tuổi\"]', 0, 'Ranh giới có thể thay đổi khi trải nghiệm và nhu cầu của bạn thay đổi.', 80, 1, '2026-05-20 06:48:39', '2026-05-20 06:48:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` varchar(36) NOT NULL,
+  `full_name` varchar(120) NOT NULL,
+  `email` varchar(190) NOT NULL,
+  `username` varchar(80) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `age` int(11) NOT NULL,
+  `plan` varchar(20) NOT NULL,
+  `xp` int(11) NOT NULL DEFAULT 0,
+  `streak` int(11) NOT NULL DEFAULT 0,
+  `quiz_score_total` int(11) NOT NULL DEFAULT 0,
+  `avatar_url` varchar(255) DEFAULT NULL,
+  `role` varchar(20) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `full_name`, `email`, `username`, `password_hash`, `age`, `plan`, `xp`, `streak`, `quiz_score_total`, `avatar_url`, `role`, `created_at`, `updated_at`) VALUES
+('16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'khoaaa', 'khoa@gmail.com', 'kkk', '$2a$12$cjWTRQWjgxG9t3WG58z4S.DOlZKC875a7tov4IIdoG5/0OjZfqE4C', 12, 'FREE', 460, 5, 0, NULL, 'STUDENT', '2026-05-28 05:15:53', '2026-06-05 00:03:33'),
+('73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', 'khoado123@gmail.com', 'khoaaa', '$2a$10$ZnfiMDqf7vFkbfNXTsEUmua7sV0/PSrkAhSqGURTbbBuotSoIXoMe', 10, 'FREE', 50, 7, 0, NULL, 'STUDENT', '2026-05-20 00:32:07', '2026-05-20 00:40:52'),
+('9f3fbf44-16f2-4f88-9cf5-3f6c2d2b0011', 'EDUcare Admin', 'admin@educare.vn', 'educare_admin', '$2b$10$2PZ0ZSIK6XXvnRprYDgBI.l9EwT3TF.hnrSRBKbpLbhf7w52IXnCe', 18, 'PREMIUM', 0, 0, 0, NULL, 'ADMIN', '2026-05-20 06:53:29', '2026-05-20 06:53:29'),
+('9f3fbf44-16f2-4f88-9cf5-3f6c2d2b0012', 'EDUcare Admin', 'adminKhoa@educare.vn', 'educare_admin_khoa', '$2a$12$8Uuqv21g2YzA4paZ7EAgRenwM6CjNKSL2ZLWpDFcarvEtRaM5KcOa', 18, 'PREMIUM', 0, 0, 0, NULL, 'ADMIN', '2026-05-28 13:24:35', '2026-05-28 13:24:35'),
+('a8d9d888-22f7-46b5-919b-3df25a590021', 'Minh Anh', 'minhanh@educare.vn', 'minhanh', '$2b$10$2PZ0ZSIK6XXvnRprYDgBI.l9EwT3TF.hnrSRBKbpLbhf7w52IXnCe', 16, 'FREE', 0, 10, 0, NULL, 'STUDENT', '2026-05-20 06:53:29', '2026-05-20 06:53:29');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `anonymous_questions`
+--
+ALTER TABLE `anonymous_questions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_anonymous_question_user` (`user_id`);
+
+--
+-- Indexes for table `anonymous_question_likes`
+--
+ALTER TABLE `anonymous_question_likes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_question_like` (`question_id`,`user_id`),
+  ADD KEY `fk_anonymous_question_like_user` (`user_id`);
+
+--
+-- Indexes for table `blog_posts`
+--
+ALTER TABLE `blog_posts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indexes for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_chat_message_room` (`room_id`),
+  ADD KEY `fk_chat_message_user` (`user_id`);
+
+--
+-- Indexes for table `chat_rooms`
+--
+ALTER TABLE `chat_rooms`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indexes for table `community_posts`
+--
+ALTER TABLE `community_posts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_community_post_user` (`user_id`);
+
+--
+-- Indexes for table `community_post_likes`
+--
+ALTER TABLE `community_post_likes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_post_like` (`post_id`,`user_id`),
+  ADD KEY `fk_community_post_like_user` (`user_id`);
+
+--
+-- Indexes for table `community_replies`
+--
+ALTER TABLE `community_replies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_community_reply_post` (`post_id`),
+  ADD KEY `fk_community_reply_user` (`user_id`);
+
+--
+-- Indexes for table `community_reply_likes`
+--
+ALTER TABLE `community_reply_likes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_reply_like` (`reply_id`,`user_id`),
+  ADD KEY `fk_community_reply_like_user` (`user_id`);
+
+--
+-- Indexes for table `courses`
+--
+ALTER TABLE `courses`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `course_enrollments`
+--
+ALTER TABLE `course_enrollments`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_user_course` (`user_id`,`course_id`),
+  ADD KEY `course_id` (`course_id`);
+
+--
+-- Indexes for table `games`
+--
+ALTER TABLE `games`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indexes for table `lessons`
+--
+ALTER TABLE `lessons`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD UNIQUE KEY `lesson_order` (`lesson_order`),
+  ADD KEY `fk_lessons_course` (`course_id`);
+
+--
+-- Indexes for table `lesson_progress`
+--
+ALTER TABLE `lesson_progress`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_user_lesson` (`user_id`,`lesson_id`),
+  ADD KEY `fk_lesson_progress_lesson` (`lesson_id`);
+
+--
+-- Indexes for table `lesson_sources`
+--
+ALTER TABLE `lesson_sources`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `lesson_id` (`lesson_id`);
+
+--
+-- Indexes for table `micro_lessons`
+--
+ALTER TABLE `micro_lessons`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_micro_lessons_lesson` (`lesson_id`);
+
+--
+-- Indexes for table `micro_lesson_blocks`
+--
+ALTER TABLE `micro_lesson_blocks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_micro_lesson_blocks_micro_lesson` (`micro_lesson_id`);
+
+--
+-- Indexes for table `micro_lesson_progress`
+--
+ALTER TABLE `micro_lesson_progress`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_micro_progress_user` (`user_id`),
+  ADD KEY `fk_micro_progress_ml` (`micro_lesson_id`);
+
+--
+-- Indexes for table `mood_entries`
+--
+ALTER TABLE `mood_entries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_user_mood_date` (`user_id`,`entry_date`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_notification_user` (`user_id`);
+
+--
+-- Indexes for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_quiz_attempt_user` (`user_id`),
+  ADD KEY `idx_quiz_attempt_created_at` (`created_at`);
+
+--
+-- Indexes for table `quiz_questions`
+--
+ALTER TABLE `quiz_questions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `anonymous_questions`
+--
+ALTER TABLE `anonymous_questions`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `anonymous_question_likes`
+--
+ALTER TABLE `anonymous_question_likes`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `blog_posts`
+--
+ALTER TABLE `blog_posts`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `chat_rooms`
+--
+ALTER TABLE `chat_rooms`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `community_posts`
+--
+ALTER TABLE `community_posts`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `community_post_likes`
+--
+ALTER TABLE `community_post_likes`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `community_replies`
+--
+ALTER TABLE `community_replies`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `community_reply_likes`
+--
+ALTER TABLE `community_reply_likes`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `courses`
+--
+ALTER TABLE `courses`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `course_enrollments`
+--
+ALTER TABLE `course_enrollments`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `games`
+--
+ALTER TABLE `games`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `lessons`
+--
+ALTER TABLE `lessons`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+
+--
+-- AUTO_INCREMENT for table `lesson_progress`
+--
+ALTER TABLE `lesson_progress`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `lesson_sources`
+--
+ALTER TABLE `lesson_sources`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+
+--
+-- AUTO_INCREMENT for table `micro_lessons`
+--
+ALTER TABLE `micro_lessons`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=202;
+
+--
+-- AUTO_INCREMENT for table `micro_lesson_blocks`
+--
+ALTER TABLE `micro_lesson_blocks`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1194;
+
+--
+-- AUTO_INCREMENT for table `micro_lesson_progress`
+--
+ALTER TABLE `micro_lesson_progress`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `mood_entries`
+--
+ALTER TABLE `mood_entries`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- AUTO_INCREMENT for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `quiz_questions`
+--
+ALTER TABLE `quiz_questions`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `anonymous_questions`
+--
+ALTER TABLE `anonymous_questions`
+  ADD CONSTRAINT `fk_anonymous_question_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `anonymous_question_likes`
+--
+ALTER TABLE `anonymous_question_likes`
+  ADD CONSTRAINT `fk_anonymous_question_like_question` FOREIGN KEY (`question_id`) REFERENCES `anonymous_questions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_anonymous_question_like_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD CONSTRAINT `fk_chat_message_room` FOREIGN KEY (`room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_chat_message_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `community_posts`
+--
+ALTER TABLE `community_posts`
+  ADD CONSTRAINT `fk_community_post_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `community_post_likes`
+--
+ALTER TABLE `community_post_likes`
+  ADD CONSTRAINT `fk_community_post_like_post` FOREIGN KEY (`post_id`) REFERENCES `community_posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_community_post_like_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `community_replies`
+--
+ALTER TABLE `community_replies`
+  ADD CONSTRAINT `fk_community_reply_post` FOREIGN KEY (`post_id`) REFERENCES `community_posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_community_reply_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `community_reply_likes`
+--
+ALTER TABLE `community_reply_likes`
+  ADD CONSTRAINT `fk_community_reply_like_reply` FOREIGN KEY (`reply_id`) REFERENCES `community_replies` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_community_reply_like_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `course_enrollments`
+--
+ALTER TABLE `course_enrollments`
+  ADD CONSTRAINT `course_enrollments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `course_enrollments_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `lessons`
+--
+ALTER TABLE `lessons`
+  ADD CONSTRAINT `fk_lessons_course` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `lesson_progress`
+--
+ALTER TABLE `lesson_progress`
+  ADD CONSTRAINT `fk_lesson_progress_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_lesson_progress_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `lesson_sources`
+--
+ALTER TABLE `lesson_sources`
+  ADD CONSTRAINT `lesson_sources_ibfk_1` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `micro_lessons`
+--
+ALTER TABLE `micro_lessons`
+  ADD CONSTRAINT `fk_micro_lessons_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `micro_lesson_blocks`
+--
+ALTER TABLE `micro_lesson_blocks`
+  ADD CONSTRAINT `fk_micro_lesson_blocks_micro_lesson` FOREIGN KEY (`micro_lesson_id`) REFERENCES `micro_lessons` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `micro_lesson_progress`
+--
+ALTER TABLE `micro_lesson_progress`
+  ADD CONSTRAINT `fk_micro_progress_ml` FOREIGN KEY (`micro_lesson_id`) REFERENCES `micro_lessons` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_micro_progress_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `mood_entries`
+--
+ALTER TABLE `mood_entries`
+  ADD CONSTRAINT `fk_mood_entry_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notification_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  ADD CONSTRAINT `fk_quiz_attempt_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
