@@ -38,6 +38,29 @@ export interface ProgressResponse {
 }
 
 export interface Lesson {
+export type MicroLessonBlock = {
+  id: number;
+  blockType: "hook" | "explanation" | "scenario" | "interaction" | "reflection" | "takeaway" | "sorting" | "flashcard";
+  contentJson: string;       // backend trả string JSON (mình map kiểu String ở entity)
+  orderIndex: number;
+};
+
+export type MicroLesson = {
+  id: number;
+  title: string;
+  order: number;             // microOrder bên backend
+  completed?: boolean;
+  blocks: MicroLessonBlock[];
+};
+
+export interface LessonSource {
+  id: number;
+  sourceName: string;
+  sourceUrl: string;
+  sourceType?: string | null;
+}
+
+export type Lesson = {
   id: number;
   slug: string;
   title: string;
@@ -45,6 +68,25 @@ export interface Lesson {
   content: string;
   order: number;
   isFree: boolean;
+
+  // new fields
+  courseId: number | null;
+  xpReward: number;
+  estimatedMinutes: number;
+  microLessons: MicroLesson[];
+  courseColorTheme?: string | null;
+  sources?: LessonSource[];
+};
+
+export interface Course {
+  id: number;
+  title: string;
+  description: string | null;
+  thumbnail: string | null;
+  colorTheme: string | null;
+  order: number | null;
+  lessons: Lesson[];
+  enrolled?: boolean;
 }
 
 export interface BlogPost {
