@@ -45,45 +45,43 @@ public final class AuthDtos {
       String createdAt) {
   }
 
-public record LessonResponse(
-    Long id,
-    String slug,
-    String title,
-    String summary,
-    String content,
-    Integer order,
-    Boolean isFree,
-
-    Long courseId,
-    Integer xpReward,
-    Integer estimatedMinutes,
-
-    List<MicroLessonResponse> microLessons
-) {}
+  public record LessonResponse(
+      Long id,
+      String slug,
+      String title,
+      String summary,
+      String content,
+      Integer order,
+      Boolean isFree,
+      Long courseId,
+      Integer xpReward,
+      Integer estimatedMinutes,
+      List<MicroLessonResponse> microLessons) {
+  }
 
   public record MicroLessonBlockResponse(
-    Long id,
-    String blockType,
-    String contentJson,
-    Integer orderIndex
-) {}
+      Long id,
+      String blockType,
+      String contentJson,
+      Integer orderIndex) {
+  }
 
-public record MicroLessonResponse(
-    Long id,
-    String title,
-    Integer order,
-    List<MicroLessonBlockResponse> blocks
-) {}
+  public record MicroLessonResponse(
+      Long id,
+      String title,
+      Integer microOrder,
+      List<MicroLessonBlockResponse> blocks) {
+  }
 
-public record CourseResponse(
-    Long id,
-    String title,
-    String description,
-    String thumbnail,
-    String colorTheme,
-    Integer order,
-    List<LessonResponse> lessons
-) {}
+  public record CourseResponse(
+      Long id,
+      String title,
+      String description,
+      String thumbnail,
+      String colorTheme,
+      Integer courseOrder,
+      List<LessonResponse> lessons) {
+  }
 
   public record BlogPostResponse(
       Long id,
@@ -132,8 +130,8 @@ public record CourseResponse(
   public record ForgotPasswordRequest(@NotBlank @Email String email) {
   }
 
-  public record PasswordResetRequest(@NotBlank String token, @NotBlank @Size(min = 6, max = 120) String password) {
-  }
+    public record PasswordResetRequest(@NotBlank @Email String email, @NotBlank String token, @NotBlank @Size(min = 6, max = 120) String password) {
+    }
 
   public record PasswordResetResponse(String status, String resetToken) {
   }

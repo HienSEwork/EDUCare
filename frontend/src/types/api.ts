@@ -37,21 +37,7 @@ export interface ProgressResponse {
   awardedXp: number;
 }
 
-export type MicroLessonBlock = {
-  id: number;
-  blockType: "hook" | "explanation" | "scenario" | "interaction" | "reflection" | "takeaway";
-  contentJson: string;       // backend trả string JSON (mình map kiểu String ở entity)
-  orderIndex: number;
-};
-
-export type MicroLesson = {
-  id: number;
-  title: string;
-  order: number;             // microOrder bên backend
-  blocks: MicroLessonBlock[];
-};
-
-export type Lesson = {
+export interface Lesson {
   id: number;
   slug: string;
   title: string;
@@ -59,22 +45,6 @@ export type Lesson = {
   content: string;
   order: number;
   isFree: boolean;
-
-  // new fields
-  courseId: number | null;
-  xpReward: number;
-  estimatedMinutes: number;
-  microLessons: MicroLesson[];
-};
-
-export interface Course {
-  id: number;
-  title: string;
-  description: string | null;
-  thumbnail: string | null;
-  colorTheme: string | null;
-  order: number | null;
-  lessons: Lesson[];
 }
 
 export interface BlogPost {

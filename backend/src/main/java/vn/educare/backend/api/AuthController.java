@@ -47,7 +47,7 @@ public class AuthController {
 
   @PostMapping("/reset-password")
   public Map<String, String> resetPassword(@Valid @RequestBody PasswordResetRequest request) {
-    authService.resetPassword(request.token(), request.password());
+    authService.resetPassword(request.email(), request.token(), request.password());
     return Map.of("status", "success");
   }
 

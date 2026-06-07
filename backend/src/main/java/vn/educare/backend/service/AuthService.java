@@ -1,13 +1,18 @@
 package vn.educare.backend.service;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.core.env.Environment;
 import vn.educare.backend.api.ApiException;
 import vn.educare.backend.api.AuthDtos.AuthResponse;
 import vn.educare.backend.api.AuthDtos.LoginRequest;
@@ -29,6 +34,9 @@ import vn.educare.backend.security.JwtService;
 @RequiredArgsConstructor
 public class AuthService {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
+  private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
   private final UserRepository userRepository;
   private final LessonProgressRepository lessonProgressRepository;
   private final LessonRepository lessonRepository;
@@ -36,6 +44,8 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final UserMapper userMapper;
+  private final MailService mailService;
+  private final Environment env;
 
   @Transactional
   public AuthResponse register(RegisterRequest request) {
@@ -87,33 +97,64 @@ public class AuthService {
   public PasswordResetResponse requestPasswordReset(String email) {
     var optionalUser = userRepository.findByEmail(email);
     if (optionalUser.isEmpty()) {
-      return new PasswordResetResponse("If the email exists, a reset link has been sent", null);
+      return new PasswordResetResponse("If the email exists, a reset code has been sent", null);
     }
 
     UserEntity user = optionalUser.get();
     passwordResetTokenRepository.deleteAllByUserId(user.getId());
 
     PasswordResetTokenEntity resetToken = new PasswordResetTokenEntity();
-    resetToken.setToken(UUID.randomUUID().toString());
+    resetToken.setToken(generateOtpCode());
     resetToken.setUserId(user.getId());
     resetToken.setCreatedAt(Instant.now());
-    resetToken.setExpiresAt(Instant.now().plus(1, ChronoUnit.HOURS));
+    resetToken.setExpiresAt(Instant.now().plus(15, ChronoUnit.MINUTES));
     passwordResetTokenRepository.save(resetToken);
 
-    return new PasswordResetResponse("If the email exists, a reset link has been sent", resetToken.getToken());
+    boolean smtpActive = Arrays.stream(env.getActiveProfiles()).anyMatch("smtp"::equals);
+    if (smtpActive) {
+      try {
+        mailService.sendResetOtp(user.getEmail(), resetToken.getToken());
+      } catch (Exception e) {
+        LOGGER.error("Failed to send reset OTP email", e);
+      }
+      return new PasswordResetResponse("If the email exists, a reset code has been sent", null);
+    }
+
+    boolean devActive = Arrays.stream(env.getActiveProfiles()).anyMatch("dev"::equals);
+    if (devActive) {
+      return new PasswordResetResponse("If the email exists, a reset code has been sent", resetToken.getToken());
+    }
+
+    return new PasswordResetResponse("If the email exists, a reset code has been sent", null);
+  }
+
+  private String generateOtpCode() {
+    int code = SECURE_RANDOM.nextInt(1_000_000);
+    return String.format("%06d", code);
   }
 
   @Transactional
-  public void resetPassword(String token, String password) {
+  public void resetPassword(String email, String token, String password) {
+    // Ensure the email exists first
+    var optionalUser = userRepository.findByEmail(email);
+    if (optionalUser.isEmpty()) {
+      throw new ApiException(400, "Invalid email or reset token");
+    }
+    UserEntity user = optionalUser.get();
+
     PasswordResetTokenEntity resetToken = passwordResetTokenRepository.findByToken(token)
         .orElseThrow(() -> new ApiException(400, "Invalid or expired reset token"));
+
+    // Token must belong to the same user (email) that requested the reset
+    if (!resetToken.getUserId().equals(user.getId())) {
+      throw new ApiException(400, "Invalid reset token for this email");
+    }
 
     if (resetToken.getExpiresAt().isBefore(Instant.now())) {
       passwordResetTokenRepository.delete(resetToken);
       throw new ApiException(400, "Invalid or expired reset token");
     }
 
-    UserEntity user = userRepository.findById(resetToken.getUserId()).orElseThrow(() -> new ApiException(404, "User not found"));
     user.setPasswordHash(passwordEncoder.encode(password));
     userRepository.save(user);
     passwordResetTokenRepository.delete(resetToken);
