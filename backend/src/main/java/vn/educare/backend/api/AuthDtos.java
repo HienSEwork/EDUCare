@@ -45,19 +45,6 @@ public final class AuthDtos {
       String createdAt) {
   }
 
-  public record LessonResponse(
-      Long id,
-      String slug,
-      String title,
-      String summary,
-      String content,
-      Integer order,
-      Boolean isFree,
-      Long courseId,
-      Integer xpReward,
-      Integer estimatedMinutes,
-      List<MicroLessonResponse> microLessons) {
-  }
 public record LessonSourceResponse(
     Long id,
     String sourceName,
@@ -89,22 +76,6 @@ public record LessonResponse(
       Integer orderIndex) {
   }
 
-  public record MicroLessonResponse(
-      Long id,
-      String title,
-      Integer microOrder,
-      List<MicroLessonBlockResponse> blocks) {
-  }
-
-  public record CourseResponse(
-      Long id,
-      String title,
-      String description,
-      String thumbnail,
-      String colorTheme,
-      Integer courseOrder,
-      List<LessonResponse> lessons) {
-  }
 public record MicroLessonResponse(
     Long id,
     String title,
