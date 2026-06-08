@@ -37,7 +37,6 @@ export interface ProgressResponse {
   awardedXp: number;
 }
 
-export interface Lesson {
 export type MicroLessonBlock = {
   id: number;
   blockType: "hook" | "explanation" | "scenario" | "interaction" | "reflection" | "takeaway" | "sorting" | "flashcard";
