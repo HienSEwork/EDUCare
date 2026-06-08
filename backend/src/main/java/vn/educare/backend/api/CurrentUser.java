@@ -12,6 +12,14 @@ public class CurrentUser {
     return details().user().getId();
   }
 
+  public String idOrNull() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && authentication.getPrincipal() instanceof AppUserDetails details) {
+      return details.user().getId();
+    }
+    return null;
+  }
+
   public AppUserDetails details() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !(authentication.getPrincipal() instanceof AppUserDetails details)) {
