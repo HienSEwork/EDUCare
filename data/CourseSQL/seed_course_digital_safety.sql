@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Lướt Mạng Tỉnh Táo, Kết Nối Cực Chất',
     'Tìm hiểu cách bảo vệ quyền riêng tư, thiết lập ranh giới số, hiểu về sự đồng thuận trực tuyến, chia sẻ ảnh an toàn và ứng phó với cờ đỏ thao túng.',
     'digital-safety-course.png',
     '#7209b7',
-    21
+    21,
+    4
 );
 SET @course_id = LAST_INSERT_ID();
 

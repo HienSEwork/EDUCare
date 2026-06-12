@@ -84,6 +84,22 @@ public record MicroLessonResponse(
     List<MicroLessonBlockResponse> blocks
 ) {}
 
+public record RecommendQuestionResponse(
+    Long id,
+    String emoji,
+    String question,
+    String reason,
+    String targetTag
+) {}
+
+public record CategoryResponse(
+    Long id,
+    String slug,
+    String name,
+    String icon,
+    String colorTheme
+) {}
+
 public record CourseResponse(
     Long id,
     String title,
@@ -92,7 +108,8 @@ public record CourseResponse(
     String colorTheme,
     Integer order,
     List<LessonResponse> lessons,
-    Boolean enrolled
+    Boolean enrolled,
+    CategoryResponse category
 ) {}
 
   public record BlogPostResponse(

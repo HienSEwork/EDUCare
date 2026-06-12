@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Tâm Lý Tuổi Teen: "Gỡ Rối" Bão Cảm Xúc!',
     'Học cách nhận diện và làm quen với những biến động cảm xúc tuổi dậy thì, xây dựng sự tự tin, ứng phó áp lực học tập và nuôi dưỡng các mối quan hệ lành mạnh.',
     'emotional-wellbeing-course.png',
     '#06d6a0',
-    23
+    23,
+    3
 );
 SET @course_id = LAST_INSERT_ID();
 

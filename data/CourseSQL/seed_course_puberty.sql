@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Dậy Thì Thành Công: Cẩm Nang "Upgrade" Bản Thân!',
     'Tìm hiểu về thay đổi thể chất, hệ sinh sản, kinh nguyệt, mộng tinh, bão cảm xúc và cách tự chăm sóc cơ thể tuổi dậy thì.',
     'puberty-course.png',
     '#f77f00',
-    22
+    22,
+    1
 );
 SET @course_id = LAST_INSERT_ID();
 

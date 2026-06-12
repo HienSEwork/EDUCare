@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Tự Tin Lớn Lên, Tự Chủ Khám Phá',
     'Khóa học về sự đồng thuận, ranh giới cá nhân và phát triển lành mạnh dành cho tuổi teen.',
     'consent-course.png',
     '#4361ee',
-    10
+    10,
+    2
 );
 SET @course_id = LAST_INSERT_ID();
 

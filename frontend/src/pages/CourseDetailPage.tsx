@@ -36,6 +36,22 @@ export default function CourseDetailPage() {
       });
   }, [id]);
 
+  // Reset scroll to top when loading is finished and content is fully rendered
+  useEffect(() => {
+    if (!isLoading) {
+      // Temporarily disable smooth scrolling for instant jump
+      const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTo(0, 0);
+      document.body.scrollTo(0, 0);
+
+      // Restore original scrolling behavior
+      document.documentElement.style.scrollBehavior = originalScrollBehavior;
+    }
+  }, [isLoading]);
+
   const handleEnroll = async () => {
     if (!course) return;
 

@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Mối Quan Hệ Lành Mạnh',
     'Tìm hiểu về cách xây dựng tình bạn, tình yêu tôn trọng, đặt ranh giới cá nhân và ứng xử văn minh trước cờ đỏ.',
     'relationship-course.png',
     '#ff5d8f',
-    20
+    20,
+    5
 );
 SET @course_id = LAST_INSERT_ID();
 
