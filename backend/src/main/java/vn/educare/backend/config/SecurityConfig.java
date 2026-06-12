@@ -40,7 +40,7 @@ public class SecurityConfig {
             .requestMatchers("/actuator/health", "/error").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/quizzes/submit").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/blog-posts/**", "/api/lessons/**", "/api/quizzes/**", "/api/games/**", "/api/community/**", "/api/leaderboard", "/api/courses", "/api/courses/*").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/blog-posts/**", "/api/lessons/**", "/api/quizzes/**", "/api/games/**", "/api/community/**", "/api/leaderboard", "/api/courses", "/api/courses/**").permitAll()
             .anyRequest().authenticated())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

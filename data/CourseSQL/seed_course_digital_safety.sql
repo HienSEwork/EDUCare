@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Lướt Mạng Tỉnh Táo, Kết Nối Cực Chất',
     'Tìm hiểu cách bảo vệ quyền riêng tư, thiết lập ranh giới số, hiểu về sự đồng thuận trực tuyến, chia sẻ ảnh an toàn và ứng phó với cờ đỏ thao túng.',
     'digital-safety-course.png',
     '#7209b7',
-    21
+    21,
+    4
 );
 SET @course_id = LAST_INSERT_ID();
 
@@ -104,6 +105,103 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn có cảm thấy áy náy khi phải block hoặc unfriend một ai đó mang lại năng lượng độc hại không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Bạn là chủ nhân tài khoản của mình. Bạn có quyền quyết định ai được phép bước vào thế giới số của bạn."]}', 6);
 
+-- --- Micro Lesson 1.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson1_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Dấu Chân Số: Đừng Để Lộ Sơ Hở''! Bạn có 3 mạng để vượt qua 5 thử thách cam go nhằm bảo vệ thông tin cá nhân. Sẵn sàng chưa?"}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Bảo vệ thông tin cá nhân",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn vừa đỗ thủ khoa kỳ thi học sinh giỏi cấp thành phố và nhận được giấy khen kèm thẻ học sinh mới cứng. Bạn rất muốn khoe tin vui này lên Story Instagram để nhận lời chúc từ bạn bè.",
+      "choices": [
+        { "text": "Chụp ảnh rõ nét toàn bộ giấy khen và thẻ học sinh có hiện họ tên, mã số, trường học và ngày sinh rồi đăng lên.", "nextNode": "fail_leak" },
+        { "text": "Dùng nhãn dán (sticker) che mờ các thông tin nhạy cảm như mã số học sinh, số điện thoại, địa chỉ nhà rồi mới đăng.", "nextNode": "step2" },
+        { "text": "Chỉ chụp ảnh chiếc cúp học sinh giỏi kèm caption thông báo tin vui mà không đăng hình ảnh thẻ hay giấy tờ gì.", "nextNode": "step2" }
+      ]
+    },
+    "step2": {
+      "text": "Một tài khoản lạ nhắn tin chúc mừng bạn rất nhiệt tình, tự xưng là cựu học sinh trường bạn và hỏi xin số điện thoại để ''tặng tài liệu ôn thi đặc biệt''.",
+      "choices": [
+        { "text": "Đưa số điện thoại ngay vì nghĩ cựu học sinh trường mình thì chắc chắn đáng tin.", "nextNode": "fail_stranger" },
+        { "text": "Cảm ơn lịch sự và nói: ''Tớ chỉ nhận tài liệu qua email học tập thôi nhé!'' hoặc từ chối cung cấp thông tin cá nhân.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau đó, bạn thấy một tài khoản Facebook lấy ảnh cá nhân của bạn và lập tài khoản clone giả danh bạn để đi vay tiền bạn bè trong danh sách.",
+      "choices": [
+        { "text": "Lờ đi vì nghĩ bạn bè mình sẽ tự biết cảnh giác.", "nextNode": "fail_ignore" },
+        { "text": "Đăng status cảnh báo bạn bè trên trang cá nhân chính thức, đồng thời báo cáo (report) tài khoản giả mạo đó.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã xử lý sự cố rò rỉ thông tin một cách dũng cảm, thông minh và có trách nhiệm bảo vệ bạn bè xung quanh.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_leak": {
+      "text": "❌ Sai rồi! Đăng ảnh thẻ học sinh hoặc giấy khen lộ rõ thông tin cá nhân là rủi ro lớn, kẻ xấu có thể dùng để định vị hoặc lừa đảo mạo danh bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_stranger": {
+      "text": "❌ Chưa đúng! Kẻ xấu trên mạng thường giả dạng cựu học sinh, người quen để lấy số điện thoại hoặc thông tin cá nhân của bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_ignore": {
+      "text": "❌ Sai rồi! Im lặng khi bị mạo danh có thể khiến bạn bè bạn bị lừa gạt tiền bạc và làm mất uy tín cá nhân của bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau:",
+  "leftBox": { "title": "Chia sẻ an toàn" },
+  "rightBox": { "title": "Chia sẻ quá đà" },
+  "items": [
+    { "text": "Đăng ảnh chú mèo đáng yêu mới nuôi", "correctBox": "left" },
+    { "text": "Đăng ảnh chụp căn cước công dân hoặc thẻ học sinh", "correctBox": "right" },
+    { "text": "Khoe ảnh chụp cổng nhà có ghi rõ số nhà, tên đường", "correctBox": "right" },
+    { "text": "Đăng review cảm nghĩ sau khi xem một cuốn sách hay", "correctBox": "left" },
+    { "text": "Đăng thời khóa biểu lớp học chi tiết hàng tuần", "correctBox": "right" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa dấu chân số sau:",
+  "pairs": [
+    { "left": "Dấu chân số chủ động", "right": "Những thông tin bạn tự ý đăng lên mạng xã hội (status, ảnh)." },
+    { "left": "Dấu chân số bị động", "right": "Dữ liệu được thu thập tự động khi bạn lướt web (cookies, lịch sử)." },
+    { "left": "Thông tin nhạy cảm", "right": "Địa chỉ nhà, số điện thoại, thẻ học sinh, thời khóa biểu." },
+    { "left": "Quyền kiểm soát số", "right": "Quyền quyết định những ai được xem và tương tác với bài đăng của bạn." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa dấu chân số:",
+  "sentence": "Những gì đã đăng lên internet sẽ rất khó [blank1] hoàn toàn và tạo nên [blank2] số của bạn. Vì vậy, hãy bảo mật [blank3] cá nhân và hạn chế chia sẻ thông tin [blank4] lên mạng.",
+  "blanks": {
+    "blank1": { "correct": "xóa", "placeholder": "..." },
+    "blank2": { "correct": "dấu chân", "placeholder": "..." },
+    "blank3": { "correct": "tài khoản", "placeholder": "..." },
+    "blank4": { "correct": "nhạy cảm", "placeholder": "..." }
+  },
+  "words": ["xóa", "dấu chân", "tài khoản", "nhạy cảm", "lưu trữ", "công khai", "hình ảnh", "riêng tư"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi bạn xóa một bức ảnh dìm bạn bè trên Story sau 5 phút đăng tải, điều gì có thể xảy ra với bức ảnh đó?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Bức ảnh đã biến mất hoàn toàn trên mạng và không ai có thể xem lại.", "correct": false, "emoji": "🙁" },
+    { "text": "Kẻ xấu hoặc bạn bè có thể đã chụp màn hình hoặc tải về trước khi bạn xóa, và nó vẫn tiếp tục tồn tại.", "correct": true, "emoji": "💚" },
+    { "text": "Bức ảnh chỉ bị lưu trong bộ nhớ tạm của điện thoại bạn.", "correct": false, "emoji": "😐" },
+    { "text": "Chỉ những người đã thả tim mới lưu lại được bức ảnh.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 2: Chat Sao Cho "Mượt", Bớt "Bất Ổn"! (Healthy Communication)
@@ -190,6 +288,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các thói quen sử dụng mạng xã hội sau:", "leftBox": {"title": "Nạp năng lượng tích cực"}, "rightBox": {"title": "Hút cạn năng lượng"}, "items": [{"text": "Theo dõi các trang chia sẻ mẹo học tập, vẽ tranh hoặc lối sống xanh", "correctBox": "left"}, {"text": "Liên tục lướt xem ảnh của các hot teen rồi tự ti về ngoại hình của mình", "correctBox": "right"}, {"text": "Giới hạn thời gian dùng mạng xã hội dưới 1 tiếng mỗi ngày", "correctBox": "left"}, {"text": "Đọc các bài viết drama, bóc phốt và tham gia bình luận chửi bới", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Bạn có cảm thấy mệt mỏi sau khi lướt mạng xã hội quá lâu không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Bạn là người lựa chọn nguồn năng lượng nạp vào tâm trí mình mỗi ngày qua màn hình điện thoại."]}', 6);
+
+-- --- Micro Lesson 2.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson2_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Chat Sao Cho Mượt, Bớt Bất Ổn''! Bạn có 3 mạng để ứng xử văn minh trong các cuộc trò chuyện trực tuyến."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Giải quyết hiểu lầm tin nhắn",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn nhắn tin rủ bạn thân đi đá bóng cuối tuần. Bạn thân chỉ rep lại đúng một chữ ngắn ngủn: ''Ừ''. Cảm giác hụt hẫng và lo lắng dâng lên, bạn nghĩ bạn ấy đang giận mình.",
+      "choices": [
+        { "text": "Nhắn lại mỉa mai: ''Ừ cái gì mà ừ, bận làm tổng thống hay sao mà rep cộc lốc thế?''", "nextNode": "fail_sarcasm" },
+        { "text": "Tạm dừng, suy nghĩ thấu cảm rằng bạn ấy có thể đang bận học hoặc mệt mỏi, rồi nhắn hỏi han nhẹ nhàng sau.", "nextNode": "step2" },
+        { "text": "Lờ đi luôn, tự ái quyết định không bao giờ rủ bạn ấy đi đá bóng nữa.", "nextNode": "fail_passive_aggressive" }
+      ]
+    },
+    "step2": {
+      "text": "Buổi tối, bạn thân nhắn lại giải thích: ''Xin lỗi cậu nha, lúc chiều tớ đang đạp xe vội nên chỉ bấm rep nhanh được vậy thôi''. Bạn thấy nhẹ nhõm. Hai đứa tiếp tục làm slide thuyết trình nhóm. Bạn thấy slide bạn ấy làm bị lòe loẹt và chưa đẹp mắt.",
+      "choices": [
+        { "text": "Chê thẳng thừng trong nhóm chat chung: ''Slide xấu thế cậu, màu sắc lòe loẹt nhìn đau mắt quá!''", "nextNode": "fail_harsh" },
+        { "text": "Góp ý riêng bằng tin nhắn Green Flag: ''Slide cậu làm bố cục rất rõ ràng nè! Tớ nghĩ nếu tụi mình đổi sang tông màu xanh mint thì nhìn sẽ dịu và hiện đại hơn đó''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Khi thảo luận bài nhóm trong group chat lớp, hai bạn khác bất đồng ý kiến dữ dội và bắt đầu dùng lời lẽ nặng nề công kích cá nhân nhau, khiến bầu không khí bốc hỏa.",
+      "choices": [
+        { "text": "Hùa vào bình luận thêm dầu vào lửa để xem drama cho vui.", "nextNode": "fail_drama" },
+        { "text": "Lên tiếng xoa dịu: ''Tụi mình bình tĩnh lại đi nè, mai lên lớp thảo luận trực tiếp sẽ dễ hiểu nhau hơn nha!''", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã xử lý và góp ý giao tiếp một cách văn minh, tinh tế, giữ năng lượng tích cực cho mối quan hệ.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_sarcasm": {
+      "text": "❌ Chưa đúng! Lập tức dùng lời mỉa mai cộc lốc dễ làm xung đột bùng phát vì những phỏng đoán sai lầm.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_passive_aggressive": {
+      "text": "❌ Chưa đúng! Giận dỗi thầm lặng không giúp giải quyết hiểu lầm mà chỉ làm tăng khoảng cách và phá hỏng tình bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_harsh": {
+      "text": "❌ Sai rồi! Chê bai thẳng thừng trước đám đông làm tổn thương lòng tự trọng của bạn mình, hãy chọn cách góp ý riêng tư tinh tế.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_drama": {
+      "text": "❌ Sai rồi! Tiếp tay cho xung đột làm rạn nứt tập thể và vi phạm văn hóa số văn minh.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thói quen nhắn tin:",
+  "leftBox": { "title": "Green Flag giao tiếp" },
+  "rightBox": { "title": "Red Flag giao tiếp" },
+  "items": [
+    { "text": "Góp ý riêng tư một cách nhẹ nhàng, xây dựng", "correctBox": "left" },
+    { "text": "Spam hàng chục dấu chấm hỏi khi đối phương chưa kịp rep", "correctBox": "right" },
+    { "text": "Dùng chữ viết hoa toàn bộ (UPPERCASE) để thể hiện sự giận dữ", "correctBox": "right" },
+    { "text": "Hỏi han nhẹ nhàng khi thấy tin nhắn rep ngắn gọn cộc lốc", "correctBox": "left" },
+    { "text": "Chửi bới, mỉa mai đối phương ngay trong group chat chung", "correctBox": "right" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa giao tiếp số sau:",
+  "pairs": [
+    { "left": "Tin nhắn Green Flag", "right": "Lời nhắn góp ý xây dựng bắt đầu bằng lời khen ngợi chân thành." },
+    { "left": "Suy nghĩ thấu cảm", "right": "Hiểu rằng đối phương chưa rep vì họ đang bận học hoặc nghỉ ngơi." },
+    { "left": "Hạ nhiệt group chat", "right": "Đề xuất gặp mặt trực tiếp thay vì cãi vã căng thẳng trên mạng." },
+    { "left": "Năng lượng tích cực", "right": "Chủ động theo dõi các trang chia sẻ kiến thức, kỹ năng sống bổ ích." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa giao tiếp:",
+  "sentence": "Giao tiếp qua màn hình rất dễ gây [blank1] vì thiếu đi tông giọng và nét mặt. Hãy sử dụng tin nhắn [blank2] để góp ý, tránh [blank3] liên tục bắt đối phương trả lời ngay, và luôn giữ thái độ [blank4] trực tuyến.",
+  "blanks": {
+    "blank1": { "correct": "hiểu lầm", "placeholder": "..." },
+    "blank2": { "correct": "xây dựng", "placeholder": "..." },
+    "blank3": { "correct": "spam", "placeholder": "..." },
+    "blank4": { "correct": "tôn trọng", "placeholder": "..." }
+  },
+  "words": ["hiểu lầm", "xây dựng", "spam", "tôn trọng", "đồng ý", "tức giận", "im lặng", "mỉa mai"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi bạn nhìn thấy trạng thái Đã xem (Seen) nhưng đối phương chưa trả lời tin nhắn của bạn suốt 30 phút, phản ứng nào sau đây thể hiện bạn là người có EQ cao?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Liên tục gọi điện và gửi tin nhắn phẫn nộ: ''Sao xem rồi mà không rep?''", "correct": false, "emoji": "😠" },
+    { "text": "Tự suy diễn rằng đối phương ghét mình rồi block họ luôn.", "correct": false, "emoji": "🥺" },
+    { "text": "Đặt điện thoại xuống, làm việc khác và hiểu rằng họ sẽ rep khi rảnh rỗi hoặc sẵn sàng.", "correct": true, "emoji": "💚" },
+    { "text": "Đăng status ám chỉ đối phương sống giả tạo.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
 
 
 -- =========================================================================
@@ -279,6 +479,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn có mối quan hệ nào đang khiến bạn thấy ấm ức nhưng chưa dám nói thẳng giới hạn của mình không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Ranh giới lành mạnh giúp chúng ta yêu quý nhau mà không làm cạn kiệt năng lượng của nhau."]}', 6);
 
+-- --- Micro Lesson 3.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson3_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Ranh Giới Số: Vẽ Vạch Rõ, Đỡ Phiền Toái''! Bạn có 3 mạng để tự chủ thiết lập ranh giới bảo vệ bản thân."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Thiết lập ranh giới cá nhân số",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn đang học bài căng thẳng để chuẩn bị cho bài thi ngày mai. Một người bạn thân liên tục nhắn tin, gọi video rủ bạn vào game cày rank cùng nhóm. Bạn đã nhắn tin bảo bận nhưng bạn ấy vẫn spam cuộc gọi liên tục.",
+      "choices": [
+        { "text": "Chịu đựng tắt tiếng điện thoại rồi ấm ức học tiếp, không dám từ chối vì sợ mất lòng.", "nextNode": "fail_passive" },
+        { "text": "Bật chế độ ''Không làm phiền'' trên điện thoại, tập trung ôn thi và sẽ nhắn lại giải thích rõ vào ngày mai.", "nextNode": "step2" },
+        { "text": "Nổi khùng lên game chửi bạn thân phiền phức rồi block luôn.", "nextNode": "fail_aggressive" }
+      ]
+    },
+    "step2": {
+      "text": "Hôm sau, bạn thân gặp bạn và giận dỗi: ''Yêu cầu mật khẩu tài khoản game của cậu để tớ vào cày hộ, thân nhau thế mà tối qua gọi chả thèm nghe''. Bạn thấy không thoải mái khi đưa mật khẩu.",
+      "choices": [
+        { "text": "Đưa luôn mật khẩu game cho bạn ấy để chuộc lỗi tối qua.", "nextNode": "fail_pass_leak" },
+        { "text": "Từ chối khéo nhưng kiên quyết: ''Mật khẩu tớ tự quản lý nha. Cuối tuần tụi mình cùng leo rank chung sau nhé!''", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Một người bạn khác kéo bạn vào một group chat ẩn danh chuyên bóc phốt, nói xấu thầy cô giáo và các bạn học sinh trong trường.",
+      "choices": [
+        { "text": "Cứ ở lại group để hóng tin tức nhưng không bình luận gì.", "nextNode": "fail_silent_stander" },
+        { "text": "Chủ động rời khỏi nhóm chat ẩn danh và nói với bạn: ''Tớ không thoải mái với việc nói xấu người khác nên tớ out nha''.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Tuyệt vời! Bạn đã kiên định thiết lập ranh giới số rõ ràng, bảo vệ tài khoản cá nhân và né tránh những không gian ảo độc hại.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_passive": {
+      "text": "❌ Chưa đúng! Chịu đựng ngầm tích tụ bực bội không giải quyết được vấn đề, mà còn dễ làm hỏng tình bạn về lâu dài.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_aggressive": {
+      "text": "❌ Chưa đúng! Phản ứng quá khích làm tổn hại mối quan hệ thay vì thiết lập ranh giới một cách chín chắn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_pass_leak": {
+      "text": "❌ Sai rồi! Mật khẩu cá nhân là ranh giới an toàn tối thiểu, không nên chia sẻ cho bất kỳ ai để tránh rủi ro mất tài khoản.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_silent_stander": {
+      "text": "❌ Sai rồi! Ở lại group chat bóc phốt độc hại là gián tiếp tiếp tay cho môi trường mạng thiếu văn minh.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi ranh giới số:",
+  "leftBox": { "title": "Tôn trọng ranh giới" },
+  "rightBox": { "title": "Xâm phạm ranh giới" },
+  "items": [
+    { "text": "Từ chối chia sẻ mật khẩu tài khoản cá nhân cho bạn bè", "correctBox": "left" },
+    { "text": "Tự ý xem lịch sử tin nhắn của người khác khi mượn máy", "correctBox": "right" },
+    { "text": "Gọi điện spam liên tục lúc nửa đêm mặc dù bạn đã nói bận", "correctBox": "right" },
+    { "text": "Đặt giới hạn thời gian lướt mạng xã hội mỗi ngày", "correctBox": "left" },
+    { "text": "Ép bạn bè phải online nói chuyện khi họ đang mệt", "correctBox": "right" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa ranh giới số sau:",
+  "pairs": [
+    { "left": "Ranh giới thời gian", "right": "Quyết định thời lượng sử dụng thiết bị và thời điểm offline nghỉ ngơi." },
+    { "left": "Ranh giới bảo mật", "right": "Giữ kín mật khẩu tài khoản cá nhân trước mọi người, kể cả bạn thân." },
+    { "left": "Ức chế ngầm (Resentment)", "right": "Sự ấm ức tích tụ bên trong khi liên tục phải chịu đựng việc bị lấn lướt." },
+    { "left": "Từ chối thẳng thắn", "right": "Nói Không lịch sự nhưng rõ ràng, không vòng vo nói dối." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới:",
+  "sentence": "Thiết lập ranh giới số giúp bạn bảo vệ [blank1] riêng tư và tránh những [blank2] ngầm tích tụ. Bạn luôn có quyền từ chối chia sẻ [blank3] cá nhân và nói không với các hội nhóm [blank4].",
+  "blanks": {
+    "blank1": { "correct": "không gian", "placeholder": "..." },
+    "blank2": { "correct": "ức chế", "placeholder": "..." },
+    "blank3": { "correct": "mật khẩu", "placeholder": "..." },
+    "blank4": { "correct": "độc hại", "placeholder": "..." }
+  },
+  "words": ["không gian", "ức chế", "mật khẩu", "độc hại", "đồng ý", "hình ảnh", "bạn bè", "chia sẻ"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi bạn mượn điện thoại của bạn bè để chụp ảnh, hành động nào sau đây là tôn trọng ranh giới số nhất?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Tiện tay mở mục nhắn tin Messenger xem có gì mới.", "correct": false, "emoji": "🥺" },
+    { "text": "Chỉ mở đúng ứng dụng camera để chụp, không tự ý bấm vào bất kỳ ứng dụng nào khác.", "correct": true, "emoji": "💚" },
+    { "text": "Lướt xem thử album ảnh riêng tư của họ.", "correct": false, "emoji": "🛑" },
+    { "text": "Vào phần cài đặt để kiểm tra thông số máy.", "correct": false, "emoji": "😐" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 4: Đồng Thuận Số: Đừng Tự Ý "Mặc Định"! (Digital Consent)
@@ -367,6 +669,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn có bao giờ thấy khó xử khi muốn rút lại một lời đồng ý trước đó với bạn bè không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Bạn luôn có quyền thay đổi quyết định. Sự đồng thuận thực sự cần được hỏi lại mỗi lần."]}', 6);
 
+-- --- Micro Lesson 4.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson4_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Đồng Thuận Số: Đừng Tự Ý Mặc Định''! Bạn có 3 mạng để thực hành sự đồng thuận số văn minh trực tuyến."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Tôn trọng sự đồng thuận trực tuyến",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn chụp được ảnh dìm của bạn thân đang ngủ gật trong lớp trông rất ngộ nghĩnh. Bạn thấy rất vui và định đăng lên Story Instagram để trêu bạn bè.",
+      "choices": [
+        { "text": "Cứ đăng lên luôn vì bạn bè thân thiết đùa chút có sao đâu.", "nextNode": "fail_leak" },
+        { "text": "Gửi tin nhắn riêng hỏi bạn ấy: ''Tớ đăng tấm này lên Story trêu tí nha cậu, cậu thấy ok không?''", "nextNode": "step2" },
+        { "text": "Đăng lên nhóm chat kín của lớp mà không cần hỏi bạn thân.", "nextNode": "fail_leak_group" }
+      ]
+    },
+    "step2": {
+      "text": "Bạn ấy nhắn lại: ''Mặt tớ phệ quá nhìn ghê chết, đừng đăng lên mạng nha cậu, tớ ngại lắm!''",
+      "choices": [
+        { "text": "Nài nỉ tiếp: ''Vui thôi mà, story tự xóa sau 24h thôi, cho đăng đi nha!''", "nextNode": "fail_pester" },
+        { "text": "Tôn trọng quyết định của bạn: ''Ok cậu nè, tớ xóa tấm này đi nhé, chọn tấm khác đẹp hơn nha!''", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau đó, một bạn nam trong lớp rủ bạn chụp ảnh chung. Bạn đồng ý chụp. Nhưng sau đó bạn nam định đăng bức ảnh lên kèm caption ghép đôi yêu đương. Bạn thấy không thoải mái.",
+      "choices": [
+        { "text": "Im lặng chịu đựng vì nghĩ nãy mình đã đồng ý chụp ảnh thì giờ họ có quyền đăng.", "nextNode": "fail_reversible" },
+        { "text": "Nói rõ ranh giới: ''Tớ đồng ý chụp ảnh chung chứ không đồng ý đăng bài ghép đôi đâu nha, mong cậu tôn trọng''.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn hảo! Bạn đã tôn trọng và thực hành quy tắc đồng thuận trực tuyến, hiểu rõ rằng đồng ý việc này không có nghĩa là đồng ý việc khác.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_leak": {
+      "text": "❌ Sai rồi! Tự ý đăng tải hình ảnh riêng tư của bạn bè lên mạng xã hội khi chưa được sự đồng ý là vi phạm ranh giới số của họ.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_leak_group": {
+      "text": "❌ Chưa đúng! Nhóm chat kín vẫn có nguy cơ bị chụp màn hình hoặc chia sẻ ra ngoài, gây tổn thương lòng tự trọng của bạn mình.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_pester": {
+      "text": "❌ Sai rồi! Nài nỉ, lấn lướt ranh giới số khi đối phương đã từ chối là hành vi thiếu tôn trọng sự đồng thuận trực tuyến.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_reversible": {
+      "text": "❌ Sai rồi! Sự đồng thuận có tính chất linh hoạt và cụ thể - việc bạn đồng ý chụp chung không có nghĩa là bạn cho phép họ đăng bài ghép đôi tùy ý.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi đồng thuận số:",
+  "leftBox": { "title": "Tôn trọng đồng thuận" },
+  "rightBox": { "title": "Tự ý mặc định" },
+  "items": [
+    { "text": "Hỏi ý kiến bạn bè trước khi tag họ vào bài viết công khai", "correctBox": "left" },
+    { "text": "Lần trước cậu cho mượn acc rồi nên lần này tớ tự ý dùng tiếp", "correctBox": "right" },
+    { "text": "Dừng gửi ảnh meme khi bạn nói hôm nay bạn mệt và muốn yên tĩnh", "correctBox": "left" },
+    { "text": "Đăng ảnh chụp dìm bạn bè lên mạng làm trò cười khi họ chưa đồng ý", "correctBox": "right" },
+    { "text": "Kiểm tra sự thoải mái của đối phương trước khi rủ call video", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa đồng thuận số sau:",
+  "pairs": [
+    { "left": "Đồng thuận trực tuyến", "right": "Sự đồng ý tự nguyện, hào hứng, cụ thể và có thể rút lại trên mạng." },
+    { "left": "Không mặc định", "right": "Việc đối phương đồng ý lần trước không có nghĩa là tự động đồng ý lần này." },
+    { "left": "Tính cụ thể (Specific)", "right": "Đồng ý chụp ảnh chung không đồng nghĩa với đồng ý đăng ảnh ghép đôi." },
+    { "left": "Nài nỉ số", "right": "Hành vi lấn lướt, ép buộc đối phương phải nhượng bộ ranh giới trên mạng." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa đồng thuận số:",
+  "sentence": "Sự đồng thuận số phải được đưa ra một cách [blank1] và hào hứng. Đồng ý lúc trước không có nghĩa là [blank2] cho lần sau, và bạn luôn có quyền [blank3] quyết định của mình bất cứ [blank4] nào.",
+  "blanks": {
+    "blank1": { "correct": "tự nguyện", "placeholder": "..." },
+    "blank2": { "correct": "mặc định", "placeholder": "..." },
+    "blank3": { "correct": "thay đổi", "placeholder": "..." },
+    "blank4": { "correct": "lúc", "placeholder": "..." }
+  },
+  "words": ["tự nguyện", "mặc định", "thay đổi", "lúc", "im lặng", "ép buộc", "nài nỉ", "đồng ý"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Nếu bạn của bạn đã đồng ý cho bạn mượn tài khoản Netflix tuần trước để xem phim, hành động nào sau đây là tôn trọng sự đồng thuận số nhất vào tuần này?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Tự ý đăng nhập xem tiếp mà không cần hỏi vì tài khoản đã lưu trên máy.", "correct": false, "emoji": "🥺" },
+    { "text": "Nhắn tin hỏi lại bạn trước khi đăng nhập: ''Tớ vào Netflix xem nốt tập phim hôm trước nhé cậu?''", "correct": true, "emoji": "💚" },
+    { "text": "Đưa tài khoản đó cho một người bạn khác mượn dùng chung.", "correct": false, "emoji": "🛑" },
+    { "text": "Đổi mật khẩu tài khoản đó để xem một mình.", "correct": false, "emoji": "😐" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 5: Sexting & Gửi Ảnh: Giữ Mình An Toàn Trên Sóng! (Sexting & Images)
@@ -453,6 +857,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các hành vi ứng xử tôn trọng quyền cơ thể sau:", "leftBox": {"title": "Tôn trọng quyền cơ thể"}, "rightBox": {"title": "Xâm phạm quyền cơ thể"}, "items": [{"text": "Từ chối chụp ảnh cơ thể mình dù bị người khác năn nỉ, chèo kéo", "correctBox": "left"}, {"text": "Lén lút chụp ảnh bạn bè đang thay đồ thể dục để trêu đùa trong nhóm", "correctBox": "right"}, {"text": "Báo cáo tài khoản đăng ảnh chế giễu ngoại hình của một bạn học sinh khác", "correctBox": "left"}, {"text": "Bắt người yêu phải bật camera khi đang tắm để chứng tỏ không giấu giếm", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Bạn có luôn cảm thấy tự tin bảo vệ ranh giới cơ thể mình trước những lời đề nghị thô lỗ trên mạng không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Cơ thể bạn là của bạn. Quyền quyết định chia sẻ hình ảnh hay không hoàn toàn thuộc về bạn, không ngoại lệ cho bất kỳ ai."]}', 6);
+
+-- --- Micro Lesson 5.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson5_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Sexting & Gửi Ảnh: Giữ Mình An Toàn Trên Sóng''! Bạn có 3 mạng để bảo vệ ranh giới hình ảnh cơ thể."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Đối phó với áp lực gửi ảnh nhạy cảm",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Người yêu qua mạng nhắn tin năn nỉ bạn gửi ảnh mặc áo trễ vai hở ngực hoặc ảnh nhạy cảm cá nhân, nói rằng ''Yêu nhau thì phải tin tưởng và chia sẻ hình ảnh cơ thể cho nhau''. Bạn thấy lo sợ và không thoải mái.",
+      "choices": [
+        { "text": "Gửi đại một bức ảnh mờ mờ hoặc che mặt để xoa dịu đối phương.", "nextNode": "fail_leak_risk" },
+        { "text": "Từ chối dứt khoát: ''Tớ không thoải mái với việc này. Mong cậu tôn trọng quyết định của tớ''.", "nextNode": "step2" },
+        { "text": "Nói dối là điện thoại hỏng camera để né tránh tạm thời.", "nextNode": "fail_avoid" }
+      ]
+    },
+    "step2": {
+      "text": "Người đó giận dỗi, đe dọa: ''Nếu không gửi thì chứng tỏ không yêu thật lòng, tụi mình chia tay đi!''",
+      "choices": [
+        { "text": "Nhượng bộ gửi ảnh vì quá sợ chia tay.", "nextNode": "fail_concede" },
+        { "text": "Kiên định ranh giới: ''Nếu cậu muốn chia tay chỉ vì tớ bảo vệ ranh giới cơ thể mình, thì tớ chấp nhận chia tay''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau đó, người đó chụp ảnh màn hình các cuộc trò chuyện riêng tư của hai đứa và đe dọa sẽ tung lên nhóm lớp nếu bạn không chịu làm theo yêu cầu của họ.",
+      "choices": [
+        { "text": "Im lặng làm theo mọi yêu cầu của họ để giữ bình yên.", "nextNode": "fail_blackmail" },
+        { "text": "Chụp lại bằng chứng đe dọa, báo ngay cho bố mẹ hoặc thầy cô giáo đáng tin cậy và gọi tổng đài 111.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã vừa kiên định bảo vệ bản thân, vừa tìm kiếm sự hỗ trợ kịp thời để dập tắt hành vi tống tiền số.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_leak_risk": {
+      "text": "❌ Sai rồi! Ảnh nhạy cảm khi đã gửi đi sẽ nằm ngoài kiểm soát và hoàn toàn có nguy cơ bị phát tán hoặc dùng để tống tiền.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_avoid": {
+      "text": "❌ Chưa đúng! Viện lý do giả vờ hỏng camera không giải quyết được gốc rễ áp lực, đối phương sẽ tiếp tục đòi hỏi khi có cơ hội.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_concede": {
+      "text": "❌ Sai rồi! Nhượng bộ đe dọa gửi ảnh nhạy cảm chỉ khiến kẻ xấu nắm thóp và khống chế bạn nhiều hơn trong tương lai.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_blackmail": {
+      "text": "❌ Sai rồi! Chịu đựng kẻ tống tiền không bao giờ mang lại an toàn. Bạn cần chụp bằng chứng và báo ngay người lớn.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi quyền cơ thể số:",
+  "leftBox": { "title": "Bảo vệ quyền cơ thể" },
+  "rightBox": { "title": "Xâm phạm quyền cơ thể" },
+  "items": [
+    { "text": "Kiên quyết từ chối gửi ảnh nhạy cảm dù bị ép buộc", "correctBox": "left" },
+    { "text": "Lên chụp ảnh bạn bè trong nhà vệ sinh để làm trò đùa", "correctBox": "right" },
+    { "text": "Báo cáo tài khoản đăng ảnh bôi nhọ ngoại hình của bạn học", "correctBox": "left" },
+    { "text": "Yêu cầu đối phương bật camera phơi bày cơ thể khi chat video", "correctBox": "right" },
+    { "text": "Xóa tag và yêu cầu gỡ ảnh dìm khi bản thân thấy ngại", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn hình ảnh sau:",
+  "pairs": [
+    { "left": "Sexting", "right": "Hành vi nhắn tin hoặc chia sẻ hình ảnh nhạy cảm, cơ thể trực tuyến." },
+    { "left": "Quyền kiểm soát cơ thể", "right": "Quyền quyết định tối cao của bạn đối với hình ảnh thân thể của chính mình." },
+    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia tiếp nhận hỗ trợ, tư vấn bảo vệ trẻ em 24/7." },
+    { "left": "Thao túng tình cảm", "right": "Dùng lời đe dọa chia tay để ép buộc đối phương gửi ảnh nhạy cảm." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa an toàn hình ảnh:",
+  "sentence": "Hình ảnh nhạy cảm đã gửi lên internet sẽ không thể [blank1] hoàn toàn. Việc ép buộc đối phương gửi ảnh cơ thể là vi phạm [blank2] cá nhân. Khi gặp sự cố đe dọa phát tán ảnh, hãy tìm điểm tựa [blank3] và gọi tổng đài [blank4].",
+  "blanks": {
+    "blank1": { "correct": "thu hồi", "placeholder": "..." },
+    "blank2": { "correct": "ranh giới", "placeholder": "..." },
+    "blank3": { "correct": "an toàn", "placeholder": "..." },
+    "blank4": { "correct": "111", "placeholder": "..." }
+  },
+  "words": ["thu hồi", "ranh giới", "an toàn", "111", "đồng ý", "công khai", "chia sẻ", "nài nỉ"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi một người bạn online đe dọa sẽ đăng bức ảnh riêng tư của bạn lên mạng nếu bạn không chịu đi chơi riêng, hành động nào sau đây giúp bạn bảo vệ mình hiệu quả nhất?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Im lặng làm theo để họ không đăng ảnh.", "correct": false, "emoji": "🥺" },
+    { "text": "Chụp màn hình bằng chứng, báo ngay cho người lớn đáng tin cậy và gọi tổng đài 111.", "correct": true, "emoji": "💚" },
+    { "text": "Nhờ bạn bè đến đe dọa, đánh trả đũa đối phương.", "correct": false, "emoji": "🛑" },
+    { "text": "Thương lượng đưa tiền cho đối phương để họ xóa ảnh.", "correct": false, "emoji": "😐" }
+  ]
+}', 6);
 
 
 -- =========================================================================
@@ -542,6 +1048,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Đã bao giờ trực giác mách bảo bạn tránh xa một người trên mạng và sau đó bạn phát hiện ra họ thực sự có vấn đề chưa?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Trực giác của bạn là người bạn đồng hành trung thực nhất. Hãy tin tưởng và lắng nghe khi nó lên tiếng cảnh báo nhé."]}', 6);
 
+-- --- Micro Lesson 6.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson6_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Né Cờ Đỏ & Kẻ Thao Túng Trên Mạng''! Bạn có 3 mạng để nhận diện và phòng tránh cờ đỏ độc hại trực tuyến."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Đối phó với kẻ thao túng",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn nói chuyện với một người bạn rất hợp gu trên mạng. Người này tự nhận là học sinh trường bên cạnh nhưng tuyệt đối không chịu gọi video call hay gặp mặt trực tiếp, và bắt đầu hỏi xin địa chỉ nhà chi tiết cùng lịch sinh hoạt của bố mẹ bạn. Trực giác bạn thấy có điều gì đó sai sai và bất ổn.",
+      "choices": [
+        { "text": "Bỏ qua cảm giác lo lắng, cung cấp thông tin vì nghĩ bạn bè trò chuyện thân thiết bấy lâu nay đáng tin.", "nextNode": "fail_leak" },
+        { "text": "Tin vào trực giác bồn chồn của mình, từ chối chia sẻ thông tin nhạy cảm và tạm dừng trò chuyện để xác minh.", "nextNode": "step2" },
+        { "text": "Chửi bới đối phương là kẻ lừa đảo rồi đi bêu rếu họ trên trang cá nhân.", "nextNode": "fail_aggressive" }
+      ]
+    },
+    "step2": {
+      "text": "Người đó nhắn tin trách móc, khóc lóc nói bạn nghi ngờ tình bạn chân thành và đe dọa sẽ tự làm đau bản thân nếu bạn không chịu chia sẻ thông tin để chứng minh lòng tin.",
+      "choices": [
+        { "text": "Nhượng bộ và đưa thông tin vì quá lo lắng đối phương sẽ tự làm hại mình.", "nextNode": "fail_guilt_concede" },
+        { "text": "Nhận diện đây là hành vi thao túng cảm xúc độc hại (Red Flag), từ chối kiên quyết và báo với bố mẹ hoặc người lớn đáng tin.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau đó, người này đe dọa sẽ tung các tin nhắn tâm sự riêng tư trước đây của bạn lên mạng xã hội để bôi nhọ danh dự của bạn.",
+      "choices": [
+        { "text": "Im lặng chịu đựng và chấp nhận bị khống chế.", "nextNode": "fail_blackmail" },
+        { "text": "Chụp bằng chứng đe dọa, chặn tài khoản đó, chia sẻ thật với bố mẹ và thầy cô để cùng tìm phương án giải quyết.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã bình tĩnh, tin dưỡng trực giác và chủ động tìm kiếm trợ giúp từ gia đình để vô hiệu hóa bẫy thao túng số.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_leak": {
+      "text": "❌ Sai rồi! Cung cấp địa chỉ nhà chi tiết và lịch đi làm của bố mẹ cho người lạ trên mạng là cực kỳ nguy hiểm, mở đường cho trộm cắp hoặc bắt cóc.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_aggressive": {
+      "text": "❌ Chưa đúng! Phản ứng nóng giận chửi bới công khai không bảo vệ an toàn cho bạn mà còn có nguy cơ tạo ra xung đột lớn hơn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_guilt_concede": {
+      "text": "❌ Sai rồi! Việc đe dọa tự làm đau để ép buộc đối phương là chiêu trò thao túng tâm lý độc hại. Nhượng bộ chỉ khiến bạn lún sâu hơn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_blackmail": {
+      "text": "❌ Sai rồi! Im lặng thỏa hiệp với kẻ đe dọa bôi nhọ không giải quyết được vấn đề. Bạn cần báo ngay với người lớn để nhận sự bảo vệ.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử theo trực giác mách bảo sau:",
+  "leftBox": { "title": "Lắng nghe trực giác" },
+  "rightBox": { "title": "Phớt lờ cảnh báo" },
+  "items": [
+    { "text": "Ngừng trò chuyện khi thấy đối phương liên tục hỏi về địa chỉ phòng ngủ", "correctBox": "left" },
+    { "text": "Cố nhắn tin tiếp dù thấy lo sợ trước câu hỏi riêng tư của họ", "correctBox": "right" },
+    { "text": "Hỏi ý kiến chị gái khi thấy bạn online đòi gọi video call lúc nửa đêm", "correctBox": "left" },
+    { "text": "Đồng ý gặp mặt riêng tư người lạ ở công viên vắng dù thấy bồn chồn", "correctBox": "right" },
+    { "text": "Từ chối cung cấp lịch đi làm của bố mẹ cho tài khoản lạ trên mạng", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa dấu hiệu cờ đỏ trực tuyến sau:",
+  "pairs": [
+    { "left": "Giả mạo danh tính (Catfishing)", "right": "Lập tài khoản ảo, dùng ảnh người khác để tiếp cận và lừa đảo tình cảm." },
+    { "left": "Thao túng cảm xúc", "right": "Đe dọa tự tử hoặc tự làm đau để bắt đối phương nhượng bộ ranh giới." },
+    { "left": "Kiểm soát số", "right": "Đòi đọc tin nhắn riêng tư, kiểm tra định vị 24/7 để quản lý." },
+    { "left": "Trực giác (Gut feeling)", "right": "Hệ thống cảnh báo sớm của cơ thể khi cảm thấy bất an, sai sai." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa cờ đỏ:",
+  "sentence": "Kẻ thao túng trực tuyến thường dùng bẫy [blank1] để bắt bạn nhượng bộ. Hãy luôn tin tưởng vào [blank2] của bản thân. Khi phát hiện các dấu hiệu [blank3], hãy dứt khoát chặn liên lạc và tìm sự [blank4] từ người thân.",
+  "blanks": {
+    "blank1": { "correct": "cảm xúc", "placeholder": "..." },
+    "blank2": { "correct": "trực giác", "placeholder": "..." },
+    "blank3": { "correct": "cờ đỏ", "placeholder": "..." },
+    "blank4": { "correct": "hỗ trợ", "placeholder": "..." }
+  },
+  "words": ["cảm xúc", "trực giác", "cờ đỏ", "hỗ trợ", "đồng ý", "nài nỉ", "giúp đỡ", "tin tưởng"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Dấu hiệu nào sau đây là một ''Cờ Đỏ'' rõ ràng nhất của một kẻ muốn lừa đảo hoặc thao túng bạn trên mạng?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Họ trả lời tin nhắn của bạn chậm vì bận học.", "correct": false, "emoji": "😐" },
+    { "text": "Họ vẽ tranh tặng bạn nhân ngày sinh nhật.", "correct": false, "emoji": "💚" },
+    { "text": "Họ liên tục tặng quà ảo giá trị lớn, đòi gửi ảnh cơ thể để chứng minh tình cảm và cấm bạn kể với người khác về họ.", "correct": true, "emoji": "😎" },
+    { "text": "Họ từ chối tham gia các group chat ẩn danh bôi nhọ người khác.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 7: Công Dân Số Văn Minh: Lan Tỏa Vibes Lành! (Positive Digital Citizenship)
@@ -628,3 +1236,105 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các hành dung góp phần xây dựng văn hóa số văn minh sau:", "leftBox": {"title": "Gieo hạt mầm tử tế"}, "rightBox": {"title": "Gieo mầm độc hại"}, "items": [{"text": "Thả tim và chúc mừng bài viết khoe thành tích học tập của bạn cùng lớp", "correctBox": "left"}, {"text": "Bình luận móc mỉa ngoại hình của một ca sĩ nổi tiếng dưới bài báo", "correctBox": "right"}, {"text": "Chia sẻ bài viết kêu gọi quyên góp giúp đỡ hoàn cảnh khó khăn thật sự", "correctBox": "left"}, {"text": "Spam các meme tục tĩu, phản cảm vào phần bình luận của người khác", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Ngày hôm nay, bạn đã làm được việc tốt hay gửi đi thông điệp tử tế nào trên không gian mạng chưa?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Một thế giới mạng văn minh, tử tế bắt đầu từ chính hành động nhỏ bé của bạn ngày hôm nay."]}', 6);
+
+-- --- Micro Lesson 7.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson7_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Công Dân Số Văn Minh: Lan Tỏa Vibes Lành''! Bạn có 3 mạng để trở thành một Upstander dũng cảm và lan tỏa sự tử tế trực tuyến."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Trở thành người bảo vệ Upstander",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Trong group chat chung của lớp học, một nhóm bạn đang đăng ảnh dìm chế giễu cân nặng và ngoại hình của Vy bằng những lời lẽ rất thô lỗ và độc ác. Vy nhắn tin khóc lóc cầu xin mọi người dừng lại nhưng nhóm bạn vẫn tiếp tục chế ảnh cười cợt.",
+      "choices": [
+        { "text": "Im lặng lờ đi vì sợ lên tiếng sẽ bị cả nhóm quay sang bắt nạt lây.", "nextNode": "fail_silent" },
+        { "text": "Chủ động nhắn tin vào group lớp yêu cầu mọi người dừng lại một cách lịch sự nhưng kiên quyết.", "nextNode": "step2" },
+        { "text": "Nhảy vào bình luận chửi bới thậm tệ nhóm bạn kia để bênh vực Vy.", "nextNode": "fail_aggressive" }
+      ]
+    },
+    "step2": {
+      "text": "Nhóm bạn bắt nạt quay sang chế giễu bạn: ''Có mỗi thế cũng căng, đúng là mọt sách thích dạy đời!''. Vy thấy rất tủi thân và tuyệt vọng.",
+      "choices": [
+        { "text": "Thấy ngượng và sợ hãi nên im lặng rút lui khỏi cuộc trò chuyện.", "nextNode": "fail_retreat" },
+        { "text": "Báo cáo bài đăng vi phạm, nhắn tin riêng động viên Vy và báo cáo sự việc cho cô giáo chủ nhiệm.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Hôm sau, cô giáo gặp nhóm bạn kia và xử lý kỷ luật nghiêm túc. Vy gửi lời cảm ơn bạn vì đã dũng cảm bảo vệ Vy. Bạn muốn cùng Vy lan tỏa văn hóa mạng tích cực trong lớp.",
+      "choices": [
+        { "text": "Rủ cả lớp cùng lập chiến dịch đăng status chia sẻ các bài vẽ, lời chúc tử tế, tag tên nhau để đẩy lùi drama.", "nextNode": "success_end" },
+        { "text": "Cùng Vy lập group chat mới loại bỏ nhóm bắt nạt kia ra để nói xấu trả đũa họ.", "nextNode": "fail_revenge" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Xuất sắc! Bạn đã thực hành vai trò của một công dân số văn minh, dũng cảm lên tiếng đẩy lùi bạo lực mạng và gieo hạt mầm tử tế.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_silent": {
+      "text": "❌ Sai rồi! Im lặng đứng nhìn chính là hành vi gián tiếp dung túng cho bắt nạt trực tuyến và cô lập nạn nhân.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_aggressive": {
+      "text": "❌ Sai rồi! Dùng bạo lực ngôn từ đối đầu với bạo lực mạng chỉ khiến xung đột leo thang và biến chính bạn thành kẻ bắt nạt.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_retreat": {
+      "text": "❌ Sai rồi! Bỏ cuộc giữa chừng dưới áp lực chọc ghẹo của nhóm bắt nạt sẽ làm nạn nhân càng cảm thấy cô đơn, bất lực.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_revenge": {
+      "text": "❌ Sai rồi! Việc lập nhóm nói xấu trả đũa không xây dựng được văn hóa số lành mạnh mà tiếp tục duy trì vòng lặp bắt nạt độc hại.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi ứng xử số:",
+  "leftBox": { "title": "Gieo hạt mầm tử tế" },
+  "rightBox": { "title": "Gieo mầm độc hại" },
+  "items": [
+    { "text": "Thả tim và bình luận khen ngợi nỗ lực vẽ tranh của bạn cùng lớp", "correctBox": "left" },
+    { "text": "Móc mỉa, bình phẩm thô lỗ về ngoại hình của người khác dưới bài viết", "correctBox": "right" },
+    { "text": "Chia sẻ bài viết kêu gọi quyên góp từ thiện có kiểm chứng rõ ràng", "correctBox": "left" },
+    { "text": "Spam bình luận tục tĩu vào fanpage trường học để câu view", "correctBox": "right" },
+    { "text": "Nhắn tin hỏi han, động viên khi thấy bạn bè đăng status buồn bã", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa công dân số sau:",
+  "pairs": [
+    { "left": "Bắt nạt trực tuyến", "right": "Hành vi lặp đi lặp lại nhằm trêu chọc, đe dọa hoặc làm nhục người khác trên mạng." },
+    { "left": "Người đứng xem (Bystander)", "right": "Người chứng kiến bạo lực mạng nhưng chọn cách im lặng hoặc hùa theo." },
+    { "left": "Người bảo vệ (Upstander)", "right": "Người dũng cảm lên tiếng bảo vệ nạn nhân và báo cáo hành vi bắt nạt." },
+    { "left": "Văn hóa số lành mạnh", "right": "Lan tỏa những vibes tích cực, lời nhắn tử tế và hỗ trợ lẫn nhau trực tuyến." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa công dân số:",
+  "sentence": "Một công dân số văn minh sẽ không chọn cách làm [blank1] đứng nhìn khi thấy bạn bè bị [blank2] trên mạng. Hãy chủ động [blank3] bài viết vi phạm và lan tỏa sự [blank4] trực tuyến.",
+  "blanks": {
+    "blank1": { "correct": "người đứng xem", "placeholder": "..." },
+    "blank2": { "correct": "bắt nạt", "placeholder": "..." },
+    "blank3": { "correct": "báo cáo", "placeholder": "..." },
+    "blank4": { "correct": "tử tế", "placeholder": "..." }
+  },
+  "words": ["người đứng xem", "bắt nạt", "báo cáo", "tử tế", "hùa theo", "im lặng", "người bảo vệ", "đồng ý"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi bạn chứng kiến một bạn học cùng lớp bị một nhóm học sinh trường khác đăng bài xúc phạm chế giễu danh dự công khai trên Facebook, hành động nào sau đây thể hiện bạn là một Upstander văn minh?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Chia sẻ bài viết đó về trang cá nhân của mình để mọi người cùng xem.", "correct": false, "emoji": "😐" },
+    { "text": "Nhắn tin riêng động viên bạn học, chụp bằng chứng và báo ngay cho giáo viên hoặc tổng đài 111 để can thiệp.", "correct": true, "emoji": "💚" },
+    { "text": "Nhảy vào phần bình luận thách thức, cãi nhau tay đôi với nhóm bắt nạt.", "correct": false, "emoji": "🛑" },
+    { "text": "Lờ đi coi như không biết vì không phải việc của mình.", "correct": false, "emoji": "🥺" }
+  ]
+}', 6);

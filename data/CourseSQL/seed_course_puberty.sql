@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Dậy Thì Thành Công: Cẩm Nang "Upgrade" Bản Thân!',
     'Tìm hiểu về thay đổi thể chất, hệ sinh sản, kinh nguyệt, mộng tinh, bão cảm xúc và cách tự chăm sóc cơ thể tuổi dậy thì.',
     'puberty-course.png',
     '#f77f00',
-    22
+    22,
+    1
 );
 SET @course_id = LAST_INSERT_ID();
 
@@ -104,6 +105,109 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn mong chờ điều gì nhất ở phiên bản trưởng thành của mình trong tương lai?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Chào mừng bạn đến với hành trình lớn lên. Hãy tự hào về phiên bản nâng cấp của chính mình!"]}', 6);
 
+-- --- Micro Lesson 1.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson1_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Dậy Thì Là Gì? Khi Cơ Thể Rục Rịch Thay Đổi!''! Bạn có 3 mạng để tự tin khám phá những thay đổi cơ thể đầu đời."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Tự tin bước qua những bỡ ngỡ dậy thì",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Linh bắt đầu nhận thấy vùng ngực của mình hơi nhức và nhú nhọn lên dưới lớp áo phông đồng phục. Đi học, Linh cảm giác như một vài bạn nam đang nhìn chằm chằm và thì thầm trêu chọc mình, khiến cô bé vô cùng ngại ngùng, bối rối và chỉ muốn khóc.",
+      "choices": [
+        { "text": "Nhượng bộ sự xấu hổ, im lặng chịu đựng cơn đau và mặc các áo rộng thùng thình để che giấu cơ thể.", "nextNode": "fail_suppress" },
+        { "text": "Nhắn tin nhỏ cho mẹ hoặc nói chuyện riêng: ''Mẹ ơi, ngực con dạo này hơi đau và nhú lên rồi. Mẹ mua giúp con chiếc áo lót đầu tiên nha mẹ!''", "nextNode": "step2" },
+        { "text": "Tự ý lấy tiền tiết kiệm mua đại áo ngực chật ních trên mạng không vừa kích cỡ về mặc mà không hỏi ý kiến ai.", "nextNode": "fail_uninformed" }
+      ]
+    },
+    "step2": {
+      "text": "Mẹ Linh mỉm cười xoa đầu dắt Linh đi mua chiếc áo lót phù hợp. Tuần sau đó, trong giờ ra chơi ở lớp, một nhóm bạn nam trêu chọc giọng nói ồm ồm đang vỡ của Tuấn, khiến cậu đỏ bừng mặt và cúi gục xuống bàn.",
+      "choices": [
+        { "text": "Hùa theo nhóm bạn nam trêu Tuấn để chứng tỏ mình hòa đồng và sành sỏi.", "nextNode": "fail_peer" },
+        { "text": "Thể hiện vai trò đồng minh đáng tin cậy, nói với nhóm bạn nam: ''Giọng Tuấn đang vỡ vì dậy thì thôi mà, tụi mình ai rồi cũng thế, trêu thế không vui đâu!''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Linh nhận thấy cơ thể mình cao lớn và đầy đặn hơn trước khá nhiều, nhưng so với cô bạn thân dậy thì sớm, Linh thấy mình vẫn thấp bé và chậm chạp hơn hẳn. Sự sốt ruột và lo âu trỗi dậy trong lòng.",
+      "choices": [
+        { "text": "Tự nhủ: ''Đồng hồ sinh học của mỗi người là độc bản. Mình cứ kiên nhẫn ăn uống đủ chất, tập luyện và yêu thương cơ thể theo nhịp độ riêng của mình''.", "nextNode": "success_end" },
+        { "text": "Lo lắng thái quá, đòi mẹ mua thuốc kích thích tăng trưởng chiều cao cấp tốc trên mạng về uống.", "nextNode": "fail_growth" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Tuyệt vời! Bạn đã vượt qua những bỡ ngỡ đầu dậy thì, biết cách tìm kiếm đồng minh và thấu hiểu lịch trình phát triển độc bản của cơ thể mình.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_suppress": {
+      "text": "❌ Chưa đúng! Việc chịu đựng và cố gắng trốn tránh bằng quần áo rộng không giải quyết được cảm giác khó chịu và sự phát triển sinh học tự nhiên.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_uninformed": {
+      "text": "❌ Chưa đúng! Sử dụng áo lót không đúng kích cỡ ở tuổi phát triển dễ gây cản trở lưu thông máu và ảnh hưởng không tốt đến sự phát triển của bầu ngực.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_peer": {
+      "text": "❌ Sai rồi! Hùa theo trêu chọc bạn bè chỉ làm gia tăng vấn đề bắt nạt học đường và gây tổn thương tinh thần cho bạn học.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_growth": {
+      "text": "❌ Sai rồi! Tự ý dùng các sản phẩm tăng chiều cao cấp tốc không rõ nguồn gốc rất nguy hiểm cho hormone tự nhiên và sức khỏe lâu dài.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ đối với cơ thể dậy thì:",
+  "leftBox": { "title": "Đón nhận tích cực" },
+  "rightBox": { "title": "Lo âu quá mức / Né tránh" },
+  "items": [
+    { "text": "Tự nhủ: Việc thay đổi giọng nói, vóc dáng là sinh lý hoàn toàn tự nhiên", "correctBox": "left" },
+    { "text": "Trốn tránh không dám đi chơi với bạn bè vì thấy mình cao vọt lên nhanh quá", "correctBox": "right" },
+    { "text": "Lựa chọn trang phục thoải mái, vừa vặn để thích nghi với vóc dáng mới", "correctBox": "left" },
+    { "text": "Liên tục soi gương dằn vặt và tự trách bản thân vì cơ thể không giống ngày xưa", "correctBox": "right" },
+    { "text": "Mở lòng trò chuyện với bố mẹ để xin hỗ trợ mua đồ dùng cá nhân phù hợp", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp các khái niệm dậy thì cơ bản và định nghĩa tương ứng:",
+  "pairs": [
+    { "left": "Dậy thì - Puberty", "right": "Giai đoạn chuyển tiếp tự nhiên từ một đứa trẻ thành người trưởng thành về sinh học." },
+    { "left": "Hormone dậy thì", "right": "Những kẻ kích hoạt âm thầm phát tín hiệu khởi động thay đổi thể chất." },
+    { "left": "Lịch trình riêng", "right": "Sự thật là mỗi người dậy thì ở thời điểm khác nhau từ 8 đến 14 tuổi." },
+    { "left": "Đồng minh đáng tin", "right": "Người lớn như bố mẹ, thầy cô giúp bạn giải đáp khúc mắc thầm kín." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về khái niệm dậy thì:",
+  "sentence": "Dậy thì là giai đoạn chuyển tiếp tự nhiên do các [blank1] kích hoạt. Mỗi người có một chiếc đồng hồ [blank2] riêng, vì thế đừng sốt ruột. Khi gặp khó khăn, hãy tìm kiếm sự giúp đỡ từ những người lớn [blank3] để nhận [blank4] kịp thời.",
+  "blanks": {
+    "blank1": { "correct": "hormone", "placeholder": "..." },
+    "blank2": { "correct": "sinh học", "placeholder": "..." },
+    "blank3": { "correct": "tin cậy", "placeholder": "..." },
+    "blank4": { "correct": "nâng đỡ", "placeholder": "..." }
+  },
+  "words": ["hormone", "sinh học", "tin cậy", "nâng đỡ", "bệnh lý", "sành sỏi", "thuốc tăng", "trốn tránh"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao việc so sánh vóc dáng và tốc độ lớn của mình với các bạn cùng lớp lại không cần thiết?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì mỗi cơ thể đều được lập trình một đồng hồ sinh học dậy thì độc lập, ai rồi cũng sẽ lớn lên theo lịch trình riêng phù hợp nhất.", "correct": true, "emoji": "💚" },
+    { "text": "Vì các bạn trong lớp chắc chắn dậy thì nhanh hơn do uống nhiều sữa hơn bạn.", "correct": false, "emoji": "😐" },
+    { "text": "Vì dậy thì trễ là biểu hiện của cơ thể khỏe mạnh hơn nhiều so với dậy thì sớm.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì lớn chậm giúp bạn giữ được sự dễ thương lâu dài hơn.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
+
 
 -- =========================================================================
 -- BÀI HỌC 2: "F5" Diện Mạo: Những Thay Đổi Rõ Mồn Một! (Physical Changes)
@@ -190,6 +294,109 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các cách phản ứng với cơ thể đang thay đổi:", "leftBox": {"title": "Yêu thương chấp nhận"}, "rightBox": {"title": "Phủ nhận ghét bỏ"}, "items": [{"text": "Tự nhắc nhở: Sự bất cân đối cơ thể lúc dậy thì là tạm thời và bình thường", "correctBox": "left"}, {"text": "Dùng các đai nịt ngực quá chặt vì xấu hổ khi thấy ngực phát triển", "correctBox": "right"}, {"text": "Tập các bài tập giãn cơ nhẹ nhàng để thích nghi với chiều cao mới", "correctBox": "left"}, {"text": "Nhịn ăn giảm cân cực đoan vì thấy vóc dáng tròn trịa hơn trước", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Có bộ phận nào trên cơ thể đang thay đổi khiến bạn thấy lo lắng không? Bạn có muốn tìm hiểu thêm về nó một cách khoa học?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Cơ thể bạn là duy nhất và đang nỗ lực hết mình để lớn lên. Hãy kiên nhẫn đồng hành cùng nó nhé."]}', 6);
+
+-- --- Micro Lesson 2.8: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson2_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''F5 Diện Mạo: Những Thay Đổi Rõ Mồn Một''! Bạn có 3 mạng để tự tin thiết lập thói quen vệ sinh và ứng phó với thay đổi diện mạo."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Tự tin làm chủ diện mạo mới",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Huy nhận thấy nách áo dạo này hay bị ướt sũng mồ hôi và tỏa mùi khá nồng sau mỗi tiết thể dục ngoài trời, khiến Huy vô cùng tự ti, không dám ngồi gần hay giơ tay phát biểu bài trước lớp.",
+      "choices": [
+        { "text": "Xịt thật nhiều nước hoa đậm đặc đè trực tiếp lên lớp mồ hôi cũ rồi đi học tiếp.", "nextNode": "fail_perfume" },
+        { "text": "Tắm rửa xà phòng sạch sẽ hàng ngày, chú ý làm khô nách và sử dụng lăn hoặc xịt khử mùi dịu nhẹ.", "nextNode": "step2" },
+        { "text": "Nhất quyết nhịn và trốn tránh không tham gia các hoạt động thể thao đá bóng yêu thích nữa.", "nextNode": "fail_avoid" }
+      ]
+    },
+    "step2": {
+      "text": "Huy cảm thấy thơm tho, tự tin trở lại. Một buổi sáng thức dậy, Huy phát hiện trên trán xuất hiện vài nốt mụn bọc sưng đỏ. Cậu thấy rất khó chịu và muốn dùng tay nặn phăng chúng đi trước khi đi học.",
+      "choices": [
+        { "text": "Dùng tay bẩn nặn thật mạnh để nhân mụn trào ra nhanh chóng.", "nextNode": "fail_pop" },
+        { "text": "Không nặn mụn bọc, giữ da sạch bằng sữa rửa mặt dịu nhẹ sáng tối và bôi kem mụn y khoa phù hợp.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Cơ thể Huy tiếp tục phát triển rậm lông ở nách và vùng kín, ria mép cũng mọc đen hơn. Huy nghe các bạn nam rỉ tai nhau rằng cạo lông nách sẽ làm cơ thể mất đi vẻ nam tính, khiến cậu lo lắng phân vân.",
+      "choices": [
+        { "text": "Tự tin quyết định giữ lại hoặc dọn dẹp vệ sinh lông cơ thể an toàn dựa hoàn toàn trên sự thoải mái và sạch sử của chính mình.", "nextNode": "success_end" },
+        { "text": "Bị ảnh hưởng bởi định kiến, chịu đựng sự ngứa ngáy nóng bức và không dám cắt tỉa vệ sinh.", "nextNode": "fail_prejudice" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn hảo! Bạn đã kiểm soát tốt mùi cơ thể, biết cách chăm sóc làn da mụn thông thái và làm chủ các thói quen vệ sinh cá nhân văn minh.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_perfume": {
+      "text": "❌ Chưa đúng! Xịt nước hoa chồng lên mồ hôi chỉ tạo ra hỗn hợp mùi hỗn loạn, gây khó chịu hơn cho những người xung quanh.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_avoid": {
+      "text": "❌ Chưa đúng! Trốn tránh thể thao không giải quyết được vấn đề vệ sinh sinh học, ngược lại còn làm bạn mất đi cơ hội rèn luyện sức khỏe.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_pop": {
+      "text": "❌ Sai rồi! Tự ý dùng tay nặn mụn bọc sưng đỏ dễ gây nhiễm trùng máu, để lại sẹo lõm và vết thâm vĩnh viễn trên da mặt.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_prejudice": {
+      "text": "❌ Sai rồi! Quyết định dọn dẹp hay giữ lông cơ thể hoàn toàn là lựa chọn cá nhân hướng tới sự sạch sẽ, không phản ánh giới tính hay nhân cách của bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các quan niệm về chăm sóc diện mạo dậy thì:",
+  "leftBox": { "title": "Chăm sóc lành mạnh" },
+  "rightBox": { "title": "Ngược đãi da / Gây hại" },
+  "items": [
+    { "text": "Rửa mặt nhẹ nhàng bằng sữa rửa mặt dịu nhẹ 2 lần mỗi ngày", "correctBox": "left" },
+    { "text": "Dùng cồn hoặc xà phòng chà sát thật mạnh lên vết mụn để diệt khuẩn", "correctBox": "right" },
+    { "text": "Mặc đồ lót bằng vải cotton thoáng khí và thay giặt sạch sẽ hàng ngày", "correctBox": "left" },
+    { "text": "Tự ý nặn mụn bọc sưng đỏ khi nhân mụn chưa chín bằng tay chưa rửa", "correctBox": "right" },
+    { "text": "Sử dụng lăn/xịt khử mùi sau khi đã tắm sạch và lau khô cơ thể", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa thay đổi thể chất dậy thì và định nghĩa tương ứng:",
+  "pairs": [
+    { "left": "Tuyến bã nhờn", "right": "Tuyến hoạt động mạnh giải phóng dầu thừa gây tắc nghẽn lỗ chân lông tuổi dậy thì." },
+    { "left": "Tuyến mồ hôi đặc biệt", "right": "Tuyến tiết dịch ở nách và vùng kín, dễ gây mùi đặc trưng khi bị vi khuẩn phân hủy." },
+    { "left": "Lông cơ thể", "right": "Tấm khiên tự nhiên giúp bảo vệ các vùng da nhạy cảm khỏi ma sát." },
+    { "left": "Mụn bọc", "right": "Nốt mụn sưng đỏ, cần được chăm sóc y khoa thay vì tự ý nặn tay." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về vệ sinh diện mạo dậy thì:",
+  "sentence": "Hormone tăng trưởng kích thích tuyến [blank1] hoạt động mạnh gây ra mụn. Hãy vệ sinh da mặt bằng sữa rửa mặt [blank2] và tuyệt đối không tự ý [blank3] mụn. Bên cạnh đó, hãy tắm rửa hàng ngày để kiểm soát [blank4] cơ thể phát sinh.",
+  "blanks": {
+    "blank1": { "correct": "bã nhờn", "placeholder": "..." },
+    "blank2": { "correct": "dịu nhẹ", "placeholder": "..." },
+    "blank3": { "correct": "nặn", "placeholder": "..." },
+    "blank4": { "correct": "mùi", "placeholder": "..." }
+  },
+  "words": ["bã nhờn", "dịu nhẹ", "nặn", "mùi", "đồ lót", "nước hoa", "cạo sạch", "lo âu"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao mồ hôi lúc đá bóng của bạn dạo này lại có mùi đậm hơn lúc nhỏ rất nhiều?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì mồ hôi của bạn dạo này chứa nhiều vi khuẩn tự nhiên có hại hơn trước.", "correct": false, "emoji": "😐" },
+    { "text": "Vì hormone dậy thì kích hoạt tuyến mồ hôi đặc biệt ở nách và vùng kín hoạt động, chất dịch này khi bị vi khuẩn trên da phân hủy sẽ tạo ra mùi cơ thể đặc trưng.", "correct": true, "emoji": "💚" },
+    { "text": "Vì bạn không chịu tắm rửa bằng các loại xà phòng sát khuẩn liều cao.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì quần áo thể thao của bạn hấp thụ quá nhiều ánh sáng mặt trời.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 
 -- =========================================================================
@@ -279,6 +486,109 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn có đang sử dụng ứng dụng nào trên điện thoại để theo dõi chu kỳ kinh nguyệt của mình không? Nó rất tiện lợi đấy!"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Thấu hiểu chu kỳ cơ thể giúp bạn làm chủ sức khỏe và tự tin bước qua tuổi dậy thì."]}', 6);
 
+-- --- Micro Lesson 3.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson3_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Đến Tháng & Chuyện Phía Trong: Hiểu Để Đỡ Lo!''! Bạn có 3 mạng để tự tin đối phó với các sự cố sinh học tuổi dậy thì."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Tự tin ứng phó sự cố hành kinh và mộng tinh",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Trong tiết Toán, Trang bỗng cảm thấy đau quặn ở bụng dưới và có dịch ẩm tràn ra quần lót. Khi đứng dậy lên bảng, Trang phát hiện váy đồng phục phía sau đã bị thấm một vệt đỏ nhỏ. Các bạn xung quanh bắt đầu nhận ra và thì thầm.",
+      "choices": [
+        { "text": "Xấu hổ khóc lóc và lập tức bỏ chạy thẳng ra khỏi cổng trường để về nhà.", "nextNode": "fail_escape" },
+        { "text": "Bình tĩnh dùng áo khoác buộc ngang hông che vệt đỏ, mượn bạn một miếng băng vệ sinh dự phòng và xin phép xuống phòng y tế trường.", "nextNode": "step2" },
+        { "text": "Ngồi im chịu trận tại chỗ suốt các tiết học tiếp theo đến tối mịt mới về nhà thay quần áo.", "nextNode": "fail_stay" }
+      ]
+    },
+    "step2": {
+      "text": "Trang được cô giáo y tế hướng dẫn thay băng vệ sinh và cho nghỉ ngơi. Tối hôm đó, cậu bạn Duy thức dậy và phát hiện quần lót của mình bị ướt dính một khoảng lớn. Duy hoang mang nghĩ mình bị bệnh tiết niệu nặng.",
+      "choices": [
+        { "text": "Giấu kỹ chiếc quần lót bẩn vào góc tủ vì xấu hổ và tự mua thuốc kháng sinh tự uống.", "nextNode": "fail_hide" },
+        { "text": "Hiểu rằng đây là hiện tượng mộng tinh sinh lý hoàn toàn bình thường ở bạn trai, đem quần lót đi giặt sạch sẽ.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Duy và Trang đi học trở lại. Trong giờ ra chơi, một nhóm bạn nam nhặt được miếng băng vệ sinh chưa dùng rơi ra từ cặp của bạn khác và cười cợt làm trò đùa giễu cợt trước lớp.",
+      "choices": [
+        { "text": "Thẳng thắn nhắc nhở: ''Băng vệ sinh là dụng cụ y tế cá nhân sạch sẽ giúp bạn gái bảo vệ sức khỏe, có gì để cười cợt đâu các cậu?''", "nextNode": "success_end" },
+        { "text": "Tránh phiền phức, im lặng bỏ qua coi như không thấy gì để không bị ghét.", "nextNode": "fail_bypass" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Chúc mừng! Bạn đã xử lý sự cố hành kinh thông minh, thấu hiểu hiện tượng mộng tinh và có tư duy văn minh xóa bỏ định kiến về sức khỏe sinh sản.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_escape": {
+      "text": "❌ Chưa đúng! Bỏ học chạy trốn không giải quyết được vệt đỏ trên váy mà còn khiến bạn bị mất bài học và vi phạm kỷ luật trường.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_stay": {
+      "text": "❌ Chưa đúng! Ngồi im mặc đồ ẩm ướt dính máu kinh suốt nhiều tiếng liên tục rất mất vệ sinh, gây mùi khó chịu và tăng nguy cơ viêm nhiễm nặng.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_hide": {
+      "text": "❌ Sai rồi! Giấu quần lót bẩn gây mùi hôi mốc, và việc tự ý uống kháng sinh bừa bãi cực kỳ gây hại cho sức khỏe gan thận của bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_bypass": {
+      "text": "❌ Sai rồi! Sự im lặng đồng lõa với trò đùa vô duyên khiến các bạn gái tiếp tục bị tổn thương và duy trì định kiến xấu về chu kỳ sinh học tự nhiên.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi chăm sóc sức khỏe sinh sản:",
+  "leftBox": { "title": "Chăm sóc thông thái" },
+  "rightBox": { "title": "Gây hại hoặc kỳ thị" },
+  "items": [
+    { "text": "Chườm ấm bụng dưới và uống nước ấm khi bị đau bụng kinh nhẹ", "correctBox": "left" },
+    { "text": "Thụt rửa sâu vào bên trong âm đạo bằng nước xà phòng sát khuẩn", "correctBox": "right" },
+    { "text": "Thay băng vệ sinh đúng giờ sau mỗi 3 đến 4 tiếng hành kinh", "correctBox": "left" },
+    { "text": "Để nguyên một miếng băng vệ sinh suốt cả ngày để tiết kiệm", "correctBox": "right" },
+    { "text": "Ghi chú ngày bắt đầu kinh nguyệt vào lịch để theo dõi chu kỳ sinh học", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp các khái niệm sức khỏe sinh sản và định nghĩa tương ứng:",
+  "pairs": [
+    { "left": "Kinh nguyệt - Period", "right": "Hiện tượng lớp niêm mạc tử cung bong ra và thoát ra ngoài khi trứng không thụ tinh." },
+    { "left": "Mộng tinh - Wet Dream", "right": "Sự xuất tinh tự nhiên không chủ ý khi đang ngủ ở bạn trai dậy thì." },
+    { "left": "Băng vệ sinh", "right": "Dụng cụ thấm hút máu kinh dùng một lần, cần được gói gọn vứt sọt rác." },
+    { "left": "Chu kỳ kinh nguyệt", "right": "Thời gian tính từ ngày đầu hành kinh tháng này đến ngày đầu hành kinh tháng sau." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về chu kỳ sinh sản:",
+  "sentence": "Kinh nguyệt và mộng tinh là các cột mốc [blank1] tự nhiên chứng tỏ bạn đang lớn. Khi hành kinh, cần thay [blank2] đúng giờ để tránh [blank3]. Hãy cởi mở chia sẻ khoa học và xóa bỏ sự [blank4] vô căn cứ.",
+  "blanks": {
+    "blank1": { "correct": "sinh lý", "placeholder": "..." },
+    "blank2": { "correct": "băng vệ sinh", "placeholder": "..." },
+    "blank3": { "correct": "viêm nhiễm", "placeholder": "..." },
+    "blank4": { "correct": "kỳ thị", "placeholder": "..." }
+  },
+  "words": ["sinh lý", "băng vệ sinh", "viêm nhiễm", "kỳ thị", "xấu hổ", "vô sinh", "dơ bẩn", "thụt rửa"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao bạn gái tuyệt đối không nên tự ý thụt rửa sâu bên trong âm đạo khi tắm rửa vệ sinh ngày đèn đỏ?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì thụt rửa sâu làm mất cân bằng độ pH tự nhiên của âm đạo, tiêu diệt vi khuẩn có lợi và đẩy vi khuẩn bên ngoài vào sâu gây viêm nhiễm đường sinh sản.", "correct": true, "emoji": "💚" },
+    { "text": "Vì âm đạo có thể tự co bóp đẩy hết nước rửa ra ngoài gây lãng phí xà phòng.", "correct": false, "emoji": "😐" },
+    { "text": "Vì việc này làm cản trở quá trình rụng trứng ở buồng trứng của bạn gái.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì nước xà phòng sẽ làm phai màu niêm mạc cơ quan sinh dục.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
+
 
 -- =========================================================================
 -- BÀI HỌC 4: Bão Cảm Xúc: Sáng Nắng Chiều Mưa, Có Sao Đâu? (Emotional Changes)
@@ -363,8 +673,111 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'explanation', '{"bullets": ["Cảm xúc dù tiêu cực hay tích cực đều là những tín hiệu quý giá mách bảo về nhu cầu bên trong của bạn.", "Đừng cố đè nén hay phủ nhận nỗi buồn, cơn giận. Hãy gọi tên và đón nhận chúng.", "Đi qua những xáo trộn này sẽ giúp bạn trở thành một người trưởng thành có chiều sâu hơn."]}', 2),
 (@ml_id, 'scenario', '{"title": "Đè nén giọt nước mắt", "body": "Nam cố nuốt nước mắt vào trong khi chú cún yêu quý qua đời vì sợ các bạn nam khác trêu mình là ẻo lả, yếu đuối."}', 3),
 (@ml_id, 'sorting', '{"instruction": "Phân loại các cách đối xử với cảm xúc cá nhân:", "leftBox": {"title": "Kết bạn cảm xúc"}, "rightBox": {"title": "Đè nén chối bỏ"}, "items": [{"text": "Khóc một trận thật to khi thấy buồn để giải tỏa hết uất ức", "correctBox": "left"}, {"text": "Cố gắng tỏ ra vui vẻ bên ngoài khi bên trong đang vô cùng đau khổ", "correctBox": "right"}, {"text": "Tự nhủ: Mình được phép buồn lúc này, ngày mai mình sẽ ổn hơn", "correctBox": "left"}, {"text": "Ghét bỏ bản thân vì thấy mình yếu đuối, dễ khóc trước mặt người khác", "correctBox": "right"}]}', 4),
-(@ml_id, 'reflection', '{"question": "Bạn có đang cho phép mình được khóc hoặc tỏ ra yếu đuối khi thực sự mệt mỏi không?"}', 5),
+(@ml_id, 'reflection', '{"question": "Bạn có đang cho phép mình được khọc hoặc tỏ ra yếu đuối khi thực sự mệt mỏi không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Cảm xúc của bạn là hợp lệ. Hãy ôm ấp lấy cả những ngày mưa giông trong lòng mình."]}', 6);
+
+-- --- Micro Lesson 4.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson4_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Bão Cảm Xúc: Sáng Nắng Chiều Mưa, Có Sao Đâu?''! Bạn có 3 mạng để tự tin đối phó và làm chủ cơn bão cảm xúc tuổi dậy thì."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Làm chủ cơn bão cảm xúc và giao tiếp lành mạnh",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bình đang rất hào hứng hoàn thành bức tranh vẽ dự thi của mình. Em trai Bình vô tình chạy nô đùa làm đổ cả cốc nước lọc lên bức tranh khiến màu nhòe nhoẹt, hỏng hoàn toàn. Bình cảm thấy máu nóng dồn lên mặt, tim đập thình thịch và muốn lao vào đánh em.",
+      "choices": [
+        { "text": "Lao vào đánh em một trận lôi đình để trút giận: ''Mày làm hỏng hết bài của tao rồi!'' và ném đồ đạc.", "nextNode": "fail_explode" },
+        { "text": "Hít thở sâu 3 nhịp, nói to: ''Em đi ra ngoài đi!'' rồi vào nhà tắm rửa mặt bằng nước lạnh để bình tĩnh lại trước khi dọn dẹp.", "nextNode": "step2" },
+        { "text": "Cố chịu đựng ấm ức, im lặng nhặt bức tranh hỏng lên rồi chạy vào phòng đóng sập cửa, nằm khóc dằn vặt bản thân cả đêm.", "nextNode": "fail_suppress" }
+      ]
+    },
+    "step2": {
+      "text": "Sau khi rửa mặt hạ nhiệt, Bình thấy bình tĩnh hơn. Tối hôm đó, lúc ăn cơm, bố mẹ so sánh: ''Bằng tuổi con, con nhà cô Lan đã biết phụ giúp việc nhà và học giỏi, sao con chỉ biết vẽ vời vô ích!''. Cảm giác ức chế lại dâng lên.",
+      "choices": [
+        { "text": "Gào khóc cãi lại: ''Bố mẹ lúc nào cũng con nhà người ta, con ghét bố mẹ!'' rồi bỏ bữa cơm.", "nextNode": "fail_clash" },
+        { "text": "Hít sâu giữ bình tĩnh, trả lời lịch sự: ''Bố mẹ ơi, con vẽ tranh là sở thích lành mạnh và con vẫn cố gắng hoàn thành việc học mà. Con mong bố mẹ động viên con thay vì so sánh ạ''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Mặc dù đã đối thoại tốt, Bình vẫn thấy trong lòng còn bứt rứt, lo lắng dồn nén trước kỳ thi học kỳ sắp tới. Cậu muốn tìm cách bình ổn lại tâm lý của mình.",
+      "choices": [
+        { "text": "Tạm dừng học 15 phút, tắt điện thoại, thực hiện kỹ thuật thở 4-7-8 điều hòa nhịp tim và nghe một bản nhạc nhẹ.", "nextNode": "success_end" },
+        { "text": "Cố ngồi nhồi nhét tài liệu liên tục 4 tiếng nữa dưới áp lực đau đầu dữ dội.", "nextNode": "fail_overwork" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Xuất sắc! Bạn đã kiểm soát tốt cơn giận bộc phát, giao tiếp văn minh với gia đình và biết cách chăm sóc tinh thần khi quá tải.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_explode": {
+      "text": "❌ Chưa đúng! Hành động bộc phát bạo lực làm tổn thương em trai, gây rạn nứt gia đình và khiến bạn dằn vặt dằn vặt sau đó.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_suppress": {
+      "text": "❌ Chưa đúng! Đè nén uất ức một mình mà không giải tỏa lành mạnh chỉ làm quả bóng cảm xúc thêm phình to và dễ phát nổ sau này.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_clash": {
+      "text": "❌ Sai rồi! La hét phản kháng hỗn hào chỉ làm tăng mâu thuẫn gia đình và khiến bố mẹ có ấn tượng xấu về sự trưởng thành của bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_overwork": {
+      "text": "❌ Sai rồi! Ép bộ não làm việc khi đang kiệt sức dưới áp lực cao độ chỉ gây phản tác dụng, làm giảm trí nhớ và tăng triệu chứng stress thể chất.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các cách đối xử với bão cảm xúc dậy thì:",
+  "leftBox": { "title": "Kết bạn cảm xúc" },
+  "rightBox": { "title": "Chối bỏ hoặc Trút giận" },
+  "items": [
+    { "text": "Cho phép bản thân khóc khi buồn để giải tỏa bớt năng lượng tiêu cực", "correctBox": "left" },
+    { "text": "Cố tỏ ra vui cười hớn hở bên ngoài khi trong lòng đang tan nát", "correctBox": "right" },
+    { "text": "Tự viết nhật ký trút bỏ mọi suy nghĩ bực bội ra giấy rồi xé bỏ", "correctBox": "left" },
+    { "text": "Quát mắng em nhỏ hoặc đập phá đồ đạc để hạ hỏa cơn cáu giận", "correctBox": "right" },
+    { "text": "Tự nhủ: Cảm xúc lo lắng này là hợp lệ, mình sẽ đối diện và vượt qua", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp các khái niệm xáo trộn cảm xúc và định nghĩa tương ứng:",
+  "pairs": [
+    { "left": "Estrogen & Testosterone", "right": "Các hormone sinh học tăng vọt tuổi dậy thì làm biến động tâm trạng." },
+    { "left": "Kính lúp suy diễn", "right": "Bẫy tâm lý phóng đại một lời nhận xét hay ánh mắt thành chỉ trích cá nhân." },
+    { "left": "Bất đồng thế hệ", "right": "Mâu thuẫn nảy sinh khi nhu cầu tự lập của con va chạm với sự bảo bọc của bố mẹ." },
+    { "left": "Kỹ thuật thở 4-7-8", "right": "Bài tập hít thở vật lý giúp kích hoạt hệ thần kinh đối giao cảm làm dịu não bộ." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về điều tiết cảm xúc:",
+  "sentence": "Sự thay đổi tâm trạng tuổi dậy thì là do tác động của [blank1]. Đừng rơi vào bẫy kính lúp [blank2] mọi chuyện. Hãy trò chuyện [blank3] với bố mẹ và sử dụng các công cụ [blank4] cảm xúc để giữ bình tĩnh.",
+  "blanks": {
+    "blank1": { "correct": "hormone", "placeholder": "..." },
+    "blank2": { "correct": "suy diễn", "placeholder": "..." },
+    "blank3": { "correct": "tôn trọng", "placeholder": "..." },
+    "blank4": { "correct": "bình ổn", "placeholder": "..." }
+  },
+  "words": ["hormone", "suy diễn", "tôn trọng", "bình ổn", "hỗn hào", "chối bỏ", "trốn tránh", "game"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao việc gọi tên chính xác cảm xúc của mình lúc giận dữ (ví dụ: ''con đang rất uất ức vì bị so sánh'') lại giúp hạ nhiệt cơn giận?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì gọi tên cảm xúc chuyển hướng hoạt động từ hạch hạnh nhân (trung tâm cảm xúc) sang vỏ não trước trán (trung tâm tư duy lô-gíc), giúp não bộ lấy lại quyền kiểm soát hành vi.", "correct": true, "emoji": "💚" },
+    { "text": "Vì nói ra sẽ làm cho đối phương lập tức sợ hãi và nhượng bộ bạn.", "correct": false, "emoji": "😐" },
+    { "text": "Vì nó làm cho hormone testosterone bị biến mất khỏi cơ thể ngay lập tức.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì đó là câu thần chú tự động làm mát nhiệt độ phòng học.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 
 -- =========================================================================
@@ -453,6 +866,109 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn có sẵn sàng yêu thương cơ thể mình ngay cả khi nó không hoàn hảo theo tiêu chuẩn của đám đông không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Bạn là một tác phẩm nghệ thuật độc bản của tự nhiên. Hãy tự hào và trân trọng chiếc body duy nhất của mình."]}', 6);
 
+-- --- Micro Lesson 5.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson5_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Yêu Lấy Chiếc Body: Đừng Để Ai Body Shame''! Bạn có 3 mạng để tự tin bảo vệ ranh giới hình ảnh cơ thể."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Tự tin bảo vệ vóc dáng trước phán xét ngoại hình",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Trong nhóm chat chung của lớp, một bạn nam đăng ảnh chụp lén Vân đang ăn bánh mì ở góc sân trường kèm chú thích trêu cợt: ''Ăn thế này bảo sao đùi to như cột đình!''. Cả nhóm hùa vào thả icon cười cợt, làm Vân vô cùng xấu hổ và tổn thương.",
+      "choices": [
+        { "text": "Nhắn tin chửi bới dữ dội và dọa gặp bạn nam đó ở cổng trường để giải quyết bằng bạo lực.", "nextNode": "fail_violence" },
+        { "text": "Chụp màn hình làm bằng chứng, rời khỏi nhóm chat toxic, tự trấn an bản thân và chia sẻ sự việc với thầy cô hoặc bố mẹ.", "nextNode": "step2" },
+        { "text": "U uất buồn bã, quyết định nhịn ăn bỏ bữa trưa và bữa tối để nhanh chóng giảm cân.", "nextNode": "fail_starve" }
+      ]
+    },
+    "step2": {
+      "text": "Được thầy cô can thiệp, nhóm bạn đã xin lỗi Vân. Cuối tuần đó, tại bữa cơm gia đình có họ hàng xa đến chơi, một người lớn nhận xét oang oang trước mọi người: ''Ơ hay dạo này Vy ăn gì béo thế con? Con gái phải biết giữ dáng chứ!''. Vy thấy ngực nghẹn lại.",
+      "choices": [
+        { "text": "Cúi đầu khóc thút thít, bỏ đũa chạy thẳng lên phòng khóa cửa lại uất ức.", "nextNode": "fail_cry" },
+        { "text": "Mỉm cười nhẹ, trả lời kiên định và lịch sự: ''Dạ dạo này con đang dậy thì nên cơ thể phát triển khỏe mạnh là tốt rồi ạ bác!'' rồi chuyển chủ đề ôn hòa.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Mọi người gật gù đồng ý và nể phục sự tự tin của Vy. Tối đến, Vy lướt Instagram thấy các hot teen đăng ảnh có vòng eo con kiến mịn màng ảo diệu, sự so sánh xã hội trỗi dậy làm Vy thấy tự ti.",
+      "choices": [
+        { "text": "Nhận thức rõ mạng xã hội chỉ là sản phẩm của filter và góc chụp, tắt điện thoại đi ngủ và tập trung vào sức khỏe thực tế của mình.", "nextNode": "success_end" },
+        { "text": "Tiếp tục lướt suốt đêm để tìm các bài viết hướng dẫn ăn kiêng cực đoan.", "nextNode": "fail_diet" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Tuyệt vời! Bạn đã bảo vệ bản thân thành công trước body shaming mạng xã hội và gia đình, đồng thời có tư duy lành mạnh về vẻ đẹp cơ thể.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_violence": {
+      "text": "❌ Chưa đúng! Sử dụng bạo lực hoặc chửi bới chỉ làm mâu thuẫn leo thang và biến bạn thành người sai trước pháp luật học đường.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_starve": {
+      "text": "❌ Chưa đúng! Nhịn ăn cực đoan gây hại nghiêm trọng cho hệ tiêu hóa và làm suy nhược cơ thể đang tuổi lớn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_cry": {
+      "text": "❌ Sai rồi! Khóc lóc bỏ chạy chỉ làm cho không khí gia đình căng thẳng và chứng tỏ bạn đang hoàn toàn bị lời chê bai đó đánh gục.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_diet": {
+      "text": "❌ Sai rồi! Tìm kiếm chế độ ăn kiêng cực đoan thâu đêm làm bạn kiệt sức, lún sâu vào bẫy tự ti ảo trên mạng.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử đối với vóc dáng cơ thể:",
+  "leftBox": { "title": "Tôn trọng cơ thể" },
+  "rightBox": { "title": "Body Shaming / Phán xét" },
+  "items": [
+    { "text": "Khen ngợi nụ cười rạng rỡ hoặc tính cách dễ mến của bạn học", "correctBox": "left" },
+    { "text": "Trêu chọc chiều cao khiêm tốn của bạn cùng lớp để mua vui", "correctBox": "right" },
+    { "text": "Tự nhủ: Cơ bắp khỏe khoắn giúp mình vận động dẻo dai tốt", "correctBox": "left" },
+    { "text": "Nhận xét bạn gái trông thô kệch chỉ vì bạn ấy có bắp tay săn chắc", "correctBox": "right" },
+    { "text": "Bỏ theo dõi những trang MXH chuyên đăng ảnh tiêu chuẩn vóc dáng phi thực tế", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa về hình ảnh cơ thể dậy thì và định nghĩa phù hợp:",
+  "pairs": [
+    { "left": "Hình ảnh cơ thể", "right": "Cách bạn suy nghĩ, cảm nhận và hình dung về ngoại hình của chính mình." },
+    { "left": "Body Shaming", "right": "Hành vi bình luận tiêu cực, giễu cợt hoặc chê bai vóc dáng người khác." },
+    { "left": "Cạm bẫy filter", "right": "Hình ảnh ảo đã qua chỉnh sửa bóp eo, mịn da tạo tiêu chuẩn phi thực tế." },
+    { "left": "Đa dạng cơ thể", "right": "Sự thật sinh học rằng mỗi gen quy định chiều cao và khung xương khác nhau." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa yêu thương cơ thể:",
+  "sentence": "Hình ảnh cơ thể lành mạnh bắt nguồn từ sự [blank1]. Khi bị phán xét ngoại hình, hãy kiên định thiết lập [blank2] bảo vệ mình. Tránh xa chiếc bẫy so sánh [blank3] và trân trọng vẻ đẹp [blank4] của bản thân.",
+  "blanks": {
+    "blank1": { "correct": "tự chấp nhận", "placeholder": "..." },
+    "blank2": { "correct": "ranh giới", "placeholder": "..." },
+    "blank3": { "correct": "mạng xã hội", "placeholder": "..." },
+    "blank4": { "correct": "độc bản", "placeholder": "..." }
+  },
+  "words": ["tự chấp nhận", "ranh giới", "mạng xã hội", "độc bản", "ăn kiêng", "chê bai", "hoàn hảo", "sống ảo"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Ý kiến hoặc lời phán xét tiêu cực của người khác về cơ thể bạn phản ánh điều gì?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Nó chỉ phản ánh thế giới quan và mức độ lịch sự/thiếu tế nhị của chính họ, chứ không định nghĩa được giá trị thật sự hay vẻ đẹp của con người bạn.", "correct": true, "emoji": "💚" },
+    { "text": "Nó phản ánh chính xác 100% những khiếm khuyết mà bạn bắt buộc phải sửa đổi ngay lập tức.", "correct": false, "emoji": "😐" },
+    { "text": "Nó phản ánh việc bạn đang không biết cách ăn mặc hợp thời trang.", "correct": false, "emoji": "🙁" },
+    { "text": "Nó phản ánh việc bố mẹ đã nuôi dạy bạn không đúng cách.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
+
 
 -- =========================================================================
 -- BÀI HỌC 6: Tự Chăm Sóc Bản Thân: Học Cách Yêu Mình Đúng Điệu! (Self-Care)
@@ -539,6 +1055,109 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các quan niệm đúng đắn về hành trình tự chăm sóc bản thân:", "leftBox": {"title": "Lành mạnh lâu dài"}, "rightBox": {"title": "Sai lầm nhất thời"}, "items": [{"text": "Tự chăm sóc là thói quen nhỏ hàng ngày: uống đủ nước, ngủ đủ giấc", "correctBox": "left"}, {"text": "Chỉ tự chăm sóc bản thân bằng cách đi mua sắm những món đồ hiệu thật đắt tiền", "correctBox": "right"}, {"text": "Chấp nhận những ngày mình mệt mỏi và cho phép bản thân nghỉ ngơi không áy náy", "correctBox": "left"}, {"text": "Ép bản thân phải luôn vui vẻ tích cực 24/7 và không được phép buồn", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Bạn có đang bao dung và nhẹ nhàng với chính mình mỗi khi gặp thất bại hay phạm sai lầm không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Tự chăm sóc là hành trình trọn đời. Hãy bước đi thong thả với lòng bao dung dành cho bản thân mình."]}', 6);
+
+-- --- Micro Lesson 6.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson6_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Tự Chăm Sóc Bản Thân: Học Cách Yêu Mình Đúng Điệu!''! Bạn có 3 mạng để xây dựng lối sống lành mạnh."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Xây dựng thói quen tự chăm sóc khoa học",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Linh định chỉ lướt điện thoại 15 phút trước khi đi ngủ lúc 10h tối để F5 tinh thần. Tuy nhiên, các video ngắn lôi cuốn trên Tiktok liên tục kéo Linh đi hết clip này sang clip khác khiến cô bé thức đến 1h sáng. Ngày hôm sau, Linh thức dậy mỏi mệt, uể oải và đi học muộn.",
+      "choices": [
+        { "text": "Tiếp tục mang điện thoại lên giường ngủ hàng đêm và lướt đến khi nào ngủ quên thì thôi.", "nextNode": "fail_phone" },
+        { "text": "Bật chế độ không làm phiền sau 10h30 tối, để điện thoại ngoài tầm với của giường ngủ và ngủ đủ 8-9 tiếng mỗi ngày.", "nextNode": "step2" },
+        { "text": "Thức khuya học bù và cày game tiếp, uống 2 lon nước tăng lực để lấy lại tỉnh táo ban ngày.", "nextNode": "fail_energy" }
+      ]
+    },
+    "step2": {
+      "text": "Nhờ ngủ sớm, Linh cảm thấy cơ thể khỏe mạnh, da dẻ bớt mụn hẳn. Một buổi trưa, Linh cảm thấy mắt mỏi rã rời, vai gáy căng nhức sau 5 tiết học căng thẳng trên lớp, nhưng chiều lại có buổi tập thể dục chạy bền.",
+      "choices": [
+        { "text": "Bất chấp mệt mỏi, cố gắng chạy hết công suất 5km để đạt chỉ tiêu thành tích cao nhất.", "nextNode": "fail_overwork" },
+        { "text": "Lắng nghe tín hiệu cơ thể, xin phép thầy giáo thể dục cho chạy vừa sức và dành thời gian kéo giãn cơ nhẹ nhàng.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau tiết thể dục, Linh thấy thoải mái. Cô bé muốn thiết lập kế hoạch ăn uống và lối sống tự chăm sóc bản thân lành mạnh lâu dài.",
+      "choices": [
+        { "text": "Nhịn bữa trưa và ăn kiêng hà khắc để ép cân nặng giảm thật nhanh giống như các người mẫu trên mạng.", "nextNode": "fail_diet" },
+        { "text": "Ăn uống đủ chất đạm, canxi, vitamin và tự thưởng cho mình một khoảng thời gian nghỉ ngơi thư giãn 30 phút mỗi ngày.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn hảo! Bạn đã xây dựng được thói quen ngủ sớm bảo vệ sức khỏe, biết lắng nghe tín hiệu mệt mỏi của cơ thể và thiết lập chế độ sinh hoạt tự chăm sóc bản thân thông thái.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_phone": {
+      "text": "❌ Chưa đúng! Thức khuya cày điện thoại ngăn cản cơ thể tiết melatonin, làm gián đoạn nhịp sinh học tự nhiên và gây kiệt quệ thể chất.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_energy": {
+      "text": "❌ Chưa đúng! Lạm dụng nước tăng lực ép cơ thể làm việc quá sức sẽ tàn phá hệ tim mạch và làm suy nhược thần kinh nghiêm trọng.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_overwork": {
+      "text": "❌ Sai rồi! Phớt lờ tín hiệu mệt mỏi thể chất để cố quá sức dễ gây chấn thương xương khớp và khiến cơ thể bị suy nhược sâu sắc.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_diet": {
+      "text": "❌ Sai rồi! Nhịn ăn ép cân cực đoan ở tuổi dậy thì sẽ cản trở nghiêm trọng quá trình phát triển chiều cao, gây hạ đường huyết nguy hiểm.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi lắng nghe cơ thể:",
+  "leftBox": { "title": "Lắng nghe thông thái" },
+  "rightBox": { "title": "Phớt lờ gượng ép" },
+  "items": [
+    { "text": "Tạm dừng học bài, đi bộ thư giãn ngoài sân 10 phút khi thấy mỏi mắt", "correctBox": "left" },
+    { "text": "Uống ly cafe đậm đặc để thức thâu đêm ôn thi dù đầu đang nhức búa bổ", "correctBox": "right" },
+    { "text": "Nằm nghỉ ngơi thư giãn khi cảm thấy bụng dưới đau âm ỉ ngày hành kinh", "correctBox": "left" },
+    { "text": "Tiếp tục chạy bộ gắng sức dù chân đang bị căng cơ sưng đỏ", "correctBox": "right" },
+    { "text": "Dành ra 30 phút vẽ tranh hoặc chơi nhạc cụ giải tỏa lo âu mỗi tối", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa tự chăm sóc và định nghĩa tương ứng:",
+  "pairs": [
+    { "left": "Hormone GH", "right": "Hormone tăng trưởng được giải phóng nhiều nhất khi cơ thể ngủ sâu trước 11h đêm." },
+    { "left": "Melatonin", "right": "Hormone kích thích giấc ngủ ngon, bị ngăn cản bởi ánh sáng xanh điện thoại." },
+    { "left": "Self-care", "right": "Phong cách sống lắng nghe nhu cầu sinh học và tinh thần để tự sạc pin bản thân." },
+    { "left": "Thói quen nhỏ", "right": "Những bước đi dễ dàng như uống thêm nước giúp bộ não không bị quá tải phản kháng." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về tự chăm sóc bản thân:",
+  "sentence": "Tự chăm sóc bản thân là một hành trình [blank1] đòi hỏi sự kiên nhẫn. Hãy ngủ sâu trước 11h đêm để giải phóng [blank2] tăng trưởng và ăn uống đủ [blank3] thay vì nhịn ăn. Đừng quên [blank4] cơ thể khi mệt mỏi.",
+  "blanks": {
+    "blank1": { "correct": "lâu dài", "placeholder": "..." },
+    "blank2": { "correct": "hormone", "placeholder": "..." },
+    "blank3": { "correct": "dinh dưỡng", "placeholder": "..." },
+    "blank4": { "correct": "lắng nghe", "placeholder": "..." }
+  },
+  "words": ["lâu dài", "hormone", "dinh dưỡng", "lắng nghe", "nhất thời", "thuốc bổ", "nhịn ăn", "phớt lờ"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao giấc ngủ từ 10h tối đến 6h sáng lại được coi là thời gian vàng để phát triển chiều cao?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì trong khoảng từ 11h đêm đến 1h sáng, tuyến yên giải phóng hormone tăng trưởng (GH) nhiều gấp 4 lần bình thường nếu cơ thể đã ngủ sâu giấc.", "correct": true, "emoji": "💚" },
+    { "text": "Vì ngủ ban đêm giúp kéo giãn các khớp xương một cách vật lý khi nằm ngang.", "correct": false, "emoji": "😐" },
+    { "text": "Vì ban đêm cơ thể không phải nạp thêm thức ăn và tiêu hóa năng lượng.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì ngủ ban đêm giúp bạn tránh được ánh nắng mặt trời có hại cho chiều cao.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 
 -- =========================================================================
@@ -627,3 +1246,106 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các hành vi thể hiện sự sẵn sàng làm chủ tuổi dậy thì:", "leftBox": {"title": "Dậy thì thành công"}, "rightBox": {"title": "Chưa sẵn sàng lớn"}, "items": [{"text": "Tự tin chăm sóc vệ sinh cá nhân sạch sẽ và ăn uống đủ chất hàng ngày", "correctBox": "left"}, {"text": "Trốn tránh không dám nói chuyện với ai khi cơ thể gặp sự cố khó chịu", "correctBox": "right"}, {"text": "Tôn trọng sự đa dạng vóc dáng và cảm xúc thay đổi của bản thân, bạn bè", "correctBox": "left"}, {"text": "Tiếp tục tin vào những lời đồn thổi phản khoa học của bạn bè cùng lớp", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Sau khóa học này, bạn cảm thấy mình đã tự tin hơn bao nhiêu phần trăm để đối mặt với những thay đổi của tuổi dậy thì?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Bạn đã sẵn sàng và đầy bản lĩnh. Hãy tự tin bước ra thế giới và tỏa sáng theo cách riêng của mình!"]}', 6);
+
+-- --- Micro Lesson 7.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson7_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Tin Chuẩn Vs Tin Đồn: Giải Mã Thắc Mắc Khó Nói!''! Bạn có 3 mạng để phân biệt kiến thức khoa học dậy thì."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Trở thành bộ lọc thông tin thông thái",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Vy đọc được một bài viết trên TikTok được chia sẻ rầm rộ bảo rằng ăn thật nhiều dứa thay cơm trong ngày hành kinh giúp cơ thể thơm tho và giảm hoàn toàn 100% cơn đau bụng kinh. Vy thấy mẹo này rất thú vị và định chia sẻ ngay về trang cá nhân của mình.",
+      "choices": [
+        { "text": "Nhấn nút chia sẻ ngay lập tức về trang cá nhân để bạn bè cùng biết.", "nextNode": "fail_share" },
+        { "text": "Tìm kiếm lại từ khóa đó trên các trang y khoa hoặc hỏi mẹ để xác nhận tính chính xác của mẹo dân gian này trước khi share.", "nextNode": "step2" },
+        { "text": "Tự thực hành thí nghiệm ăn 3 quả dứa thay cơm cả ngày để tự kiểm chứng.", "nextNode": "fail_experiment" }
+      ]
+    },
+    "step2": {
+      "text": "Mẹ Vy giải thích rằng dứa có enzyme bromelain giúp giãn cơ tử cung nhẹ nhưng ăn quá nhiều thay cơm gây loét dạ dày. Hôm sau ở lớp, bạn Duy lo sợ tột cùng kể với Khánh rằng hôm qua Duy vô tình ôm một bạn nữ, và Duy nghe đồn là ôm nhau có thể làm bạn gái mang thai.",
+      "choices": [
+        { "text": "Rỉ tai đồn tiếp với các bạn nam khác để cùng cười cợt chọc ghẹo Duy.", "nextNode": "fail_spread" },
+        { "text": "Trấn an Duy: ''Ôm nhau không thể mang thai được đâu cậu ơi. Cần có sự gặp gỡ trực tiếp của tinh trùng và trứng cơ, cậu yên tâm nhé!''", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Duy thở phào nhẹ nhõm. Cuối ngày, bạn Bách băn khoăn khi nghe các bạn rỉ tai nhau rằng hành vi tự khám phá cơ thể (thủ dâm) sẽ làm suy giảm trí nhớ, vô sinh và hỏng thận.",
+      "choices": [
+        { "text": "Bách hoang mang tin sái cổ và đi mua thuốc bổ thận tráng dương tự uống.", "nextNode": "fail_myth" },
+        { "text": "Bách hiểu đúng khoa học: Đây là hành vi sinh lý bình thường nếu thực hiện điều độ, kín đáo và giữ vệ sinh sạch sẽ.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Xuất sắc! Bạn đã có tư duy phản biện xuất sắc, biết chọn lọc nguồn tin y khoa chuẩn xác và dũng cảm xóa bỏ các tin đồn nhảm học đường.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_share": {
+      "text": "❌ Chưa đúng! Chia sẻ thông tin giật gân, chưa kiểm chứng góp phần lan truyền tin đồn nhảm và làm giảm uy tín cá nhân của bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_experiment": {
+      "text": "❌ Chưa đúng! Ăn dứa thay cơm cả ngày tàn phá niêm mạc dạ dày do lượng axit cao, gây hại lớn cho hệ tiêu hóa.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_spread": {
+      "text": "❌ Sai rồi! Lan truyền tin đồn sai lệch về mang thai gây hoang mang dư luận học đường và thể hiện sự thiếu hiểu biết giáo dục giới tính.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_myth": {
+      "text": "❌ Sai rồi! Tin vào tin đồn thiếu khoa học làm bạn sống trong cảm giác tội lỗi, sợ hãi vô lý và việc tự uống thuốc bừa bãi có hại cho gan thận.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các nguồn tìm kiếm kiến thức sức khỏe dậy thì:",
+  "leftBox": { "title": "Nguồn tin cậy khoa học" },
+  "rightBox": { "title": "Nguồn tin rác / Tin đồn" },
+  "items": [
+    { "text": "Website của Tổ chức Y tế Thế giới WHO, UNICEF hoặc Bộ Y tế Việt Nam", "correctBox": "left" },
+    { "text": "Các video ngắn giật tít câu view của các tiktoker không có chuyên môn y khoa", "correctBox": "right" },
+    { "text": "Sách giáo khoa Sinh học hoặc phòng tư vấn tâm lý học đường của trường", "correctBox": "left" },
+    { "text": "Các lời rỉ tai truyền miệng của hội bạn thân trong phòng vệ sinh học đường", "correctBox": "right" },
+    { "text": "Bác sĩ chuyên khoa tại các bệnh viện nhi hoặc trung tâm y tế uy tín", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp các khái niệm giải mã thắc mắc dậy thì và định nghĩa tương ứng:",
+  "pairs": [
+    { "left": "Thủ dâm - Masturbation", "right": "Hành vi tự kích thích cơ quan sinh dục tìm cảm giác thư giãn, bình thường về sinh lý." },
+    { "left": "Tư duy phản biện", "right": "Kỹ năng đặt câu hỏi kiểm chứng nguồn tin trước khi tin hoặc chia sẻ." },
+    { "left": "Sụn tăng trưởng đóng khớp", "right": "Hiện tượng đầu xương hóa cốt hoàn toàn vào khoảng tuổi 20-22 làm ngừng tăng chiều cao." },
+    { "left": "Giáo dục giới tính", "right": "Kiến thức khoa học giúp thấu hiểu cơ thể, cảm xúc và các mối quan hệ an toàn." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về giải mã tin đồn dậy thì:",
+  "sentence": "Đừng vội tin vào các tin đồn học đường, hãy rèn luyện tư duy [blank1]. Tự khám phá cơ thể là hành vi [blank2] bình thường nếu điều độ. Chiều cao chỉ dừng lại khi [blank3] đóng khớp hoàn toàn. Hãy hỏi [blank4] khi gặp băn khoăn.",
+  "blanks": {
+    "blank1": { "correct": "phản biện", "placeholder": "..." },
+    "blank2": { "correct": "sinh lý", "placeholder": "..." },
+    "blank3": { "correct": "xương", "placeholder": "..." },
+    "blank4": { "correct": "chuyên gia", "placeholder": "..." }
+  },
+  "words": ["phản biện", "sinh lý", "xương", "chuyên gia", "bệnh hoạn", "vô sinh", "Google", "nhịn ăn"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Làm thế nào để cải thiện chiều cao tối ưu ở giai đoạn cuối tuổi dậy thì một cách khoa học?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Duy trì chế độ dinh dưỡng giàu canxi/protein, đi ngủ sớm trước 11h đêm để giải phóng hormone tăng trưởng và tích cực chơi thể thao kéo giãn xương.", "correct": true, "emoji": "💚" },
+    { "text": "Uống các loại thuốc tăng chiều cao siêu tốc và ăn thật nhiều đồ ngọt.", "correct": false, "emoji": "😐" },
+    { "text": "Nằm im một chỗ cả ngày trên giường để xương không bị đè nén.", "correct": false, "emoji": "🙁" },
+    { "text": "Nhịn ăn giảm cân và chỉ uống sữa thay cơm hàng ngày.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+

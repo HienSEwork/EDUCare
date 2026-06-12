@@ -8,13 +8,14 @@ SET NAMES utf8mb4;
 USE educare;
 
 -- 1. Thêm Khóa học mới
-INSERT INTO courses (title, description, thumbnail, color_theme, course_order)
+INSERT INTO courses (title, description, thumbnail, color_theme, course_order, category_id)
 VALUES (
     'Tự Tin Lớn Lên, Tự Chủ Khám Phá',
     'Khóa học về sự đồng thuận, ranh giới cá nhân và phát triển lành mạnh dành cho tuổi teen.',
     'consent-course.png',
     '#4361ee',
-    10
+    10,
+    2
 );
 SET @course_id = LAST_INSERT_ID();
 
@@ -113,6 +114,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn có đang cố làm hài lòng người khác bằng cách bỏ qua cảm xúc của chính mình?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Yêu thương đi liền với sự tôn trọng, không phải sự ép buộc."]}', 6);
 
+-- --- Micro Lesson 1.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson1_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Luật đi đường - Đồng thuận là gì?''! Bạn có 3 mạng để vượt qua 5 thử thách cam go. Hãy sẵn sàng nhé."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Hỏi xin sự đồng thuận",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn đang xem phim tại rạp cùng bạn gái mới quen. Phim đến đoạn cao trào, bạn muốn đan tay vào tay bạn ấy. Bạn ấy đang tập trung cao độ vào màn hình, hai tay ôm hộp bắp rang bơ đặt trên đùi.",
+      "choices": [
+        { "text": "Cứ luồn tay vào hộp bắp để chạm tay bạn ấy rồi nắm lấy, vừa tự nhiên vừa lãng mạn.", "nextNode": "fail_surprise" },
+        { "text": "Nói khẽ bên tai: ''Tớ nắm tay cậu được không?''", "nextNode": "step2" },
+        { "text": "Chờ phim hết rồi đột ngột nắm tay khi đang đi ra.", "nextNode": "fail_passive" }
+      ]
+    },
+    "step2": {
+      "text": "Bạn ấy đỏ mặt, mỉm cười nhẹ rồi nói: ''Nắm tay thì được nè, nhưng đừng đan ngón tay chặt quá nha, tay tớ đang bị ra mồ hôi và hơi nóng''.",
+      "choices": [
+        { "text": "Nghe vậy thấy cụt hứng, buông tay ra và quay đi chỗ khác: ''Thôi thế thì thôi vậy''.", "nextNode": "fail_anger" },
+        { "text": "Cười nhẹ: ''Ok cậu nè!'', nắm tay nhẹ nhàng, tôn trọng yêu cầu cụ thể của bạn ấy.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Một lát sau, bạn ấy thấy mỏi tay và khẽ rút tay ra để cầm ly nước ngọt.",
+      "choices": [
+        { "text": "Nắm giữ chặt lại: ''Ơ đang nắm tay vui mà, sao lại rút ra?''", "nextNode": "fail_reversible" },
+        { "text": "Nới lỏng tay để bạn ấy rút ra thoải mái: ''Cậu uống nước đi nè!''.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã áp dụng quy tắc F.R.I.E.S cực tốt: tôn trọng sự linh hoạt (Reversible) và tính cụ thể (Specific) của sự đồng thuận.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_surprise": {
+      "text": "❌ Chưa đúng rồi! Việc đụng chạm bất ngờ mà không hỏi trước có thể làm đối phương giật mình hoặc khó chịu, vi phạm ranh giới cá nhân.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_passive": {
+      "text": "❌ Chưa đúng. Trong mối quan hệ lành mạnh, tụi mình nên chủ động hỏi ý kiến trước khi đụng chạm cơ thể thay vì im lặng làm càn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_anger": {
+      "text": "❌ Sai rồi! Giận dỗi khi đối phương thiết lập ranh giới cụ thể là hành vi thao túng cảm xúc, thiếu tôn trọng quyền tự quyết của họ.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_reversible": {
+      "text": "❌ Chưa chính xác. Sự đồng thuận có tính linh hoạt (Reversible) - bất cứ ai cũng có quyền rút lại lời đồng ý bất kỳ lúc nào và bạn phải tôn trọng điều đó.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau:",
+  "leftBox": { "title": "Lành mạnh (Green Flag)" },
+  "rightBox": { "title": "Độc hại (Red Flag)" },
+  "items": [
+    { "text": "Đồng ý vì nể sợ người yêu giận dỗi", "correctBox": "right" },
+    { "text": "Tự nguyện đồng ý nắm tay nhưng từ chối ôm má", "correctBox": "left" },
+    { "text": "Gật đầu làm theo lời dụ dỗ ngọt ngào khi đang say sưa", "correctBox": "right" },
+    { "text": "Hào hứng đồng ý đi chơi xa và chuẩn bị kỹ lưỡng", "correctBox": "left" },
+    { "text": "Im lặng cúi đầu chịu đựng khi đối phương bá vai", "correctBox": "right" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa quy tắc F.R.I.E.S sau:",
+  "pairs": [
+    { "left": "Tự nguyện (Freely given)", "right": "Đồng ý không có sự ép buộc, nài nỉ hay lo sợ bị giận dỗi." },
+    { "left": "Linh hoạt (Reversible)", "right": "Có quyền đổi ý và rút lại quyết định bất cứ lúc nào." },
+    { "left": "Đầy đủ thông tin (Informed)", "right": "Biết rõ bản chất hành động, không bị lừa dối hay giấu giếm." },
+    { "left": "Cụ thể (Specific)", "right": "Đồng ý cho việc này không đồng nghĩa với việc khác." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới:",
+  "sentence": "Một lời [blank1] thực sự phải dựa trên sự [blank2] của bản thân, không bị áp lực [blank3] hay dụ dỗ, và có thể thay đổi bất cứ [blank4] nào.",
+  "blanks": {
+    "blank1": { "correct": "đồng ý", "placeholder": "..." },
+    "blank2": { "correct": "tự nguyện", "placeholder": "..." },
+    "blank3": { "correct": "ép buộc", "placeholder": "..." },
+    "blank4": { "correct": "lúc", "placeholder": "..." }
+  },
+  "words": ["đồng ý", "tự nguyện", "ép buộc", "lúc", "im lặng", "nể nang", "ngượng ngùng", "đèn đỏ"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi đối phương đã đồng ý ôm bạn lúc trước, nhưng sau đó đẩy nhẹ bạn ra và nói ''Tớ thấy hơi nhanh'', phản ứng nào sau đây thể hiện sự tôn trọng ranh giới tốt nhất?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Hờn dỗi: ''Nãy cậu đồng ý rồi mà giờ lại thay đổi à?''", "correct": false, "emoji": "🙁" },
+    { "text": "Nói đùa: ''Làm gì mà căng thế, ôm tí thôi mà!''", "correct": false, "emoji": "😐" },
+    { "text": "Dừng lại ngay, nới lỏng tay và nhẹ nhàng hỏi han cảm nhận của đối phương.", "correct": true, "emoji": "💚" },
+    { "text": "Cứ ôm chặt thêm vài giây rồi mới buông ra.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 2: Lắc đầu không sao cả - Đối diện với từ chối (lesson_order = 10)
@@ -195,6 +298,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn có nghĩ rằng sau mỗi lần từ chối, chúng ta sẽ trở nên vững vàng hơn không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Vết xước nhỏ trong tình cảm không làm bạn yếu đi, chúng giúp bạn trưởng thành hơn."]}', 6);
 
+-- --- Micro Lesson 2.6: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson2_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Lắc đầu không sao cả''! Bạn có 3 mạng để vượt qua 5 thử thách thử lòng kiên cường. Sẵn sàng chưa?"}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Đối thoại ranh giới và ứng phó từ chối",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn rủ bạn cùng lớp đi hiệu sách mua tài liệu học tập cuối tuần này. Bạn ấy ngập ngừng từ chối: ''Xin lỗi cậu nha, cuối tuần này tớ bận học thêm và dọn dẹp nhà cửa mất rồi''. Cảm giác ngượng ngùng dâng lên trong lòng bạn.",
+      "choices": [
+        { "text": "Tự suy diễn: ''Chắc bạn ấy ghét mình nên mới lấy cớ từ chối''. Quyết định không bao giờ nói chuyện nữa.", "nextNode": "fail_low_self_esteem" },
+        { "text": "Nài nỉ thêm: ''Học thêm tí thôi mà, đi hiệu sách nhanh lắm, đi với tớ đi!''", "nextNode": "fail_pester" },
+        { "text": "Phản hồi lịch sự: ''Ok cậu nè, học tập và dọn dẹp vui vẻ nha! Hôm khác tụi mình đi cũng được''.", "nextNode": "step2" }
+      ]
+    },
+    "step2": {
+      "text": "Thứ Hai đi học, bạn thấy bạn ấy đang cười nói vui vẻ với một nhóm bạn khác. Cơn ghen tị và hụt hẫng nhen nhóm.",
+      "choices": [
+        { "text": "Đến chen vào và nói mỉa mai: ''Bận dọn nhà mà nay rảnh rỗi buôn chuyện thế nhờ?''", "nextNode": "fail_sarcasm" },
+        { "text": "Cư xử bình thường, chủ động chào hỏi vui vẻ và tập trung vào việc học của mình.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Cuối tuần sau, bạn ấy chủ động nhắn tin rủ bạn đi thư viện tự học chung.",
+      "choices": [
+        { "text": "Từ chối thẳng thừng để trả đũa: ''Hôm trước bận thì hôm nay tớ cũng bận nhé!''", "nextNode": "fail_revenge" },
+        { "text": "Vui vẻ nhận lời: ''Ý tưởng hay đó, hẹn cậu thứ Bảy ở thư viện nha!''", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã đặt ranh giới cá nhân một cách dứt khoát nhưng vẫn lịch sự, mềm mỏng và giữ vững lập trường của mình.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_low_self_esteem": {
+      "text": "❌ Chưa đúng rồi! Tự suy diễn tiêu cực chỉ làm bản thân tổn thương và xa lánh mối quan hệ, trong khi lý do từ chối thường nằm ở hoàn cảnh của họ.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_pester": {
+      "text": "❌ Sai rồi! Nài nỉ, ép buộc đối phương nhượng bộ khi họ đã từ chối là hành vi thiếu tôn trọng ranh giới của họ.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_sarcasm": {
+      "text": "❌ Chưa đúng. Lời nói mỉa mai thể hiện sự thiếu chín chắn và làm rạn nứt tình cảm bạn bè một cách không đáng có.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_revenge": {
+      "text": "❌ Sai rồi! Hành vi trả đũa trẻ con không giúp xây dựng tình bạn lành mạnh mà chỉ làm tăng thêm khoảng cách.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại suy nghĩ sau khi bị từ chối:",
+  "leftBox": { "title": "Thực tế & Lành mạnh" },
+  "rightBox": { "title": "Tự ti & Suy diễn" },
+  "items": [
+    { "text": "Bạn ấy từ chối vì không muốn đi chơi với mình hôm nay", "correctBox": "left" },
+    { "text": "Chắc chắn mình là kẻ thất bại, xấu xí và không ai thích", "correctBox": "right" },
+    { "text": "Có thể bạn ấy thực sự bận hoặc mệt mỏi vào lúc đó", "correctBox": "left" },
+    { "text": "Mình không bao giờ nên mở lời mời bất kỳ ai nữa", "correctBox": "right" },
+    { "text": "Ranh giới của người khác cần được tôn trọng tuyệt đối", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và cách ứng xử sau:",
+  "pairs": [
+    { "left": "Sự bền bỉ (Resilience)", "right": "Khả năng tự hồi phục sau hụt hẫng và thất vọng." },
+    { "left": "Tự chủ cảm xúc", "right": "Không đổ lỗi cho bản thân hay giận dỗi đối phương." },
+    { "left": "Ranh giới cá nhân", "right": "Giới hạn giúp bảo vệ không gian riêng tư của mỗi người." },
+    { "left": "Từ chối lịch sự", "right": "Đưa ra lời từ chối rõ ràng kèm thái độ nhẹ nhàng, tôn trọng." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành triết lý kiên cường:",
+  "sentence": "Khi bị từ chối, việc [blank1] ranh giới của người khác và giữ thái độ [blank2] giúp bạn bảo vệ [blank3] của bản thân cũng như duy trì [blank4] tốt đẹp.",
+  "blanks": {
+    "blank1": { "correct": "tôn trọng", "placeholder": "..." },
+    "blank2": { "correct": "lịch sự", "placeholder": "..." },
+    "blank3": { "correct": "giá trị", "placeholder": "..." },
+    "blank4": { "correct": "mối quan hệ", "placeholder": "..." }
+  },
+  "words": ["tôn trọng", "lịch sự", "giá trị", "mối quan hệ", "tự ti", "giận dỗi", "nài nỉ", "trả đũa"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Nếu bạn cảm thấy mệt mỏi và không muốn đi chơi cùng bạn bè, cách từ chối nào sau đây là văn minh và rõ ràng nhất?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Lờ tin nhắn đi, giả vờ như không đọc được.", "correct": false, "emoji": "🥺" },
+    { "text": "Nói dối là nhà có việc bận đột xuất để khỏi phải giải thích.", "correct": false, "emoji": "😐" },
+    { "text": "Nói rõ rằng mình đang mệt cần nghỉ ngơi, cảm ơn lời rủ và hẹn dịp khác.", "correct": true, "emoji": "💚" },
+    { "text": "Nhắn tin cộc lốc: ''Không đi đâu, mệt lắm!''", "correct": false, "emoji": "😠" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 3: Ranh giới số & Mạng xã hội (lesson_order = 11)
@@ -275,6 +480,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'flashcard', '{"front": "Sự đụng chạm bá đạo trên phim ảnh có phải là hình mẫu ngoài đời?", "back": "Không. Trên phim thường lãng mạn hóa việc đụng chạm không xin phép. Ngoài đời, sự đồng thuận tự nguyện và tôn trọng ranh giới mới là ưu tiên số 1.", "notes": "Cần phân biệt kịch bản điện ảnh với các mối quan hệ an toàn thực tế."}', 3),
 (@ml_id, 'reflection', '{"question": "Bạn có từng mong muốn người yêu mình phải hoàn hảo hay bá đạo giống nhân vật trong phim chưa?"}', 4),
 (@ml_id, 'takeaway', '{"items": ["Đừng mang kịch bản phim ảnh áp vào đời thực. Sự an toàn và tôn trọng quan trọng hơn sự lãng mạn giả tạo."]}', 5);
+
+-- --- Micro Lesson 3.6: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson3_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Ranh giới số & Mạng xã hội''! Bạn có 3 mạng để giải quyết các rắc rối trên không gian ảo. Tiến lên!"}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Ranh giới trên không gian mạng",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn chụp được ảnh dìm của bạn thân ngủ gật trong lớp với dáng vẻ rất ngộ nghĩnh. Nhóm chat của lớp đang bàn tán xôn xao, bạn định đăng tấm ảnh này lên Story Instagram cá nhân.",
+      "choices": [
+        { "text": "Đăng lên ngay lập tức kèm caption hài hước để mọi người cùng thả tim.", "nextNode": "fail_leak" },
+        { "text": "Gửi riêng bức ảnh cho bạn ấy xem trước và hỏi ý kiến: ''Tớ đăng tấm này lên Story trêu tí được không?''", "nextNode": "step2" },
+        { "text": "Chỉ chia sẻ trong nhóm chat kín 3 người bạn thân mà không cần hỏi bạn ấy.", "nextNode": "fail_leak_private" }
+      ]
+    },
+    "step2": {
+      "text": "Bạn ấy nhắn lại: ''Trông mặt tớ phệ quá, cậu đừng đăng lên mạng nha, tớ ngại lắm!''",
+      "choices": [
+        { "text": "Nài nỉ tiếp: ''Ui dào bạn bè cả mà, story 24h tự xóa thôi, có ai để ý đâu, cho tớ đăng đi!''", "nextNode": "fail_pester" },
+        { "text": "Tôn trọng bạn: ''Ok cậu nè, tớ sẽ giữ làm kỷ niệm riêng thôi, không đăng đâu!''", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Tối hôm đó, một thành viên khác trong nhóm lớp lại tự ý đăng bức ảnh dìm đó lên nhóm Facebook chung của trường.",
+      "choices": [
+        { "text": "Hùa vào bình luận trêu chọc chung cho vui: ''Haha nhìn tấu hài thực sự!''", "nextNode": "fail_cyberbullying" },
+        { "text": "Nhắn tin nhắc nhở bạn kia gỡ ảnh và động viên bạn thân của mình.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn hảo! Tôn trọng ranh giới số của bạn bè giúp giữ gìn tình bạn đẹp trực tuyến và thực tế.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_leak": {
+      "text": "❌ Sai rồi! Tự ý đăng ảnh dìm của bạn bè lên mạng xã hội khi chưa được sự đồng ý là vi phạm ranh giới số của họ.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_leak_private": {
+      "text": "❌ Chưa đúng. Dù là nhóm chat kín, chia sẻ ảnh dìm không có sự đồng thuận vẫn có nguy cơ rò rỉ và gây tổn thương cho bạn mình.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_pester": {
+      "text": "❌ Sai rồi! Nài nỉ, ép buộc đối phương nhượng bộ trên mạng xã hội vẫn là hành vi thiếu tôn trọng ranh giới của họ.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_cyberbullying": {
+      "text": "❌ Sai rồi! Hùa theo trêu chọc khi biết bạn không thoải mái là hành vi tiếp tay cho bắt nạt trực tuyến.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi trên mạng xã hội:",
+  "leftBox": { "title": "Green Flag số" },
+  "rightBox": { "title": "Red Flag số" },
+  "items": [
+    { "text": "Hỏi ý kiến bạn bè trước khi đăng ảnh chung lên mạng", "correctBox": "left" },
+    { "text": "Đòi người yêu cung cấp mật khẩu tài khoản để kiểm soát", "correctBox": "right" },
+    { "text": "Tôn trọng yêu cầu gỡ tag hoặc xóa ảnh từ người khác", "correctBox": "left" },
+    { "text": "Gửi ảnh nhạy cảm cá nhân dưới áp lực đe dọa chia tay", "correctBox": "right" },
+    { "text": "Cài đặt chế độ riêng tư để bảo vệ thông tin cá nhân", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn số sau:",
+  "pairs": [
+    { "left": "Đồng thuận số (Digital consent)", "right": "Hỏi ý kiến trước khi chia sẻ hình ảnh hoặc thông tin người khác lên mạng." },
+    { "left": "Ranh giới mật khẩu", "right": "Quyền giữ bảo mật tài khoản cá nhân, không chia sẻ để chứng minh lòng tin." },
+    { "left": "Bộ lọc truyền thông", "right": "Khả năng phân biệt ảo tưởng trên phim ảnh với các mối quan hệ đời thực." },
+    { "left": "Bắt nạt trực tuyến", "right": "Hành vi sử dụng mạng xã hội để trêu chọc, cô lập hoặc làm nhục người khác." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa an toàn mạng:",
+  "sentence": "Mạng xã hội không bao giờ [blank1] hoàn toàn thông tin, vì vậy hãy luôn tôn trọng [blank2] số của bạn bè và tuyệt đối nói không với áp lực gửi ảnh [blank3] dù đối phương có [blank4] thế nào.",
+  "blanks": {
+    "blank1": { "correct": "xóa", "placeholder": "..." },
+    "blank2": { "correct": "ranh giới", "placeholder": "..." },
+    "blank3": { "correct": "nhạy cảm", "placeholder": "..." },
+    "blank4": { "correct": "nài nỉ", "placeholder": "..." }
+  },
+  "words": ["xóa", "ranh giới", "nhạy cảm", "nài nỉ", "công khai", "chia sẻ", "lừa dối", "tin tưởng"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi một người bạn online liên tục nhắn tin yêu cầu bạn gửi ảnh chụp riêng tư nhạy cảm của bạn, phản ứng nào sau đây bảo vệ bạn tốt nhất?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Gửi một bức ảnh chụp từ xa, che mặt để tự bảo vệ.", "correct": false, "emoji": "🥺" },
+    { "text": "Từ chối dứt khoát, chặn tài khoản đó và báo ngay với người lớn đáng tin cậy.", "correct": true, "emoji": "💚" },
+    { "text": "Thương lượng: ''Cậu gửi ảnh của cậu trước đi rồi tớ gửi sau''.", "correct": false, "emoji": "😐" },
+    { "text": "Im lặng gửi ảnh vì sợ bị tung thông tin cá nhân lên mạng.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
 
 
 -- =========================================================================
@@ -358,6 +665,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn thích nhất điểm nào trên cơ thể mình hiện tại? Hãy dành một lời khen cho nó nhé."}', 5),
 (@ml_id, 'takeaway', '{"items": ["Cơ thể bạn đang lớn lên theo cách riêng của nó. Đừng so sánh bản thân với bất kỳ ai."]}', 6);
 
+-- --- Micro Lesson 4.6: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson4_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Làm chủ cơ thể & Sức khỏe''! Bạn có 3 mạng để thử thách kiến thức y học và pháp lý. Bắt đầu!"}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Quyền tự quyết cơ thể và pháp luật",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn đang quen một người yêu 15 tuổi. Người yêu nói rất yêu bạn và muốn hai đứa tiến xa hơn (quan hệ tình dục) để chứng minh tình cảm sâu sắc. Bạn biết rõ quy định pháp luật Việt Nam nhưng người yêu cứ khóc lóc.",
+      "choices": [
+        { "text": "Đồng ý vì nghĩ cả hai tự nguyện thì pháp luật không can thiệp.", "nextNode": "fail_legal_issue" },
+        { "text": "Kiên quyết từ chối lịch sự, giải thích rõ ranh giới pháp lý cột mốc 16 tuổi để bảo vệ cả hai.", "nextNode": "step2" },
+        { "text": "Nổi giận đùng đùng, mắng mỏ người yêu là thiếu hiểu biết rồi đòi chia tay ngay.", "nextNode": "fail_anger_legal" }
+      ]
+    },
+    "step2": {
+      "text": "Người yêu giận dỗi nói: ''Cậu lấy lý do pháp luật để thoái thác đúng không? Yêu nhau mà sợ sệt đủ thứ!''",
+      "choices": [
+        { "text": "Nhượng bộ vì không muốn bị nghi ngờ tình cảm chân thành.", "nextNode": "fail_legal_concede" },
+        { "text": "Vỗ về người yêu, khẳng định tình cảm chân thành nhưng kiên định ranh giới: ''Tớ muốn bảo vệ tương lai của cả hai đứa''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau đó, người yêu nghe theo lời khuyên của bạn và muốn cùng bạn tìm hiểu về các biện pháp tránh thai khoa học để chuẩn bị kiến thức cho tương lai.",
+      "choices": [
+        { "text": "Khuyên người yêu dùng phương pháp xuất tinh ngoài vì nghe bạn bè bảo rất an toàn và tự nhiên.", "nextNode": "fail_medical_myth" },
+        { "text": "Đề xuất cùng tìm hiểu về bao cao su và các biện pháp tránh thai an toàn, khoa học.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã vừa kiên định bảo vệ bản thân và đối phương, vừa tuân thủ pháp luật Việt Nam.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_legal_issue": {
+      "text": "❌ Sai luật hình sự! Tại Việt Nam, mọi hành vi quan hệ tình dục với người dưới 16 tuổi là phạm pháp hình sự, kể cả có sự tự nguyện từ hai phía.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_anger_legal": {
+      "text": "❌ Phản ứng quá đà! Lên giọng mắng mỏ không giúp đối phương hiểu rõ bản chất vấn đề pháp lý mà chỉ làm xung đột gia tăng.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_legal_concede": {
+      "text": "❌ Sai rồi! Nhượng bộ áp lực tình cảm để vi phạm pháp luật hình sự là hành vi cực kỳ nguy hiểm cho cả hai.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_medical_myth": {
+      "text": "❌ Sai kiến thức y khoa! Xuất tinh ngoài có tỷ lệ thất bại rất cao và hoàn toàn không phòng tránh được các bệnh lây qua đường tình dục (STIs).",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại kiến thức giới tính:",
+  "leftBox": { "title": "Khoa học chính xác" },
+  "rightBox": { "title": "Lời đồn nguy hại" },
+  "items": [
+    { "text": "Bao cao su giúp ngăn ngừa thai và hầu hết bệnh STIs", "correctBox": "left" },
+    { "text": "Xuất tinh ngoài là biện pháp tránh thai tuyệt đối an toàn", "correctBox": "right" },
+    { "text": "Gọi đúng tên dương vật, âm hộ để giao tiếp sức khỏe", "correctBox": "left" },
+    { "text": "Quan hệ lần đầu tiên thì chắc chắn không thể mang thai", "correctBox": "right" },
+    { "text": "Cơ thể dậy thì phát triển theo tốc độ riêng của mỗi người", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa cơ thể và định nghĩa sau:",
+  "pairs": [
+    { "left": "Quyền tự quyết (Agency)", "right": "Quyền sở hữu tối cao và đưa ra quyết định đối với cơ thể của chính bạn." },
+    { "left": "Độ tuổi đồng thuận", "right": "Cột mốc đủ 16 tuổi trở lên theo quy định của Luật hình sự Việt Nam." },
+    { "left": "Bệnh lây qua đường tình dục", "right": "Các bệnh STIs như HIV, lậu, giang mai cần phòng tránh bằng bao cao su." },
+    { "left": "Âm hộ (Vulva)", "right": "Cấu tạo sinh học bên ngoài của cơ quan sinh dục nữ cần gọi tên khoa học." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa pháp luật:",
+  "sentence": "Tại Việt Nam, mọi hành vi quan hệ tình dục với người dưới [blank1] tuổi đều vi phạm [blank2] hình sự, kể cả khi có sự [blank3] tự nguyện, nhằm bảo vệ sự phát triển [blank4] của vị thành niên.",
+  "blanks": {
+    "blank1": { "correct": "16", "placeholder": "..." },
+    "blank2": { "correct": "pháp luật", "placeholder": "..." },
+    "blank3": { "correct": "đồng thuận", "placeholder": "..." },
+    "blank4": { "correct": "lành mạnh", "placeholder": "..." }
+  },
+  "words": ["16", "pháp luật", "đồng thuận", "lành mạnh", "18", "dân sự", "im lặng", "ép buộc"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Phương pháp nào sau đây là duy nhất vừa giúp tránh thai hiệu quả vừa bảo vệ bạn khỏi các bệnh lây truyền qua đường tình dục (STIs)?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Sử dụng thuốc tránh thai khẩn cấp.", "correct": false, "emoji": "🥺" },
+    { "text": "Sử dụng bao cao su đúng cách trong suốt quá trình đụng chạm tình dục.", "correct": true, "emoji": "💚" },
+    { "text": "Thực hiện xuất tinh ngoài âm đạo.", "correct": false, "emoji": "😐" },
+    { "text": "Tính ngày rụng trứng theo chu kỳ kinh nguyệt.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 5: Áp lực bạn bè & Điểm tựa hỗ trợ (lesson_order = 13)
@@ -440,6 +849,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'interaction', '{"question": "An nên làm thế nào?", "choices": [{"text": "Im lặng làm theo vì quá sợ hãi lời đe dọa.", "correct": false, "emoji": "🛑"}, {"text": "Chụp màn hình bằng chứng, báo ngay cho bố mẹ/thầy cô và gọi tổng đài can thiệp 111.", "correct": true, "emoji": "💚"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Bạn có ghi nhớ số điện thoại 111 và số của người lớn đáng tin cậy nhất để gọi khi khẩn cấp không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Tìm kiếm sự hỗ trợ không phải là yếu đuối. Đó là hành động dũng cảm để tự bảo vệ mình."]}', 6);
+
+-- --- Micro Lesson 5.6: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson5_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Áp lực bạn bè & Điểm tựa hỗ trợ''! Bạn có 3 mạng để vượt qua 5 thử thách áp lực tâm lý nhóm. Khởi đầu!"}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Đối phó với áp lực đồng trang lứa",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Nhóm bạn thân đang tụ tập ở nhà một bạn học, lôi ra một thiết bị thuốc lá điện tử (vape) rực rỡ và rủ bạn hút thử một hơi lớn. Cả nhóm hùa vào khích tướng: ''Không hút là nhát gan, không nể mặt anh em chơi chung gì cả!''",
+      "choices": [
+        { "text": "Hút thử một hơi thật sâu để chứng tỏ bản thân cool ngầu và giữ hòa khí nhóm.", "nextNode": "fail_vape_try" },
+        { "text": "Lớn tiếng giáo huấn cả nhóm về tác hại của vape đối với phổi.", "nextNode": "fail_lecture_group" },
+        { "text": "Từ chối khéo léo nhưng dứt khoát: ''Tớ xin kiếu, phổi tớ nhạy cảm lắm, ngửi khói là ho sặc sụa rồi''.", "nextNode": "step2" }
+      ]
+    },
+    "step2": {
+      "text": "Một bạn trong nhóm bĩu môi cười cợt: ''Yếu đuối thế, thử một tí có chết ai đâu mà sợ!''",
+      "choices": [
+        { "text": "Cảm thấy tự ái, giật lấy vape để hút chứng minh mình không yếu.", "nextNode": "fail_pride" },
+        { "text": "Kiên định cười vui: ''Tớ yếu thật mà, tớ chỉ mạnh môn bóng rổ thôi! Các cậu cứ chơi đi, tớ ra phòng khách xem tivi nha''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau đó, một bạn trong nhóm đột ngột khóa cửa phòng lại và đe dọa không cho bạn ra ngoài nếu bạn không chịu uống cạn cốc nước ngọt đã pha cồn.",
+      "choices": [
+        { "text": "Sợ hãi nhắm mắt uống hết cốc nước để được thả ra.", "nextNode": "fail_alcohol" },
+        { "text": "Chụp lại hình ảnh phòng khóa, kiên quyết yêu cầu mở cửa, đồng thời nhắn tin báo cho bố mẹ hoặc gọi tổng đài 111 hỗ trợ nếu tình hình căng thẳng.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Xuất sắc! Bạn đã từ chối áp lực nhóm thành công bằng thái độ kiên định, vui vẻ và bảo vệ sức khỏe của mình.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_vape_try": {
+      "text": "❌ Sai rồi! Làm việc gây hại cho sức khỏe chỉ vì sợ đám đông tẩy chay là tự đánh mất ranh giới cá nhân.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_lecture_group": {
+      "text": "❌ Chưa khéo. Lên giọng dạy đời bạn bè khi họ đang hưng phấn chỉ khiến họ phản kháng, cô lập bạn nhanh hơn thay vì có tính xây dựng.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_pride": {
+      "text": "❌ Sai rồi! Nhượng bộ ranh giới sức khỏe chỉ vì lời thách thức hay khích tướng trẻ con là thiếu tự chủ.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_alcohol": {
+      "text": "❌ Sai rồi! Uống đồ uống chứa chất kích thích/cồn dưới sự đe dọa cưỡng bức là vi phạm ranh giới an toàn của bạn. Hãy tìm kiếm sự hỗ trợ ngay lập tức.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi sau:",
+  "leftBox": { "title": "Áp lực nhóm độc hại" },
+  "rightBox": { "title": "Điểm tựa an toàn" },
+  "items": [
+    { "text": "Rủ rê thử vape hoặc chất kích thích để chứng tỏ bản thân", "correctBox": "left" },
+    { "text": "Chia sẻ khó khăn với bố mẹ hoặc thầy cô giáo đáng tin", "correctBox": "right" },
+    { "text": "Ép buộc bạn bè cô lập, nói xấu một học sinh mới", "correctBox": "left" },
+    { "text": "Gọi điện đến Tổng đài Quốc gia 111 để tìm sự giúp đỡ", "correctBox": "right" },
+    { "text": "Đe dọa phát tán thông tin riêng tư nếu không làm theo lời thách", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn sau:",
+  "pairs": [
+    { "left": "Áp lực đồng trang lứa", "right": "Sự thúc ép từ nhóm bạn khiến bạn làm điều nguy hiểm hoặc không muốn." },
+    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia hỗ trợ, tư vấn bảo vệ trẻ em miễn phí 24/7." },
+    { "left": "Dũng khí đi ngược", "right": "Khả năng nói không và giữ vững lập trường trước đám đông thúc ép." },
+    { "left": "Điểm tựa hỗ trợ", "right": "Những người lớn đáng tin cậy giúp bạn giải quyết các tình huống nguy hiểm." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới điểm tựa:",
+  "sentence": "Khi đối mặt với sự [blank1] từ bạn bè để làm điều sai trái, hãy kiên định [blank2], và nếu cảm thấy an toàn bị [blank3], hãy liên hệ ngay với người lớn đáng tin cậy hoặc gọi tổng đài [blank4].",
+  "blanks": {
+    "blank1": { "correct": "thúc ép", "placeholder": "..." },
+    "blank2": { "correct": "từ chối", "placeholder": "..." },
+    "blank3": { "correct": "đe dọa", "placeholder": "..." },
+    "blank4": { "correct": "111", "placeholder": "..." }
+  },
+  "words": ["thúc ép", "từ chối", "đe dọa", "111", "đồng ý", "im lặng", "hùa theo", "bạn bè"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi ranh giới cơ thể của bạn bị xâm hại hoặc bạn bị đe dọa cưỡng ép trực tuyến, hành động nào sau đây là dũng cảm và chính xác nhất?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Im lặng chịu đựng, tự giải quyết một mình vì sợ bố mẹ mắng.", "correct": false, "emoji": "🥺" },
+    { "text": "Nhượng bộ và làm theo yêu cầu của đối phương để họ không đe dọa nữa.", "correct": false, "emoji": "😐" },
+    { "text": "Thu thập bằng chứng, chia sẻ ngay với người lớn đáng tin cậy và liên hệ tổng đài 111 để được hỗ trợ kịp thời.", "correct": true, "emoji": "💚" },
+    { "text": "Đe dọa hoặc dùng bạo lực trả đũa lại đối phương.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
 
 -- =========================================================================
 -- END OF SEED SCRIPT

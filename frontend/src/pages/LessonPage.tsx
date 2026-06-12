@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ExternalLink, PlayCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ExternalLink, PlayCircle, Lock, Trophy } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/contexts/AuthContext";
@@ -37,7 +37,7 @@ function rgbToHex(r: number, g: number, b: number) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-function mix(hex: string, target: "#ffffff" | "#000000", amount: number) {
+function mix(hex: string, target: string, amount: number) {
   const a = Math.max(0, Math.min(1, amount));
   const c1 = hexToRgb(hex);
   const c2 = hexToRgb(target);
@@ -56,11 +56,17 @@ function blockLabel(blockType: MicroLessonBlock["blockType"]) {
     case "scenario":
       return "Tình huống thực tế";
     case "interaction":
-      return "Bạn sẽ làm gì?";
+      return "Thử thách trắc nghiệm";
     case "sorting":
       return "Phân loại hành vi";
     case "flashcard":
       return "Thẻ nhớ lật 3D";
+    case "scenario-choice":
+      return "Chọn cuộc phiêu lưu";
+    case "matching":
+      return "Ghép cặp từ khóa";
+    case "fill-blank":
+      return "Xếp chữ điền từ";
     case "reflection":
       return "Suy ngẫm";
     case "takeaway":
@@ -70,13 +76,31 @@ function blockLabel(blockType: MicroLessonBlock["blockType"]) {
   }
 }
 
-function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void }) {
+function isAssessmentMicro(ml: any) {
+  if (!ml) return false;
+  if (ml.order === 99) return true;
+  const titleLower = (ml.title ?? "").toLowerCase();
+  if (titleLower.includes("kiểm tra") || titleLower.includes("assessment") || titleLower.includes("test")) return true;
+  return (ml.blocks ?? []).some((b: any) => ["scenario-choice", "matching", "fill-blank"].includes(b.blockType));
+}
+
+function SortingBlock({
+  data,
+  onComplete,
+  isCompleted,
+  onIncorrect,
+}: {
+  data: any;
+  onComplete: () => void;
+  isCompleted?: boolean;
+  onIncorrect?: () => void;
+}) {
   const [items] = useState<any[]>(() => data?.items ?? []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [greenList, setGreenList] = useState<string[]>([]);
   const [redList, setRedList] = useState<string[]>([]);
   const [isWrong, setIsWrong] = useState(false);
-  const [isDone, setIsDone] = useState(false);
+  const [isDone, setIsDone] = useState(isCompleted ?? false);
 
   const greenBoxRef = useRef<HTMLButtonElement>(null);
   const redBoxRef = useRef<HTMLButtonElement>(null);
@@ -90,6 +114,16 @@ function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void 
   const instruction = data?.instruction ?? "Kéo thẻ hoặc click phân loại hành vi sau:";
 
   const currentItem = items[currentIndex];
+
+  useEffect(() => {
+    if (isCompleted) {
+      setIsDone(true);
+      const lefts = items.filter((i) => i.correctBox === "left").map((i) => i.text);
+      const rights = items.filter((i) => i.correctBox === "right").map((i) => i.text);
+      setGreenList(lefts);
+      setRedList(rights);
+    }
+  }, [isCompleted, items]);
 
   const handleClassify = (target: "left" | "right") => {
     if (isDone || !currentItem) return;
@@ -109,7 +143,11 @@ function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void 
       }
     } else {
       setIsWrong(true);
-      toast.error("Chưa chính xác rồi. Hãy thử lại!", { duration: 1500 });
+      if (onIncorrect) {
+        onIncorrect();
+      } else {
+        toast.error("Chưa chính xác rồi. Hãy thử lại!", { duration: 1500 });
+      }
       setTimeout(() => setIsWrong(false), 500);
     }
   };
@@ -218,7 +256,6 @@ function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void 
               setIsOverGreen(false);
               setIsOverRed(false);
 
-              // Viewport coordinates of the pointer drop point (scroll-compensated)
               const dragX = info.point.x - window.scrollX;
               const dragY = info.point.y - window.scrollY;
 
@@ -291,14 +328,30 @@ function SortingBlock({ data, onComplete }: { data: any; onComplete: () => void 
   );
 }
 
-function FlashcardBlock({ data, onComplete }: { data: any; onComplete: () => void }) {
+function FlashcardBlock({
+  data,
+  onComplete,
+  isCompleted,
+}: {
+  data: any;
+  onComplete: () => void;
+  isCompleted?: boolean;
+}) {
   const [flipped, setFlipped] = useState(false);
-  const [rated, setRated] = useState(false);
+  const [rated, setRated] = useState(isCompleted ?? false);
   const [rating, setRating] = useState<string | null>(null);
 
   const front = data?.front ?? "Mặt trước";
   const back = data?.back ?? "Mặt sau";
   const notes = data?.notes ?? "";
+
+  useEffect(() => {
+    if (isCompleted) {
+      setRated(true);
+    } else {
+      setRated(false);
+    }
+  }, [isCompleted]);
 
   const handleRate = (level: "easy" | "medium" | "hard") => {
     setRating(level);
@@ -392,7 +445,544 @@ function FlashcardBlock({ data, onComplete }: { data: any; onComplete: () => voi
   );
 }
 
-function renderBlockContent(block: MicroLessonBlock, onInteractionCorrect?: () => void) {
+function InteractionBlock({
+  data,
+  onComplete,
+  isCompleted,
+  onIncorrect,
+}: {
+  data: any;
+  onComplete: () => void;
+  isCompleted?: boolean;
+  onIncorrect?: () => void;
+}) {
+  const question = data?.question ?? "";
+  const choices = data?.choices ?? [];
+
+  const [isDone, setIsDone] = useState(isCompleted ?? false);
+  const [wrongAttempt, setWrongAttempt] = useState(false);
+
+  useEffect(() => {
+    if (isCompleted) {
+      setIsDone(true);
+    } else {
+      setIsDone(false);
+    }
+  }, [isCompleted]);
+
+  const handleSelect = (isCorrect: boolean) => {
+    if (isDone) return;
+
+    if (isCorrect) {
+      toast.success("Chính xác!");
+      setIsDone(true);
+      onComplete();
+    } else {
+      setWrongAttempt(true);
+      if (onIncorrect) {
+        onIncorrect();
+      } else {
+        toast.error("Thử lại nhé.");
+      }
+      setTimeout(() => setWrongAttempt(false), 500);
+    }
+  };
+
+  return (
+    <div className="mt-3 space-y-3">
+      <p className="text-[15px] font-semibold text-foreground">{question}</p>
+
+      <motion.div
+        animate={wrongAttempt ? { x: [-8, 8, -8, 8, 0] } : {}}
+        transition={{ duration: 0.4 }}
+        className="grid gap-3 md:grid-cols-2"
+      >
+        {choices.map((c: any, idx: number) => {
+          const isCorrect = !!c?.correct;
+          const tone = isDone
+            ? isCorrect
+              ? "bg-mint/18 border-mint/40 text-mint-foreground"
+              : "bg-background/40 border-border/40 opacity-40"
+            : "bg-background/88 border-border/80 hover:border-primary/45 hover:bg-background";
+
+          return (
+            <button
+              key={idx}
+              disabled={isDone}
+              className={`w-full rounded-[1.4rem] border px-4 py-4 text-left text-[14px] font-semibold transition-colors shadow-sm ${tone}`}
+              onClick={() => handleSelect(isCorrect)}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <span className="min-w-0 flex-1">{c?.text ?? ""}</span>
+                <span className="text-lg">{c?.emoji ?? (isCorrect ? "🙂" : "☹️")}</span>
+              </div>
+            </button>
+          );
+        })}
+      </motion.div>
+    </div>
+  );
+}
+
+function ScenarioChoiceBlock({
+  data,
+  onComplete,
+  isCompleted,
+  onIncorrect,
+}: {
+  data: any;
+  onComplete: () => void;
+  isCompleted?: boolean;
+  onIncorrect?: () => void;
+}) {
+  const nodes = data?.nodes ?? {};
+  const startNode = data?.startNode ?? "start";
+
+  const successNodeKey = useMemo(() => {
+    return Object.keys(nodes).find((key) => nodes[key].isEnd && nodes[key].isSuccess) || startNode;
+  }, [nodes, startNode]);
+
+  const [localNodeKey, setLocalNodeKey] = useState(startNode);
+  const [localDone, setLocalDone] = useState(false);
+
+  const currentNodeKey = isCompleted ? successNodeKey : localNodeKey;
+  const isDone = isCompleted || localDone;
+
+  const currentNode = nodes[currentNodeKey];
+
+  const handleChoice = (nextNodeKey: string) => {
+    if (isDone) return;
+
+    const nextNode = nodes[nextNodeKey];
+    if (!nextNode) return;
+
+    if (nextNode.isEnd) {
+      if (nextNode.isSuccess) {
+        setLocalNodeKey(nextNodeKey);
+        setLocalDone(true);
+        toast.success("Tuyệt vời! Bạn đã hoàn thành cuộc phiêu lưu.");
+        onComplete();
+      } else {
+        setLocalNodeKey(nextNodeKey);
+        if (onIncorrect) {
+          onIncorrect();
+        } else {
+          toast.error("Lựa chọn chưa chính xác.");
+        }
+      }
+    } else {
+      setLocalNodeKey(nextNodeKey);
+    }
+  };
+
+  return (
+    <div className="mt-4 space-y-4">
+      <span className="text-[13px] font-bold text-foreground/50">
+        🎭 Quyết định của bạn sẽ dẫn tới kết quả khác nhau
+      </span>
+
+      <div className="p-4 rounded-2xl bg-background/58 border border-white/70 min-h-[80px]">
+        <p className="text-[15px] leading-7 text-foreground/80">{currentNode?.text}</p>
+      </div>
+
+      {currentNode?.isEnd ? (
+        <div className="flex justify-center pt-2">
+          {currentNode.isSuccess ? (
+            <div className="rounded-[1.6rem] bg-mint/10 px-5 py-3 text-center border border-mint/20 shadow-soft w-full">
+              <p className="text-[14px] font-bold text-mint-foreground">🎉 Chúc mừng! Thử thách hoàn thành xuất sắc.</p>
+            </div>
+          ) : (
+            <Button
+              onClick={() => {
+                setLocalNodeKey(startNode);
+                setLocalDone(false);
+              }}
+              className="rounded-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-6 py-2"
+            >
+              Quay lại bắt đầu thử cách khác ↺
+            </Button>
+          )}
+        </div>
+      ) : (
+        <div className="grid gap-3 pt-2">
+          {(currentNode?.choices ?? []).map((choice: any, idx: number) => (
+            <button
+              key={idx}
+              disabled={isDone}
+              onClick={() => handleChoice(choice.nextNode)}
+              className="w-full text-left p-4 rounded-[1.4rem] border border-border/80 bg-background/70 hover:border-primary/40 hover:bg-background transition-all text-[14px] font-semibold text-foreground/90 shadow-soft"
+            >
+              {choice.text}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MatchingBlock({
+  data,
+  onComplete,
+  isCompleted,
+  onIncorrect,
+}: {
+  data: any;
+  onComplete: () => void;
+  isCompleted?: boolean;
+  onIncorrect?: () => void;
+}) {
+  const pairs = data?.pairs ?? [];
+  const instruction = data?.instruction ?? "Ghép các khái niệm sau:";
+
+  const [shuffledLeft] = useState<string[]>(() => {
+    const lefts = pairs.map((p: any) => p.left);
+    return lefts.slice().sort(() => Math.random() - 0.5);
+  });
+  const [shuffledRight] = useState<string[]>(() => {
+    const rights = pairs.map((p: any) => p.right);
+    return rights.slice().sort(() => Math.random() - 0.5);
+  });
+
+  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
+  const [selectedRight, setSelectedRight] = useState<string | null>(null);
+  const [localMatchedLefts, setLocalMatchedLefts] = useState<Set<string>>(new Set());
+  const [localMatchedRights, setLocalMatchedRights] = useState<Set<string>>(new Set());
+  const [errorLeft, setErrorLeft] = useState<string | null>(null);
+  const [errorRight, setErrorRight] = useState<string | null>(null);
+  const [wrongAttempt, setWrongAttempt] = useState(false);
+  const [localDone, setLocalDone] = useState(false);
+
+  const isDone = isCompleted || localDone;
+
+  const matchedLefts = useMemo(() => {
+    if (isCompleted) {
+      return new Set<string>(pairs.map((p: any) => p.left));
+    }
+    return localMatchedLefts;
+  }, [isCompleted, pairs, localMatchedLefts]);
+
+  const matchedRights = useMemo(() => {
+    if (isCompleted) {
+      return new Set<string>(pairs.map((p: any) => p.right));
+    }
+    return localMatchedRights;
+  }, [isCompleted, pairs, localMatchedRights]);
+
+  const handleLeftClick = (text: string) => {
+    if (isDone || matchedLefts.has(text) || errorLeft) return;
+    if (selectedLeft === text) {
+      setSelectedLeft(null);
+      return;
+    }
+
+    setSelectedLeft(text);
+    if (selectedRight) {
+      checkMatch(text, selectedRight);
+    }
+  };
+
+  const handleRightClick = (text: string) => {
+    if (isDone || matchedRights.has(text) || errorRight) return;
+    if (selectedRight === text) {
+      setSelectedRight(null);
+      return;
+    }
+
+    setSelectedRight(text);
+    if (selectedLeft) {
+      checkMatch(selectedLeft, text);
+    }
+  };
+
+  const checkMatch = (leftText: string, rightText: string) => {
+    const matchedPair = pairs.find((p: any) => p.left === leftText && p.right === rightText);
+
+    if (matchedPair) {
+      toast.success("Ghép cặp đúng!");
+      const nextLefts = new Set(localMatchedLefts).add(leftText);
+      const nextRights = new Set(localMatchedRights).add(rightText);
+      setLocalMatchedLefts(nextLefts);
+      setLocalMatchedRights(nextRights);
+      setSelectedLeft(null);
+      setSelectedRight(null);
+
+      if (nextLefts.size === pairs.length) {
+        setLocalDone(true);
+        onComplete();
+      }
+    } else {
+      setErrorLeft(leftText);
+      setErrorRight(rightText);
+      setSelectedLeft(null);
+      setSelectedRight(null);
+      setWrongAttempt(true);
+
+      if (onIncorrect) {
+        onIncorrect();
+      } else {
+        toast.error("Ghép cặp chưa chính xác.");
+      }
+
+      setTimeout(() => {
+        setErrorLeft(null);
+        setErrorRight(null);
+        setWrongAttempt(false);
+      }, 800);
+    }
+  };
+
+  return (
+    <div className="mt-4 space-y-4">
+      <p className="text-[14px] font-semibold text-foreground/80">{instruction}</p>
+
+      {isDone ? (
+        <div className="rounded-[1.6rem] bg-mint/10 p-5 text-center border border-mint/20 shadow-soft w-full">
+          <p className="text-[14px] font-bold text-mint-foreground">🎉 Bạn đã ghép đôi chính xác tất cả định nghĩa!</p>
+        </div>
+      ) : (
+        <motion.div
+          animate={wrongAttempt ? { x: [-8, 8, -8, 8, 0] } : {}}
+          transition={{ duration: 0.4 }}
+          className="grid grid-cols-2 gap-4"
+        >
+          <div className="space-y-2.5">
+            {shuffledLeft.map((text) => {
+              const isMatched = matchedLefts.has(text);
+              const isSelected = selectedLeft === text;
+              const isFailed = errorLeft === text;
+
+              let styleClass = "border-border/80 bg-background/70 hover:border-primary/45";
+              if (isMatched) styleClass = "border-mint/60 bg-mint/8 text-mint-foreground opacity-60 cursor-default";
+              else if (isFailed) styleClass = "border-peach bg-peach/20 text-peach-foreground";
+              else if (isSelected) styleClass = "border-primary bg-primary/8 shadow-soft ring-2 ring-primary/20";
+
+              return (
+                <button
+                  key={text}
+                  disabled={isMatched || isDone}
+                  onClick={() => handleLeftClick(text)}
+                  className={`w-full text-left p-3.5 rounded-xl border text-[13px] font-semibold transition-all shadow-sm ${styleClass}`}
+                >
+                  {text}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="space-y-2.5">
+            {shuffledRight.map((text) => {
+              const isMatched = matchedRights.has(text);
+              const isSelected = selectedRight === text;
+              const isFailed = errorRight === text;
+
+              let styleClass = "border-border/80 bg-background/70 hover:border-primary/45";
+              if (isMatched) styleClass = "border-mint/60 bg-mint/8 text-mint-foreground opacity-60 cursor-default";
+              else if (isFailed) styleClass = "border-peach bg-peach/20 text-peach-foreground";
+              else if (isSelected) styleClass = "border-primary bg-primary/8 shadow-soft ring-2 ring-primary/20";
+
+              return (
+                <button
+                  key={text}
+                  disabled={isMatched || isDone}
+                  onClick={() => handleRightClick(text)}
+                  className={`w-full text-left p-3.5 rounded-xl border text-[13px] font-semibold transition-all shadow-sm leading-relaxed ${styleClass}`}
+                >
+                  {text}
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+function FillBlankBlock({
+  data,
+  onComplete,
+  isCompleted,
+  onIncorrect,
+}: {
+  data: any;
+  onComplete: () => void;
+  isCompleted?: boolean;
+  onIncorrect?: () => void;
+}) {
+  const sentence = data?.sentence ?? "";
+  const blanks = data?.blanks ?? {};
+  const instruction = data?.instruction ?? "Điền vào chỗ trống:";
+  const wordPool = data?.words ?? [];
+
+  const [localFilled, setLocalFilled] = useState<Record<string, string>>({});
+  const [localSuccess, setLocalSuccess] = useState(false);
+  const [wrongAttempt, setWrongAttempt] = useState(false);
+
+  const isSuccess = isCompleted || localSuccess;
+
+  const filled = useMemo(() => {
+    if (isCompleted) {
+      const preFilled: Record<string, string> = {};
+      Object.keys(blanks).forEach((key) => {
+        preFilled[key] = blanks[key].correct;
+      });
+      return preFilled;
+    }
+    return localFilled;
+  }, [isCompleted, blanks, localFilled]);
+
+  const handleWordClick = (word: string) => {
+    if (isSuccess) return;
+
+    const isUsed = Object.values(filled).includes(word);
+    if (isUsed) return;
+
+    const blankKeys = Object.keys(blanks);
+    const firstEmptyKey = blankKeys.find((key) => !filled[key]);
+
+    if (firstEmptyKey) {
+      setLocalFilled((prev) => ({
+        ...prev,
+        [firstEmptyKey]: word,
+      }));
+    }
+  };
+
+  const handleBlankClick = (blankKey: string) => {
+    if (isSuccess) return;
+
+    if (filled[blankKey]) {
+      setLocalFilled((prev) => {
+        const next = { ...prev };
+        delete next[blankKey];
+        return next;
+      });
+    }
+  };
+
+  const handleCheck = () => {
+    const blankKeys = Object.keys(blanks);
+    let allCorrect = true;
+
+    for (const key of blankKeys) {
+      if (filled[key] !== blanks[key].correct) {
+        allCorrect = false;
+        break;
+      }
+    }
+
+    if (allCorrect) {
+      setLocalSuccess(true);
+      toast.success("Chính xác tuyệt đối!");
+      onComplete();
+    } else {
+      setWrongAttempt(true);
+      if (onIncorrect) {
+        onIncorrect();
+      } else {
+        toast.error("Đáp án chưa đúng rồi.");
+      }
+      setTimeout(() => {
+        setWrongAttempt(false);
+      }, 600);
+    }
+  };
+
+  const parseSentence = () => {
+    const parts = sentence.split(/(\[blank\d+\])/g);
+    return parts.map((part: string, index: number) => {
+      const match = part.match(/^\[(blank\d+)\]$/);
+      if (match) {
+        const key = match[1];
+        const word = filled[key];
+        const hasValue = !!word;
+
+        return (
+          <button
+            key={index}
+            disabled={isSuccess}
+            onClick={() => handleBlankClick(key)}
+            className={`inline-flex items-center justify-center min-w-[70px] h-[34px] px-3.5 mx-1.5 rounded-xl border-2 transition-all font-bold text-[14px] ${isSuccess
+              ? "border-mint bg-mint/10 text-mint-foreground"
+              : wrongAttempt
+                ? "border-peach bg-peach/10 text-peach-foreground"
+                : hasValue
+                  ? "border-primary bg-primary/5 text-primary"
+                  : "border-dashed border-foreground/30 hover:border-primary/50 text-foreground/40"
+              }`}
+          >
+            {hasValue ? word : blanks[key].placeholder ?? "..."}
+          </button>
+        );
+      }
+      return <span key={index} className="text-[15px] font-semibold text-foreground/80 leading-7">{part}</span>;
+    });
+  };
+
+  const allFilled = Object.keys(blanks).every((key) => !!filled[key]);
+
+  return (
+    <div className="mt-4 space-y-5">
+      <p className="text-[14px] font-semibold text-foreground/80">{instruction}</p>
+
+      <motion.div
+        animate={wrongAttempt ? { x: [-8, 8, -8, 8, 0] } : {}}
+        transition={{ duration: 0.4 }}
+        className="p-5 rounded-2xl bg-background/58 border border-white/70 shadow-sm leading-relaxed"
+      >
+        <div className="flex flex-wrap items-center leading-loose">
+          {parseSentence()}
+        </div>
+      </motion.div>
+
+      {isSuccess ? (
+        <div className="rounded-[1.6rem] bg-mint/10 p-5 text-center border border-mint/20 shadow-soft w-full">
+          <p className="text-[14px] font-bold text-mint-foreground">🎉 Bạn đã điền từ hoàn toàn chính xác!</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2.5 justify-center py-2 border-t border-dashed border-foreground/10 pt-4">
+            {wordPool.map((word: string) => {
+              const isUsed = Object.values(filled).includes(word);
+              return (
+                <button
+                  key={word}
+                  disabled={isUsed || isSuccess}
+                  onClick={() => handleWordClick(word)}
+                  className={`px-4 py-2.5 rounded-full border text-[13px] font-bold transition-all shadow-sm ${isUsed
+                    ? "bg-foreground/5 text-foreground/20 border-foreground/10 cursor-not-allowed"
+                    : "bg-background/88 border-border/80 hover:border-primary/40 text-foreground/85 active:scale-95"
+                    }`}
+                >
+                  {word}
+                </button>
+              );
+            })}
+          </div>
+
+          {allFilled && (
+            <div className="flex justify-center pt-2">
+              <Button
+                onClick={handleCheck}
+                className="rounded-full bg-primary text-white hover:gradient-primary px-8 py-3 text-xs font-bold shadow-soft"
+              >
+                Kiểm tra kết quả
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function renderBlockContent(
+  block: MicroLessonBlock,
+  onInteractionCorrect?: () => void,
+  isCompleted?: boolean,
+  onIncorrect?: () => void
+) {
   const data = safeJsonParse(block.contentJson);
 
   if (block.blockType === "hook") {
@@ -420,44 +1010,67 @@ function renderBlockContent(block: MicroLessonBlock, onInteractionCorrect?: () =
 
   if (block.blockType === "interaction") {
     return (
-      <div className="mt-3 space-y-3">
-        <p className="text-[15px] font-semibold text-foreground">{data?.question ?? ""}</p>
-        <div className="grid gap-3 md:grid-cols-2">
-          {(data?.choices ?? []).map((c: any, idx: number) => {
-            const isCorrect = !!c?.correct;
-            const tone = isCorrect ? "bg-mint/14 hover:bg-mint/22" : "bg-peach/14 hover:bg-peach/22";
+      <InteractionBlock
+        data={data}
+        onComplete={onInteractionCorrect ?? (() => { })}
+        isCompleted={isCompleted}
+        onIncorrect={onIncorrect ?? (() => { })}
+      />
+    );
+  }
 
-            return (
-              <button
-                key={idx}
-                className={`w-full rounded-[1.4rem] px-4 py-4 text-left text-[15px] font-semibold transition-colors ${tone}`}
-                onClick={() => {
-                  if (isCorrect) {
-                    toast.success("Chuẩn rồi!");
-                    if (onInteractionCorrect) onInteractionCorrect();
-                  } else {
-                    toast.error("Thử lại nhé.");
-                  }
-                }}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="min-w-0 flex-1">{c?.text ?? ""}</span>
-                  <span className="text-lg">{c?.emoji ?? (isCorrect ? "🙂" : "☹️")}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+  if (block.blockType === "scenario-choice") {
+    return (
+      <ScenarioChoiceBlock
+        data={data}
+        onComplete={onInteractionCorrect ?? (() => { })}
+        isCompleted={isCompleted}
+        onIncorrect={onIncorrect ?? (() => { })}
+      />
+    );
+  }
+
+  if (block.blockType === "matching") {
+    return (
+      <MatchingBlock
+        data={data}
+        onComplete={onInteractionCorrect ?? (() => { })}
+        isCompleted={isCompleted}
+        onIncorrect={onIncorrect ?? (() => { })}
+      />
+    );
+  }
+
+  if (block.blockType === "fill-blank") {
+    return (
+      <FillBlankBlock
+        data={data}
+        onComplete={onInteractionCorrect ?? (() => { })}
+        isCompleted={isCompleted}
+        onIncorrect={onIncorrect ?? (() => { })}
+      />
     );
   }
 
   if (block.blockType === "sorting") {
-    return <SortingBlock data={data} onComplete={onInteractionCorrect ?? (() => { })} />;
+    return (
+      <SortingBlock
+        data={data}
+        onComplete={onInteractionCorrect ?? (() => { })}
+        isCompleted={isCompleted}
+        onIncorrect={onIncorrect ?? (() => { })}
+      />
+    );
   }
 
   if (block.blockType === "flashcard") {
-    return <FlashcardBlock data={data} onComplete={onInteractionCorrect ?? (() => { })} />;
+    return (
+      <FlashcardBlock
+        data={data}
+        onComplete={onInteractionCorrect ?? (() => { })}
+        isCompleted={isCompleted}
+      />
+    );
   }
 
   if (block.blockType === "reflection") {
@@ -539,18 +1152,84 @@ export default function LessonPage() {
   const activeMicro = microLessonsSorted[safeActiveMicroIndex] ?? null;
   const activeBlocks = useMemo(() => (activeMicro ? sortBlocks(activeMicro.blocks ?? []) : []), [activeMicro]);
 
-  const canPrevMicro = safeActiveMicroIndex > 0;
-  const canNextMicro = safeActiveMicroIndex < microLessonsSorted.length - 1;
+  const allContentMicrosCompleted = useMemo(() => {
+    return microLessonsSorted.every((ml) => isAssessmentMicro(ml) || ml.completed);
+  }, [microLessonsSorted]);
 
+  const canPrevMicro = safeActiveMicroIndex > 0;
+  const nextMicro = microLessonsSorted[safeActiveMicroIndex + 1] ?? null;
+  const isNextMicroLocked = nextMicro && isAssessmentMicro(nextMicro) && !allContentMicrosCompleted;
+  const canNextMicro = safeActiveMicroIndex < microLessonsSorted.length - 1 && !isNextMicroLocked;
+
+  const [completedBlockIds, setCompletedBlockIds] = useState<Set<number>>(new Set());
+  const [testLives, setTestLives] = useState(3);
+  const [testGameOver, setTestGameOver] = useState(false);
+  const [replayMode, setReplayMode] = useState(false);
+  const [resetNonce, setResetNonce] = useState(0);
   const [visibleBlocksCount, setVisibleBlocksCount] = useState(1);
 
+  const isAssessment = isAssessmentMicro(activeMicro);
+  const isLastMicro = safeActiveMicroIndex === microLessonsSorted.length - 1;
+
+  const totalContentMicros = useMemo(() => {
+    return microLessonsSorted.filter((ml) => !isAssessmentMicro(ml)).length;
+  }, [microLessonsSorted]);
+
+  const allInteractiveBlocksCompleted = useMemo(() => {
+    return activeBlocks.every((block) => {
+      const isInteractive = ["interaction", "sorting", "flashcard", "scenario-choice", "matching", "fill-blank"].includes(block.blockType);
+      return !isInteractive || completedBlockIds.has(block.id);
+    });
+  }, [activeBlocks, completedBlockIds]);
+
   useEffect(() => {
-    if (activeMicro?.completed) {
-      setVisibleBlocksCount(activeBlocks.length);
+    setTestLives(3);
+    setTestGameOver(false);
+    setReplayMode(false);
+
+    if (activeMicro) {
+      if (activeMicro.completed) {
+        setCompletedBlockIds(new Set(activeBlocks.map((b) => b.id)));
+        setVisibleBlocksCount(activeBlocks.length);
+      } else {
+        setCompletedBlockIds(new Set());
+        setVisibleBlocksCount(1);
+      }
     } else {
+      setCompletedBlockIds(new Set());
       setVisibleBlocksCount(1);
     }
-  }, [activeMicro?.id, activeMicro?.completed, activeBlocks.length]);
+  }, [activeMicro?.id, activeMicro?.completed, activeBlocks]);
+
+  const handleIncorrectAnswer = () => {
+    if (!isAssessment) {
+      toast.error("Chưa chính xác rồi. Hãy thử lại nhé! 🥺");
+      return;
+    }
+    setTestLives((prev) => {
+      const nextLives = prev - 1;
+      if (nextLives <= 0) {
+        setTestGameOver(true);
+        toast.error("Bài kiểm tra kết thúc! Bạn đã hết mạng.");
+      } else {
+        toast.error(`Chưa chính xác! Bạn còn ${nextLives} mạng.`);
+      }
+      return nextLives;
+    });
+  };
+
+  const handleBlockCompleted = (blockId: number) => {
+    setCompletedBlockIds((prev) => {
+      const next = new Set(prev);
+      next.add(blockId);
+      return next;
+    });
+
+    const currentIdx = activeBlocks.findIndex((b) => b.id === blockId);
+    if (currentIdx !== -1 && currentIdx === visibleBlocksCount - 1) {
+      setVisibleBlocksCount((v) => Math.min(activeBlocks.length, v + 1));
+    }
+  };
 
   const handleCompleteMicro = async (microLessonId: number) => {
     try {
@@ -561,24 +1240,30 @@ export default function LessonPage() {
       if (res.user) {
         syncUser(res.user);
       }
-      toast.success(`Đã hoàn thành phần học! (+${res.awardedXp} XP)`);
 
-      // Re-fetch current lesson to update micro completion status
       let updatedLesson = lesson;
       if (id) {
         updatedLesson = await apiRequest<Lesson>(`/lessons/${id}`);
         setLesson(updatedLesson);
       }
 
-      // Check if this was the last micro lesson based on sorted list
       const sortedList = sortMicroLessons(updatedLesson?.microLessons ?? []);
       const currentIndex = activeMicroIndex;
       const isLastMicro = currentIndex >= sortedList.length - 1;
 
+      if (!isLastMicro) {
+        toast.success(`Đã hoàn thành phần học! (+${res.awardedXp} XP)`);
+      }
+
       if (isLastMicro) {
         if (updatedLesson && res.user && !res.user.completedLessons.includes(updatedLesson.slug)) {
           await completeLesson(updatedLesson.slug);
-          toast.success(`🎉 Chúc mừng! Bạn đã hoàn thành toàn bộ bài học: ${updatedLesson.title}! (+${updatedLesson.xpReward} XP)`);
+          setTimeout(() => {
+            toast.success(
+              `🎉 Chúc mừng! Bạn đã hoàn thành toàn bộ bài học: ${updatedLesson.title}! (+${updatedLesson.xpReward} XP)`,
+              { duration: 5000 }
+            );
+          }, 1000);
         }
       } else if (currentIndex < sortedList.length - 1) {
         setActiveMicroIndex(currentIndex + 1);
@@ -587,6 +1272,43 @@ export default function LessonPage() {
       toast.error("Không thể hoàn thành phần học. Vui lòng thử lại.");
     }
   };
+
+  const isCompletingRef = useRef(false);
+
+  useEffect(() => {
+    isCompletingRef.current = false;
+  }, [activeMicro?.id]);
+
+  useEffect(() => {
+    if (
+      user &&
+      activeMicro &&
+      isAssessment &&
+      allInteractiveBlocksCompleted &&
+      visibleBlocksCount === activeBlocks.length &&
+      (!activeMicro.completed || !completed) &&
+      !replayMode &&
+      !testGameOver &&
+      !isCompletingRef.current
+    ) {
+      isCompletingRef.current = true;
+      handleCompleteMicro(activeMicro.id)
+        .finally(() => {
+          isCompletingRef.current = false;
+        });
+    }
+  }, [
+    user,
+    activeMicro?.id,
+    isAssessment,
+    allInteractiveBlocksCompleted,
+    visibleBlocksCount,
+    activeBlocks.length,
+    completed,
+    activeMicro?.completed,
+    replayMode,
+    testGameOver
+  ]);
 
   const courseHex =
     lesson?.courseColorTheme && /^#?[0-9a-fA-F]{3,6}$/.test(lesson.courseColorTheme)
@@ -598,6 +1320,106 @@ export default function LessonPage() {
   const accentStrong = mix(courseHex, "#000000", 0.35);
   const accentSoft = mix(courseHex, "#ffffff", 0.82);
   const accentBorder = mix(courseHex, "#ffffff", 0.55);
+
+  const renderCompletedSummary = () => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="detail-panel p-8 text-center flex flex-col items-center justify-center space-y-6 border border-mint/20 bg-mint/5"
+      >
+        <div className="relative">
+          <span className="text-6xl animate-bounce inline-block">🏆</span>
+          <span className="absolute -top-1 -right-1 text-2xl">✨</span>
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-foreground">Bạn đã chinh phục Thử thách!</h2>
+          <p className="text-[15px] text-foreground/74 max-w-md mx-auto leading-relaxed">
+            Chúc mừng bạn đã hoàn thành xuất sắc tất cả các trò chơi kiểm tra năng lực của bài học này và ghi nhớ kiến thức sâu sắc.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-4 justify-center pt-2">
+          <Button
+            onClick={() => {
+              setReplayMode(true);
+              setTestLives(3);
+              setTestGameOver(false);
+              setCompletedBlockIds(new Set());
+              setVisibleBlocksCount(1);
+              setResetNonce((n) => n + 1);
+            }}
+            className="rounded-full px-6 py-5 text-xs font-bold border border-primary text-primary bg-background hover:bg-primary/5 transition-all shadow-soft"
+          >
+            Chơi lại thử thách ↺
+          </Button>
+
+          {nextLesson ? (
+            <Button
+              onClick={() => navigate(`/lesson/${nextLesson.slug}`)}
+              className="rounded-full px-6 py-5 text-xs font-bold text-white transition-all shadow-soft animate-pulse"
+              style={{ backgroundColor: accentStrong }}
+            >
+              Đi đến bài học tiếp theo <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                if (lesson.courseId) {
+                  navigate(`/course/${lesson.courseId}`);
+                } else {
+                  navigate("/courses");
+                }
+              }}
+              className="rounded-full px-6 py-5 text-xs font-bold text-white transition-all shadow-soft"
+              style={{ backgroundColor: accentStrong }}
+            >
+              Quay lại lộ trình khóa học
+            </Button>
+          )}
+        </div>
+      </motion.div>
+    );
+  };
+
+  const renderGameOverView = () => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="detail-panel p-8 text-center flex flex-col items-center justify-center space-y-6 border border-peach/20 bg-peach/5"
+      >
+        <div className="relative">
+          <span className="text-6xl inline-block">😢</span>
+          <span className="absolute -top-1 -right-1 text-2xl">💔</span>
+        </div>
+
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-foreground">Hết lượt mất rồi!</h2>
+          <p className="text-[15px] text-foreground/74 max-w-md mx-auto leading-relaxed">
+            Bạn đã sử dụng hết 3 mạng trong bài kiểm tra này. Hãy ôn lại kiến thức và thử lại từ đầu nhé!
+          </p>
+        </div>
+
+        <div className="pt-2">
+          <Button
+            onClick={() => {
+              setTestLives(3);
+              setTestGameOver(false);
+              setCompletedBlockIds(new Set());
+              setVisibleBlocksCount(1);
+              setResetNonce((n) => n + 1);
+            }}
+            className="rounded-full px-8 py-5 text-xs font-bold text-white transition-all shadow-soft"
+            style={{ backgroundColor: accentStrong }}
+          >
+            Làm lại từ đầu ↺
+          </Button>
+        </div>
+      </motion.div>
+    );
+  };
 
   if (error) {
     return (
@@ -680,97 +1502,158 @@ export default function LessonPage() {
                 <p className="text-[15px] leading-7 text-foreground/74">{lesson.summary}</p>
               </div>
 
-              <div className="mt-8 rounded-[1.6rem] border p-5 shadow-soft" style={{ backgroundColor: accentSoft, borderColor: accentBorder }}>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: accentStrong }}>
-                  Micro lesson {activeMicro ? activeMicro.order : "-"} / {microLessonsSorted.length || 0}
-                </p>
+              <div
+                className="mt-8 rounded-[1.8rem] border p-6 shadow-soft transition-all duration-300 relative overflow-hidden"
+                style={
+                  isAssessment
+                    ? {
+                      background: `linear-gradient(135deg, ${accentSoft}, ${mix(accentSoft, "#FFFBEB", 0.5)})`,
+                      borderColor: "#F59E0B",
+                      borderWidth: "2px",
+                      boxShadow: "0 10px 30px -5px rgba(245, 158, 11, 0.12)",
+                    }
+                    : {
+                      backgroundColor: accentSoft,
+                      borderColor: accentBorder,
+                    }
+                }
+              >
+                {isAssessment && (
+                  <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-amber-500/5 blur-xl pointer-events-none" />
+                )}
 
-                <h2 className="mt-3 line-clamp-2 font-heading text-2xl font-bold text-foreground">
+                <div className="flex flex-wrap items-center gap-2 mb-2.5">
+                  {isAssessment ? (
+                    <div className="flex items-center gap-1.5">
+                      <Trophy className="h-4 w-4 text-amber-500 animate-pulse" />
+                      <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-amber-600 bg-amber-100/70 px-2.5 py-0.5 rounded-full border border-amber-200">
+                        Thử thách tổng kết
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: accentStrong }}>
+                      Micro lesson {activeMicro ? activeMicro.order : "-"} / {totalContentMicros || 0}
+                    </p>
+                  )}
+                </div>
+
+                <h2 className="line-clamp-2 font-heading text-2xl font-bold text-foreground">
                   {activeMicro ? activeMicro.title : "Chưa có micro lesson"}
                 </h2>
               </div>
 
-              {/* Timeline blocks (FIXED: no extra/offset line) */}
+              {isAssessment && (!activeMicro.completed || replayMode) && !testGameOver && (
+                <div className="mt-4 flex items-center justify-between p-4 rounded-[1.2rem] bg-background/60 border border-white/80 shadow-soft">
+                  <span className="text-sm font-bold text-foreground/75 flex items-center gap-1.5">
+                    🎮 Thử thách sinh tồn (Đồng bộ 3 mạng):
+                  </span>
+                  <div className="flex gap-1.5 items-center">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ scale: 1 }}
+                        animate={i >= testLives ? { scale: [1, 1.4, 0.9, 1] } : {}}
+                        transition={{ duration: 0.3 }}
+                        className="text-2xl"
+                      >
+                        {i < testLives ? "❤️" : "🖤"}
+                      </motion.span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Timeline blocks */}
               <div className="mt-8 space-y-6">
                 {activeMicro ? (
-                  activeBlocks.slice(0, visibleBlocksCount).map((block, idx) => {
-                    const isLastVisible = idx === visibleBlocksCount - 1;
-                    const isLastBlock = idx === activeBlocks.length - 1;
-                    const showContinueButton =
-                      isLastVisible &&
-                      !isLastBlock &&
-                      !["interaction", "sorting", "flashcard"].includes(block.blockType);
+                  isAssessment && activeMicro.completed && !replayMode ? (
+                    renderCompletedSummary()
+                  ) : isAssessment && testGameOver ? (
+                    renderGameOverView()
+                  ) : (
+                    activeBlocks.slice(0, visibleBlocksCount).map((block, idx) => {
+                      const isLastVisible = idx === visibleBlocksCount - 1;
+                      const isLastBlock = idx === activeBlocks.length - 1;
+                      const showContinueButton =
+                        isLastVisible &&
+                        !isLastBlock &&
+                        !["interaction", "sorting", "flashcard", "scenario-choice", "matching", "fill-blank"].includes(block.blockType);
 
-                    return (
-                      <motion.div
-                        key={block.id}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35, ease: "easeOut" }}
-                        className="relative md:pl-14"
-                      >
-                        {/* connector to next bubble - only if next is visible */}
-                        {idx < visibleBlocksCount - 1 ? (
-                          <div
-                            className="absolute left-[19px] top-[60px] bottom-[-54px] w-px hidden md:block"
-                            style={{
-                              backgroundColor: accentBorder,
-                            }}
-                          />
-                        ) : null}
-
-                        {/* left timeline column */}
-                        <div className="absolute left-0 top-6 hidden w-10 md:block">
-                          {/* bubble */}
-                          <div
-                            className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white shadow-soft"
-                            style={{ backgroundColor: accentStrong }}
-                          >
-                            {idx + 1}
-                          </div>
-                        </div>
-
-                        {/* card */}
-                        <div className="rounded-[1.8rem] border border-white/70 bg-card/90 p-5 shadow-card">
-                          <p
-                            className="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
-                            style={{ backgroundColor: accentSoft, color: accentStrong }}
-                          >
-                            {blockLabel(block.blockType)}
-                          </p>
-
-                          {renderBlockContent(block, () => {
-                            if (!isLastBlock) {
-                              setVisibleBlocksCount((v) => Math.min(activeBlocks.length, v + 1));
-                            }
-                          })}
-
-                          {showContinueButton ? (
-                            <div className="mt-4 flex justify-end">
-                              <Button
-                                onClick={() => setVisibleBlocksCount((v) => Math.min(activeBlocks.length, v + 1))}
-                                className="rounded-full px-5 py-2 text-xs font-semibold text-white transition-all shadow-soft"
-                                style={{ backgroundColor: accentStrong }}
-                              >
-                                Tiếp tục <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                              </Button>
-                            </div>
+                      return (
+                        <motion.div
+                          key={`${block.id}-${resetNonce}`}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.35, ease: "easeOut" }}
+                          className="relative md:pl-14"
+                        >
+                          {idx < visibleBlocksCount - 1 ? (
+                            <div
+                              className="absolute left-[19px] top-[60px] bottom-[-54px] w-px hidden md:block"
+                              style={{
+                                backgroundColor: accentBorder,
+                              }}
+                            />
                           ) : null}
-                        </div>
-                      </motion.div>
-                    );
-                  })
+
+                          <div className="absolute left-0 top-6 hidden w-10 md:block">
+                            <div
+                              className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white shadow-soft"
+                              style={{ backgroundColor: accentStrong }}
+                            >
+                              {idx + 1}
+                            </div>
+                          </div>
+
+                          <div className="rounded-[1.8rem] border border-white/70 bg-card/90 p-5 shadow-card">
+                            <p
+                              className="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
+                              style={{ backgroundColor: accentSoft, color: accentStrong }}
+                            >
+                              {blockLabel(block.blockType)}
+                            </p>
+
+                            {renderBlockContent(
+                              block,
+                              () => handleBlockCompleted(block.id),
+                              completedBlockIds.has(block.id),
+                              handleIncorrectAnswer
+                            )}
+
+                            {showContinueButton ? (
+                              <div className="mt-4 flex justify-end">
+                                <Button
+                                  onClick={() => setVisibleBlocksCount((v) => Math.min(activeBlocks.length, v + 1))}
+                                  className="rounded-full px-5 py-2 text-xs font-semibold text-white transition-all shadow-soft"
+                                  style={{ backgroundColor: accentStrong }}
+                                >
+                                  Tiếp tục <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                                </Button>
+                              </div>
+                            ) : null}
+                          </div>
+                        </motion.div>
+                      );
+                    })
+                  )
                 ) : (
                   <p className="text-sm text-foreground/70">Bài học này chưa có micro lessons.</p>
                 )}
               </div>
 
               {/* Complete Micro Lesson Button */}
-              {user && activeMicro && !activeMicro.completed && visibleBlocksCount === activeBlocks.length ? (
+              {user && activeMicro && !isAssessment && (!activeMicro.completed || replayMode) && !testGameOver && visibleBlocksCount === activeBlocks.length && allInteractiveBlocksCompleted ? (
                 <div className="mt-8 flex justify-center">
                   <Button
-                    onClick={() => void handleCompleteMicro(activeMicro.id)}
-                    className="rounded-full px-8 py-5 text-sm font-semibold text-white transition-all shadow-soft hover:shadow-hover"
+                    onClick={() => {
+                      if (replayMode) {
+                        toast.success("Thử thách đã hoàn thành (Chế độ chơi lại)!");
+                        setReplayMode(false);
+                      } else {
+                        void handleCompleteMicro(activeMicro.id);
+                      }
+                    }}
+                    className="rounded-full px-8 py-5 text-sm font-semibold text-white transition-all shadow-soft hover:shadow-hover animate-pulse"
                     style={{ backgroundColor: accentStrong }}
                   >
                     Hoàn thành phần học này (+10 XP)
@@ -828,45 +1711,116 @@ export default function LessonPage() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Danh sách micro lessons</p>
 
               <div className="mt-4 space-y-3">
-                {microLessonsSorted.map((ml, idx) => (
-                  <button
-                    key={ml.id}
-                    onClick={() => setActiveMicroIndex(idx)}
-                    className={`w-full rounded-[1.1rem] px-4 py-3 text-left text-sm transition-colors ${idx === safeActiveMicroIndex ? "text-foreground" : "text-foreground/80 hover:text-foreground"
-                      }`}
-                    style={{
-                      backgroundColor: idx === safeActiveMicroIndex ? accentSoft : "rgba(255,255,255,0.72)",
-                      border: idx === safeActiveMicroIndex ? `1px solid ${accentBorder}` : "1px solid rgba(255,255,255,0.65)",
-                    }}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span
-                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                          style={{
-                            backgroundColor: idx === safeActiveMicroIndex ? accentStrong : "rgba(0, 0, 0, 0.06)",
-                            color: idx === safeActiveMicroIndex ? "white" : "inherit",
-                          }}
-                        >
-                          {ml.order}
-                        </span>
-                        <span className="min-w-0 truncate font-semibold">
-                          {ml.title}
-                        </span>
-                      </div>
+                {microLessonsSorted.map((ml, idx) => {
+                  const isLocked = isAssessmentMicro(ml) && !allContentMicrosCompleted;
+                  const isAssessment = isAssessmentMicro(ml);
+                  const isActive = idx === safeActiveMicroIndex;
 
-                      <div className="shrink-0 flex items-center gap-1.5">
-                        {ml.completed ? (
-                          <CheckCircle2 className="h-5 w-5 text-emerald-500 fill-emerald-50" />
-                        ) : idx === safeActiveMicroIndex ? (
-                          <PlayCircle className="h-5 w-5 text-primary" />
-                        ) : (
-                          <span className="text-xs text-foreground/55 font-medium">{(ml.blocks?.length ?? 0)} cards</span>
-                        )}
+                  let buttonStyle: React.CSSProperties = {};
+                  let buttonClass = "";
+
+                  if (isLocked) {
+                    buttonStyle = {
+                      backgroundColor: "rgba(243, 244, 246, 0.5)",
+                      border: "1px dashed rgba(156, 163, 175, 0.5)",
+                      cursor: "not-allowed",
+                      opacity: 0.7,
+                    };
+                    buttonClass = "text-foreground/50";
+                  } else if (isAssessment) {
+                    if (isActive) {
+                      buttonStyle = {
+                        background: `linear-gradient(135deg, ${accentStrong}, ${mix(accentStrong, "#000000", 0.2)})`,
+                        border: "2px solid #F59E0B",
+                        boxShadow: "0 0 12px rgba(245, 158, 11, 0.35)",
+                        color: "white",
+                      };
+                    } else {
+                      buttonStyle = {
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        border: `2px dashed ${accentBorder}`,
+                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.04)",
+                        color: "inherit",
+                      };
+                    }
+                  } else {
+                    if (isActive) {
+                      buttonStyle = {
+                        backgroundColor: accentSoft,
+                        border: `1px solid ${accentBorder}`,
+                        color: "inherit",
+                      };
+                    } else {
+                      buttonStyle = {
+                        backgroundColor: "rgba(255,255,255,0.72)",
+                        border: "1px solid rgba(255,255,255,0.65)",
+                        color: "inherit",
+                      };
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={ml.id}
+                      onClick={() => {
+                        if (isLocked) {
+                          toast.error("Vui lòng học xong tất cả các phần học trước để mở khóa bài kiểm tra! 🔒");
+                          return;
+                        }
+                        setActiveMicroIndex(idx);
+                      }}
+                      className={`w-full rounded-[1.1rem] px-4 py-3 text-left text-sm transition-colors ${buttonClass}`}
+                      style={buttonStyle}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span
+                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold animate-transition"
+                            style={{
+                              backgroundColor: isAssessment
+                                ? isActive
+                                  ? "#F59E0B"
+                                  : "rgba(245, 158, 11, 0.15)"
+                                : isActive
+                                  ? accentStrong
+                                  : "rgba(0, 0, 0, 0.06)",
+                              color: isAssessment
+                                ? isActive
+                                  ? "white"
+                                  : "#D97706"
+                                : isActive
+                                  ? "white"
+                                  : "inherit",
+                            }}
+                          >
+                            {isAssessment ? (
+                              <Trophy className="h-3.5 w-3.5" />
+                            ) : (
+                              ml.order
+                            )}
+                          </span>
+                          <span className={`min-w-0 truncate font-semibold ${isActive && isAssessment ? "text-white" : ""}`}>
+                            {ml.title}
+                          </span>
+                        </div>
+
+                        <div className="shrink-0 flex items-center gap-1.5">
+                          {isLocked ? (
+                            <Lock className="h-4 w-4 text-foreground/45" />
+                          ) : ml.completed ? (
+                            <CheckCircle2 className="h-5 w-5 text-emerald-500 fill-emerald-50" />
+                          ) : isActive ? (
+                            <PlayCircle className={`h-5 w-5 ${isAssessment ? "text-amber-400" : "text-primary"}`} />
+                          ) : (
+                            <span className={`text-xs font-medium ${isAssessment ? "text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-100" : "text-foreground/55"}`}>
+                              {isAssessment ? "Challenge" : `${(ml.blocks?.length ?? 0)} cards`}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -898,7 +1852,6 @@ export default function LessonPage() {
               </div>
             </div>
 
-            {/* Lesson Sources Card */}
             {lesson.sources && lesson.sources.length > 0 ? (
               <div className="rounded-[2rem] gradient-card p-6 shadow-card">
                 <div className="flex items-center gap-3">
