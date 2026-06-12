@@ -25,8 +25,12 @@ import vn.educare.backend.repository.MicroLessonBlockRepository;
 import vn.educare.backend.repository.MicroLessonRepository;
 import vn.educare.backend.repository.QuizQuestionRepository;
 import vn.educare.backend.api.AuthDtos.CourseResponse;
+import vn.educare.backend.api.AuthDtos.CategoryResponse;
 import vn.educare.backend.api.AuthDtos.LessonSourceResponse;
+import vn.educare.backend.api.AuthDtos.RecommendQuestionResponse;
 import vn.educare.backend.api.CurrentUser;
+import vn.educare.backend.model.RecommendQuestionEntity;
+import vn.educare.backend.repository.RecommendQuestionRepository;
 import vn.educare.backend.model.CourseEntity;
 import vn.educare.backend.model.LessonSourceEntity;
 import vn.educare.backend.model.MicroLessonProgressEntity;
@@ -34,9 +38,11 @@ import vn.educare.backend.repository.CourseRepository;
 import vn.educare.backend.repository.LessonSourceRepository;
 import vn.educare.backend.repository.MicroLessonProgressRepository;
 import vn.educare.backend.repository.CourseEnrollmentRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ContentService {
 
   private final LessonRepository lessonRepository;
@@ -52,6 +58,7 @@ public class ContentService {
   private final MicroLessonProgressRepository microLessonProgressRepository;
   private final LessonSourceRepository lessonSourceRepository;
   private final CourseEnrollmentRepository courseEnrollmentRepository;
+  private final RecommendQuestionRepository recommendQuestionRepository;
 
 
   private final ObjectMapper objectMapper;
@@ -201,6 +208,18 @@ public CourseResponse course(Long id) {
       enrolled = courseEnrollmentRepository.existsByUserIdAndCourseId(userId, course.getId());
     }
 
+    CategoryResponse categoryResponse = null;
+    if (course.getCategory() != null) {
+      var cat = course.getCategory();
+      categoryResponse = new CategoryResponse(
+          cat.getId(),
+          cat.getSlug(),
+          cat.getName(),
+          cat.getIcon(),
+          cat.getColorTheme()
+      );
+    }
+
     return new CourseResponse(
         course.getId(),
         course.getTitle(),
@@ -209,7 +228,8 @@ public CourseResponse course(Long id) {
         course.getColorTheme(),
         course.getCourseOrder(),
         lessons,
-        enrolled
+        enrolled,
+        categoryResponse
     );
   }
 
@@ -254,6 +274,7 @@ public CourseResponse course(Long id) {
         Boolean.TRUE.equals(game.getIsPublished()));
   }
 
+  @Transactional
   public void enroll(Long courseId) {
     String userId = currentUser.id();
     if (!courseRepository.existsById(courseId)) {
@@ -277,5 +298,26 @@ public CourseResponse course(Long id) {
         .stream()
         .map(this::toCourseResponse)
         .toList();
+  }
+
+  public List<RecommendQuestionResponse> recommendQuestions() {
+    return recommendQuestionRepository.findAllByOrderByQuestionOrderAsc()
+        .stream()
+        .map(this::toRecommendQuestionResponse)
+        .toList();
+  }
+
+  private RecommendQuestionResponse toRecommendQuestionResponse(RecommendQuestionEntity entity) {
+    String targetTag = null;
+    if (entity.getCategory() != null) {
+      targetTag = entity.getCategory().getSlug();
+    }
+    return new RecommendQuestionResponse(
+        entity.getId(),
+        entity.getEmoji(),
+        entity.getQuestion(),
+        entity.getReason(),
+        targetTag
+    );
   }
 }

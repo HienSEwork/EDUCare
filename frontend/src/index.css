@@ -211,6 +211,13 @@
     border-color: hsl(var(--border) / 0.9);
     background: hsl(0 0% 100% / 0.72);
   }
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes driftAura {

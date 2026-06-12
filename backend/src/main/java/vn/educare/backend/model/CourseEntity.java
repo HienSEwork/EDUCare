@@ -30,6 +30,10 @@ public class CourseEntity {
   @Column(name = "course_order")
   private Integer courseOrder;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id")
+  private CategoryEntity category;
+
   @Column(name = "created_at")
   private Instant createdAt;
 

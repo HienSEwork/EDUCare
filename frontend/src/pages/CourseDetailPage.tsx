@@ -36,6 +36,22 @@ export default function CourseDetailPage() {
       });
   }, [id]);
 
+  // Reset scroll to top when loading is finished and content is fully rendered
+  useEffect(() => {
+    if (!isLoading) {
+      // Temporarily disable smooth scrolling for instant jump
+      const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTo(0, 0);
+      document.body.scrollTo(0, 0);
+
+      // Restore original scrolling behavior
+      document.documentElement.style.scrollBehavior = originalScrollBehavior;
+    }
+  }, [isLoading]);
+
   const handleEnroll = async () => {
     if (!course) return;
 
@@ -175,99 +191,242 @@ export default function CourseDetailPage() {
         {/* Syllabus / Syllabus Section */}
         <section className="mt-10 grid gap-8 lg:grid-cols-[2.7fr_1.3fr]">
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                <BookOpen className="h-5 w-5 text-primary" />
-              </span>
-              <h2 className="font-heading text-2xl font-bold text-foreground">Nội dung khóa học (Syllabus)</h2>
-            </div>
-
-            <div className="space-y-4">
-              {course.lessons.map((lesson, idx) => {
-                const completed = user?.completedLessons.includes(lesson.slug);
-                const isFree = lesson.isFree;
+            {(() => {
+              const themeColor = course.colorTheme && /^#?[0-9a-fA-F]{3,6}$/.test(course.colorTheme)
+                ? course.colorTheme.startsWith("#") ? course.colorTheme : `#${course.colorTheme}`
+                : "#7C3AED";
+              
+              const nextActiveLessonSlug = course.lessons?.find((l) => {
+                const completed = user?.completedLessons.includes(l.slug);
+                const isFree = l.isFree;
                 const userIsPremium = user?.plan === "premium" || user?.plan === "popular";
                 const isLocked = !isFree && !userIsPremium;
+                return !completed && !isLocked;
+              })?.slug || null;
 
-                const cardContent = (
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-bold ${
-                        completed ? "bg-mint/20 text-mint-foreground" : "bg-primary/10 text-primary"
-                      }`}
-                    >
-                      {completed ? <CheckCircle2 className="h-5 w-5" /> : idx + 1}
-                    </div>
+              return (
+                <>
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-300" style={{ backgroundColor: `${themeColor}18` }}>
+                      <BookOpen className="h-5 w-5" style={{ color: themeColor }} />
+                    </span>
+                    <h2 className="font-heading text-2xl font-bold text-foreground">Nội dung khóa học (Syllabus)</h2>
+                  </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-semibold text-lg text-foreground">{lesson.title}</h3>
-                        {isFree ? (
-                          <span className="rounded-full bg-teal/12 px-2.5 py-0.5 text-[10px] font-bold text-teal-foreground">
+                  <div className="space-y-4">
+                    {course.lessons.map((lesson, idx) => {
+                      const completed = user?.completedLessons.includes(lesson.slug);
+                      const isFree = lesson.isFree;
+                      const userIsPremium = user?.plan === "premium" || user?.plan === "popular";
+                      const isLocked = !isFree && !userIsPremium;
+                      const isActivePlayable = lesson.slug === nextActiveLessonSlug;
+
+                      let cardStyle: React.CSSProperties = {};
+                      let accentBarStyle: React.CSSProperties = {};
+                      let iconStyle: React.CSSProperties = {};
+                      let iconElement: React.ReactNode = null;
+                      let badgeElement: React.ReactNode = null;
+                      let titleColorStyle: React.CSSProperties = {};
+
+                      if (isLocked) {
+                        cardStyle = {
+                          backgroundColor: "rgba(243, 244, 246, 0.45)",
+                          borderColor: "rgba(156, 163, 175, 0.25)",
+                          borderStyle: "dashed",
+                          opacity: 0.65,
+                          cursor: "not-allowed",
+                        };
+                        accentBarStyle = {
+                          width: "4px",
+                          backgroundColor: "#94A3B8",
+                        };
+                        iconStyle = {
+                          backgroundColor: "rgba(0, 0, 0, 0.04)",
+                          color: "rgba(0, 0, 0, 0.35)",
+                          border: "1px solid rgba(0, 0, 0, 0.08)",
+                        };
+                        iconElement = <Lock className="h-4 w-4 shrink-0 text-slate-400" />;
+                        badgeElement = (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[10px] font-bold text-slate-500">
+                            <Lock className="h-2.5 w-2.5" />
+                            Chưa mở khóa
+                          </span>
+                        );
+                      } else if (completed) {
+                        cardStyle = {
+                          background: "linear-gradient(135deg, rgba(240, 253, 250, 0.85) 0%, rgba(244, 252, 249, 0.55) 100%)",
+                          borderColor: "rgba(16, 185, 129, 0.22)",
+                        };
+                        accentBarStyle = {
+                          width: "6px",
+                          backgroundColor: "#10B981",
+                        };
+                        iconStyle = {
+                          backgroundColor: "rgba(16, 185, 129, 0.12)",
+                          color: "#10B981",
+                          border: "1px solid rgba(16, 185, 129, 0.2)",
+                        };
+                        iconElement = <CheckCircle2 className="h-5 w-5 text-emerald-500" />;
+                        badgeElement = (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600">
+                            <CheckCircle2 className="h-2.5 w-2.5" />
+                            Hoàn thành
+                          </span>
+                        );
+                        titleColorStyle = {
+                          color: "#064e3b",
+                          opacity: 0.85,
+                        };
+                      } else if (isActivePlayable) {
+                        cardStyle = {
+                          background: `linear-gradient(135deg, rgba(255, 255, 255, 0.99), ${themeColor}08)`,
+                          borderColor: themeColor,
+                          borderWidth: "2px",
+                          boxShadow: `0 16px 36px -12px ${themeColor}2e, 0 8px 20px -8px ${themeColor}1a`,
+                          ["--hover-shadow" as any]: `0 24px 48px -12px ${themeColor}45`,
+                        };
+                        accentBarStyle = {
+                          width: "8px",
+                          background: `linear-gradient(180deg, ${themeColor}, #ec4899)`,
+                        };
+                        iconStyle = {
+                          background: `linear-gradient(135deg, ${themeColor}, ${themeColor}bb)`,
+                          color: "white",
+                          boxShadow: `0 4px 12px ${themeColor}40`,
+                        };
+                        iconElement = <PlayCircle className="h-5 w-5 animate-pulse" />;
+                        badgeElement = (
+                          <span
+                            className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-black text-white animate-pulse shadow-sm"
+                            style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)" }}
+                          >
+                            <Sparkles className="h-2.5 w-2.5" />
+                            Học tiếp
+                          </span>
+                        );
+                        titleColorStyle = {
+                          color: themeColor,
+                          fontWeight: 800,
+                        };
+                      } else {
+                        cardStyle = {
+                          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)",
+                          borderColor: "rgba(229, 231, 235, 0.75)",
+                        };
+                        accentBarStyle = {
+                          width: "4px",
+                          backgroundColor: themeColor + "60",
+                        };
+                        iconStyle = {
+                          backgroundColor: themeColor + "08",
+                          color: themeColor,
+                          border: `1px solid ${themeColor}20`,
+                        };
+                        iconElement = idx + 1;
+                        badgeElement = isFree ? (
+                          <span className="rounded-full bg-teal-500/10 border border-teal-500/20 px-2.5 py-0.5 text-[10px] font-bold text-teal-600">
                             Học thử
                           </span>
                         ) : (
-                          <span className="rounded-full bg-pink/12 px-2.5 py-0.5 text-[10px] font-bold text-pink-foreground">
+                          <span
+                            className="rounded-full px-2.5 py-0.5 text-[10px] font-bold border"
+                            style={{
+                              backgroundColor: themeColor + "10",
+                              borderColor: themeColor + "30",
+                              color: themeColor,
+                            }}
+                          >
                             Nâng cao
                           </span>
-                        )}
-                        {completed && (
-                          <span className="rounded-full bg-mint/12 px-2.5 py-0.5 text-[10px] font-bold text-mint-foreground">
-                            Hoàn thành
-                          </span>
-                        )}
-                        {isLocked && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-bold text-muted-foreground">
-                            <Lock className="h-3 w-3" />
-                            Khóa
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{lesson.summary}</p>
-                      <p className="mt-2 text-[11px] text-muted-foreground/80">
-                        {lesson.estimatedMinutes} phút học • +{lesson.xpReward} XP
-                      </p>
-                    </div>
+                        );
+                      }
+
+                      const cardContent = (
+                        <div className="flex items-start gap-4 w-full">
+                          {/* Left Accent Bar */}
+                          <div
+                            className="absolute left-0 top-0 bottom-0 transition-all duration-300 rounded-l-[1.6rem]"
+                            style={accentBarStyle}
+                          />
+
+                          {/* Icon container */}
+                          <div
+                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-bold transition-all duration-300 ${
+                              isActivePlayable ? "ring-4 ring-primary/10" : ""
+                            }`}
+                            style={iconStyle}
+                          >
+                            {iconElement}
+                          </div>
+
+                          {/* Text content */}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3
+                                className="font-heading text-lg transition-colors group-hover:text-primary"
+                                style={titleColorStyle}
+                              >
+                                {lesson.title}
+                              </h3>
+                              {badgeElement}
+                            </div>
+                            <p className="mt-1.5 text-sm text-slate-600/90 leading-relaxed font-medium">
+                              {lesson.summary}
+                            </p>
+                            <p className="mt-2 text-[11px] text-muted-foreground/80 font-semibold tracking-wide uppercase">
+                              {lesson.estimatedMinutes} phút học • +{lesson.xpReward} XP
+                            </p>
+                          </div>
+                        </div>
+                      );
+
+                      if (!course.enrolled && !isFree) {
+                        // Lock advanced lessons if not enrolled
+                        return (
+                          <div
+                            key={lesson.slug}
+                            onClick={() => toast.info("Vui lòng bấm 'Đăng ký học' ở trên để mở khóa các bài học nâng cao!")}
+                            className="relative overflow-hidden rounded-[1.6rem] border p-5 pl-8 shadow-soft transition-all duration-300 hover:shadow-md cursor-pointer"
+                            style={cardStyle}
+                          >
+                            {cardContent}
+                          </div>
+                        );
+                      }
+
+                      if (isLocked) {
+                        // Lock if premium and user is free
+                        return (
+                          <div
+                            key={lesson.slug}
+                            onClick={() => toast.warning("Bài học này thuộc gói nâng cao, vui lòng nâng cấp tài khoản!")}
+                            className="relative overflow-hidden rounded-[1.6rem] border p-5 pl-8 shadow-soft transition-all duration-300 hover:shadow-md cursor-not-allowed"
+                            style={cardStyle}
+                          >
+                            {cardContent}
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <Link
+                          key={lesson.slug}
+                          to={`/lesson/${lesson.slug}`}
+                          className={`relative overflow-hidden block rounded-[1.6rem] border p-5 pl-8 shadow-soft transition-all duration-300 group hover:-translate-y-0.5 ${
+                            isActivePlayable
+                              ? "hover:scale-[1.025] hover:[box-shadow:var(--hover-shadow)]"
+                              : "hover:scale-[1.015] hover:shadow-hover"
+                          }`}
+                          style={cardStyle}
+                        >
+                          {cardContent}
+                        </Link>
+                      );
+                    })}
                   </div>
-                );
-
-                if (!course.enrolled && !isFree) {
-                  // Lock advanced lessons if not enrolled
-                  return (
-                    <div
-                      key={lesson.slug}
-                      onClick={() => toast.info("Vui lòng bấm 'Đăng ký học' ở trên để mở khóa các bài học nâng cao!")}
-                      className="rounded-[1.6rem] border border-white/60 bg-card/60 p-5 shadow-soft opacity-70 cursor-pointer hover:border-primary/20 transition-all"
-                    >
-                      {cardContent}
-                    </div>
-                  );
-                }
-
-                if (isLocked) {
-                  // Lock if premium and user is free
-                  return (
-                    <div
-                      key={lesson.slug}
-                      onClick={() => toast.warning("Bài học này thuộc gói nâng cao, vui lòng nâng cấp tài khoản!")}
-                      className="rounded-[1.6rem] border border-white/60 bg-card/60 p-5 shadow-soft opacity-70 cursor-pointer hover:border-destructive/20 transition-all"
-                    >
-                      {cardContent}
-                    </div>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={lesson.slug}
-                    to={`/lesson/${lesson.slug}`}
-                    className="block rounded-[1.6rem] border border-white/70 bg-card/90 p-5 shadow-soft hover:shadow-hover hover:border-primary/20 transition-all"
-                  >
-                    {cardContent}
-                  </Link>
-                );
-              })}
-            </div>
+                </>
+              );
+            })()}
           </div>
 
           {/* Right sidebar */}
