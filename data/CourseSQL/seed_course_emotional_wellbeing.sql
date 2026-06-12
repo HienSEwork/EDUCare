@@ -104,9 +104,112 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Bạn đã từng thử viết ra những suy nghĩ của mình khi tức giận chưa? Cảm giác lúc đó thế nào?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Đầu óc dùng để suy nghĩ chứ không phải để lưu trữ lo âu. Hãy trút bỏ chúng ra trang giấy."]}', 6);
 
+-- --- Micro Lesson 1.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson1_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Ủa, Sao Dạo Này Tâm Trạng Bão Bùng Quá?''! Bạn có 3 mạng để đón nhận cảm xúc và làm hòa với ngày low-energy."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Đón nhận cảm xúc và làm hòa với ngày low-energy",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Vy đi học về trong trạng thái mệt mỏi, uể oải rã rời (low-energy day) sau một tuần thi cử căng thẳng. Vừa bước chân vào nhà, mẹ Vy đã cằn nhằn: ''Sao đi học về không dọn ngay phòng đi, bừa bộn như cái ổ gà!''. Vy thấy lồng ngực nghẹn lại, cơn giận dữ và bất bình bỗng dưng dâng lên cuồn cuộn.",
+      "choices": [
+        { "text": "Nổi đóa, hét lên với mẹ: ''Con mệt lắm rồi, mẹ suốt ngày chỉ biết cằn nhằn thôi!'' rồi chạy vào phòng đóng sập cửa.", "nextNode": "fail_explode" },
+        { "text": "Dừng lại thở sâu 3 giây để hạ nhiệt hạch hạnh nhân, nói nhẹ nhàng: ''Mẹ ơi, hôm nay con đi học về mệt quá. Mẹ cho con nằm nghỉ 30 phút rồi con dậy dọn phòng sạch sẽ nha mẹ!''.", "nextNode": "step2" },
+        { "text": "Cố kìm nén cơn giận, lẳng lặng đi dọn phòng ngay lập tức với thái độ ấm ức, vừa dọn vừa khóc vì tủi thân.", "nextNode": "fail_suppress" }
+      ]
+    },
+    "step2": {
+      "text": "Mẹ Vy lắng nghe giọng nói bình tĩnh của bạn, liền dịu giọng xuống và đồng ý: ''Ừ, thế vào nghỉ ngơi đi con''. Vy vào phòng nằm nghỉ, nhưng trong lòng vẫn còn những suy nghĩ ngổn ngang, bứt rứt vì bài kiểm tra tiếng Anh đạt điểm không như ý.",
+      "choices": [
+        { "text": "Mở điện thoại lướt mạng xã hội liên tục để trốn tránh cảm giác khó chịu và xem các bạn khác có đăng bài khoe điểm không.", "nextNode": "fail_avoid" },
+        { "text": "Lấy một cuốn sổ nhỏ, viết tự do tất cả những lo lắng, ấm ức trong đầu ra trang giấy mà không cần câu cú hoàn chỉnh (journaling).", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau khi viết nhật ký, Vy thấy đầu óc nhẹ nhõm hẳn. Tuy nhiên, Vy tự hỏi liệu ngày hôm nay năng lượng thấp và buồn bã vô cớ như vậy có phải là mình đang trở nên yếu đuối và tệ hại đi không?",
+      "choices": [
+        { "text": "Tự nhủ: ''Một ngày low-energy là tín hiệu cơ thể cần sạc pin. Cảm xúc đi xuống cũng bình thường, mình không cần phải luôn hoàn hảo''.", "nextNode": "success_end" },
+        { "text": "Tự trách: ''Chắc chắn do mình lười biếng và kém cỏi hơn các bạn nên mới tụt mood thế này, phải cố vui lên mới được!''.", "nextNode": "fail_self_blame" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Tuyệt vời! Bạn đã gọi tên cảm xúc thành công, biết cách sạc lại năng lượng cho ngày low-energy và trút bỏ overthinking lành mạnh qua trang viết.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_explode": {
+      "text": "❌ Chưa đúng! Cơn giận bộc phát khiến bạn mất kiểm soát, làm tổn thương mẹ và để lại cảm giác tội lỗi, dằn vặt sau đó.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_suppress": {
+      "text": "❌ Chưa đúng! Đè nén cảm xúc khó chịu và ép bản thân làm việc khi kiệt sức chỉ khiến quả bóng cảm xúc tiêu cực phình to và dễ nổ tung sau đó.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_avoid": {
+      "text": "❌ Sai rồi! Trốn tránh bằng mạng xã hội chỉ mang lại sự xao nhãng tạm thời, nhưng việc so sánh điểm số trên mạng lại dễ kích hoạt overthinking sâu sắc hơn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_self_blame": {
+      "text": "❌ Sai rồi! Gán nhãn toxic cho nỗi buồn và ép mình luôn tích cực chỉ làm gia tăng sự căng thẳng và từ chối nhu cầu tự nhiên của cơ thể.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các phản ứng với cảm xúc tiêu cực:",
+  "leftBox": { "title": "Đón nhận cảm xúc lành mạnh" },
+  "rightBox": { "title": "Chối bỏ, đè nén hoặc trút giận" },
+  "items": [
+    { "text": "Cho phép bản thân khóc và buồn khi gặp thất bại", "correctBox": "left" },
+    { "text": "Cố tỏ ra vui cười, giả vờ ổn để người khác không thấy mình yếu đuối", "correctBox": "right" },
+    { "text": "Tự viết nhật ký trút hết nỗi tức giận ra giấy rồi xé bỏ", "correctBox": "left" },
+    { "text": "Cáu gắt và quát mắng em nhỏ để trút bỏ sự bực bội trong lòng", "correctBox": "right" },
+    { "text": "Tự nhủ: Cảm xúc này là bình thường và nó sẽ trôi qua sau khi mình nghỉ ngơi", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp các khái niệm cảm xúc dậy thì và định nghĩa tương ứng:",
+  "pairs": [
+    { "left": "Hormone tuổi dậy thì", "right": "Chất hóa học tăng vọt kích hoạt cảm xúc thất thường như biểu đồ hình sin." },
+    { "left": "Hạch hạnh nhân - Amygdala", "right": "Vùng não kiểm soát cảm xúc, hoạt động cực nhạy bén ở tuổi teen." },
+    { "left": "Nhật ký tự do", "right": "Nơi trút bầu tâm sự, viết ra mọi suy nghĩ ngổn ngang để dọn dẹp bộ não." },
+    { "left": "Low-energy days", "right": "Những ngày năng lượng thấp, cơ thể phát tín hiệu cần được nghỉ ngơi sạc pin." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về cách làm bạn với cảm xúc:",
+  "sentence": "Ở tuổi dậy thì, các [blank1] tăng vọt kích hoạt vùng [blank2] làm bạn nhạy cảm hơn. Khi gặp ngày ít năng lượng, đừng gán nhãn [blank3] cho nỗi buồn, hãy viết [blank4] để giải tỏa overthinking.",
+  "blanks": {
+    "blank1": { "correct": "hormone", "placeholder": "..." },
+    "blank2": { "correct": "hạch hạnh nhân", "placeholder": "..." },
+    "blank3": { "correct": "toxic", "placeholder": "..." },
+    "blank4": { "correct": "nhật ký", "placeholder": "..." }
+  },
+  "words": ["hormone", "hạch hạnh nhân", "toxic", "nhật ký", "lười biếng", "bất trị", "game", "tuyệt vọng"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao việc gọi tên chính xác cảm xúc (ví dụ: ''tớ đang bất an'', ''tớ đang thất vọng'') lại giúp bạn bình tĩnh hơn?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì gọi tên cảm xúc sẽ giúp bạn chứng tỏ mình là người am hiểu tâm lý học.", "correct": false, "emoji": "😐" },
+    { "text": "Vì nó gửi tín hiệu giúp não bộ (vùng vỏ não trước trán) kích hoạt khả năng kiểm soát và xoa dịu hạch hạnh nhân ngay lập tức.", "correct": true, "emoji": "💚" },
+    { "text": "Vì nó làm cho cảm xúc tiêu cực biến mất vĩnh viễn không bao giờ quay lại.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì khi nói ra, mọi người xung quanh sẽ lập tức làm theo ý bạn.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 2: Chữa Lành "Tự Ti": Bạn Có Giá Trị Hơn Bạn Tưởng! (Self-Esteem)
+
 -- =========================================================================
 INSERT INTO lessons (course_id, slug, title, summary, content, lesson_order, is_free, xp_reward, estimated_minutes)
 VALUES (
@@ -190,6 +293,109 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các thái độ đối với khuyết điểm cá nhân:", "leftBox": {"title": "Chấp nhận bao dung"}, "rightBox": {"title": "Cầu toàn cực đoan"}, "items": [{"text": "Coi lỗi sai là cơ hội để học hỏi và rút kinh nghiệm", "correctBox": "left"}, {"text": "Mất ăn mất ngủ cả tuần chỉ vì nói vấp một câu trước đám đông", "correctBox": "right"}, {"text": "Yêu mến cả những vết sẹo hay nốt tàn nhang trên cơ thể mình", "correctBox": "left"}, {"text": "Liên tục dằn vặt bản thân vì không đạt vị trí dẫn đầu", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Khuyết điểm nào của bản thân mà bạn đang tập cách làm quen và chấp nhận gần đây?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Hoàn hảo là một ảo ảnh. Không hoàn hảo mới là cuộc sống thực tế."]}', 6);
+
+-- --- Micro Lesson 2.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson2_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Chữa Lành Tự Ti: Bạn Có Giá Trị Hơn Bạn Tưởng''! Bạn có 3 mạng để vượt qua bẫy so sánh và xây dựng sự tự tin."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Vượt qua bẫy tự ti",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn nhận kết quả kiểm tra Toán giữa kỳ được 3 điểm, trong khi bạn thân ngồi cạnh đạt điểm 9 tuyệt đối. Cảm giác xấu hổ, thất vọng và tự ti dâng tràn. Bạn bắt đầu nghi ngờ năng lực học tập của chính mình.",
+      "choices": [
+        { "text": "Tự dằn vặt mình: ''Mình là kẻ dốt nát bẩm sinh, học mấy cũng vô dụng thôi!'' rồi ném bài kiểm tra vào góc bàn.", "nextNode": "fail_self_blame" },
+        { "text": "Nhìn nhận bài thi như một phản hồi (feedback), chúc mừng bạn thân và tự nhủ: ''Lần này mình làm chưa tốt phần hình học, mình sẽ nhờ bạn chỉ bài giúp''.", "nextNode": "step2" },
+        { "text": "Tỏ vẻ không quan tâm, nói mỉa mai bạn: ''Học giỏi thế sau này đi làm tổng thống à?'' rồi cộc lốc im lặng.", "nextNode": "fail_sarcasm" }
+      ]
+    },
+    "step2": {
+      "text": "Tối về nhà, bố mẹ lướt xem nhóm Zalo lớp thấy danh sách điểm số và lập tức so sánh: ''Con nhà người ta học hành giỏi giang thế, sao con chỉ được 3 điểm?''. Cảm giác nghẹn ngực quay lại.",
+      "choices": [
+        { "text": "Cãi nhau tay đôi với bố mẹ: ''Thế bố mẹ đi mà nhận bạn đó làm con!'' rồi đóng cửa bỏ bữa tối.", "nextNode": "fail_clash" },
+        { "text": "Lắng nghe với lòng tự trắc ẩn, giải thích lịch sự: ''Con xin lỗi bố mẹ. Bài này con ôn tập chưa kỹ, con đã nhận ra lỗi sai và đang nhờ bạn kèm thêm để thi cuối kỳ tốt hơn ạ''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Vy lướt mạng xã hội Instagram và thấy một người bạn khác liên tục đăng ảnh nhận học bổng tiếng Anh và flexing cuộc sống du lịch sang chảnh. Sự so sánh xã hội trỗi dậy làm bạn thấy tự ti.",
+      "choices": [
+        { "text": "Tự ti về ngoại hình và hoàn cảnh của mình, quyết định nhịn ăn hoặc trốn tránh không muốn đi học.", "nextNode": "fail_avoidance" },
+        { "text": "Nhận thức rằng mạng xã hội chỉ là cuốn phim nổi bật của họ, tắt ứng dụng điện thoại và tập trung vào các mục tiêu nhỏ của bản thân.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Xuất sắc! Bạn đã xây dựng được lòng tự trắc ẩn vững vàng, tách biệt điểm số khỏi giá trị bản thân và vượt qua bẫy so sánh xã hội thông minh.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_self_blame": {
+      "text": "❌ Chưa đúng! Tự dằn vặt bản thân làm triệt tiêu động lực học tập, khiến bạn lún sâu vào chiếc bẫy tự ti độc hại.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_sarcasm": {
+      "text": "❌ Chưa đúng! Mỉa mai thành công của bạn bè chỉ thể hiện sự ghen tị ngầm và làm tổn thương mối quan hệ tốt đẹp.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_clash": {
+      "text": "❌ Sai rồi! Cãi cọ gay gắt với bố mẹ chỉ làm tăng khoảng cách gia đình và khiến tâm trạng của bạn tệ hơn rất nhiều.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_avoidance": {
+      "text": "❌ Sai rồi! Nhịn ăn hoặc bỏ học trốn tránh không giải quyết được vấn đề thực tế, mà còn gây hại nghiêm trọng cho sức khỏe của bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ với bản thân:",
+  "leftBox": { "title": "Tự tin lành mạnh" },
+  "rightBox": { "title": "Tự ti / Cầu toàn thái quá" },
+  "items": [
+    { "text": "Chấp nhận bản thân có cả điểm mạnh và điểm yếu", "correctBox": "left" },
+    { "text": "Mất ngủ cả tuần chỉ vì nói vấp một câu trước lớp", "correctBox": "right" },
+    { "text": "Coi lỗi sai là cơ hội để học hỏi và rút kinh nghiệm", "correctBox": "left" },
+    { "text": "Nâng mình lên bằng cách dìm các bạn học kém hơn xuống", "correctBox": "right" },
+    { "text": "Chào mừng thành công của bạn bè mà không ghen tị", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa giá trị bản thân và định nghĩa phù hợp:",
+  "pairs": [
+    { "left": "Tự tin thực sự", "right": "Chấp nhận bản thân, không cần lấn lướt hay so sánh với ai." },
+    { "left": "Lòng tự trắc ẩn", "right": "Trò chuyện bao dung với chính mình khi gặp thất bại hay sai lầm." },
+    { "left": "Bẫy so sánh", "right": "So sánh điểm yếu nhất của mình với điểm mạnh nhất của người khác." },
+    { "left": "Sự cầu toàn cực đoan", "right": "Ép buộc bản thân phải hoàn mỹ 100% trong mọi lĩnh vực." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa lòng tự trọng:",
+  "sentence": "Điểm số chỉ phản ánh năng lực ở một [blank1], không định nghĩa [blank2] con người bạn. Hãy dùng lời nói [blank3] để trò chuyện với bản thân và tránh chiếc bẫy [blank4] xã hội độc hại.",
+  "blanks": {
+    "blank1": { "correct": "thời điểm", "placeholder": "..." },
+    "blank2": { "correct": "giá trị", "placeholder": "..." },
+    "blank3": { "correct": "bao dung", "placeholder": "..." },
+    "blank4": { "correct": "so sánh", "placeholder": "..." }
+  },
+  "words": ["thời điểm", "giá trị", "bao dung", "so sánh", "hoàn hảo", "điểm số", "tự ti", "flexing"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Mục đích thực chất đằng sau hành vi ''flexing'' (khoe khoang) quá đà trên mạng xã hội của một người thường là gì?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Họ thực sự quá hoàn hảo và không có bất kỳ nỗi lo lắng nào.", "correct": false, "emoji": "😐" },
+    { "text": "Họ muốn nhận được sự công nhận từ bên ngoài để khỏa lấp sự bất an, tự ti bên trong.", "correct": true, "emoji": "💚" },
+    { "text": "Họ đang muốn giúp đỡ bạn bè học tập tốt hơn.", "correct": false, "emoji": "🙁" },
+    { "text": "Họ thích thể hiện phong cách sống giản dị, khiêm tốn.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 
 -- =========================================================================
@@ -278,6 +484,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Hôm nay, bạn muốn gửi lời cảm ơn đến bộ phận nào trên cơ thể mình nhất?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Cơ thể là ngôi nhà duy nhất bạn có. Hãy yêu thương và chăm sóc nó chu đáo."]}', 6);
 
+-- --- Micro Lesson 3.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson3_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Hòa Giải Với Chiếc Body: Bạn Đẹp Theo Cách Riêng!''! Bạn có 3 mạng để tự tin ứng phó body shaming và trân trọng ngoại hình độc bản."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Tự tin ứng phó body shaming và yêu thương vóc dáng",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Đức đăng một bức ảnh chụp lúc chơi bóng rổ cùng lớp lên Facebook. Phía dưới phần bình luận, một bạn lớp bên cạnh viết: ''Trông như bộ xương di động/nhái bén ấy nhỉ, học bóng rổ làm gì cho tốn thời gian!''. Đức thấy mặt nóng bừng, lồng ngực thắt lại vì xấu hổ và tức giận.",
+      "choices": [
+        { "text": "Bình luận chửi bới lại bạn đó một cách gay gắt để xả giận: ''Nhìn lại gương đi xem mình có ra gì không mà nói người khác!''.", "nextNode": "fail_fight" },
+        { "text": "Chụp lại màn hình làm bằng chứng, sau đó ẩn hoặc xóa bình luận khiếm nhã kia đi để bảo vệ không gian cá nhân, tự nhủ: Mình chơi bóng rổ vì sức khỏe của mình chứ không phải để làm vừa mắt họ.", "nextNode": "step2" },
+        { "text": "U uất xóa luôn bức ảnh bóng rổ, quyết định không đi tập bóng rổ nữa vì sợ bị mọi người chê cười ngoại hình.", "nextNode": "fail_withdraw" }
+      ]
+    },
+    "step2": {
+      "text": "Mọi việc dần trôi qua, nhưng tuần sau đó, khi cả lớp tập trung ở hành lang, bạn đó lại tiếp tục trêu chọc trực tiếp trước mặt đông người: ''Kìa, bộ xương di động kìa!''. Mọi người xung quanh đổ dồn ánh mắt vào Đức.",
+      "choices": [
+        { "text": "Im lặng, cúi gục đầu đi chỗ khác, cố nén nước mắt để không ai thấy mình đang khóc.", "nextNode": "fail_silent" },
+        { "text": "Nhìn thẳng vào bạn đó, trả lời bình tĩnh và kiên định: ''Tớ tự hào vì cơ thể khỏe mạnh của tớ giúp tớ chạy nhanh và chơi bóng rổ tốt. Tớ mong cậu tôn trọng và không nhận xét ngoại hình của tớ nữa nhé!''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau khi Đức thiết lập ranh giới rõ ràng, bạn kia ngượng ngùng im lặng bỏ đi. Cuối ngày, Đức đứng trước gương và nhìn ngắm cơ thể gầy gò của mình, suy nghĩ về việc thay đổi vóc dáng.",
+      "choices": [
+        { "text": "Quyết định nhịn ăn sáng và uống sữa tăng cơ thần tốc không rõ nguồn gốc để đạt mục tiêu tăng cân nhanh nhất.", "nextNode": "fail_unhealthy" },
+        { "text": "Tập trung vào chế độ ăn uống đủ chất, tập luyện thể thao vừa sức theo nhịp độ tự nhiên của cơ thể để tăng sự dẻo dai.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Xuất sắc! Bạn đã bảo vệ bản thân thành công trước body shaming bằng ranh giới kiên định và trân trọng cơ thể theo cách lành mạnh nhất.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_fight": {
+      "text": "❌ Chưa đúng! Cãi vã gay gắt trên mạng chỉ tạo ra một cuộc khẩu chiến toxic, hạ thấp hình ảnh của chính bạn và không giải quyết được vấn đề.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_withdraw": {
+      "text": "❌ Chưa đúng! Bỏ cuộc vì lời chê bai của người khác là bạn đang nhượng bộ kẻ bắt nạt và từ bỏ sở thích lành mạnh giúp cơ thể khỏe mạnh.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_silent": {
+      "text": "❌ Sai rồi! Im lặng cam chịu không giúp thiết lập ranh giới, kẻ trêu chọc sẽ nghĩ bạn dễ bắt nạt và có thể tiếp tục hành vi body shaming này.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_unhealthy": {
+      "text": "❌ Sai rồi! Sử dụng các biện pháp tăng cơ/giảm cân cực đoan gây hại nghiêm trọng cho các cơ quan nội tạng và sự phát triển sinh học của tuổi dậy thì.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ đối với vóc dáng cơ thể:",
+  "leftBox": { "title": "Yêu thương cơ thể" },
+  "rightBox": { "title": "Ngược đãi hoặc phán xét" },
+  "items": [
+    { "text": "Uống đủ nước và vận động vừa sức giúp cơ thể dẻo dai", "correctBox": "left" },
+    { "text": "Nhịn ăn bỏ bữa để nhanh chóng có vòng eo con kiến", "correctBox": "right" },
+    { "text": "Tự nhủ: Chiếc mũi tẹt thừa hưởng từ bố mẹ là nét độc bản đáng yêu", "correctBox": "left" },
+    { "text": "Soi gương liên tục và dằn vặt bản thân vì không có cơ bắp vạm vỡ", "correctBox": "right" },
+    { "text": "Nhận xét khiếm nhã về cân nặng của bạn học dưới danh nghĩa đùa vui", "correctBox": "right" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa về ngoại hình và định nghĩa phù hợp:",
+  "pairs": [
+    { "left": "Filter ảo ma", "right": "Hình ảnh chỉnh sửa kỹ thuật số tạo nên tiêu chuẩn sắc đẹp phi thực tế." },
+    { "left": "Body shaming", "right": "Hành vi chê bai, giễu cợt ngoại hình gây tổn thương tinh thần người khác." },
+    { "left": "Đa dạng vóc dáng", "right": "Sự thật sinh học rằng gen quyết định mỗi cơ thể có cấu trúc khác nhau." },
+    { "left": "Lòng biết ơn cơ thể", "right": "Trân trọng chức năng sinh học giữ cho ta sống khỏe mạnh 24/7." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa yêu thương cơ thể:",
+  "sentence": "Mạng xã hội thường trưng bày những hình ảnh đã qua [blank1], hãy trân trọng cơ thể thực của mình. Khi bị [blank2] ngoại hình, hãy kiên định thiết lập [blank3] và tập trung nuôi dưỡng cơ thể [blank4] thay vì chạy theo khuôn mẫu.",
+  "blanks": {
+    "blank1": { "correct": "chỉnh sửa", "placeholder": "..." },
+    "blank2": { "correct": "chê bai", "placeholder": "..." },
+    "blank3": { "correct": "ranh giới", "placeholder": "..." },
+    "blank4": { "correct": "khỏe mạnh", "placeholder": "..." }
+  },
+  "words": ["chỉnh sửa", "chê bai", "ranh giới", "khỏe mạnh", "filter", "nhịn ăn", "chất lượng", "cụt ngủn"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao việc so sánh ngoại hình của bạn với các hot teen trên mạng xã hội lại không công bằng?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì họ ở thành phố lớn còn bạn ở nông thôn hoặc tỉnh lẻ.", "correct": false, "emoji": "😐" },
+    { "text": "Vì hình ảnh của họ đã được chọn lọc từ hàng trăm tấm, chỉnh sửa góc sáng, kéo chân và dùng filter ảo ma, khác xa thực tế.", "correct": true, "emoji": "💚" },
+    { "text": "Vì họ được trả tiền để chụp ảnh đẹp còn bạn thì không.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì cơ thể của họ được cấu tạo từ các tế bào sinh học đặc biệt hơn bạn.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 4: Khi Áp Lực Đè Nặng: "Giải Cứu" Bộ Não Quá Tải! (Managing Stress)
@@ -365,6 +673,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Chiếc ''van xả stress'' yêu thích và lành mạnh nhất của bạn lúc này là gì?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Chủ động xả áp suất trước khi bộ não của bạn bị ''chập mạch'' vì quá tải."]}', 6);
 
+-- --- Micro Lesson 4.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson4_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Khi Áp Lực Đè Nặng: Giải Cứu Bộ Não Quá Tải''! Bạn có 3 mạng để vượt qua stress thi cử và quản lý lo âu hiệu quả."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Giải cứu bộ não quá tải",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Tuần tới bạn có 3 bài thi học kỳ dồn dập. Bạn bắt đầu thấy đau bụng âm ỉ, mỏi vai gáy và tối nằm trằn trọc mãi không ngủ được. Sự lo lắng khổng lồ đè nặng khiến bạn không muốn chạm tay vào sách vở.",
+      "choices": [
+        { "text": "Mở game cày rank hoặc lướt TikTok suốt 5 tiếng liên tục để tạm quên đi đống bài tập cần học.", "nextNode": "fail_avoid" },
+        { "text": "Chấp nhận đây là stress thi cử, viết danh sách bài vở cần học, chia nhỏ nhiệm vụ và học theo phương pháp Pomodoro.", "nextNode": "step2" },
+        { "text": "Thức xuyên đêm đến 4h sáng nhồi nhét hết kiến thức và uống liên tiếp 2 lon nước tăng lực.", "nextNode": "fail_overwork" }
+      ]
+    },
+    "step2": {
+      "text": "Sáng ngày thi, vừa bước vào phòng thi, bạn thấy tim đập thình thịch, tay run rẩy, mồ hôi vã ra và đầu óc bỗng dưng trống rỗng, đóng băng hoàn toàn trước đề bài.",
+      "choices": [
+        { "text": "Hoảng loạn gục mặt xuống bàn tự trách mình học nhiều mà vẫn vô dụng.", "nextNode": "fail_freeze" },
+        { "text": "Nhắm mắt lại, đặt tay lên bụng, thực hiện 3 chu kỳ thở sâu 4-7-8 để làm chậm nhịp tim và sạc oxy cho não.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau khi thi xong, mặc dù bài thi làm khá tốt nhưng bạn vẫn thấy căng thẳng tích tụ. Bạn cần mở chiếc ''van xả stress'' để phục hồi năng lượng.",
+      "choices": [
+        { "text": "Ăn một lúc 3 gói mì cay và uống nước ngọt có ga cho bõ tức.", "nextNode": "fail_unhealthy_vent" },
+        { "text": "Đi tắm nước ấm, vận động nhẹ nhàng ngoài công viên hoặc nghe một bản nhạc nhẹ yêu thích để xả bớt áp suất.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã đối mặt với stress chủ động, bình tĩnh vượt qua khoảnh khắc đóng băng bằng kỹ thuật thở 4-7-8 và xả stress lành mạnh.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_avoid": {
+      "text": "❌ Chưa đúng! Lảng tránh thụ động bằng game chỉ mang lại cảm giác an tâm tạm thời, nhưng vấn đề vẫn còn nguyên và stress sẽ dội lại mạnh mẽ hơn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_overwork": {
+      "text": "❌ Chưa đúng! Thức trắng đêm nhồi nhét kết hợp lạm dụng nước tăng lực sẽ tàn phá thể chất, khiến bộ não dễ bị ''đóng băng'' khi thi.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_freeze": {
+      "text": "❌ Sai rồi! Hoảng loạn tinh thần chỉ làm gián đoạn hệ tư duy của não bộ. Bạn cần bài tập thở sâu vật lý để lập tức hạ nhiệt.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_unhealthy_vent": {
+      "text": "❌ Sai rồi! Xả stress bằng đồ ăn cay nóng, đồ ăn nhanh chỉ làm quá tải hệ tiêu hóa và không giải quyết được căng thẳng tinh thần.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các phản ứng ứng phó áp lực:",
+  "leftBox": { "title": "Đối mặt chủ động" },
+  "rightBox": { "title": "Trốn tránh thụ động" },
+  "items": [
+    { "text": "Viết danh sách các việc cần làm và thực hiện việc nhỏ trước", "correctBox": "left" },
+    { "text": "Nằm lướt TikTok liên tục để không phải nghĩ về bài tập", "correctBox": "right" },
+    { "text": "Nhờ bạn bè hoặc giáo viên chỉ dẫn phần bài tập quá khó", "correctBox": "left" },
+    { "text": "Cố học tiếp dù đầu đang nhức búa bổ vì sợ điểm kém", "correctBox": "right" },
+    { "text": "Dành 10 phút đi bộ thư giãn ngoài vườn sạc pin tâm hồn", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa stress và định nghĩa phù hợp:",
+  "pairs": [
+    { "left": "Adrenaline & Cortisol", "right": "Hormone được giải phóng khi cơ thể gặp trạng thái căng thẳng, lo âu." },
+    { "left": "Stress tích cực (Eustress)", "right": "Áp lực vừa phải giúp tập trung hơn để hoàn thành mục tiêu ngắn hạn." },
+    { "left": "Stress độc hại (Distress)", "right": "Sự căng thẳng kéo dài liên tục gây kiệt quệ tinh thần và thể chất." },
+    { "left": "Kỹ thuật thở 4-7-8", "right": "Bài tập điều hòa nhịp thở kích hoạt hệ thần kinh đối giao cảm làm dịu não bộ." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ứng phó stress:",
+  "sentence": "Stress không chỉ ở trong đầu mà còn biểu hiện qua các tín hiệu [blank1] của cơ thể. Đừng lảng tránh bằng game, hãy [blank2] chia nhỏ công việc và sử dụng những chiếc [blank3] lành mạnh để [blank4] bớt áp lực.",
+  "blanks": {
+    "blank1": { "correct": "thể chất", "placeholder": "..." },
+    "blank2": { "correct": "chủ động", "placeholder": "..." },
+    "blank3": { "correct": "van xả", "placeholder": "..." },
+    "blank4": { "correct": "giải phóng", "placeholder": "..." }
+  },
+  "words": ["thể chất", "chủ động", "van xả", "giải phóng", "lơ đi", "im lặng", "nước ngọt", "lười biếng"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao việc sử dụng nước tăng lực và thức xuyên đêm ôn thi là cờ đỏ nguy hiểm cho kết quả thi cử?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì nó làm cho bạn thông minh hơn đột xuất và gây ra kiêu ngạo.", "correct": false, "emoji": "😐" },
+    { "text": "Vì nó gây thiếu ngủ nghiêm trọng và làm tăng nồng độ cortisol, khiến bộ não dễ bị trống rỗng khi vào phòng thi.", "correct": true, "emoji": "💚" },
+    { "text": "Vì nó khiến bạn làm bài thi quá nhanh mà không kịp soát lỗi.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì giáo viên sẽ trừ điểm nếu phát hiện học sinh thức khuya.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
+
 
 -- =========================================================================
 -- BÀI HỌC 5: Khi "Crush" Từ Chối: Vượt Qua "Bể Sầu" Cực Mượt! (Rejection & Resilience)
@@ -405,7 +815,7 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'hook', '{"title": "Làm sao để biết khi nào tình cảm của mình là đơn phương và đối phương chỉ coi mình là một người bạn xã giao?"}', 1),
 (@ml_id, 'explanation', '{"bullets": ["Tình cảm lành mạnh cần sự tương tác hai chiều và sự hào hứng từ cả hai phía.", "Dấu hiệu tình cảm một chiều: Bạn luôn là người chủ động nhắn tin trước, câu trả lời của họ rất ngắn gọn/hờ hững, hoặc họ né tránh các buổi hẹn riêng.", "Nhận ra điều này sớm giúp bạn bảo vệ lòng tự trọng và tránh đầu tư quá nhiều kỳ vọng."]}', 2),
 (@ml_id, 'scenario', '{"title": "Đợi chờ tin nhắn", "body": "Lan liên tục nhắn tin hỏi han Lâm mỗi ngày. Lâm thường trả lời rất muộn bằng những câu cộc lốc như ''Ừ'', ''Ok'', hoặc thả emoji. Lan tự biện hộ là Lâm đang bận học."}', 3),
-(@ml_id, 'interaction', '{"question": "Lan nên hiểu phản hồi của Lâm thế nào cho đúng thực tế?", "choices": [{"text": "Lâm không thực sự hào hứng và quan tâm đến cuộc trò chuyện với Lan. Lan nên dừng việc chủ động nhắn tin liên tục.", "correct": true, "emoji": "💚"}, {"text": "Lâm đang thử thách lòng kiên nhẫn của Lan, Lan cần nhắn tin nhiều hơn nữa để Lâm cảm động.", "correct": false, "emoji": "🙁"}]}', 4),
+(@ml_id, 'interaction', '{"question": "Lan nên hiểu phản hồi của Lâm thế nào cho đúng thực tế?", "choices": [{"text": "Lâm không thực sự hào hứng và quan tâm đến cuộc trò chuyện với Lan. Lan nên dừng việc chủ động nhắn tin liên tục.", "correct": true, "emoji": "💚"}, {"text": "Lâm đang thử thách lòng kiên nhẫn của Lan, Lan cần nhắn tin nhiều hơn nữa để Lâm cảm động.", "correct": false, "emoji": "☹️"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Bạn đã từng ở trong một mối quan hệ mà bạn luôn là người phải chủ động cố gắng chưa?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Bạn xứng đáng với một tình cảm được đón nhận và trân trọng từ cả hai phía."]}', 6);
 
@@ -452,6 +862,108 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các bài học rút ra từ trải nghiệm rung động đầu đời:", "leftBox": {"title": "Bài học trưởng thành"}, "rightBox": {"title": "Tiêu cực tự ti"}, "items": [{"text": "Mình biết cách bày tỏ cảm xúc thật của mình một cách dũng cảm", "correctBox": "left"}, {"text": "Mình sẽ không bao giờ mở lòng yêu thương hay tin tưởng ai nữa", "correctBox": "right"}, {"text": "Mình hiểu rõ hơn về những tiêu chuẩn tình cảm mà mình mong đợi", "correctBox": "left"}, {"text": "Ngoại hình mình xấu xí nên chắc chắn cả đời này sẽ bị cô độc", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Bạn có tự hào về lòng dũng cảm của mình sau những lần đối mặt với thử thách cảm xúc đã qua không?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Những vết xước cảm xúc hôm nay chính là chất liệu tạo nên sự kiên cường của bạn ngày mai."]}', 6);
+
+-- --- Micro Lesson 5.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson5_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Khi Crush Từ Chối: Vượt Qua Bể Sầu Cực Mượt''! Bạn có 3 mạng để tôi luyện sức bật cảm xúc sau thất bại tình cảm."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Vượt qua bể sầu tỏ tình",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn lấy hết dũng khí tỏ tình với crush bằng một món quà nhỏ ở công viên. Đối phương ngập ngừng rồi nói lời từ chối: ''Cảm ơn cậu, nhưng tớ chỉ muốn tụi mình là bạn tốt thôi!''. Mặt bạn nóng bừng, tai lùng bùng và lồng ngực đau nhói thực tế.",
+      "choices": [
+        { "text": "Nài nỉ tiếp: ''Cho tớ cơ hội đi, tớ sẽ làm mọi thứ vì cậu mà!''", "nextNode": "fail_beg" },
+        { "text": "Mỉm cười nhẹ, chấp nhận ranh giới: ''Tớ hiểu rồi, cảm ơn cậu đã chia sẻ thẳng thắn nhé. Tớ hơi buồn chút nhưng tớ tôn trọng quyết định của cậu''.", "nextNode": "step2" },
+        { "text": "Nổi giận đùng đùng, ném món quà đi và mắng: ''Cậu sống lạnh lùng thế, sau này đừng chơi với nhau nữa!''", "nextNode": "fail_furious" }
+      ]
+    },
+    "step2": {
+      "text": "Tối về nhà, cảm giác thất tình làm bạn buồn bã tột cùng. Bạn thấy mình liên tục muốn mở trang cá nhân của họ lên xem họ có đăng bài viết mới nào không, lòng cồn cào bất an.",
+      "choices": [
+        { "text": "Tiếp tục ẩn danh theo dõi từng lượt like, thả tim của họ trên Instagram để tìm kiếm manh mối.", "nextNode": "fail_stalk" },
+        { "text": "Ẩn tạm thời trang cá nhân của họ, cất các món quà gợi nhớ và rủ hội bạn thân đi ăn kem, xem phim để F5 tâm trạng.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Ba tháng sau, bạn nhìn thấy crush cũ đang đi chơi vui vẻ với một người bạn khác. Cảm xúc nhói nhẹ trỗi dậy, bạn tự hỏi trải nghiệm này có ý nghĩa gì với con người bạn.",
+      "choices": [
+        { "text": "Tự dằn vặt: ''Chắc chắn do mình xấu xí và kém cỏi nên mới bị bỏ rơi. Mình sẽ không bao giờ mở lòng nữa!''", "nextNode": "fail_cynical" },
+        { "text": "Nhận ra đây là trải nghiệm dũng cảm giúp mình biết cách bày tỏ cảm xúc, tôn trọng ranh giới và vững vàng đứng lên.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã phục hồi cảm xúc cực kỳ kiên cường, ứng xử văn minh khi bị từ chối và khơi dậy lòng dũng cảm tự hào.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_beg": {
+      "text": "❌ Chưa đúng! Nài nỉ bám đuôi khi đối phương đã từ chối là thiếu tôn trọng ranh giới của họ và hạ thấp lòng tự trọng của chính bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_furious": {
+      "text": "❌ Chưa đúng! Nổi giận chửi bới đối phương khi bị từ chối chỉ thể hiện sự ích kỷ và thiếu chín chắn trong kiểm soát cảm xúc.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_stalk": {
+      "text": "❌ Sai rồi! Việc âm thầm theo dõi (stalk) trang cá nhân liên tục chỉ làm kéo dài nỗi đau thất tình và khiến bạn khó phục hồi.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_cynical": {
+      "text": "❌ Sai rồi! Trải nghiệm từ chối chỉ chứng minh hai người chưa phù hợp, không làm giảm đi giá trị tổng thể của con người bạn.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các suy nghĩ phục hồi sau thất tình:",
+  "leftBox": { "title": "Bài học trưởng thành" },
+  "rightBox": { "title": "Tiêu cực tự ti" },
+  "items": [
+    { "text": "Bị từ chối nghĩa là hai người chưa phù hợp ở thời điểm này", "correctBox": "left" },
+    { "text": "Bị từ chối chứng tỏ mình là kẻ kém cỏi và không ai yêu", "correctBox": "right" },
+    { "text": "Đối phương có quyền tự do lựa chọn tình cảm của họ", "correctBox": "left" },
+    { "text": "Mình sẽ không bao giờ mở lòng yêu thương hay tin tưởng ai nữa", "correctBox": "right" },
+    { "text": "Mình biết cách bày tỏ cảm xúc thật của mình một cách dũng cảm", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa phục hồi cảm xúc và định nghĩa phù hợp:",
+  "pairs": [
+    { "left": "Resilience (Sức bật)", "right": "Khả năng đối mặt với thất bại cảm xúc và tự chữa lành đứng dậy." },
+    { "left": "Dopamine", "right": "Hormone tạo cảm giác phấn khích, cồn cào khi say nắng crush." },
+    { "left": "Tình cảm một chiều", "right": "Tình cảm chỉ xuất phát từ một phía, thiếu sự tương tác hai chiều." },
+    { "left": "Từ chối văn minh", "right": "Chia sẻ thẳng thắn sự từ chối đi kèm sự tôn trọng cảm xúc đối phương." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa phục hồi sau từ chối:",
+  "sentence": "Sự từ chối kích hoạt vùng não xử lý nỗi đau [blank1] thực tế. Hãy tập cách chấp nhận và [blank2] ranh giới của họ. Cất đi những món quà cũ giúp bạn [blank3] tâm trạng và rèn luyện sức bật [blank4] cảm xúc kiên cường.",
+  "blanks": {
+    "blank1": { "correct": "thể xác", "placeholder": "..." },
+    "blank2": { "correct": "tôn trọng", "placeholder": "..." },
+    "blank3": { "correct": "F5", "placeholder": "..." },
+    "blank4": { "correct": "cảm xúc", "placeholder": "..." }
+  },
+  "words": ["thể xác", "tôn trọng", "F5", "cảm xúc", "nài nỉ", "stalk", "lo sợ", "tự ti"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Hành động nào sau đây giúp bạn phục hồi nhanh nhất sau khi bị crush từ chối lời tỏ tình?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Đăng những bài viết buồn bã, oán trách lấp lửng để crush thấy tội lỗi.", "correct": false, "emoji": "😐" },
+    { "text": "Chấp nhận nỗi buồn trong vài ngày, ẩn thông báo từ crush, cất kỷ vật cũ và tập trung vào các thói quen tốt cùng bạn bè thân thiết.", "correct": true, "emoji": "💚" },
+    { "text": "Lập tức tìm một người khác thế chỗ để chứng minh mình vẫn có giá trị.", "correct": false, "emoji": "🙁" },
+    { "text": "Ngồi học liên tục 12 tiếng để không còn thời gian suy nghĩ.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
 
 
 -- =========================================================================
@@ -541,6 +1053,109 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'reflection', '{"question": "Ai là những cái tên đầu tiên bạn sẽ đưa vào danh sách ''Biệt đội giải cứu cảm xúc'' của mình?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Được bao quanh bởi những người tử tế là liều thuốc chữa lành tốt nhất cho tâm hồn."]}', 6);
 
+-- --- Micro Lesson 6.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson6_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Mối Quan Hệ Chất Lượng Cao Vs Độc Hại''! Bạn có 3 mạng để nhận diện cờ đỏ thao túng và bảo vệ ranh giới tình bạn."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Nhận diện và thoát khỏi thao túng",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Bạn mượn điện thoại của bạn thân để gọi nhờ. Khi bạn trả lại, bạn thân nổi giận đùng đùng, giật lấy máy và quát: ''Sao cậu lại mở Zalo đọc tin nhắn của tớ? Cậu tò mò quá đáng thế!''. Dù bạn hoàn toàn không đọc gì, đối phương liên tục dùng ''chiến tranh lạnh'' bắt bạn xin lỗi.",
+      "choices": [
+        { "text": "Chấp nhận nhận lỗi và liên tục xin lỗi để xoa dịu cơn giận của bạn: ''Tớ xin lỗi, tớ hứa lần sau sẽ không chạm vào máy cậu nữa''.", "nextNode": "fail_accept_guilt" },
+        { "text": "Bình tĩnh khẳng định ranh giới: ''Tớ chỉ dùng máy gọi điện và không hề mở tin nhắn. Tớ tôn trọng sự riêng tư của cậu và mong cậu cũng tin tưởng tớ''.", "nextNode": "step2" },
+        { "text": "Nổi khùng mắng lại bạn thân là kẻ đa nghi, ích kỷ rồi đi nói xấu họ với các bạn khác trong lớp.", "nextNode": "fail_aggressive" }
+      ]
+    },
+    "step2": {
+      "text": "Hôm sau, bạn thân đòi bạn phải chia sẻ mật khẩu tài khoản Instagram để chứng minh lòng trung thực và bắt bạn xóa bớt danh sách bạn bè khác giới đi vì ''yêu thương và lo lắng cho bạn''.",
+      "choices": [
+        { "text": "Nhượng bộ đưa mật khẩu và xóa bạn bè vì sợ bị cô lập khỏi nhóm bạn chơi chung.", "nextNode": "fail_concede" },
+        { "text": "Nhận diện đây là cờ đỏ kiểm soát số, kiên quyết từ chối: ''Tớ muốn giữ mật khẩu và bạn bè làm không gian riêng tư. Tụi mình tin tưởng nhau bằng hành động nhé!''.", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Sau đó, nhóm bạn thân bắt đầu lập nhóm chat riêng để cô lập, đăng ảnh chế giễu bạn và nhắn tin đe dọa tung các bí mật cá nhân của hai đứa trước đây lên diễn đàn trường. Bạn thấy quá tải cảm xúc và lo sợ tột cùng.",
+      "choices": [
+        { "text": "Im lặng chịu đựng, cắn răng làm theo các yêu cầu nhạy cảm của họ để giữ bí mật.", "nextNode": "fail_blackmail" },
+        { "text": "Chụp màn hình bằng chứng, báo ngay cho bố mẹ hoặc thầy cô giáo y tế học đường, và gọi tổng đài 111 để nhận sự che chở pháp lý.", "nextNode": "success_end" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Xuất sắc! Bạn đã dũng cảm nhận diện cờ đỏ thao túng cảm xúc, kiên định bảo vệ ranh giới số và tìm kiếm sự hỗ trợ khẩn cấp từ người lớn kịp thời.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_accept_guilt": {
+      "text": "❌ Chưa đúng! Nhận tội khống để xoa dịu kẻ thao túng (gaslighting) chỉ khiến họ tiếp tục kiểm soát tâm lý và lấn lướt ranh giới của bạn trong tương lai.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_aggressive": {
+      "text": "❌ Chưa đúng! Công kích lại đối phương và đi nói xấu sau lưng không giải quyết được mâu thuẫn mà còn biến bạn thành kẻ bắt nạt cảm xúc.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_concede": {
+      "text": "❌ Sai rồi! Bàn giao mật khẩu cá nhân và xóa bạn bè theo yêu cầu vô lý là tự nguyện chui vào bẫy kiểm soát độc hại.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_blackmail": {
+      "text": "❌ Sai rồi! Thỏa hiệp với kẻ tống tiền bôi nhọ không mang lại sự an toàn. Hãy chụp bằng chứng và báo cáo ngay cho người lớn.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các cờ hiệu tình bạn:",
+  "leftBox": { "title": "Cờ xanh Green Flag" },
+  "rightBox": { "title": "Cờ đỏ Red Flag" },
+  "items": [
+    { "text": "Lắng nghe không phán xét, tôn trọng ranh giới cá nhân", "correctBox": "left" },
+    { "text": "Dùng sự im lặng, chiến tranh lạnh để trừng phạt khi bạn làm trái ý", "correctBox": "right" },
+    { "text": "Biết nói lời xin lỗi chân thành khi làm tổn thương bạn", "correctBox": "left" },
+    { "text": "Thường xuyên chê bai ngoại hình và nói xấu sau lưng bạn", "correctBox": "right" },
+    { "text": "Vui mừng và ủng hộ ước mơ, thành công của bạn", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa mối quan hệ và định nghĩa phù hợp:",
+  "pairs": [
+    { "left": "Gaslighting (Thao túng)", "right": "Hành vi làm đối phương nghi ngờ suy nghĩ, cảm xúc và trí nhớ của chính mình." },
+    { "left": "Vulnerability (Tổn thương)", "right": "Dũng khí cởi bỏ áo giáp để chia sẻ thật lòng lo âu với người đáng tin." },
+    { "left": "Mạng lưới hỗ trợ", "right": "Tấm đệm an toàn gồm gia đình, thầy cô, chuyên gia giúp giảm chấn thương cuộc sống." },
+    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia hỗ trợ, tư vấn và bảo vệ trẻ em Việt Nam 24/7." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa mối quan hệ lành mạnh:",
+  "sentence": "Tình bạn lành mạnh tôn trọng ranh giới và không bắt bạn phải [blank1] gánh vác mọi lo âu. Khi gặp kẻ [blank2] cảm xúc, hãy dũng cảm thiết lập khoảng cách và tìm kiếm sự giúp đỡ từ những [blank3] đáng tin cậy hoặc gọi tổng đài [blank4].",
+  "blanks": {
+    "blank1": { "correct": "âm thầm", "placeholder": "..." },
+    "blank2": { "correct": "thao túng", "placeholder": "..." },
+    "blank3": { "correct": "đồng minh", "placeholder": "..." },
+    "blank4": { "correct": "111", "placeholder": "..." }
+  },
+  "words": ["âm thầm", "thao túng", "đồng minh", "111", "xin lỗi", "im lặng", "nể sợ", "bạn thân"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Khi bạn thân của bạn liên tục dùng chiêu trò ''chiến tranh lạnh'' (im lặng không rep tin nhắn) để ép bạn phải đi chơi chung khi bạn đang mệt, phản ứng nào thể hiện sự tự chủ nhất?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Nhắn tin năn nỉ, xin lỗi dồn dập để họ hết giận.", "correct": false, "emoji": "🥺" },
+    { "text": "Giữ vững ranh giới: ''Tớ mệt cần nghỉ ngơi. Khi nào cậu sẵn sàng nói chuyện bình thường thì tụi mình chat nhé'' và không nhắn tin ép họ.", "correct": true, "emoji": "💚" },
+    { "text": "Lập tức chặn liên lạc và unfriend họ vĩnh viễn.", "correct": false, "emoji": "🛑" },
+    { "text": "Nhờ các bạn khác vào group chat để nói móc mỉa họ.", "correct": false, "emoji": "😐" }
+  ]
+}', 6);
+
+
 
 -- =========================================================================
 -- BÀI HỌC 7: Yêu Bản Thân: Không Chỉ Là Câu Nói Bắt Trend! (Self-Care)
@@ -627,3 +1242,105 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
 (@ml_id, 'sorting', '{"instruction": "Phân loại các mục tiêu thói quen thiết lập hàng ngày:", "leftBox": {"title": "Mục tiêu nhỏ khả thi"}, "rightBox": {"title": "Mục tiêu quá tải"}, "items": [{"text": "Đọc 2 trang sách trước khi đi ngủ mỗi tối", "correctBox": "left"}, {"text": "Ép bản thân phải học liên tục 10 tiếng không nghỉ", "correctBox": "right"}, {"text": "Tập thể dục nhẹ nhàng 10 phút sau khi thức dậy", "correctBox": "left"}, {"text": "Thay đổi toàn bộ chế độ ăn kiêng hà khắc ngay lập tức", "correctBox": "right"}]}', 4),
 (@ml_id, 'reflection', '{"question": "Một thói quen nhỏ, tích cực nào bạn muốn bắt đầu thiết lập ngay từ ngày mai?"}', 5),
 (@ml_id, 'takeaway', '{"items": ["Những bước đi nhỏ mỗi ngày sẽ đưa bạn đi được một hành trình rất xa. Hãy kiên trì nhé!"]}', 6);
+
+-- --- Micro Lesson 7.7: Bài kiểm tra: Thử thách tổng kết ---
+INSERT INTO micro_lessons (lesson_id, title, micro_order) VALUES (@lesson7_id, 'Bài kiểm tra: Thử thách tổng kết', 99);
+SET @assessment_ml_id = LAST_INSERT_ID();
+
+INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, order_index) VALUES
+(@assessment_ml_id, 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Yêu Bản Thân: Không Chỉ Là Câu Nói Bắt Trend''! Bạn có 3 mạng để thực hành tự chăm sóc lành mạnh và thiết lập ranh giới nói không."}', 1),
+(@assessment_ml_id, 'scenario-choice', '{
+  "title": "Cuộc phiêu lưu: Thực hành self-care và nói Không",
+  "startNode": "step1",
+  "nodes": {
+    "step1": {
+      "text": "Tối muộn trước ngày thi học kỳ quan trọng, bạn đã rất mệt và muốn đi ngủ sớm lúc 10h30 để giữ sức khỏe. Bỗng nhiên, nhóm bạn thân liên tục gọi điện, nhắn tin trong group chat lớp rủ bạn vào game cày rank cùng để lấy thành tích chung.",
+      "choices": [
+        { "text": "Nể bạn bè, cố online chơi cùng đến 1h sáng dù mắt nhắm mắt mở mệt mỏi.", "nextNode": "fail_pleaser" },
+        { "text": "Nhắn tin từ chối lịch sự, kiên định: ''Tớ thèm chơi cùng quá nhưng tối nay tớ muốn ngủ sớm để mai làm bài tốt. Thi xong tụi mình cày bù nhé!'' rồi off điện thoại đi ngủ.", "nextNode": "step2" },
+        { "text": "Tắt nguồn điện thoại đi ngủ mà không nói một lời nào với nhóm bạn.", "nextNode": "fail_silent_cut" }
+      ]
+    },
+    "step2": {
+      "text": "Sáng hôm sau đi thi, bạn làm bài rất tỉnh táo. Tuy nhiên, buổi trưa lúc ăn cơm, nhóm bạn giận dỗi trách móc: ''Có mỗi thế cũng từ chối, đúng là đồ phá đám mất hết cả hứng của nhóm!''. Bạn thấy trong lòng dâng lên cảm giác có lỗi và áy náy.",
+      "choices": [
+        { "text": "Vội vàng hứa hẹn bù đắp: ''Tối nay tớ hứa sẽ online chơi bù cùng các cậu suốt đêm nhé!'' để họ hết giận.", "nextNode": "fail_compromise" },
+        { "text": "Chấp nhận cảm giác áy náy ngắn hạn, tự giải thích nhẹ nhàng: ''Tớ tôn trọng việc leo rank nhưng sức khỏe ngày thi quan trọng hơn với tớ mà. Mong các cậu thông cảm nha!''", "nextNode": "step3" }
+      ]
+    },
+    "step3": {
+      "text": "Cuối tuần đến, bạn muốn thực hành tự chăm sóc (self-care) tâm hồn. Bạn muốn lập một kế hoạch thói quen nhỏ khả thi lâu dài để nâng cấp cuộc sống.",
+      "choices": [
+        { "text": "Đặt mục tiêu mỗi tối đọc 2 trang sách và đi ngủ trước 11h đêm đều đặn mỗi ngày.", "nextNode": "success_end" },
+        { "text": "Lập lịch trình học tập hà khắc liên tục 12 tiếng một ngày và nhịn ăn tối để giảm cân ngay lập tức.", "nextNode": "fail_unrealistic" }
+      ]
+    },
+    "success_end": {
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã thực hành nghệ thuật từ chối kiên định để bảo vệ năng lượng bản thân, vượt qua áp lực làm hài lòng đám đông và thiết lập thói quen nhỏ bền vững.",
+      "isEnd": true,
+      "isSuccess": true
+    },
+    "fail_pleaser": {
+      "text": "❌ Chưa đúng! Nhượng bộ áp lực nhóm (people-pleasing) làm tổn hại nghiêm trọng đến giấc ngủ và kết quả thi cử của bạn ngày hôm sau.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_silent_cut": {
+      "text": "❌ Chưa đúng! Im lặng cắt đứt liên lạc đột ngột dễ gây hiểu lầm là bạn khinh khỉnh hoặc vô trách nhiệm. Một lời từ chối thẳng thắn, rõ ràng luôn tốt hơn.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_compromise": {
+      "text": "❌ Sai rồi! Nhượng bộ thức đêm cày bù chỉ làm kiệt quệ thể chất và chứng tỏ bạn không tôn trọng ranh giới sức khỏe của chính mình.",
+      "isEnd": true,
+      "isSuccess": false
+    },
+    "fail_unrealistic": {
+      "text": "❌ Sai rồi! Lập kế hoạch quá tải, hà khắc đột ngột chỉ khiến bộ não phản kháng và bỏ cuộc nhanh chóng, không đem lại sự phát triển bền vững.",
+      "isEnd": true,
+      "isSuccess": false
+    }
+  }
+}', 2),
+(@assessment_ml_id, 'sorting', '{
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hoạt động tự chăm sóc:",
+  "leftBox": { "title": "Self-care đích thực" },
+  "rightBox": { "title": "Shopping / Trốn chạy nhất thời" },
+  "items": [
+    { "text": "Ngủ đúng giờ và uống đủ nước mỗi ngày", "correctBox": "left" },
+    { "text": "Nạp thật nhiều trà sữa và thức ăn nhanh để xoa dịu nỗi buồn", "correctBox": "right" },
+    { "text": "Đọc 2 trang sách hoặc đi bộ 10 phút sạc pin tinh thần", "correctBox": "left" },
+    { "text": "Đi mua sắm vô tội vạ những món đồ đắt tiền để giải tỏa áp lực", "correctBox": "right" },
+    { "text": "Từ chối lời rủ rê đi chơi muộn khi cơ thể đang kiệt sức", "correctBox": "left" }
+  ]
+}', 3),
+(@assessment_ml_id, 'matching', '{
+  "instruction": "Ghép cặp từ khóa tự chăm sóc và định nghĩa phù hợp:",
+  "pairs": [
+    { "left": "Self-care (Tự chăm sóc)", "right": "Những thói quen nhỏ giúp bảo vệ sức khỏe sinh học và tinh thần lâu dài." },
+    { "left": "People-pleasing", "right": "Hội chứng luôn cố nói Có để làm hài lòng người khác vì sợ bị ghét." },
+    { "left": "Nghỉ ngơi tích cực", "right": "Nhu cầu sinh học tối thiểu giúp các tế bào thần kinh phục hồi và tái tạo." },
+    { "left": "Thói quen siêu nhỏ", "right": "Cải tiến 1% mỗi ngày giúp vượt qua sự phản kháng của não bộ." }
+  ]
+}', 4),
+(@assessment_ml_id, 'fill-blank', '{
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa tự yêu thương:",
+  "sentence": "Tự chăm sóc bản thân không phải là hành vi [blank1], nó là nhu cầu sinh học tối thiểu. Hãy học cách nói [blank2] với người khác để nói [blank3] với sức khỏe của mình, và kiên trì rèn luyện các thói quen [blank4] mỗi ngày.",
+  "blanks": {
+    "blank1": { "correct": "ích kỷ", "placeholder": "..." },
+    "blank2": { "correct": "Không", "placeholder": "..." },
+    "blank3": { "correct": "Có", "placeholder": "..." },
+    "blank4": { "correct": "siêu nhỏ", "placeholder": "..." }
+  },
+  "words": ["ích kỷ", "Không", "Có", "siêu nhỏ", "lười biếng", "shopping", "ép buộc", "im lặng"]
+}', 5),
+(@assessment_ml_id, 'interaction', '{
+  "question": "Thử thách trắc nghiệm: Tại sao các mục tiêu thói quen siêu nhỏ (như đọc 2 trang sách, tập thể dục 5 phút) lại đem lại sự phát triển bền vững hơn các kế hoạch thay đổi to lớn?",
+  "enableLives": true,
+  "choices": [
+    { "text": "Vì mục tiêu nhỏ giúp bạn nhận được nhiều lời khen ngợi từ mọi người.", "correct": false, "emoji": "😐" },
+    { "text": "Vì chúng dễ dàng thực hiện, không kích hoạt hệ thống phản kháng của bộ não và giúp xây dựng đường liên kết thần kinh bền vững.", "correct": true, "emoji": "💚" },
+    { "text": "Vì các thói quen lớn tốn quá ít thời gian của bạn.", "correct": false, "emoji": "🙁" },
+    { "text": "Vì thói quen nhỏ không đòi hỏi bạn phải đầu tư bất kỳ nỗ lực nào.", "correct": false, "emoji": "🛑" }
+  ]
+}', 6);
