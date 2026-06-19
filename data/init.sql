@@ -2922,8 +2922,19 @@ CREATE TABLE `subscription_plans` (
 
 INSERT INTO `subscription_plans` (`id`, `name`, `price`, `duration_days`, `description`) VALUES
 ('FREE', 'Học viên Miễn phí', 0.00, 99999, 'Truy cập các nội dung cơ bản của EDUcare.'),
-('VIP_1M', 'Học viên VIP 1 Tháng', 99000.00, 30, 'Mở khóa toàn bộ các bài học chuyên sâu, câu hỏi gợi ý và rèn luyện kỹ năng thực tế.'),
-('PREMIUM_3M', 'Học viên Premium 3 Tháng', 249000.00, 90, 'Trải nghiệm học tập không giới hạn cùng trợ lý tư vấn cá nhân hóa EDUcare.');
+('VIP_1M', 'Học viên VIP 1 Tháng', 29000.00, 30, '      
+      Xem 100% bài học chuyên sâu,
+      Hệ thống câu hỏi khuyên học động,
+      Làm tất cả bài tập quiz,
+      Chơi game tình huống đầy đủ,
+      Tích lũy Streak & XP xếp hạng,
+      Hỗ trợ tư vấn trực tuyến'),
+('PREMIUM_4M', 'Học viên Premium 4 Tháng', 99000.00, 120, 'Trải nghiệm học tập không giới hạn cùng trợ lý tư vấn cá nhân hóa EDUcare,
+      Mọi quyền lợi của gói VIP,
+      Tư vấn ưu tiên 24/7 với chuyên gia,
+      Mở khóa sớm các chủ đề nhạy cảm,
+      Tham gia phòng chat kín đặc quyền,
+      Tiết kiệm 15% chi phí');
 
 -- --------------------------------------------------------
 

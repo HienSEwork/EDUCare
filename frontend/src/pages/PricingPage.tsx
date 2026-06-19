@@ -36,7 +36,7 @@ const plans: PlanItem[] = [
   {
     id: "VIP_1M",
     name: "Học viên VIP 1 Tháng",
-    price: "99.000đ",
+    price: "29.000đ",
     period: "/ 30 ngày",
     features: [
       "Xem 100% bài học chuyên sâu",
@@ -51,17 +51,16 @@ const plans: PlanItem[] = [
     badge: "⚡ Gợi ý cho bạn",
   },
   {
-    id: "PREMIUM_3M",
-    name: "Premium 3 Tháng",
-    price: "249.000đ",
-    period: "/ 90 ngày",
+    id: "PREMIUM_4M",
+    name: "Premium 4 Tháng",
+    price: "99.000đ",
+    period: "/ 120 ngày",
     features: [
       "Mọi quyền lợi của gói VIP",
       "Tư vấn ưu tiên 24/7 với chuyên gia",
       "Mở khóa sớm các chủ đề nhạy cảm",
       "Tham gia phòng chat kín đặc quyền",
-      "Nhận chứng chỉ điện tử chính thức",
-      "Tiết kiệm 16% chi phí"
+      "Tiết kiệm 15% chi phí"
     ],
     color: "border-pink-300/80 bg-pink-50/20",
     popular: false,
@@ -91,14 +90,13 @@ const mapPlanToItem = (apiPlan: SubscriptionPlan): PlanItem => {
       "Tích lũy Streak & XP xếp hạng",
       "Hỗ trợ tư vấn trực tuyến"
     ];
-  } else if (apiPlan.id === "PREMIUM_3M") {
+  } else if (apiPlan.id === "PREMIUM_4M") {
     features = [
       "Mọi quyền lợi của gói VIP",
       "Tư vấn ưu tiên 24/7 với chuyên gia",
       "Mở khóa sớm các chủ đề nhạy cảm",
       "Tham gia phòng chat kín đặc quyền",
-      "Nhận chứng chỉ điện tử chính thức",
-      "Tiết kiệm 16% chi phí"
+      "Tiết kiệm 15% chi phí"
     ];
   } else if (apiPlan.description) {
     features = apiPlan.description.split(/[\n;]+/).map(s => s.trim()).filter(Boolean);
@@ -167,7 +165,7 @@ function formatExpiryDate(dateStr: string) {
 export default function PricingPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   const [displayPlans, setDisplayPlans] = useState<PlanItem[]>(plans);
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -220,8 +218,8 @@ export default function PricingPage() {
     } catch (err) {
       console.error("Payment error:", err);
       setError(
-        err instanceof ApiError 
-          ? err.message 
+        err instanceof ApiError
+          ? err.message
           : "Đã xảy ra lỗi khi tạo yêu cầu thanh toán. Vui lòng thử lại sau."
       );
     } finally {
@@ -232,7 +230,7 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen py-16 bg-[linear-gradient(135deg,rgba(253,244,255,0.4)_0%,rgba(239,246,255,0.4)_100%)]">
       <div className="container mx-auto px-4 max-w-5xl">
-        
+
         {/* Title Section */}
         <div className="mb-12 text-center">
           <motion.div
@@ -243,7 +241,7 @@ export default function PricingPage() {
             <Sparkles className="h-4 w-4" />
             <span>Đầu tư cho kiến thức và an toàn bản thân</span>
           </motion.div>
-          
+
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -251,7 +249,7 @@ export default function PricingPage() {
           >
             Chọn gói đồng hành cùng <span className="text-primary">EDUcare</span>
           </motion.h1>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -271,18 +269,18 @@ export default function PricingPage() {
         {/* Pricing Cards Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 items-stretch">
           {displayPlans.map((plan, index) => {
-            const isCurrentPlan = 
+            const isCurrentPlan =
               (plan.id === "FREE" && (!user?.subscriptionPlanId || user.subscriptionPlanId === "FREE")) ||
               (plan.id === user?.subscriptionPlanId) ||
               (plan.id === "VIP_1M" && !user?.subscriptionPlanId && user?.plan?.toUpperCase() === "POPULAR") ||
               (plan.id === "PREMIUM_3M" && !user?.subscriptionPlanId && user?.plan?.toUpperCase() === "PREMIUM");
 
-            const isLowerTier = 
+            const isLowerTier =
               plan.id !== "FREE" && getTierLevel(plan.id) < getUserTierLevel(user?.plan);
 
             const isVip = plan.id.toUpperCase().includes("VIP");
             const isPremium = plan.id.toUpperCase().includes("PREMIUM");
-            
+
             // Dynamic card styles
             let cardStyle = "border-slate-200/80 bg-white/70 shadow-md hover:scale-[1.02] hover:shadow-lg";
             if (isVip) {
@@ -303,13 +301,12 @@ export default function PricingPage() {
               >
                 <div>
                   {plan.badge && (
-                    <span className={`absolute -top-3 left-6 rounded-full px-3.5 py-1 text-[11px] font-black shadow-soft uppercase tracking-wider ${
-                      isVip ? "bg-primary text-white" : "bg-pink-500 text-white"
-                    }`}>
+                    <span className={`absolute -top-3 left-6 rounded-full px-3.5 py-1 text-[11px] font-black shadow-soft uppercase tracking-wider ${isVip ? "bg-primary text-white" : "bg-pink-500 text-white"
+                      }`}>
                       {plan.badge}
                     </span>
                   )}
-                  
+
                   <div className="flex justify-between items-start mt-1">
                     <h3 className="font-heading text-xl md:text-2xl font-black text-slate-800 leading-none">{plan.name}</h3>
                   </div>
@@ -324,9 +321,8 @@ export default function PricingPage() {
                   <ul className="space-y-3.5">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2.5 text-[14px] md:text-[15px] font-semibold text-slate-600 leading-relaxed">
-                        <Check className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${
-                          isPremium ? "text-pink-500 animate-pulse" : "text-primary"
-                        }`} />
+                        <Check className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${isPremium ? "text-pink-500 animate-pulse" : "text-primary"
+                          }`} />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -367,13 +363,12 @@ export default function PricingPage() {
                     <Button
                       onClick={() => handleSelectPlan(plan)}
                       disabled={loadingPlanId !== null}
-                      className={`w-full rounded-2xl h-12 font-black text-sm transition-all active:scale-[0.98] ${
-                        isVip
-                          ? "bg-primary text-primary-foreground hover:bg-primary/95 shadow-soft hover:shadow-lg hover:shadow-primary/20"
-                          : isPremium
-                            ? "bg-pink-500 text-white hover:bg-pink-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20"
-                            : "border-2 border-slate-200 bg-white/80 hover:bg-slate-50 text-slate-800"
-                      }`}
+                      className={`w-full rounded-2xl h-12 font-black text-sm transition-all active:scale-[0.98] ${isVip
+                        ? "bg-primary text-primary-foreground hover:bg-primary/95 shadow-soft hover:shadow-lg hover:shadow-primary/20"
+                        : isPremium
+                          ? "bg-pink-500 text-white hover:bg-pink-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20"
+                          : "border-2 border-slate-200 bg-white/80 hover:bg-slate-50 text-slate-800"
+                        }`}
                       variant={isVip || isPremium ? "default" : "outline"}
                     >
                       {loadingPlanId === plan.id ? (
@@ -408,7 +403,7 @@ export default function PricingPage() {
             ))}
           </div>
         </div>
-        
+
       </div>
     </div>
   );
