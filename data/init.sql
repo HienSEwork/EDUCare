@@ -719,14 +719,8 @@ INSERT INTO `micro_lessons` (`id`, `lesson_id`, `title`, `micro_order`, `created
 (233, 20, 'Bài kiểm tra: Thử thách tổng kết', 99, '2026-06-11 19:08:08', '2026-06-11 19:08:08'),
 (234, 21, 'Bài kiểm tra: Thử thách tổng kết', 99, '2026-06-11 19:08:08', '2026-06-11 19:08:08'),
 (235, 22, 'Bài kiểm tra: Thử thách tổng kết', 99, '2026-06-11 19:08:08', '2026-06-11 19:08:08'),
-(236, 23, 'Bài kiểm tra: Thử thách tổng kết', 99, '2026-06-11 19:08:09', '2026-06-11 19:08:09'),
-(237, 12, 'Luật đi đường tình cảm', 1, '2026-06-11 20:02:14', '2026-06-11 20:02:14'),
-(238, 12, 'Nhận diện một lời \"Đồng ý\" xịn', 2, '2026-06-11 20:02:14', '2026-06-11 20:02:14'),
-(239, 12, 'Vì sao im lặng không phải là đồng ý?', 3, '2026-06-11 20:02:14', '2026-06-11 20:02:14'),
-(240, 12, 'Từ \"Ok\" đến \"Không Ok\" trong chớp mắt', 4, '2026-06-11 20:02:14', '2026-06-11 20:02:14'),
-(241, 12, 'Cách check-in siêu tự nhiên', 5, '2026-06-11 20:02:14', '2026-06-11 20:02:14'),
-(242, 12, 'Tình dục không ép buộc mới vui!', 6, '2026-06-11 20:02:15', '2026-06-11 20:02:15'),
-(243, 12, 'Bài kiểm tra: Thử thách tổng kết', 99, '2026-06-11 20:02:15', '2026-06-11 20:02:15');
+(236, 23, 'Bài kiểm tra: Thử thách tổng kết', 99, '2026-06-11 19:08:09', '2026-06-11 19:08:09');
+
 
 -- --------------------------------------------------------
 
@@ -2905,6 +2899,97 @@ ALTER TABLE `password_reset_tokens`
 --
 ALTER TABLE `quiz_attempts`
   ADD CONSTRAINT `fk_quiz_attempt_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `subscription_plans`
+--
+
+CREATE TABLE `subscription_plans` (
+  `id` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `price` decimal(10,2) NOT NULL,
+  `duration_days` int(11) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `subscription_plans`
+--
+
+INSERT INTO `subscription_plans` (`id`, `name`, `price`, `duration_days`, `description`) VALUES
+('FREE', 'Học viên Miễn phí', 0.00, 99999, 'Truy cập các nội dung cơ bản của EDUcare.'),
+('VIP_1M', 'Học viên VIP 1 Tháng', 29000.00, 30, '      
+      Xem 100% bài học chuyên sâu,
+      Hệ thống câu hỏi khuyên học động,
+      Làm tất cả bài tập quiz,
+      Chơi game tình huống đầy đủ,
+      Tích lũy Streak & XP xếp hạng,
+      Hỗ trợ tư vấn trực tuyến'),
+('PREMIUM_4M', 'Học viên Premium 4 Tháng', 99000.00, 120, 'Trải nghiệm học tập không giới hạn cùng trợ lý tư vấn cá nhân hóa EDUcare,
+      Mọi quyền lợi của gói VIP,
+      Tư vấn ưu tiên 24/7 với chuyên gia,
+      Mở khóa sớm các chủ đề nhạy cảm,
+      Tham gia phòng chat kín đặc quyền,
+      Tiết kiệm 15% chi phí');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_subscriptions`
+--
+
+CREATE TABLE `user_subscriptions` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(36) NOT NULL,
+  `plan_id` varchar(50) NOT NULL,
+  `start_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `end_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` varchar(50) NOT NULL DEFAULT 'ACTIVE',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_user_sub_user` (`user_id`),
+  KEY `idx_user_sub_plan` (`plan_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_transactions`
+--
+
+CREATE TABLE `payment_transactions` (
+  `id` varchar(100) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `plan_id` varchar(50) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'PENDING',
+  `payment_method` varchar(50) DEFAULT NULL,
+  `gateway_reference` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_pay_trans_user` (`user_id`),
+  KEY `idx_pay_trans_plan` (`plan_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Constraints for table `user_subscriptions`
+--
+ALTER TABLE `user_subscriptions`
+  ADD CONSTRAINT `fk_user_sub_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_user_sub_plan` FOREIGN KEY (`plan_id`) REFERENCES `subscription_plans` (`id`);
+
+--
+-- Constraints for table `payment_transactions`
+--
+ALTER TABLE `payment_transactions`
+  ADD CONSTRAINT `fk_pay_trans_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pay_trans_plan` FOREIGN KEY (`plan_id`) REFERENCES `subscription_plans` (`id`);
 
 --
 -- Constraints for table `recommend_questions`

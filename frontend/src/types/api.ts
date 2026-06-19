@@ -16,6 +16,8 @@ export interface User {
   isAdmin: boolean;
   completedLessons: string[];
   createdAt: string;
+  subscriptionEndDate?: string | null;
+  subscriptionPlanId?: string | null;
 }
 
 export interface AuthResponse {
@@ -376,3 +378,16 @@ export interface LeaderboardResponse {
     avatar: string;
   }>;
 }
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  durationDays: number;
+  description: string | null;
+}
+
+export interface CheckoutResponse {
+  checkoutUrl: string;
+}
+

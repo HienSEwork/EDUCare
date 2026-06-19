@@ -17,6 +17,16 @@ function planLabel(plan: string) {
   return plan;
 }
 
+function formatExpiryDate(dateStr: string) {
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  } catch (e) {
+    return "";
+  }
+}
+
 export default function ProfilePage() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardResponse | null>(null);
@@ -89,7 +99,15 @@ export default function ProfilePage() {
                 <div className="mt-6 grid grid-cols-2 gap-3">
                   <ProfileStat label={PROFILE_PAGE_COPY.stats.email} value={user.email} compact />
                   <ProfileStat label={PROFILE_PAGE_COPY.stats.age} value={String(user.age)} />
-                  <ProfileStat label={PROFILE_PAGE_COPY.stats.plan} value={planLabel(user.plan)} />
+                  <ProfileStat 
+                    label={PROFILE_PAGE_COPY.stats.plan} 
+                    value={
+                      planLabel(user.plan) + 
+                      (user.subscriptionEndDate && user.plan !== "free"
+                        ? ` (HSD: ${formatExpiryDate(user.subscriptionEndDate)})` 
+                        : "")
+                    } 
+                  />
                   <ProfileStat label={PROFILE_PAGE_COPY.stats.xp} value={String(user.xp)} />
                 </div>
               </div>

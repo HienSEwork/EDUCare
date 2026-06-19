@@ -37,6 +37,7 @@ const AUTH_HEADER_SHELL_WIDTH = "max-w-[780px]";
 const navGroups = [
   { label: NAV_COPY.home, to: "/" },
   { label: NAV_COPY.blog, items: [{ label: NAV_COPY.blogPosts, to: "/blog" }, { label: NAV_COPY.courses, to: "/courses" }] },
+  { label: "Nâng cấp VIP 💎", to: "/pricing" },
   {
     label: NAV_COPY.community,
     items: [
@@ -295,7 +296,20 @@ export default function Navbar() {
                               <Shield className="h-3 w-3" />
                               {NAV_COPY.admin}
                             </p>
-                          ) : null}
+                          ) : (
+                            <div className="flex gap-1.5 flex-wrap mt-1">
+                              {user.plan === "popular" && (
+                                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-primary shadow-soft">
+                                  VIP ⚡
+                                </span>
+                              )}
+                              {user.plan === "premium" && (
+                                <span className="inline-flex items-center rounded-full bg-pink-500/10 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-pink-600 shadow-soft">
+                                  PREMIUM 💎
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </DropdownMenuLabel>

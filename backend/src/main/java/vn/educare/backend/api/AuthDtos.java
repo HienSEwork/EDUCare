@@ -42,7 +42,9 @@ public final class AuthDtos {
       String role,
       boolean isAdmin,
       List<String> completedLessons,
-      String createdAt) {
+      String createdAt,
+      String subscriptionEndDate,
+      String subscriptionPlanId) {
   }
 
 public record LessonSourceResponse(
