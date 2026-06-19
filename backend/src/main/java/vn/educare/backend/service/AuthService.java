@@ -19,6 +19,8 @@ import vn.educare.backend.model.UserRole;
 import vn.educare.backend.repository.LessonRepository;
 import vn.educare.backend.repository.LessonProgressRepository;
 import vn.educare.backend.repository.UserRepository;
+import vn.educare.backend.repository.UserSubscriptionRepository;
+import vn.educare.backend.model.UserSubscriptionEntity;
 import vn.educare.backend.security.JwtService;
 
 @Service
@@ -31,6 +33,7 @@ public class AuthService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final UserMapper userMapper;
+  private final UserSubscriptionRepository userSubscriptionRepository;
 
   @Transactional
   public AuthResponse register(RegisterRequest request) {
@@ -78,7 +81,29 @@ public class AuthService {
     return mapUser(user);
   }
 
+  private void checkAndUpdateSubscription(UserEntity user) {
+    List<UserSubscriptionEntity> activeSubs = userSubscriptionRepository.findByUserIdAndStatus(user.getId(), "ACTIVE");
+    boolean hasActive = false;
+    Instant now = Instant.now();
+
+    for (UserSubscriptionEntity sub : activeSubs) {
+      if (sub.getEndDate().isBefore(now)) {
+        sub.setStatus("EXPIRED");
+        userSubscriptionRepository.save(sub);
+      } else {
+        hasActive = true;
+      }
+    }
+
+    if (!hasActive && user.getPlan() != UserPlan.FREE) {
+      user.setPlan(UserPlan.FREE);
+      userRepository.save(user);
+    }
+  }
+
   public UserResponse mapUser(UserEntity user) {
+    checkAndUpdateSubscription(user);
+
     List<Long> completedLessonIds = lessonProgressRepository.findAllByUserIdOrderByCompletedAtAsc(user.getId())
         .stream()
         .map(LessonProgressEntity::getLessonId)

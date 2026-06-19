@@ -36,3 +36,7 @@ app:
     password: ${APP_ADMIN_PASSWORD:Admin@123}
     full-name: ${APP_ADMIN_FULL_NAME:EDUcare Admin}
     username: ${APP_ADMIN_USERNAME:educare_admin}
+  payos:
+    client-id: ${PAYOS_CLIENT_ID:}
+    api-key: ${PAYOS_API_KEY:}
+    checksum-key: ${PAYOS_CHECKSUM_KEY:}

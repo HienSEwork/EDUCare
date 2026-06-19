@@ -39,8 +39,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/actuator/health", "/error").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/quizzes/submit").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/blog-posts/**", "/api/lessons/**", "/api/quizzes/**", "/api/games/**", "/api/community/**", "/api/leaderboard", "/api/courses", "/api/courses/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/quizzes/submit", "/api/payments/webhook", "/api/payments/cancel/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/blog-posts/**", "/api/lessons/**", "/api/quizzes/**", "/api/games/**", "/api/community/**", "/api/leaderboard", "/api/courses", "/api/courses/**", "/api/payments/plans").permitAll()
             .anyRequest().authenticated())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
