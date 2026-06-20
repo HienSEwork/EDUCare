@@ -380,23 +380,54 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Wave into tools */}
-      <div className="h-2 bg-gradient-to-r from-violet-100 via-pink-100 to-sky-100" />
-
       {/* ════════════════════════════════════
-          TOOLS
+          TOOLS — Private zone
       ════════════════════════════════════ */}
-      <section className="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-20">
+      <section className="bg-white py-20">
         <div className="container mx-auto px-4">
-          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="mb-10 text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.22em] text-indigo-500">Hàng ngày</p>
+          {/* Outer label */}
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="mb-8 text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.22em] text-indigo-400">Không gian cá nhân</p>
             <h2 className="mt-2 font-heading text-3xl font-bold text-gray-900 md:text-4xl">Công cụ đồng hành</h2>
+            <p className="mt-2 text-sm text-gray-400">Chỉ bạn thấy — riêng tư, không chia sẻ</p>
           </motion.div>
-          <div className="grid gap-6 lg:grid-cols-3">
-            <MoodTracker />
-            <AnonymousQuestionBox />
-            <RandomAdvice />
-          </div>
+
+          {/* Private zone wrapper */}
+          <motion.div
+            variants={fadeUp} custom={0.3} initial="hidden" whileInView="show" viewport={{ once: true }}
+            className="relative overflow-hidden rounded-[2.5rem] p-1 shadow-[0_24px_80px_rgba(15,23,42,0.18)]"
+            style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 45%, #0c1445 100%)" }}
+          >
+            {/* ambient glow blobs inside dark zone */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[2.5rem]">
+              <div className="absolute -left-20 top-10 h-64 w-64 rounded-full bg-indigo-600/20 blur-[80px]" />
+              <div className="absolute -right-16 bottom-10 h-56 w-56 rounded-full bg-blue-500/15 blur-[70px]" />
+              <div className="absolute left-1/2 top-0 h-40 w-80 -translate-x-1/2 rounded-full bg-violet-500/10 blur-[60px]" />
+            </div>
+
+            {/* top bar label */}
+            <div className="relative flex items-center justify-between px-8 pt-6 pb-2">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1.5">
+                  <span className="h-3 w-3 rounded-full bg-white/10" />
+                  <span className="h-3 w-3 rounded-full bg-white/10" />
+                  <span className="h-3 w-3 rounded-full bg-white/10" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-[0.22em] text-white/40">Khu vực riêng tư của bạn</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/8 px-3 py-1">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                <span className="text-xs font-semibold text-white/50">Chỉ mình bạn</span>
+              </div>
+            </div>
+
+            {/* grid of 3 cards */}
+            <div className="relative grid gap-4 p-6 lg:grid-cols-3">
+              <MoodTracker />
+              <AnonymousQuestionBox />
+              <RandomAdvice />
+            </div>
+          </motion.div>
         </div>
       </section>
 
