@@ -121,7 +121,7 @@ export default function Navbar() {
       <div
         data-ui="floating-header-shell"
         className={cn(
-          "mx-auto flex w-full items-center rounded-full border border-white/60 bg-[linear-gradient(135deg,rgba(255,236,243,0.94)_0%,rgba(245,239,255,0.96)_52%,rgba(232,244,255,0.94)_100%)] px-4 shadow-[0_18px_46px_rgba(51,35,87,0.10)] lg:px-5",
+          "mx-auto flex w-full items-center rounded-full border border-sky-200/40 bg-[linear-gradient(135deg,rgba(186,230,253,0.18)_0%,rgba(224,242,254,0.22)_52%,rgba(186,230,253,0.16)_100%)] px-4 shadow-[0_8px_32px_rgba(14,116,144,0.08)] backdrop-blur-md lg:px-5",
           isAuthPage ? AUTH_HEADER_SHELL_WIDTH : DEFAULT_HEADER_SHELL_WIDTH,
         )}
       >
@@ -129,10 +129,13 @@ export default function Navbar() {
           <div className="flex min-w-[148px] items-center">
             <Link
               to="/"
-              aria-label="EDUcare"
-              className="group inline-flex items-center rounded-full border border-white/78 bg-white/90 px-4 py-2.5 shadow-[0_12px_28px_rgba(67,43,104,0.12)] transition-transform hover:-translate-y-0.5"
+              aria-label="EDUcare — Đồng hành cùng tuổi teen"
+              className="group inline-flex items-center gap-2 rounded-full border border-sky-200/60 bg-white/80 px-4 py-2.5 shadow-[0_6px_20px_rgba(14,116,144,0.10)] backdrop-blur-sm transition-transform hover:-translate-y-0.5"
             >
-              <span className="bg-[linear-gradient(135deg,#6534e8_0%,#f04fa5_100%)] bg-clip-text font-heading text-[1.22rem] font-bold tracking-[-0.04em] text-transparent lg:text-[1.3rem]">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-sky-400 text-[11px] font-black text-white shadow-sm">
+                E
+              </span>
+              <span className="bg-[linear-gradient(135deg,#3b5bdb_0%,#0ea5e9_100%)] bg-clip-text font-heading text-[1.18rem] font-bold tracking-[-0.03em] text-transparent lg:text-[1.26rem]">
                 EDUcare
               </span>
             </Link>
@@ -172,7 +175,7 @@ export default function Navbar() {
                   </button>
 
                   {openDropdown === group.label ? (
-                    <div className="absolute left-0 top-full z-20 mt-3 min-w-[220px] rounded-[1.2rem] border border-white/75 bg-[linear-gradient(150deg,rgba(255,239,245,0.98)_0%,rgba(246,241,255,0.98)_55%,rgba(235,246,255,0.98)_100%)] p-2.5 shadow-[0_28px_80px_rgba(37,30,71,0.18)]">
+                    <div className="absolute left-0 top-full z-20 mt-3 min-w-[220px] rounded-[1.2rem] border border-sky-100/70 bg-[linear-gradient(150deg,rgba(240,249,255,0.98)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.98)_100%)] p-2.5 shadow-[0_20px_60px_rgba(14,116,144,0.14)] backdrop-blur-md">
                       {group.items.map((item) => (
                         <Link
                           key={item.to}
@@ -224,7 +227,7 @@ export default function Navbar() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                       align="end"
-                      className="w-[360px] rounded-[1.35rem] border-white/75 bg-[linear-gradient(150deg,rgba(255,239,245,0.98)_0%,rgba(246,241,255,0.98)_55%,rgba(235,246,255,0.98)_100%)] p-2 shadow-[0_24px_80px_rgba(37,30,71,0.18)]"
+                      className="w-[360px] rounded-[1.35rem] border-sky-100/70 bg-[linear-gradient(150deg,rgba(240,249,255,0.98)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.98)_100%)] p-2 shadow-[0_20px_60px_rgba(14,116,144,0.14)] backdrop-blur-md"
                     >
                       <DropdownMenuLabel className="px-3 py-3">
                         <div className="flex items-center justify-between gap-3">
@@ -279,7 +282,7 @@ export default function Navbar() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-64 rounded-[1.2rem] border-white/75 bg-[linear-gradient(150deg,rgba(255,239,245,0.98)_0%,rgba(246,241,255,0.98)_55%,rgba(235,246,255,0.98)_100%)] p-2 shadow-[0_24px_80px_rgba(37,30,71,0.18)]"
+                    className="w-64 rounded-[1.2rem] border-sky-100/70 bg-[linear-gradient(150deg,rgba(240,249,255,0.98)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.98)_100%)] p-2 shadow-[0_20px_60px_rgba(14,116,144,0.14)] backdrop-blur-md"
                   >
                     <DropdownMenuLabel className="px-3 py-2">
                       <div className="flex items-center gap-3">
@@ -367,7 +370,7 @@ export default function Navbar() {
       </div>
 
       {mobileOpen ? (
-        <div className="mx-auto mt-3 w-full max-w-[1080px] space-y-4 rounded-[2rem] border border-white/75 bg-[linear-gradient(150deg,rgba(255,239,245,0.97)_0%,rgba(246,241,255,0.98)_55%,rgba(235,246,255,0.97)_100%)] p-4 shadow-[0_18px_50px_rgba(51,35,87,0.16)] lg:hidden">
+        <div className="mx-auto mt-3 w-full max-w-[1080px] space-y-4 rounded-[2rem] border border-sky-200/50 bg-[linear-gradient(150deg,rgba(240,249,255,0.97)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.97)_100%)] p-4 shadow-[0_16px_50px_rgba(14,116,144,0.12)] backdrop-blur-md lg:hidden">
           {navGroups.map((group) =>
             "items" in group ? (
               <div key={group.label}>
