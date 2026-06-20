@@ -97,7 +97,7 @@ When a model version file is created, the agent must integrate the change into t
 - Database access belongs in `repository/`.
 - Entities should only map database structure and simple lifecycle hooks.
 - Use `ApiException` for business errors; do not throw raw runtime exceptions when the client needs a clear message.
-- Do not use `printStackTrace`; use an SLF4J logger.
+- Do not use `print7StackTrace`; use an SLF4J logger.
 - Public endpoints must be explicitly declared in `SecurityConfig`.
 - Every data-writing endpoint needs input validation and authentication unless it is intentionally public.
 
