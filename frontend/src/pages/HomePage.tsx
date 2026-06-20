@@ -396,32 +396,42 @@ export default function HomePage() {
 
         <div className="container relative mx-auto px-4">
           {/* Header */}
-          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="mb-10 text-center">
-            {/* top bar label */}
-            <div className="mb-6 flex items-center justify-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
+            className="mb-10 flex flex-col items-start gap-3 md:flex-row md:items-end md:justify-between"
+          >
+            <div>
+              {/* breadcrumb bar */}
+              <div className="mb-3 flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-blue-400" />
+                  <span className="h-2 w-2 rounded-full bg-indigo-400/60" />
+                  <span className="h-2 w-2 rounded-full bg-indigo-400/30" />
                 </div>
-                <span className="text-xs font-bold uppercase tracking-[0.22em] text-white/30">Khu vực riêng tư của bạn</span>
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-400/80">Không gian cá nhân</span>
+                <div className="flex items-center gap-1.5 rounded-full border border-blue-400/20 bg-blue-500/10 px-2.5 py-0.5">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                  <span className="text-[10px] font-semibold text-white/50">Chỉ mình bạn</span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                <span className="text-xs font-semibold text-white/40">Chỉ mình bạn</span>
-              </div>
+              <h2 className="font-heading text-3xl font-bold text-white md:text-4xl">
+                Công cụ<br className="hidden sm:block" /> đồng hành
+              </h2>
+              <p className="mt-2 text-sm text-white/40">Riêng tư · An toàn · Không chia sẻ với bất kỳ ai</p>
             </div>
-            <p className="text-sm font-bold uppercase tracking-[0.22em] text-indigo-400">Không gian cá nhân</p>
-            <h2 className="mt-2 font-heading text-3xl font-bold text-white md:text-4xl">Công cụ đồng hành</h2>
-            <p className="mt-2 text-sm text-white/35">Riêng tư · An toàn · Không chia sẻ</p>
+            {/* decorative divider right */}
+            <div className="hidden h-px flex-1 bg-gradient-to-r from-blue-500/30 to-transparent md:block" />
           </motion.div>
 
-          {/* Cards grid */}
-          <div className="grid gap-5 lg:grid-cols-3">
+          {/* 2-col layout: MoodTracker left (wider) | right column stacked */}
+          <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+            {/* Left — MoodTracker */}
             <MoodTracker />
-            <AnonymousQuestionBox />
-            <RandomAdvice />
+
+            {/* Right — stacked AnonymousQuestionBox + RandomAdvice */}
+            <div className="flex flex-col gap-5">
+              <AnonymousQuestionBox />
+              <RandomAdvice />
+            </div>
           </div>
         </div>
       </section>
