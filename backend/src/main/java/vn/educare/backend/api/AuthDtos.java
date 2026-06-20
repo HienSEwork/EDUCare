@@ -67,6 +67,8 @@ public record LessonResponse(
     Integer xpReward,
     Integer estimatedMinutes,
     String courseColorTheme,
+    String teaserVideoId,
+    String fullVideoId,
     List<MicroLessonResponse> microLessons,
     List<LessonSourceResponse> sources
 ) {}

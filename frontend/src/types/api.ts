@@ -72,6 +72,8 @@ export type Lesson = {
   microLessons: MicroLesson[];
   courseColorTheme?: string | null;
   sources?: LessonSource[];
+  teaserVideoId?: string | null;
+  fullVideoId?: string | null;
 };
 
 export interface RecommendQuestion {

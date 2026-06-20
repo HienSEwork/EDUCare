@@ -48,6 +48,12 @@ public class LessonEntity {
   @Column(name = "estimated_minutes", nullable = false)
   private Integer estimatedMinutes;
 
+  @Column(name = "teaser_video_id")
+  private String teaserVideoId;
+
+  @Column(name = "full_video_id")
+  private String fullVideoId;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 

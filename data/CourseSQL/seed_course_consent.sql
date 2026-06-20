@@ -22,7 +22,7 @@ SET @course_id = LAST_INSERT_ID();
 -- =========================================================================
 -- BÀI HỌC 1: Luật đi đường - Đồng thuận là gì? (lesson_order = 9)
 -- =========================================================================
-INSERT INTO lessons (course_id, slug, title, summary, content, lesson_order, is_free, xp_reward, estimated_minutes)
+INSERT INTO lessons (course_id, slug, title, summary, content, lesson_order, is_free, xp_reward, estimated_minutes, teaser_video_id, full_video_id)
 VALUES (
     @course_id,
     'luat-di-duong-dong-thuan-la-gi',
@@ -32,7 +32,9 @@ VALUES (
     9,
     true,
     100,
-    10
+    10,
+    'qK9DqF_Ci10',
+    'JBqlllo0LGs'
 );
 SET @lesson1_id = LAST_INSERT_ID();
 
