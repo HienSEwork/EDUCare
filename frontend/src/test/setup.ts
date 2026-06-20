@@ -10,7 +10,7 @@ Object.defineProperty(window, "matchMedia", {
     removeListener: () => {},
     addEventListener: () => {},
     removeEventListener: () => {},
-    dispatchEvent: () => {},
+    dispatchEvent: () => false,
   }),
 });
 
@@ -32,3 +32,21 @@ Object.defineProperty(globalThis, "IntersectionObserver", {
   writable: true,
   value: MockIntersectionObserver,
 });
+
+class MockResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+Object.defineProperty(window, "ResizeObserver", {
+  writable: true,
+  value: MockResizeObserver,
+});
+
+window.scrollTo = () => {};
+document.documentElement.scrollTo = () => {};
+document.body.scrollTo = () => {};
+
+// Mock HTMLElement.scrollTo for scroll containers
+Element.prototype.scrollTo = () => {};
