@@ -8,6 +8,19 @@ import MoodTracker from "@/components/MoodTracker";
 import AnonymousQuestionBox from "@/components/AnonymousQuestionBox";
 import RandomAdvice from "@/components/RandomAdvice";
 
+import imgTeenFriends from "@/assets/home/teen-friends.jpg";
+import imgStudyDesk from "@/assets/home/study-desk.jpg";
+import imgNatureCalm from "@/assets/home/nature-calm.jpg";
+import imgAvatarGirl1 from "@/assets/home/avatar-girl1.jpg";
+import imgAvatarBoy1 from "@/assets/home/avatar-boy1.jpg";
+import imgAvatarGirl2 from "@/assets/home/avatar-girl2.jpg";
+import imgAvatarBoy2 from "@/assets/home/avatar-boy2.jpg";
+import imgHeroStudents from "@/assets/home/hero-students.jpg";
+import imgAvatarGirl3 from "@/assets/home/avatar-girl3.jpg";
+import imgAvatarGirl4 from "@/assets/home/avatar-girl4.jpg";
+import imgAvatarBoy3 from "@/assets/home/avatar-boy3.jpg";
+import imgAvatarGirl5 from "@/assets/home/avatar-girl5.jpg";
+
 /* ── Shared variants ── */
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -37,24 +50,9 @@ const steps = [
 
 /* ── Course cards ── */
 const courses = [
-  {
-    title: "Kỹ năng giao tiếp",
-    badge: "Hot",
-    rating: "4.8",
-    img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop&auto=format",
-  },
-  {
-    title: "Quản lý thời gian",
-    badge: "New",
-    rating: "4.9",
-    img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=300&fit=crop&auto=format",
-  },
-  {
-    title: "Tư duy tích cực",
-    badge: "Hot",
-    rating: "4.9",
-    img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&auto=format",
-  },
+  { title: "Kỹ năng giao tiếp", badge: "Hot", rating: "4.8", img: imgTeenFriends },
+  { title: "Quản lý thời gian", badge: "New", rating: "4.9", img: imgStudyDesk },
+  { title: "Tư duy tích cực",   badge: "Hot", rating: "4.9", img: imgNatureCalm },
 ];
 
 /* ── Wave SVG divider ── */
@@ -164,12 +162,7 @@ export default function HomePage() {
               {/* Social proof */}
               <motion.div variants={fadeUp} custom={3} className="mt-10 flex items-center gap-5">
                 <div className="flex -space-x-3">
-                  {[
-                    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop",
-                    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop",
-                    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop",
-                    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop",
-                  ].map((src, i) => (
+                  {[imgAvatarGirl1, imgAvatarBoy1, imgAvatarGirl2, imgAvatarBoy2].map((src, i) => (
                     <img key={i} src={src} alt="" className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-md" />
                   ))}
                   <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-indigo-500 to-blue-500 text-xs font-bold text-white shadow-md">
@@ -191,7 +184,7 @@ export default function HomePage() {
               {/* Hero image — Unsplash teen/education */}
               <motion.div style={{ y: heroImgY }} className="relative z-10">
                 <img
-                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=640&h=720&fit=crop&auto=format"
+                  src={imgHeroStudents}
                   alt="Teens learning"
                   className="w-[440px] rounded-[2.5rem] object-cover shadow-[0_32px_100px_rgba(79,70,229,0.28)]"
                   style={{ maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)" }}
@@ -472,12 +465,7 @@ export default function HomePage() {
               {/* Avatar row */}
               <div className="mt-8 flex items-center gap-3">
                 <div className="flex -space-x-2">
-                  {[
-                    "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&h=60&fit=crop",
-                    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop",
-                    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&h=60&fit=crop",
-                    "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=60&h=60&fit=crop",
-                  ].map((src, i) => (
+                  {[imgAvatarGirl3, imgAvatarGirl4, imgAvatarBoy3, imgAvatarGirl5].map((src, i) => (
                     <img key={i} src={src} alt="" className="h-9 w-9 rounded-full border-2 border-blue-800 object-cover" />
                   ))}
                   <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-blue-800 bg-white/20 text-xs font-bold text-white">
@@ -505,7 +493,7 @@ export default function HomePage() {
               <div className="mt-8 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
-                    src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop"
+                    src={imgAvatarGirl1}
                     alt="Minh Anh"
                     className="h-12 w-12 rounded-full object-cover shadow-md"
                   />
