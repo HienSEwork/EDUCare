@@ -174,4 +174,28 @@ export const GAME_DISPLAY_BY_SLUG = {
     title: "Ánh sáng tự tin",
     summary: "Mini game thư giãn giúp bạn lấy lại năng lượng tích cực và nhịp vui sau giờ học.",
   },
+  "myth-buster": {
+    title: "Giải Mã Tin Đồn",
+    summary: "20 câu Đúng/Sai siêu nhanh về sức khỏe tuổi teen — kiến thức vững, phản xạ lẹ!",
+  },
+  "safe-swipe": {
+    title: "Ranh Giới An Toàn",
+    summary: "30 tình huống thực tế — vuốt phải nếu an toàn, vuốt trái nếu nguy hiểm. Bạn nhận ra bao nhiêu cạm bẫy?",
+  },
+  "chat-detective": {
+    title: "Thám Tử Mạng",
+    summary: "Nhập vai trong các cuộc trò chuyện nguy hiểm và chọn cách phản hồi đúng đắn để vượt qua mọi tình huống!",
+  },
+  "red-flag-hunt": {
+    title: "Cảnh Giác Cao Độ",
+    summary: "Quan sát màn hình giả mạo và bấm vào tất cả dấu hiệu đáng ngờ — luyện kỹ năng quan sát sắc bén!",
+  },
+  "emotion-sort": {
+    title: "Dọn Rác Cảm Xúc",
+    summary: "Kéo thả các hành vi và cảm xúc vào đúng rổ — nhận diện điều lành mạnh và độc hại cho tâm trí bạn!",
+  },
+  "teen-path": {
+    title: "Ngã Rẽ Tuổi Teen",
+    summary: "Visual novel tương tác — mỗi quyết định dẫn đến một kết cục khác nhau. Bạn mở khóa được bao nhiêu ending?",
+  },
 } as const satisfies Record<string, { title: string; summary: string }>;

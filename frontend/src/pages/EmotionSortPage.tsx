@@ -1,0 +1,337 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
+import { Heart, Trash2, RefreshCw, ArrowRight, Trophy, CheckCircle2, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ALL_EMOTION_CARDS, type EmotionCard } from "@/data/emotionCards";
+
+type GamePhase = "intro" | "playing" | "result";
+
+interface PlayedEmotion extends EmotionCard {
+  placedCorrectly: boolean;
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+const TOTAL_CARDS = 20; // show 10 healthy + 10 unhealthy
+
+function EmotionBubble({
+  card,
+  onDrop,
+  isPlayed,
+}: {
+  card: EmotionCard;
+  onDrop: (card: EmotionCard, zone: "healthy" | "unhealthy") => void;
+  isPlayed: boolean;
+}) {
+  const [isDragging, setIsDragging] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleDragEnd = useCallback(
+    (event: MouseEvent | TouchEvent | PointerEvent) => {
+      setIsDragging(false);
+      const target = event instanceof TouchEvent
+        ? document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
+        : document.elementFromPoint((event as PointerEvent).clientX, (event as PointerEvent).clientY);
+
+      const healthyZone = document.getElementById("healthy-zone");
+      const unhealthyZone = document.getElementById("unhealthy-zone");
+
+      if (healthyZone?.contains(target as Node)) {
+        onDrop(card, "healthy");
+      } else if (unhealthyZone?.contains(target as Node)) {
+        onDrop(card, "unhealthy");
+      }
+    },
+    [card, onDrop],
+  );
+
+  if (isPlayed) return null;
+
+  return (
+    <motion.div
+      ref={ref}
+      drag
+      dragMomentum={false}
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={handleDragEnd}
+      whileDrag={{ scale: 1.1, zIndex: 50, cursor: "grabbing" }}
+      animate={{ y: [0, -6, 0] }}
+      transition={{ duration: 2 + (card.id % 3) * 0.5, repeat: Infinity, ease: "easeInOut", delay: (card.id % 5) * 0.3 }}
+      className={`relative flex cursor-grab flex-col items-center gap-1 rounded-[1.4rem] border-2 bg-white px-3 py-3 shadow-soft select-none ${
+        isDragging ? "opacity-70" : "opacity-100"
+      }`}
+      style={{ borderColor: card.color + "66", width: 110 }}
+    >
+      <span className="text-2xl">{card.emoji}</span>
+      <span className="text-center text-xs font-semibold leading-tight">{card.label}</span>
+    </motion.div>
+  );
+}
+
+function DropZone({
+  id,
+  label,
+  emoji,
+  color,
+  bg,
+  count,
+  isOver,
+}: {
+  id: string;
+  label: string;
+  emoji: string;
+  color: string;
+  bg: string;
+  count: number;
+  isOver: boolean;
+}) {
+  return (
+    <div
+      id={id}
+      className={`flex min-h-[160px] flex-col items-center justify-center gap-2 rounded-[1.8rem] border-4 border-dashed p-4 transition-all ${isOver ? "scale-105" : ""}`}
+      style={{
+        borderColor: isOver ? color : color + "66",
+        background: isOver ? bg + "cc" : bg + "55",
+      }}
+    >
+      <span className="text-4xl">{emoji}</span>
+      <p className="font-bold text-sm" style={{ color }}>{label}</p>
+      <span className="text-2xl font-black" style={{ color }}>{count}</span>
+    </div>
+  );
+}
+
+export default function EmotionSortPage() {
+  const [phase, setPhase] = useState<GamePhase>("intro");
+  const [deck, setDeck] = useState<EmotionCard[]>([]);
+  const [played, setPlayed] = useState<PlayedEmotion[]>([]);
+  const [lastFeedback, setLastFeedback] = useState<{ correct: boolean; card: EmotionCard } | null>(null);
+  const feedbackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [healthyCount, setHealthyCount] = useState(0);
+  const [unhealthyCount, setUnhealthyCount] = useState(0);
+
+  const startGame = useCallback(() => {
+    const healthy = shuffle(ALL_EMOTION_CARDS.filter((c) => c.isHealthy)).slice(0, TOTAL_CARDS / 2);
+    const unhealthy = shuffle(ALL_EMOTION_CARDS.filter((c) => !c.isHealthy)).slice(0, TOTAL_CARDS / 2);
+    setDeck(shuffle([...healthy, ...unhealthy]));
+    setPlayed([]);
+    setHealthyCount(0);
+    setUnhealthyCount(0);
+    setLastFeedback(null);
+    setPhase("playing");
+  }, []);
+
+  const handleDrop = useCallback(
+    (card: EmotionCard, zone: "healthy" | "unhealthy") => {
+      const correct = card.isHealthy === (zone === "healthy");
+      setPlayed((prev) => [...prev, { ...card, placedCorrectly: correct }]);
+      setDeck((prev) => prev.filter((c) => c.id !== card.id));
+
+      if (zone === "healthy") setHealthyCount((n) => n + 1);
+      else setUnhealthyCount((n) => n + 1);
+
+      setLastFeedback({ correct, card });
+      if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current);
+      feedbackTimeout.current = setTimeout(() => {
+        setLastFeedback(null);
+        if (played.length + 1 >= TOTAL_CARDS) setPhase("result");
+      }, 1800);
+    },
+    [played.length],
+  );
+
+  useEffect(() => {
+    return () => { if (feedbackTimeout.current) clearTimeout(feedbackTimeout.current); };
+  }, []);
+
+  const playedIds = new Set(played.map((p) => p.id));
+  const correctCount = played.filter((p) => p.placedCorrectly).length;
+  const pct = played.length > 0 ? Math.round((correctCount / played.length) * 100) : 0;
+
+  // ── INTRO ──────────────────────────────────────────────────────────────
+  if (phase === "intro") {
+    return (
+      <div className="min-h-screen pb-16 pt-8">
+        <div className="container mx-auto max-w-2xl px-4">
+          <motion.section
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="overflow-hidden rounded-[2.4rem] border border-white/70 bg-[linear-gradient(135deg,rgba(6,214,160,0.12)_0%,rgba(246,241,255,0.96)_50%,rgba(239,68,68,0.10)_100%)] p-8 shadow-card md:p-12"
+          >
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#06d6a0] shadow-soft">
+              <Heart className="h-3.5 w-3.5" /> Mini Game
+            </span>
+            <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">
+              Dọn Rác Cảm Xúc 💚
+            </h1>
+            <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">
+              Kéo và thả từng hành vi/cảm xúc vào đúng rổ: <strong className="text-green-600">Lành mạnh 💚</strong> hoặc <strong className="text-red-500">Độc hại ❌</strong>.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                { label: "Số thẻ", value: `${TOTAL_CARDS} thẻ` },
+                { label: "Dạng chơi", value: "Kéo thả" },
+                { label: "Chủ đề", value: "Cảm xúc & hành vi" },
+              ].map((item) => (
+                <div key={item.label} className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
+                  <p className="mt-2 text-lg font-bold">{item.value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 space-y-3 rounded-[1.8rem] border border-white/70 bg-white/60 p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Cách chơi</p>
+              {[
+                "Kéo thẻ bong bóng cảm xúc vào đúng rổ",
+                "Rổ 💚 = hành vi/cảm xúc LÀNH MẠNH",
+                "Rổ ❌ = hành vi/cảm xúc ĐỘC HẠI",
+                "Sau mỗi thẻ sẽ có phản hồi ngay lập tức",
+              ].map((rule, i) => (
+                <div key={i} className="flex items-start gap-3 text-sm text-foreground/80">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">{i + 1}</span>
+                  {rule}
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button id="emotion-sort-start-btn" className="gradient-primary px-8 py-6 text-base font-bold text-primary-foreground" onClick={startGame}>
+                <Heart className="mr-2 h-5 w-5" /> Bắt đầu dọn dẹp!
+              </Button>
+              <Button variant="outline" asChild><Link to="/games">← Về trang game</Link></Button>
+            </div>
+          </motion.section>
+        </div>
+      </div>
+    );
+  }
+
+  // ── RESULT ─────────────────────────────────────────────────────────────
+  if (phase === "result") {
+    const label = pct >= 85 ? { text: "Bậc thầy cảm xúc! Tuyệt vời! 🌟", color: "#06d6a0" }
+      : pct >= 70 ? { text: "Rất tốt! Cảm xúc của bạn khá cân bằng.", color: "#4361ee" }
+      : pct >= 50 ? { text: "Ổn đấy! Hãy tìm hiểu thêm về cảm xúc lành mạnh.", color: "#f77f00" }
+      : { text: "Cần học thêm về nhận diện cảm xúc nhé!", color: "#ef4444" };
+
+    return (
+      <div className="min-h-screen pb-16 pt-8">
+        <div className="container mx-auto max-w-4xl px-4">
+          <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
+            <section className="rounded-[2.4rem] border border-white/70 bg-white/90 p-8 shadow-card text-center md:p-12">
+              <div className="text-5xl">{pct >= 80 ? "🏆" : pct >= 60 ? "💙" : "📚"}</div>
+              <h1 className="mt-4 font-heading text-3xl font-bold" style={{ color: label.color }}>{label.text}</h1>
+              <p className="mt-2 text-muted-foreground">Đúng <strong>{correctCount}/{played.length}</strong> thẻ ({pct}%)</p>
+              <div
+                className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-card"
+                style={{ background: `conic-gradient(${label.color} ${pct}%, #e5e7eb ${pct}%)` }}
+              >
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background">
+                  <span className="font-heading text-2xl font-bold" style={{ color: label.color }}>{pct}%</span>
+                </div>
+              </div>
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
+                <Button id="emotion-sort-replay-btn" className="gradient-primary text-primary-foreground" onClick={startGame}>
+                  <RefreshCw className="mr-2 h-4 w-4" /> Chơi lại
+                </Button>
+                <Button variant="outline" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
+              </div>
+            </section>
+
+            {/* Review */}
+            <section className="mt-8">
+              <h2 className="mb-4 font-heading text-2xl font-bold">Xem lại kết quả</h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {played.map((p) => (
+                  <div
+                    key={p.id}
+                    className={`rounded-[1.6rem] border p-4 ${p.placedCorrectly ? "border-green-200/70 bg-green-50/80" : "border-red-200/70 bg-red-50/80"}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${p.placedCorrectly ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}>
+                        {p.placedCorrectly ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+                      </span>
+                      <div>
+                        <p className="font-semibold text-sm">{p.emoji} {p.label}</p>
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          → {p.isHealthy ? "💚 Lành mạnh" : "❌ Độc hại"}
+                        </p>
+                        <p className="mt-1 text-xs text-foreground/70">{p.explanation}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── PLAYING ────────────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen pb-8 pt-8">
+      <div className="container mx-auto max-w-3xl px-4">
+        {/* Header */}
+        <div className="mb-4 flex items-center justify-between rounded-[1.6rem] border border-white/65 bg-card/84 px-5 py-3 shadow-soft">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <Trophy className="h-4 w-4 text-primary" /> {correctCount} đúng
+          </div>
+          <span className="text-xs text-muted-foreground">Còn {deck.length} thẻ</span>
+          <span className="text-sm font-semibold">{played.length}/{TOTAL_CARDS}</span>
+        </div>
+
+        {/* Progress bar */}
+        <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-muted">
+          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(played.length / TOTAL_CARDS) * 100}%`, background: "linear-gradient(90deg,#06d6a0,#4361ee)" }} />
+        </div>
+
+        {/* Drop zones */}
+        <div className="mb-6 grid grid-cols-2 gap-4">
+          <DropZone id="healthy-zone" label="Lành mạnh" emoji="💚" color="#16a34a" bg="#dcfce7" count={healthyCount} isOver={false} />
+          <DropZone id="unhealthy-zone" label="Độc hại" emoji="❌" color="#dc2626" bg="#fee2e2" count={unhealthyCount} isOver={false} />
+        </div>
+
+        {/* Cards area */}
+        <div className="relative min-h-[240px] rounded-[1.8rem] border border-white/65 bg-card/40 p-4">
+          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            Kéo thẻ vào rổ bên trên 👆
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {deck.map((card) => (
+              <EmotionBubble key={card.id} card={card} onDrop={handleDrop} isPlayed={playedIds.has(card.id)} />
+            ))}
+            {deck.length === 0 && !lastFeedback && (
+              <div className="flex flex-col items-center py-8 text-muted-foreground">
+                <span className="text-4xl">🎉</span>
+                <p className="mt-2 font-semibold">Xong hết rồi!</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Feedback */}
+        <AnimatePresence>
+          {lastFeedback && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className={`mt-4 rounded-[1.4rem] p-4 ${lastFeedback.correct ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">{lastFeedback.correct ? "✅" : "❌"}</span>
+                <div>
+                  <p className="font-bold">{lastFeedback.correct ? "Chính xác!" : "Chưa đúng!"} — {lastFeedback.card.emoji} {lastFeedback.card.label}</p>
+                  <p className="mt-1 text-sm">{lastFeedback.card.explanation}</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
