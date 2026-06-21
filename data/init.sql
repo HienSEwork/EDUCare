@@ -388,7 +388,47 @@ INSERT INTO `lessons` (`id`, `course_id`, `slug`, `title`, `summary`, `content`,
 (46, 11, 'ket-noi-lanh-manh-va-diem-tua-cam-xuc', 'Mối Quan Hệ \"Chất Lượng Cao\" Vs Độc Hại', 'Phân biệt tình bạn lành mạnh (Green Flag) và độc hại (Red Flag), nhận diện các hành vi kiểm soát cảm xúc.', 'Bài học hướng dẫn phân biệt mối quan hệ Green Flag và cờ đỏ thao túng cảm xúc, cách chia sẻ tổn thương tinh thần và xây dựng mạng lưới hỗ trợ.', 40, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15'),
 (47, 11, 'tu-cham-soc-va-phat-trien-ban-than', 'Yêu Bản Thân: Không Chỉ Là Câu Nói Bắt Trend!', 'Hiểu đúng về tự chăm sóc bản thân, học cách thiết lập ranh giới từ từ chối và hướng tới sự phát triển cá nhân bền vững.', 'Bài học cuối cùng hướng dẫn phương pháp self-care đích thực, rèn luyện kỹ năng từ chối bảo vệ năng lượng cá nhân và đặt mục tiêu thói quen nhỏ.', 41, 0, 100, 12, '2026-06-05 15:00:15', '2026-06-05 15:00:15');
 
+-- Video IDs for Course 4: Tự Tin Lớn Lên, Tự Chủ Khám Phá
 UPDATE `lessons` SET `teaser_video_id` = 'qK9DqF_Ci10', `full_video_id` = 'JBqlllo0LGs' WHERE `id` = 12;
+UPDATE `lessons` SET `teaser_video_id` = 'oib5aUmyqxk', `full_video_id` = '1No4K4CfidM' WHERE `id` = 13;
+UPDATE `lessons` SET `teaser_video_id` = 'KknU68Q42pQ', `full_video_id` = 'afbF-8Q5QmA' WHERE `id` = 14;
+UPDATE `lessons` SET `teaser_video_id` = 'xuE_cSa85sU', `full_video_id` = 'DBVhFxQOMYk' WHERE `id` = 15;
+UPDATE `lessons` SET `teaser_video_id` = 'NNdx-DIXj9s', `full_video_id` = 'in1T-7wnDFw' WHERE `id` = 16;
+
+UPDATE `lessons` SET `teaser_video_id` = 'H3o1ZAxwB9E', `full_video_id` = 'YIxKoIgLhKM' WHERE `id` = 17;
+UPDATE `lessons` SET `teaser_video_id` = 'KXa1oWIVRps', `full_video_id` = 'SUPxdg7_H8Y' WHERE `id` = 18;
+UPDATE `lessons` SET `teaser_video_id` = '8UyDjtUMRZQ', `full_video_id` = 'Mdhzsc0takI' WHERE `id` = 19;
+UPDATE `lessons` SET `teaser_video_id` = 'OavNxoIknvM', `full_video_id` = 'nZdSDY1_WWI' WHERE `id` = 20;
+UPDATE `lessons` SET `teaser_video_id` = 'YSEd0Np5hGg', `full_video_id` = 'EJcKvZEw0Ro' WHERE `id` = 21;
+UPDATE `lessons` SET `teaser_video_id` = 'JpSa6aMBKHQ', `full_video_id` = 'MJ2CByzc-LI' WHERE `id` = 22;
+UPDATE `lessons` SET `teaser_video_id` = 'uc_vPN8ZYj8', `full_video_id` = 'D4fZotU9LlA' WHERE `id` = 23;
+
+-- Video IDs for Course 10: Dậy Thì Thành Công
+UPDATE `lessons` SET `teaser_video_id` = 'crJaJCED10U', `full_video_id` = 'Hvyc8_jmcYE' WHERE `id` = 34;
+UPDATE `lessons` SET `teaser_video_id` = 'ZOCpbDEhd9A', `full_video_id` = 'PvC-6koXfpM' WHERE `id` = 35;
+UPDATE `lessons` SET `teaser_video_id` = 'Sy7RE8MOEAU', `full_video_id` = 'WZfhwcnHsN4' WHERE `id` = 36;
+UPDATE `lessons` SET `teaser_video_id` = '3Z5fK4dvrBo', `full_video_id` = 'rfdtTGZJesE' WHERE `id` = 37;
+UPDATE `lessons` SET `teaser_video_id` = 'qPiy_5UeVLE', `full_video_id` = 'UhfDDwsROFo' WHERE `id` = 38;
+UPDATE `lessons` SET `teaser_video_id` = 'xhuakJTxIxk', `full_video_id` = 'kOmGu0sPOrI' WHERE `id` = 39;
+UPDATE `lessons` SET `teaser_video_id` = '5KyAYCeoZ9Y', `full_video_id` = 'HfLcvpWp7N4' WHERE `id` = 40;
+
+-- Video IDs for Course 11: Sức Khỏe Tâm Lý & Cảm Xúc
+UPDATE `lessons` SET `teaser_video_id` = '9hnfYkApRP4', `full_video_id` = '7rh0hOEi2YY' WHERE `id` = 41;
+UPDATE `lessons` SET `teaser_video_id` = 'msLrLfoN-l0', `full_video_id` = 'fMpbsYCmeys' WHERE `id` = 42;
+UPDATE `lessons` SET `teaser_video_id` = '_EI49W8C8HM', `full_video_id` = 'mVTzIhkH3AU' WHERE `id` = 43;
+UPDATE `lessons` SET `teaser_video_id` = 'G-rf7-GmJDs', `full_video_id` = 'Vzhki_xDLj0' WHERE `id` = 44;
+UPDATE `lessons` SET `teaser_video_id` = 'biLXKK_qbAg', `full_video_id` = 'Owxn-Rnngnc' WHERE `id` = 45;
+UPDATE `lessons` SET `teaser_video_id` = 'szJ_snaHdY0', `full_video_id` = 'rU9PJWT7IrM' WHERE `id` = 46;
+UPDATE `lessons` SET `teaser_video_id` = 'RQdRs4fGKFE', `full_video_id` = 'Us3jEGzJ65Q' WHERE `id` = 47;
+
+-- Video IDs for Course 8: Lướt Mạng Tỉnh Táo, Kết Nối Cực Chất
+UPDATE `lessons` SET `teaser_video_id` = 'fR51s075vY0', `full_video_id` = 'ncBVgfE0PWM' WHERE `id` = 24;
+UPDATE `lessons` SET `teaser_video_id` = 'ie0MQJDWCcI', `full_video_id` = 'hYUf2_kAzg4' WHERE `id` = 25;
+UPDATE `lessons` SET `teaser_video_id` = 'Pb8xvg2pXo4', `full_video_id` = 'ssB0l8vXIg0' WHERE `id` = 26;
+UPDATE `lessons` SET `teaser_video_id` = 'zN3dj5JZMqk', `full_video_id` = 'Yxa2ooaKVdk' WHERE `id` = 27;
+UPDATE `lessons` SET `teaser_video_id` = '6U6JwT0wX0A', `full_video_id` = 'hyEH7yn_S9w' WHERE `id` = 28;
+UPDATE `lessons` SET `teaser_video_id` = 'mC2iX-3FgIQ', `full_video_id` = 'CCfcSVr99oE' WHERE `id` = 29;
+UPDATE `lessons` SET `teaser_video_id` = 'OrDhGQ2psaM', `full_video_id` = '5bc-fwcrrR4' WHERE `id` = 30;
 
 -- --------------------------------------------------------
 

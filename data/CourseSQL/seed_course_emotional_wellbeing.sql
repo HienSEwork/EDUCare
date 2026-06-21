@@ -1345,3 +1345,15 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
     { "text": "Vì thói quen nhỏ không đòi hỏi bạn phải đầu tư bất kỳ nỗ lực nào.", "correct": false, "emoji": "🛑" }
   ]
 }', 6);
+
+-- =========================================================================
+-- CẬP NHẬT VIDEO ID (TEASER & FULL) CHO CÁC BÀI HỌC
+-- =========================================================================
+UPDATE lessons SET teaser_video_id = '9hnfYkApRP4', full_video_id = '7rh0hOEi2YY' WHERE id = @lesson1_id;
+UPDATE lessons SET teaser_video_id = 'msLrLfoN-l0', full_video_id = 'fMpbsYCmeys' WHERE id = @lesson2_id;
+UPDATE lessons SET teaser_video_id = '_EI49W8C8HM', full_video_id = 'mVTzIhkH3AU' WHERE id = @lesson3_id;
+UPDATE lessons SET teaser_video_id = 'G-rf7-GmJDs', full_video_id = 'Vzhki_xDLj0' WHERE id = @lesson4_id;
+UPDATE lessons SET teaser_video_id = 'biLXKK_qbAg', full_video_id = 'Owxn-Rnngnc' WHERE id = @lesson5_id;
+UPDATE lessons SET teaser_video_id = 'szJ_snaHdY0', full_video_id = 'rU9PJWT7IrM' WHERE id = @lesson6_id;
+UPDATE lessons SET teaser_video_id = 'RQdRs4fGKFE', full_video_id = 'Us3jEGzJ65Q' WHERE id = @lesson7_id;
+
