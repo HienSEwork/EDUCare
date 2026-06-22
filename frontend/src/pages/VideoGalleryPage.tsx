@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { apiRequest } from "@/lib/api/client";
 import { Lesson, Course } from "@/types/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, BookOpen, AlertCircle, Trophy, X, Star, Search, Sparkles, ChevronRight, Film, ChevronLeft, ArrowRight, Shuffle, RefreshCw } from "lucide-react";
+import { Play, BookOpen, AlertCircle, Trophy, X, Star, Search, Sparkles, ChevronRight, Film, ChevronLeft, ArrowRight, Shuffle, RefreshCw, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -32,6 +32,7 @@ export default function VideoGalleryPage() {
   const [showCtaModal, setShowCtaModal] = useState(false);
   const [apiReady, setApiReady] = useState(false);
   const [videoDuration, setVideoDuration] = useState<string>("Đang tải...");
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   // Search & Filter States
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,6 +52,20 @@ export default function VideoGalleryPage() {
 
   const playerRef = useRef<any>(null);
   const [sentinelNode, setSentinelNode] = useState<HTMLDivElement | null>(null);
+
+  // Hiển thị nút "Lên đầu trang" khi cuộn xuống dưới
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Fetch danh sách khóa học để lấy các bài học có video
   useEffect(() => {
@@ -708,6 +723,23 @@ export default function VideoGalleryPage() {
                 </div>
               </motion.div>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Nút trở về đầu trang */}
+        <AnimatePresence>
+          {showBackToTop && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="fixed bottom-8 right-8 z-40 p-3.5 rounded-full gradient-primary text-primary-foreground shadow-lg hover:shadow-primary/30 hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center border border-primary/20"
+              title="Trở về đầu trang"
+              whileHover={{ y: -4 }}
+            >
+              <ArrowUp className="h-5 w-5" />
+            </motion.button>
           )}
         </AnimatePresence>
 
