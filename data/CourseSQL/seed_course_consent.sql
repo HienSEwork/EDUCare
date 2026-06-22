@@ -22,7 +22,7 @@ SET @course_id = LAST_INSERT_ID();
 -- =========================================================================
 -- BÀI HỌC 1: Luật đi đường - Đồng thuận là gì? (lesson_order = 9)
 -- =========================================================================
-INSERT INTO lessons (course_id, slug, title, summary, content, lesson_order, is_free, xp_reward, estimated_minutes)
+INSERT INTO lessons (course_id, slug, title, summary, content, lesson_order, is_free, xp_reward, estimated_minutes, teaser_video_id, full_video_id)
 VALUES (
     @course_id,
     'luat-di-duong-dong-thuan-la-gi',
@@ -32,7 +32,9 @@ VALUES (
     9,
     true,
     100,
-    10
+    10,
+    'qK9DqF_Ci10',
+    'JBqlllo0LGs'
 );
 SET @lesson1_id = LAST_INSERT_ID();
 
@@ -951,6 +953,15 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
     { "text": "Đe dọa hoặc dùng bạo lực trả đũa lại đối phương.", "correct": false, "emoji": "🛑" }
   ]
 }', 6);
+
+-- =========================================================================
+-- CẬP NHẬT VIDEO ID (TEASER & FULL) CHO CÁC BÀI HỌC
+-- =========================================================================
+UPDATE lessons SET teaser_video_id = 'qK9DqF_Ci10', full_video_id = 'JBqlllo0LGs' WHERE id = @lesson1_id;
+UPDATE lessons SET teaser_video_id = 'oib5aUmyqxk', full_video_id = '1No4K4CfidM' WHERE id = @lesson2_id;
+UPDATE lessons SET teaser_video_id = 'KknU68Q42pQ', full_video_id = 'afbF-8Q5QmA' WHERE id = @lesson3_id;
+UPDATE lessons SET teaser_video_id = 'xuE_cSa85sU', full_video_id = 'DBVhFxQOMYk' WHERE id = @lesson4_id;
+UPDATE lessons SET teaser_video_id = 'NNdx-DIXj9s', full_video_id = 'in1T-7wnDFw' WHERE id = @lesson5_id;
 
 -- =========================================================================
 -- END OF SEED SCRIPT

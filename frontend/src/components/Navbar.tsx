@@ -36,7 +36,7 @@ const AUTH_HEADER_SHELL_WIDTH = "max-w-[780px]";
 
 const navGroups = [
   { label: NAV_COPY.home, to: "/" },
-  { label: NAV_COPY.blog, items: [{ label: NAV_COPY.blogPosts, to: "/blog" }, { label: NAV_COPY.courses, to: "/courses" }] },
+  { label: NAV_COPY.blog, items: [{ label: NAV_COPY.blogPosts, to: "/blog" }, { label: NAV_COPY.courses, to: "/courses" }, { label: "Thư viện Video 🎬", to: "/videos" }] },
   { label: "Nâng cấp VIP 💎", to: "/pricing" },
   {
     label: NAV_COPY.community,

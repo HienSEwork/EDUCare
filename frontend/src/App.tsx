@@ -30,6 +30,7 @@ import CommunityPage from "./pages/CommunityPage";
 import ChatRoomsPage from "./pages/ChatRoomsPage";
 import PricingPage from "./pages/PricingPage";
 import PaymentCallbackPage from "./pages/PaymentCallbackPage";
+import VideoGalleryPage from "./pages/VideoGalleryPage";
 import MythBusterPage from "./pages/MythBusterPage";
 import SafeSwipePage from "./pages/SafeSwipePage";
 import ChatDetectivePage from "./pages/ChatDetectivePage";
@@ -79,6 +80,7 @@ function AppShell() {
           <Route path="/blog/:id" element={<BlogPostPage />} />
           <Route path="/games" element={<GamesPage />} />
           <Route path="/games/quiz" element={<QuizPage />} />
+           <Route path="/games/flash-light-run" element={<FlashLightRunPage />} />
           <Route path="/games/flash-light-run" element={<FlashLightRunPage />} />
           <Route path="/games/myth-buster" element={<MythBusterPage />} />
           <Route path="/games/safe-swipe" element={<SafeSwipePage />} />
@@ -88,6 +90,7 @@ function AppShell() {
           <Route path="/games/teen-path" element={<TeenPathPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/payment/callback" element={<PaymentCallbackPage />} />
+          <Route path="/videos" element={<VideoGalleryPage />} />
           <Route path="/leaderboard" element={<Navigate to="/community/leaderboard" replace />} />
           <Route path="/dashboard" element={<UserDashboardRoute />} />
           <Route path="/admin/dashboard" element={<AdminDashboardRoute />} />

@@ -1329,3 +1329,15 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
     { "text": "Liên hệ với nhóm bạn thân khác để lập kế hoạch đến gặp đánh dằn mặt đối phương.", "correct": false, "emoji": "🛑" }
   ]
 }', 6);
+
+-- =========================================================================
+-- 7. Cập nhật link video cho các bài học
+-- =========================================================================
+UPDATE lessons SET teaser_video_id = 'H3o1ZAxwB9E', full_video_id = 'YIxKoIgLhKM' WHERE id = @lesson1_id;
+UPDATE lessons SET teaser_video_id = 'KXa1oWIVRps', full_video_id = 'SUPxdg7_H8Y' WHERE id = @lesson2_id;
+UPDATE lessons SET teaser_video_id = '8UyDjtUMRZQ', full_video_id = 'Mdhzsc0takI' WHERE id = @lesson3_id;
+UPDATE lessons SET teaser_video_id = 'OavNxoIknvM', full_video_id = 'nZdSDY1_WWI' WHERE id = @lesson4_id;
+UPDATE lessons SET teaser_video_id = 'YSEd0Np5hGg', full_video_id = 'EJcKvZEw0Ro' WHERE id = @lesson5_id;
+UPDATE lessons SET teaser_video_id = 'JpSa6aMBKHQ', full_video_id = 'MJ2CByzc-LI' WHERE id = @lesson6_id;
+UPDATE lessons SET teaser_video_id = 'uc_vPN8ZYj8', full_video_id = 'D4fZotU9LlA' WHERE id = @lesson7_id;
+

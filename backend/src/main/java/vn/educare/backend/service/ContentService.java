@@ -166,6 +166,8 @@ public CourseResponse course(Long id) {
         lesson.getEstimatedMinutes(),
 
         courseColorTheme, 
+        lesson.getTeaserVideoId(),
+        lesson.getFullVideoId(),
 
         microLessonResponses,
         sourceResponses

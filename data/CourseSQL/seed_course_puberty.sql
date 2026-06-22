@@ -1349,3 +1349,16 @@ INSERT INTO micro_lesson_blocks (micro_lesson_id, block_type, content_json, orde
   ]
 }', 6);
 
+
+-- =========================================================================
+-- CẬP NHẬT VIDEO ID (TEASER & FULL) CHO CÁC BÀI HỌC
+-- =========================================================================
+UPDATE lessons SET teaser_video_id = 'crJaJCED10U', full_video_id = 'Hvyc8_jmcYE' WHERE id = @lesson1_id;
+UPDATE lessons SET teaser_video_id = 'ZOCpbDEhd9A', full_video_id = 'PvC-6koXfpM' WHERE id = @lesson2_id;
+UPDATE lessons SET teaser_video_id = 'Sy7RE8MOEAU', full_video_id = 'WZfhwcnHsN4' WHERE id = @lesson3_id;
+UPDATE lessons SET teaser_video_id = '3Z5fK4dvrBo', full_video_id = 'rfdtTGZJesE' WHERE id = @lesson4_id;
+UPDATE lessons SET teaser_video_id = 'qPiy_5UeVLE', full_video_id = 'UhfDDwsROFo' WHERE id = @lesson5_id;
+UPDATE lessons SET teaser_video_id = 'xhuakJTxIxk', full_video_id = 'kOmGu0sPOrI' WHERE id = @lesson6_id;
+UPDATE lessons SET teaser_video_id = '5KyAYCeoZ9Y', full_video_id = 'HfLcvpWp7N4' WHERE id = @lesson7_id;
+
+

@@ -17,6 +17,14 @@ function safeJsonParse(value: string) {
   }
 }
 
+function extractYoutubeId(url: string | null | undefined): string {
+  if (!url) return "";
+  if (url.length === 11) return url;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : url;
+}
+
 function sortBlocks(blocks: MicroLessonBlock[]) {
   return blocks.slice().sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
 }
@@ -1104,6 +1112,7 @@ export default function LessonPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [activeMicroIndex, setActiveMicroIndex] = useState(0);
+  const [isVideoExpanded, setIsVideoExpanded] = useState(true);
   const [isPrevHovered, setIsPrevHovered] = useState(false);
 
   useEffect(() => {
@@ -1125,6 +1134,14 @@ export default function LessonPage() {
   useEffect(() => {
     setActiveMicroIndex(0);
   }, [lesson?.slug]);
+
+  useEffect(() => {
+    if (activeMicroIndex === 0) {
+      setIsVideoExpanded(true);
+    } else {
+      setIsVideoExpanded(false);
+    }
+  }, [activeMicroIndex]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1501,6 +1518,61 @@ export default function LessonPage() {
               <div className="mt-5 border-l-4 bg-background/62 px-5 py-5" style={{ borderColor: accentBorder }}>
                 <p className="text-[15px] leading-7 text-foreground/74">{lesson.summary}</p>
               </div>
+
+              {lesson.fullVideoId && (
+                <div className="mt-6 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground/60 flex items-center gap-1.5">
+                      <PlayCircle className="h-4 w-4 text-primary" /> Video bài giảng chính thức
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="rounded-full text-xs font-bold text-primary hover:bg-primary/10 flex items-center gap-1 h-8 px-3"
+                      onClick={() => setIsVideoExpanded(!isVideoExpanded)}
+                    >
+                      {isVideoExpanded ? (
+                        <>Ẩn video bài giảng ✕</>
+                      ) : (
+                        <>Hiện video bài giảng 👁️‍🗨️</>
+                      )}
+                    </Button>
+                  </div>
+                  
+                  {isVideoExpanded ? (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="aspect-video w-full overflow-hidden rounded-2xl border border-muted-foreground/10 bg-black shadow-md"
+                    >
+                      <iframe
+                        src={`https://www.youtube.com/embed/${extractYoutubeId(lesson.fullVideoId)}?rel=0&modestbranding=1`}
+                        title={lesson.title}
+                        allowFullScreen
+                        className="h-full w-full border-0"
+                      />
+                    </motion.div>
+                  ) : (
+                    <div 
+                      onClick={() => setIsVideoExpanded(true)}
+                      className="cursor-pointer group flex items-center justify-between p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <PlayCircle className="h-5 w-5 fill-current" />
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">Video bài giảng đã thu gọn</p>
+                          <p className="text-xs text-muted-foreground">Nhấp vào đây hoặc nút phía trên để mở lại video bất kỳ lúc nào.</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-primary px-3 py-1.5 rounded-full bg-background border border-primary/20 shadow-sm group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                        Xem video
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div
                 className="mt-8 rounded-[1.8rem] border p-6 shadow-soft transition-all duration-300 relative overflow-hidden"
