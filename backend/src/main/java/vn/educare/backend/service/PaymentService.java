@@ -168,11 +168,19 @@ public class PaymentService {
       return true; // Already processed (idempotent)
     }
 
+    String gatewayRef = data.containsKey("reference") ? data.get("reference").toString() : null;
+    fulfillPayment(transaction, gatewayRef);
+    return true;
+  }
+
+  private void fulfillPayment(PaymentTransactionEntity transaction, String gatewayRef) {
+    if ("SUCCESS".equals(transaction.getStatus())) {
+      return;
+    }
+
     // Update transaction status
     transaction.setStatus("SUCCESS");
-    if (data.containsKey("reference")) {
-      transaction.setGatewayReference(data.get("reference").toString());
-    }
+    transaction.setGatewayReference(gatewayRef);
     transactionRepository.save(transaction);
 
     // Upgrade user plan
@@ -202,14 +210,66 @@ public class PaymentService {
 
     log.info("User {} upgraded to {} (Plan ID: {}) until {}", 
         user.getUsername(), userPlan, plan.getId(), subscription.getEndDate());
-    return true;
   }
 
-  @Transactional(readOnly = true)
+  private void syncStatusFromPayOS(PaymentTransactionEntity transaction) {
+    try {
+      String url = "https://api-merchant.payos.vn/v2/payment-requests/" + transaction.getId();
+
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("x-client-id", payosClientId);
+      headers.set("x-api-key", payosApiKey);
+      headers.setContentType(MediaType.APPLICATION_JSON);
+
+      HttpEntity<Void> entity = new HttpEntity<>(headers);
+      ResponseEntity<Map> response = restTemplate.exchange(
+          url,
+          org.springframework.http.HttpMethod.GET,
+          entity,
+          Map.class
+      );
+
+      if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+        Map body = response.getBody();
+        String code = (String) body.get("code");
+        if ("00".equals(code)) {
+          Map data = (Map) body.get("data");
+          String payosStatus = (String) data.get("status");
+
+          if ("PAID".equals(payosStatus)) {
+            String gatewayRef = null;
+            java.util.List txs = (java.util.List) data.get("transactions");
+            if (txs != null && !txs.isEmpty()) {
+              Map firstTx = (Map) txs.get(0);
+              if (firstTx != null && firstTx.containsKey("reference")) {
+                gatewayRef = firstTx.get("reference").toString();
+              }
+            }
+            fulfillPayment(transaction, gatewayRef);
+          } else if ("CANCELLED".equals(payosStatus)) {
+            transaction.setStatus("CANCELLED");
+            transactionRepository.save(transaction);
+            log.info("Transaction {} synced from PayOS as CANCELLED.", transaction.getId());
+          }
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error calling PayOS API to sync status for transaction: {}", transaction.getId(), e);
+    }
+  }
+
+  @Transactional
   public String getTransactionStatus(String transactionId) {
-    return transactionRepository.findById(transactionId)
-        .map(PaymentTransactionEntity::getStatus)
-        .orElse("NOT_FOUND");
+    Optional<PaymentTransactionEntity> transactionOpt = transactionRepository.findById(transactionId);
+    if (transactionOpt.isEmpty()) {
+      return "NOT_FOUND";
+    }
+
+    PaymentTransactionEntity transaction = transactionOpt.get();
+    if ("PENDING".equals(transaction.getStatus())) {
+      syncStatusFromPayOS(transaction);
+    }
+    return transaction.getStatus();
   }
 
   @Transactional

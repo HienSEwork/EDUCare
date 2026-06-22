@@ -28,7 +28,7 @@ export default function VideoGalleryPage() {
   const { toast } = useToast();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<ExtendedLesson | null>(null);
   const [showCtaModal, setShowCtaModal] = useState(false);
   const [apiReady, setApiReady] = useState(false);
   const [videoDuration, setVideoDuration] = useState<string>("Đang tải...");
@@ -656,16 +656,32 @@ export default function VideoGalleryPage() {
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
-                className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-card border border-muted shadow-2xl"
+                className="relative w-full max-w-5xl overflow-hidden rounded-3xl bg-slate-950 border border-white/10 shadow-[0_0_50px_-12px_rgba(124,58,237,0.3)] text-white"
               >
                 {/* Modal Header */}
-                <div className="flex items-center justify-between p-4 border-b border-muted">
-                  <div>
-                    <span className="text-xs font-semibold text-primary">Xem nhanh bài giảng</span>
-                    <h2 className="font-heading text-lg font-bold line-clamp-1">{selectedLesson.title}</h2>
+                <div className="flex items-center justify-between p-5 border-b border-white/10 bg-slate-900/40 backdrop-blur-md">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">
+                        Xem thử bài giảng
+                      </span>
+                      {selectedLesson.courseTitle && (
+                        <span
+                          className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border"
+                          style={{
+                            backgroundColor: `${selectedLesson.courseColorTheme || "#7C3AED"}15`,
+                            borderColor: `${selectedLesson.courseColorTheme || "#7C3AED"}35`,
+                            color: selectedLesson.courseColorTheme || "#7C3AED"
+                          }}
+                        >
+                          {selectedLesson.courseTitle}
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="font-heading text-lg md:text-xl font-bold line-clamp-1 text-white">{selectedLesson.title}</h2>
                   </div>
-                  <button onClick={closePlayer} className="p-1 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground">
-                    <X className="h-6 w-6" />
+                  <button onClick={closePlayer} className="p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-all hover:rotate-90 duration-200">
+                    <X className="h-5 w-5" />
                   </button>
                 </div>
 
@@ -691,17 +707,17 @@ export default function VideoGalleryPage() {
                         initial={{ scale: 0.8 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                        className="max-w-md p-6 rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-md shadow-lg"
+                        className="max-w-md p-6 rounded-2xl border border-primary/30 bg-slate-900/90 backdrop-blur-md shadow-2xl text-white"
                       >
                         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 border border-primary/30">
                           <Star className="h-8 w-8 text-yellow-500 fill-current" />
                         </div>
                         <h3 className="text-xl font-bold mb-2">Chúc mừng bạn đã xem xong!</h3>
-                        <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+                        <p className="text-slate-300 text-sm mb-6 leading-relaxed">
                           Bạn vừa nắm được ý chính của bài học. Hãy tham gia lớp học chính thức ngay để làm trắc nghiệm tương tác và nhận trọn vẹn **+100 XP** nhé!
                         </p>
                         <div className="flex gap-3 justify-center">
-                          <Button variant="outline" onClick={closePlayer} className="rounded-full">
+                          <Button variant="ghost" onClick={closePlayer} className="rounded-full border border-white/20 text-white bg-transparent hover:bg-white/10 hover:text-white">
                             Đóng lại
                           </Button>
                           <Button
@@ -717,9 +733,15 @@ export default function VideoGalleryPage() {
                 </div>
 
                 {/* Modal Footer Info */}
-                <div className="p-4 bg-muted/30 text-xs text-muted-foreground flex justify-between items-center">
-                  <span>Hoàn thành xem video nhận thưởng khích lệ +5 XP</span>
-                  <span>Thời lượng xem thử: {videoDuration}</span>
+                <div className="p-4 bg-slate-900/80 border-t border-white/10 text-xs text-slate-300 flex flex-col sm:flex-row gap-3 justify-between items-center">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <Trophy className="h-4 w-4 text-yellow-500 animate-bounce" />
+                    Hoàn thành xem video để nhận thưởng khích lệ <strong className="text-yellow-400">+5 XP</strong>
+                  </span>
+                  <span className="flex items-center gap-1.5 text-slate-400">
+                    <Film className="h-4 w-4 text-primary" />
+                    Thời lượng xem thử: <strong className="text-white font-bold">{videoDuration}</strong>
+                  </span>
                 </div>
               </motion.div>
             </motion.div>
