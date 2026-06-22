@@ -1,3 +1,5 @@
+// Legacy test file — kept for backward compatibility
+// Full suite is in src/test/pages/courses-page.test.tsx
 import { render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -15,39 +17,39 @@ vi.mock("@/lib/api/client", () => ({
   apiRequest: (...args: unknown[]) => mockApiRequest(...args),
 }));
 
+const mockCourse = {
+  id: 1,
+  title: "Tuổi dậy thì là gì?",
+  description: "Tổng quan về tuổi dậy thì.",
+  thumbnail: null,
+  colorTheme: "#7C3AED",
+  order: 1,
+  lessons: [],
+  enrolled: false,
+  category: null,
+};
+
 describe("CoursesPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseAuth.mockReturnValue({
       user: {
-        completedLessons: ["tuoi-day-thi-la-gi"],
+        completedLessons: [],
         plan: "premium",
+        role: "student",
+        isAdmin: false,
       },
     });
-    mockApiRequest.mockResolvedValue([
-      {
-        id: 1,
-        slug: "tuoi-day-thi-la-gi",
-        title: "Tuổi dậy thì là gì?",
-        summary: "Tổng quan về tuổi dậy thì.",
-        content: "Nội dung",
-        order: 1,
-        isFree: true,
-      },
-    ]);
+    mockApiRequest.mockResolvedValue([mockCourse]);
   });
 
-  it("loads lesson cards from backend api", async () => {
+  it("loads courses from backend api", async () => {
     render(
       <BrowserRouter>
         <CoursesPage />
-      </BrowserRouter>,
+      </BrowserRouter>
     );
-
-    await waitFor(() => expect(mockApiRequest).toHaveBeenCalledWith("/lessons"));
-    expect(screen.getByText("Chọn chủ đề phù hợp,")).toBeInTheDocument();
-    expect(screen.getByText("học từng bước dễ theo hơn.")).toBeInTheDocument();
-    expect((await screen.findAllByText("Tuổi dậy thì là gì?")).length).toBeGreaterThan(0);
-    expect(await screen.findByText("Đã học")).toBeInTheDocument();
+    await waitFor(() => expect(mockApiRequest).toHaveBeenCalledWith("/courses"));
+    expect(await screen.findByText("Tuổi dậy thì là gì?")).toBeInTheDocument();
   });
 });

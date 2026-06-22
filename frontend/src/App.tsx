@@ -31,6 +31,12 @@ import ChatRoomsPage from "./pages/ChatRoomsPage";
 import PricingPage from "./pages/PricingPage";
 import PaymentCallbackPage from "./pages/PaymentCallbackPage";
 import VideoGalleryPage from "./pages/VideoGalleryPage";
+import MythBusterPage from "./pages/MythBusterPage";
+import SafeSwipePage from "./pages/SafeSwipePage";
+import ChatDetectivePage from "./pages/ChatDetectivePage";
+import RedFlagHuntPage from "./pages/RedFlagHuntPage";
+import EmotionSortPage from "./pages/EmotionSortPage";
+import TeenPathPage from "./pages/TeenPathPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -75,6 +81,13 @@ function AppShell() {
           <Route path="/games" element={<GamesPage />} />
           <Route path="/games/quiz" element={<QuizPage />} />
            <Route path="/games/flash-light-run" element={<FlashLightRunPage />} />
+          <Route path="/games/flash-light-run" element={<FlashLightRunPage />} />
+          <Route path="/games/myth-buster" element={<MythBusterPage />} />
+          <Route path="/games/safe-swipe" element={<SafeSwipePage />} />
+          <Route path="/games/chat-detective" element={<ChatDetectivePage />} />
+          <Route path="/games/red-flag-hunt" element={<RedFlagHuntPage />} />
+          <Route path="/games/emotion-sort" element={<EmotionSortPage />} />
+          <Route path="/games/teen-path" element={<TeenPathPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/payment/callback" element={<PaymentCallbackPage />} />
           <Route path="/videos" element={<VideoGalleryPage />} />

@@ -18,6 +18,8 @@ backend/dist
 backend/target
 frontend/.env
 backend/.env
+.env.production
+.env.*.local
 vite-dev.log
 vite-dev.err.log
 *.local
