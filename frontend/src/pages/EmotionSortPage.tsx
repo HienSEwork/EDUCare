@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence, useDragControls } from "framer-motion";
-import { Heart, Trash2, RefreshCw, ArrowRight, Trophy, CheckCircle2, XCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, RefreshCw, ArrowRight, Trophy, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ALL_EMOTION_CARDS, type EmotionCard } from "@/data/emotionCards";
+import GameIntroHero from "@/components/GameIntroHero";
+import introSvg from "@/assets/games/intro-emotion-sort.svg";
 
 type GamePhase = "intro" | "playing" | "result";
 
@@ -17,53 +19,74 @@ function shuffle<T>(arr: T[]): T[] {
 
 const TOTAL_CARDS = 20; // show 10 healthy + 10 unhealthy
 
+function pointInRect(el: HTMLElement | null, x: number, y: number): boolean {
+  if (!el) return false;
+  const r = el.getBoundingClientRect();
+  return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+}
+
 function EmotionBubble({
   card,
   onDrop,
   isPlayed,
+  onDragMove,
+  onDragStop,
 }: {
   card: EmotionCard;
   onDrop: (card: EmotionCard, zone: "healthy" | "unhealthy") => void;
   isPlayed: boolean;
+  onDragMove: (x: number, y: number) => void;
+  onDragStop: () => void;
 }) {
   const [isDragging, setIsDragging] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+
+  const getPointerXY = (event: MouseEvent | TouchEvent | PointerEvent): { x: number; y: number } => {
+    if (event instanceof TouchEvent && event.changedTouches.length > 0) {
+      return { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
+    }
+    return { x: (event as PointerEvent).clientX, y: (event as PointerEvent).clientY };
+  };
 
   const handleDragEnd = useCallback(
     (event: MouseEvent | TouchEvent | PointerEvent) => {
       setIsDragging(false);
-      const target = event instanceof TouchEvent
-        ? document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY)
-        : document.elementFromPoint((event as PointerEvent).clientX, (event as PointerEvent).clientY);
-
-      const healthyZone = document.getElementById("healthy-zone");
-      const unhealthyZone = document.getElementById("unhealthy-zone");
-
-      if (healthyZone?.contains(target as Node)) {
+      onDragStop();
+      const { x, y } = getPointerXY(event);
+      if (pointInRect(document.getElementById("healthy-zone"), x, y)) {
         onDrop(card, "healthy");
-      } else if (unhealthyZone?.contains(target as Node)) {
+      } else if (pointInRect(document.getElementById("unhealthy-zone"), x, y)) {
         onDrop(card, "unhealthy");
       }
     },
-    [card, onDrop],
+    [card, onDrop, onDragStop],
+  );
+
+  const handleDrag = useCallback(
+    (_event: MouseEvent | TouchEvent | PointerEvent, info: { point: { x: number; y: number } }) => {
+      onDragMove(info.point.x, info.point.y);
+    },
+    [onDragMove],
   );
 
   if (isPlayed) return null;
 
   return (
     <motion.div
-      ref={ref}
       drag
       dragMomentum={false}
+      dragElastic={0.08}
       onDragStart={() => setIsDragging(true)}
+      onDrag={handleDrag}
       onDragEnd={handleDragEnd}
-      whileDrag={{ scale: 1.1, zIndex: 50, cursor: "grabbing" }}
-      animate={{ y: [0, -6, 0] }}
-      transition={{ duration: 2 + (card.id % 3) * 0.5, repeat: Infinity, ease: "easeInOut", delay: (card.id % 5) * 0.3 }}
-      className={`relative flex cursor-grab flex-col items-center gap-1 rounded-[1.4rem] border-2 bg-white px-3 py-3 shadow-soft select-none ${
-        isDragging ? "opacity-70" : "opacity-100"
-      }`}
-      style={{ borderColor: card.color + "66", width: 110 }}
+      whileDrag={{ scale: 1.15, zIndex: 50, boxShadow: "0 16px 40px rgba(0,0,0,0.18)" }}
+      animate={isDragging ? {} : { y: [0, -6, 0] }}
+      transition={
+        isDragging
+          ? {}
+          : { duration: 2 + (card.id % 3) * 0.5, repeat: Infinity, ease: "easeInOut", delay: (card.id % 5) * 0.3 }
+      }
+      className="relative flex cursor-grab flex-col items-center gap-1 rounded-[1.4rem] border-2 bg-white px-3 py-3 shadow-soft select-none active:cursor-grabbing"
+      style={{ borderColor: card.color + "88", width: 110, touchAction: "none" }}
     >
       <span className="text-2xl">{card.emoji}</span>
       <span className="text-center text-xs font-semibold leading-tight">{card.label}</span>
@@ -91,13 +114,15 @@ function DropZone({
   return (
     <div
       id={id}
-      className={`flex min-h-[160px] flex-col items-center justify-center gap-2 rounded-[1.8rem] border-4 border-dashed p-4 transition-all ${isOver ? "scale-105" : ""}`}
+      className="flex min-h-[160px] flex-col items-center justify-center gap-2 rounded-[1.8rem] border-4 border-dashed p-4 transition-all duration-150"
       style={{
-        borderColor: isOver ? color : color + "66",
-        background: isOver ? bg + "cc" : bg + "55",
+        borderColor: isOver ? color : color + "55",
+        background: isOver ? bg + "ee" : bg + "44",
+        transform: isOver ? "scale(1.04)" : "scale(1)",
+        boxShadow: isOver ? `0 0 0 4px ${color}33` : "none",
       }}
     >
-      <span className="text-4xl">{emoji}</span>
+      <span className={`text-4xl transition-transform duration-150 ${isOver ? "scale-125" : ""}`}>{emoji}</span>
       <p className="font-bold text-sm" style={{ color }}>{label}</p>
       <span className="text-2xl font-black" style={{ color }}>{count}</span>
     </div>
@@ -112,6 +137,15 @@ export default function EmotionSortPage() {
   const feedbackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [healthyCount, setHealthyCount] = useState(0);
   const [unhealthyCount, setUnhealthyCount] = useState(0);
+  const [activeZone, setActiveZone] = useState<"healthy" | "unhealthy" | null>(null);
+
+  const handleDragMove = useCallback((x: number, y: number) => {
+    if (pointInRect(document.getElementById("healthy-zone"), x, y)) setActiveZone("healthy");
+    else if (pointInRect(document.getElementById("unhealthy-zone"), x, y)) setActiveZone("unhealthy");
+    else setActiveZone(null);
+  }, []);
+
+  const handleDragStop = useCallback(() => setActiveZone(null), []);
 
   const startGame = useCallback(() => {
     const healthy = shuffle(ALL_EMOTION_CARDS.filter((c) => c.isHealthy)).slice(0, TOTAL_CARDS / 2);
@@ -154,57 +188,28 @@ export default function EmotionSortPage() {
   // ── INTRO ──────────────────────────────────────────────────────────────
   if (phase === "intro") {
     return (
-      <div className="min-h-screen pb-16 pt-8">
-        <div className="container mx-auto max-w-2xl px-4">
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="overflow-hidden rounded-[2.4rem] border border-white/70 bg-[linear-gradient(135deg,rgba(6,214,160,0.12)_0%,rgba(246,241,255,0.96)_50%,rgba(239,68,68,0.10)_100%)] p-8 shadow-card md:p-12"
-          >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#06d6a0] shadow-soft">
-              <Heart className="h-3.5 w-3.5" /> Mini Game
-            </span>
-            <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">
-              Dọn Rác Cảm Xúc 💚
-            </h1>
-            <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">
-              Kéo và thả từng hành vi/cảm xúc vào đúng rổ: <strong className="text-green-600">Lành mạnh 💚</strong> hoặc <strong className="text-red-500">Độc hại ❌</strong>.
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {[
-                { label: "Số thẻ", value: `${TOTAL_CARDS} thẻ` },
-                { label: "Dạng chơi", value: "Kéo thả" },
-                { label: "Chủ đề", value: "Cảm xúc & hành vi" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
-                  <p className="mt-2 text-lg font-bold">{item.value}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 space-y-3 rounded-[1.8rem] border border-white/70 bg-white/60 p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Cách chơi</p>
-              {[
-                "Kéo thẻ bong bóng cảm xúc vào đúng rổ",
-                "Rổ 💚 = hành vi/cảm xúc LÀNH MẠNH",
-                "Rổ ❌ = hành vi/cảm xúc ĐỘC HẠI",
-                "Sau mỗi thẻ sẽ có phản hồi ngay lập tức",
-              ].map((rule, i) => (
-                <div key={i} className="flex items-start gap-3 text-sm text-foreground/80">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">{i + 1}</span>
-                  {rule}
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button id="emotion-sort-start-btn" className="gradient-primary px-8 py-6 text-base font-bold text-primary-foreground" onClick={startGame}>
-                <Heart className="mr-2 h-5 w-5" /> Bắt đầu dọn dẹp!
-              </Button>
-              <Button variant="outline" asChild><Link to="/games">← Về trang game</Link></Button>
-            </div>
-          </motion.section>
-        </div>
-      </div>
+      <GameIntroHero
+        illustrationSrc={introSvg}
+        eyebrow="💚 Mini Game · Kéo thả"
+        title="Dọn Rác Cảm Xúc"
+        description="Kéo và thả từng hành vi/cảm xúc vào đúng rổ. Phân loại lành mạnh hay độc hại — bạn nhận ra được bao nhiêu?"
+        stats={[
+          { label: "Số thẻ", value: "20 thẻ" },
+          { label: "Dạng chơi", value: "Kéo & thả" },
+          { label: "Chủ đề", value: "Cảm xúc & hành vi" },
+        ]}
+        rules={[
+          { text: "Kéo thẻ bong bóng vào đúng rổ bên trên" },
+          { text: "Rổ 💚 = hành vi/cảm xúc LÀNH MẠNH" },
+          { text: "Rổ ❌ = hành vi/cảm xúc ĐỘC HẠI" },
+          { text: "Sau mỗi thẻ có phản hồi và giải thích" },
+        ]}
+        startLabel="Bắt đầu dọn dẹp!"
+        onStart={startGame}
+        bgGradient="linear-gradient(135deg,rgba(6,214,160,0.08) 0%,rgba(246,241,255,0.96) 50%,rgba(239,68,68,0.08) 100%)"
+        accentColor="#06d6a0"
+        buttonIcon={<Heart className="h-5 w-5" />}
+      />
     );
   }
 
@@ -290,8 +295,8 @@ export default function EmotionSortPage() {
 
         {/* Drop zones */}
         <div className="mb-6 grid grid-cols-2 gap-4">
-          <DropZone id="healthy-zone" label="Lành mạnh" emoji="💚" color="#16a34a" bg="#dcfce7" count={healthyCount} isOver={false} />
-          <DropZone id="unhealthy-zone" label="Độc hại" emoji="❌" color="#dc2626" bg="#fee2e2" count={unhealthyCount} isOver={false} />
+          <DropZone id="healthy-zone" label="Lành mạnh" emoji="💚" color="#16a34a" bg="#dcfce7" count={healthyCount} isOver={activeZone === "healthy"} />
+          <DropZone id="unhealthy-zone" label="Độc hại" emoji="❌" color="#dc2626" bg="#fee2e2" count={unhealthyCount} isOver={activeZone === "unhealthy"} />
         </div>
 
         {/* Cards area */}
@@ -301,7 +306,14 @@ export default function EmotionSortPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {deck.map((card) => (
-              <EmotionBubble key={card.id} card={card} onDrop={handleDrop} isPlayed={playedIds.has(card.id)} />
+              <EmotionBubble
+                key={card.id}
+                card={card}
+                onDrop={handleDrop}
+                isPlayed={playedIds.has(card.id)}
+                onDragMove={handleDragMove}
+                onDragStop={handleDragStop}
+              />
             ))}
             {deck.length === 0 && !lastFeedback && (
               <div className="flex flex-col items-center py-8 text-muted-foreground">

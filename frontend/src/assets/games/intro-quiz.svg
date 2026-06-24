@@ -1,0 +1,311 @@
+﻿<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f0c29"/>
+      <stop offset="50%" stop-color="#1a1560"/>
+      <stop offset="100%" stop-color="#24243e"/>
+    </linearGradient>
+    <!-- Brain glow -->
+    <radialGradient id="brainGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7c6fff" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#0f0c29" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Card glass gradient -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+    <!-- Option highlight gradient -->
+    <linearGradient id="optHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6c63ff"/>
+      <stop offset="100%" stop-color="#9c6bff"/>
+    </linearGradient>
+    <!-- Progress fill -->
+    <linearGradient id="progressFill" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6c63ff"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <!-- XP badge gradient -->
+    <linearGradient id="xpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5c842"/>
+      <stop offset="100%" stop-color="#e8a020"/>
+    </linearGradient>
+    <!-- Brain glow filter -->
+    <filter id="glowBrain" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Text glow filter -->
+    <filter id="glowText" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- QMark glow -->
+    <filter id="glowQ" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Card shadow -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#6c63ff" flood-opacity="0.25"/>
+    </filter>
+    <!-- Clip for card -->
+    <clipPath id="cardClip">
+      <rect x="247" y="28" width="215" height="240" rx="16"/>
+    </clipPath>
+  </defs>
+
+  <!-- ========== BACKGROUND ========== -->
+  <rect width="480" height="300" fill="url(#bgGrad)"/>
+
+  <!-- Subtle star dots -->
+  <circle cx="20" cy="18" r="1" fill="#ffffff" opacity="0.3"/>
+  <circle cx="55" cy="45" r="0.7" fill="#ffffff" opacity="0.2"/>
+  <circle cx="90" cy="12" r="1.2" fill="#ffffff" opacity="0.25"/>
+  <circle cx="140" cy="38" r="0.8" fill="#ffffff" opacity="0.2"/>
+  <circle cx="200" cy="22" r="1" fill="#ffffff" opacity="0.3"/>
+  <circle cx="230" cy="55" r="0.6" fill="#ffffff" opacity="0.15"/>
+  <circle cx="35" cy="200" r="0.8" fill="#ffffff" opacity="0.2"/>
+  <circle cx="78" cy="250" r="1" fill="#ffffff" opacity="0.15"/>
+  <circle cx="180" cy="270" r="0.7" fill="#ffffff" opacity="0.2"/>
+  <circle cx="210" cy="190" r="1.2" fill="#ffffff" opacity="0.1"/>
+
+  <!-- ========== BRAIN AMBIENT GLOW ========== -->
+  <ellipse cx="118" cy="148" rx="72" ry="68" fill="url(#brainGlow)"/>
+
+  <!-- ========== LOW-POLY GEOMETRIC BRAIN (center-left) ========== -->
+  <g filter="url(#glowBrain)" opacity="0.95">
+    <!-- Brain outline path 鈥?stylized left+right hemisphere -->
+    <path d="
+      M118,82
+      C102,78 88,85 83,98
+      C78,108 80,120 86,128
+      C80,134 77,143 80,152
+      C83,162 90,168 98,170
+      C95,178 97,188 104,193
+      C112,198 122,196 128,190
+      C134,196 144,199 152,195
+      C160,190 163,181 160,172
+      C168,168 174,160 173,150
+      C172,141 166,134 159,130
+      C164,122 164,110 158,100
+      C152,90 140,85 130,87
+      C125,82 121,80 118,82Z
+    " fill="#1e1080" stroke="#6c63ff" stroke-width="1.5"/>
+
+    <!-- Low-poly facets 鈥?left hemisphere -->
+    <polygon points="118,82 102,90 108,105" fill="#2d1f9e" opacity="0.9"/>
+    <polygon points="102,90 86,98 96,112" fill="#3a2ab0" opacity="0.85"/>
+    <polygon points="108,105 96,112 104,125" fill="#4533c0" opacity="0.9"/>
+    <polygon points="86,98 83,112 96,112" fill="#2a1d95" opacity="0.8"/>
+    <polygon points="83,112 80,126 93,130" fill="#352490" opacity="0.85"/>
+    <polygon points="96,112 93,130 104,125" fill="#4030b8" opacity="0.9"/>
+    <polygon points="80,126 80,140 90,143" fill="#2e1f8a" opacity="0.8"/>
+    <polygon points="93,130 90,143 104,138" fill="#3d2da8" opacity="0.9"/>
+    <polygon points="104,125 104,138 114,132" fill="#4e3dbd" opacity="0.9"/>
+    <polygon points="80,140 82,154 93,148" fill="#2b1c85" opacity="0.8"/>
+    <polygon points="90,143 93,148 103,150" fill="#3928a0" opacity="0.85"/>
+    <polygon points="104,138 103,150 115,148" fill="#4a38b5" opacity="0.9"/>
+    <polygon points="82,154 86,165 97,160" fill="#2e1e8c" opacity="0.8"/>
+    <polygon points="93,148 97,160 106,158" fill="#3c2aa5" opacity="0.85"/>
+    <polygon points="103,150 106,158 115,154" fill="#4535b0" opacity="0.88"/>
+    <polygon points="86,165 97,173 102,165" fill="#361f98" opacity="0.8"/>
+    <polygon points="97,160 102,165 112,168" fill="#4230a8" opacity="0.85"/>
+    <polygon points="106,158 112,168 116,162" fill="#4d3bb8" opacity="0.88"/>
+
+    <!-- Right hemisphere facets -->
+    <polygon points="118,82 130,87 126,100" fill="#3022a8" opacity="0.88"/>
+    <polygon points="130,87 144,88 138,102" fill="#3d2dba" opacity="0.85"/>
+    <polygon points="126,100 138,102 132,115" fill="#4838c5" opacity="0.9"/>
+    <polygon points="144,88 158,96 150,108" fill="#3528b0" opacity="0.85"/>
+    <polygon points="138,102 150,108 144,118" fill="#4236bb" opacity="0.88"/>
+    <polygon points="132,115 144,118 137,128" fill="#5040cd" opacity="0.9"/>
+    <polygon points="158,96 163,110 154,116" fill="#3124a8" opacity="0.82"/>
+    <polygon points="150,108 154,116 147,125" fill="#4035b8" opacity="0.88"/>
+    <polygon points="144,118 147,125 140,133" fill="#4e3fc8" opacity="0.9"/>
+    <polygon points="163,110 166,124 156,128" fill="#2e1fa2" opacity="0.8"/>
+    <polygon points="154,116 156,128 148,135" fill="#3d2eb5" opacity="0.85"/>
+    <polygon points="147,125 148,135 140,140" fill="#4b3cc2" opacity="0.88"/>
+    <polygon points="166,124 165,138 155,136" fill="#2c1c9e" opacity="0.8"/>
+    <polygon points="156,128 155,136 147,142" fill="#3b2cac" opacity="0.85"/>
+    <polygon points="148,135 147,142 140,146" fill="#483abc" opacity="0.88"/>
+    <polygon points="165,138 163,152 153,148" fill="#2d1e9a" opacity="0.8"/>
+    <polygon points="155,136 153,148 145,152" fill="#3a2aa8" opacity="0.85"/>
+    <polygon points="147,142 145,152 138,155" fill="#4637b8" opacity="0.88"/>
+    <polygon points="163,152 160,163 152,158" fill="#321e98" opacity="0.82"/>
+    <polygon points="153,148 152,158 144,162" fill="#3d2da5" opacity="0.85"/>
+    <polygon points="145,152 144,162 136,165" fill="#4535b2" opacity="0.88"/>
+    <polygon points="160,163 157,175 148,170" fill="#36209a" opacity="0.82"/>
+    <polygon points="152,158 148,170 140,170" fill="#4030a8" opacity="0.85"/>
+    <polygon points="144,162 140,170 133,168" fill="#4c3cbb" opacity="0.88"/>
+
+    <!-- Center dividing line -->
+    <line x1="118" y1="84" x2="118" y2="190" stroke="#6c63ff" stroke-width="0.8" opacity="0.5"/>
+
+    <!-- Brain surface highlight lines -->
+    <path d="M88,105 Q95,98 105,102" stroke="#8b7fff" stroke-width="0.8" fill="none" opacity="0.6"/>
+    <path d="M84,130 Q92,125 100,128" stroke="#8b7fff" stroke-width="0.8" fill="none" opacity="0.5"/>
+    <path d="M135,92 Q145,96 152,104" stroke="#9488ff" stroke-width="0.8" fill="none" opacity="0.6"/>
+    <path d="M155,120 Q160,130 158,140" stroke="#9488ff" stroke-width="0.8" fill="none" opacity="0.5"/>
+
+    <!-- Bright edge highlight -->
+    <path d="M118,82 C102,78 88,85 83,98 C78,108 80,120 86,128" fill="none" stroke="#b8afff" stroke-width="1" opacity="0.4"/>
+    <path d="M130,87 C140,85 152,90 158,100 C164,110 164,122 159,130" fill="none" stroke="#b8afff" stroke-width="1" opacity="0.35"/>
+
+    <!-- Brain outline redraw on top -->
+    <path d="
+      M118,82
+      C102,78 88,85 83,98
+      C78,108 80,120 86,128
+      C80,134 77,143 80,152
+      C83,162 90,168 98,170
+      C95,178 97,188 104,193
+      C112,198 122,196 128,190
+      C134,196 144,199 152,195
+      C160,190 163,181 160,172
+      C168,168 174,160 173,150
+      C172,141 166,134 159,130
+      C164,122 164,110 158,100
+      C152,90 140,85 130,87
+      C125,82 121,80 118,82Z
+    " fill="none" stroke="#7c6fff" stroke-width="1.8"/>
+  </g>
+
+  <!-- ========== QUESTION MARK ========== -->
+  <g filter="url(#glowQ)">
+    <text x="185" y="120" font-family="Georgia, serif" font-size="62" font-weight="bold"
+          fill="#fffbe0" opacity="0.92" text-anchor="middle">?</text>
+  </g>
+  <text x="185" y="120" font-family="Georgia, serif" font-size="62" font-weight="bold"
+        fill="#f5c842" opacity="0.15" text-anchor="middle">?</text>
+
+  <!-- ========== QUIZ TITLE (top center) ========== -->
+  <text x="240" y="22" font-family="Arial Black, Impact, sans-serif" font-size="20"
+        font-weight="900" fill="#6c63ff" opacity="0.5" text-anchor="middle"
+        letter-spacing="8" filter="url(#glowText)">QUIZ</text>
+  <text x="240" y="22" font-family="Arial Black, Impact, sans-serif" font-size="20"
+        font-weight="900" fill="#e8e4ff" text-anchor="middle" letter-spacing="8">QUIZ</text>
+  <rect x="210" y="25" width="60" height="2" rx="1" fill="url(#progressFill)" opacity="0.8"/>
+
+  <!-- ========== XP BADGE (top right) ========== -->
+  <rect x="400" y="8" width="68" height="24" rx="12" fill="url(#xpGrad)"/>
+  <text x="434" y="24" font-family="Arial Black, sans-serif" font-size="11"
+        font-weight="900" fill="#1a0a00" text-anchor="middle" letter-spacing="0.5">+50 XP</text>
+
+  <!-- ========== MODE BADGES ========== -->
+  <rect x="8" y="8" width="88" height="20" rx="10" fill="#6c63ff" opacity="0.25" stroke="#6c63ff" stroke-width="0.8" stroke-opacity="0.6"/>
+  <text x="52" y="22" font-family="Arial, sans-serif" font-size="9" font-weight="700"
+        fill="#c4bfff" text-anchor="middle" letter-spacing="0.5">QUICK 路 10 c芒u</text>
+  <rect x="102" y="8" width="84" height="20" rx="10" fill="#24243e" stroke="#6c63ff" stroke-width="0.8" stroke-opacity="0.4"/>
+  <text x="144" y="22" font-family="Arial, sans-serif" font-size="9" font-weight="700"
+        fill="#7870c0" text-anchor="middle" letter-spacing="0.5">LONG 路 30 c芒u</text>
+
+  <!-- ========== QUIZ CARD (right side) ========== -->
+  <g filter="url(#cardShadow)">
+    <rect x="247" y="28" width="215" height="240" rx="16" fill="url(#cardGrad)" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1"/>
+    <rect x="247" y="28" width="215" height="240" rx="16" fill="#1a1560" opacity="0.55"/>
+  </g>
+
+  <!-- Card top accent bar -->
+  <rect x="247" y="28" width="215" height="4" rx="2" fill="url(#progressFill)" opacity="0.7" clip-path="url(#cardClip)"/>
+
+  <!-- Question number eyebrow -->
+  <text x="262" y="52" font-family="Arial, sans-serif" font-size="9" font-weight="700"
+        fill="#a09aff" letter-spacing="2" opacity="0.8">C脗U 7 / 10</text>
+
+  <!-- Question text -->
+  <foreignObject x="258" y="57" width="196" height="52">
+    <div xmlns="http://www.w3.org/1999/xhtml"
+         style="font-family: Arial, sans-serif; font-size: 12px; font-weight: 600; color: #e8e4ff; line-height: 1.45; word-wrap: break-word;">
+      膼峄?tu峄昳 d岷瓂 th矛 th瓢峄漬g b岷痶 膽岷 t峄?
+    </div>
+  </foreignObject>
+
+  <!-- ===== ANSWER OPTIONS ===== -->
+  <!-- Option A -->
+  <rect x="258" y="113" width="190" height="30" rx="8" fill="#0f0c29" opacity="0.7" stroke="#3a3270" stroke-width="0.8"/>
+  <rect x="258" y="113" width="22" height="30" rx="8" fill="#2a2460" opacity="0.8"/>
+  <text x="269" y="132" font-family="Arial, sans-serif" font-size="10" font-weight="800"
+        fill="#6c63ff" text-anchor="middle">A</text>
+  <text x="290" y="132" font-family="Arial, sans-serif" font-size="10" font-weight="500"
+        fill="#b0aae8">6 鈥?8 tu峄昳</text>
+
+  <!-- Option B 鈥?SELECTED -->
+  <rect x="258" y="149" width="190" height="30" rx="8" fill="url(#optHighlight)" opacity="0.9"/>
+  <rect x="258" y="149" width="190" height="30" rx="8" fill="none" stroke="#a78bfa" stroke-width="1.5" opacity="0.7"/>
+  <rect x="258" y="149" width="22" height="30" rx="8" fill="#4a3bcc" opacity="0.9"/>
+  <text x="269" y="168" font-family="Arial, sans-serif" font-size="10" font-weight="800"
+        fill="#ffffff" text-anchor="middle">B</text>
+  <text x="290" y="168" font-family="Arial, sans-serif" font-size="10" font-weight="700"
+        fill="#ffffff">9 鈥?13 tu峄昳</text>
+  <circle cx="435" cy="164" r="8" fill="#ffffff" opacity="0.2"/>
+  <path d="M431,164 L434,167 L440,160" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Option C -->
+  <rect x="258" y="185" width="190" height="30" rx="8" fill="#0f0c29" opacity="0.7" stroke="#3a3270" stroke-width="0.8"/>
+  <rect x="258" y="185" width="22" height="30" rx="8" fill="#2a2460" opacity="0.8"/>
+  <text x="269" y="204" font-family="Arial, sans-serif" font-size="10" font-weight="800"
+        fill="#6c63ff" text-anchor="middle">C</text>
+  <text x="290" y="204" font-family="Arial, sans-serif" font-size="10" font-weight="500"
+        fill="#b0aae8">14 鈥?16 tu峄昳</text>
+
+  <!-- Option D -->
+  <rect x="258" y="221" width="190" height="30" rx="8" fill="#0f0c29" opacity="0.7" stroke="#3a3270" stroke-width="0.8"/>
+  <rect x="258" y="221" width="22" height="30" rx="8" fill="#2a2460" opacity="0.8"/>
+  <text x="269" y="240" font-family="Arial, sans-serif" font-size="10" font-weight="800"
+        fill="#6c63ff" text-anchor="middle">D</text>
+  <text x="290" y="240" font-family="Arial, sans-serif" font-size="10" font-weight="500"
+        fill="#b0aae8">17 鈥?19 tu峄昳</text>
+
+  <!-- ========== BOOKS STACK (bottom-left) ========== -->
+  <g transform="translate(8, 240)">
+    <!-- Book 3 (back) 鈥?teal -->
+    <rect x="18" y="-8" width="38" height="52" rx="3" fill="#1a8f8f"/>
+    <rect x="18" y="-8" width="6" height="52" rx="2" fill="#0d6b6b"/>
+    <rect x="18" y="-8" width="38" height="52" rx="3" fill="none" stroke="#26b5b5" stroke-width="0.6" opacity="0.5"/>
+    <!-- Book 2 (middle) 鈥?coral -->
+    <rect x="8" y="2" width="36" height="46" rx="3" fill="#e05a4e"/>
+    <rect x="8" y="2" width="6" height="46" rx="2" fill="#b03a30"/>
+    <rect x="8" y="2" width="36" height="46" rx="3" fill="none" stroke="#f07a70" stroke-width="0.6" opacity="0.5"/>
+    <!-- Book 1 (front) 鈥?gold -->
+    <rect x="0" y="10" width="32" height="38" rx="3" fill="#e8a020"/>
+    <rect x="0" y="10" width="5" height="38" rx="2" fill="#c07810"/>
+    <rect x="0" y="10" width="32" height="38" rx="3" fill="none" stroke="#f5c842" stroke-width="0.6" opacity="0.5"/>
+    <line x1="24" y1="16" x2="28" y2="16" stroke="#fff" stroke-width="1" opacity="0.4"/>
+    <line x1="24" y1="20" x2="28" y2="20" stroke="#fff" stroke-width="1" opacity="0.3"/>
+  </g>
+
+  <!-- ========== PROGRESS BAR (bottom) ========== -->
+  <text x="60" y="278" font-family="Arial, sans-serif" font-size="8" font-weight="600"
+        fill="#a09aff" opacity="0.8">TI岷綨 膼峄?/text>
+  <text x="420" y="278" font-family="Arial, sans-serif" font-size="8" font-weight="700"
+        fill="#a78bfa" text-anchor="end">7 / 10</text>
+  <rect x="60" y="282" width="360" height="8" rx="4" fill="#1e1a55" opacity="0.8"/>
+  <rect x="60" y="282" width="252" height="8" rx="4" fill="url(#progressFill)"/>
+  <circle cx="312" cy="286" r="5" fill="#a78bfa" opacity="0.4"/>
+  <circle cx="312" cy="286" r="3" fill="#e8e4ff"/>
+
+  <!-- ========== DECORATIVE LINES ========== -->
+  <line x1="0" y1="265" x2="240" y2="265" stroke="#6c63ff" stroke-width="0.4" opacity="0.15"/>
+  <line x1="240" y1="0" x2="240" y2="300" stroke="#6c63ff" stroke-width="0.4" opacity="0.1"/>
+
+  <!-- Floating particles around brain -->
+  <circle cx="68" cy="90" r="1.5" fill="#a78bfa" opacity="0.6"/>
+  <circle cx="170" cy="85" r="1" fill="#a78bfa" opacity="0.5"/>
+  <circle cx="60" cy="175" r="1.2" fill="#7c6fff" opacity="0.5"/>
+  <circle cx="178" cy="175" r="1" fill="#7c6fff" opacity="0.4"/>
+  <circle cx="75" cy="140" r="0.8" fill="#c4bfff" opacity="0.4"/>
+  <circle cx="162" cy="200" r="1.2" fill="#a78bfa" opacity="0.45"/>
+  <circle cx="195" cy="148" r="0.9" fill="#f5c842" opacity="0.5"/>
+  <circle cx="100" cy="72" r="1" fill="#f5c842" opacity="0.4"/>
+</svg>

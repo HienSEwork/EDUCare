@@ -1,0 +1,331 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300">
+  <defs>
+    <!-- Vignette gradient -->
+    <radialGradient id="vigCenter" cx="50%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#161a24" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#070709" stop-opacity="0.8"/>
+    </radialGradient>
+
+    <!-- Red glow filter for flags -->
+    <filter id="redGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feFlood flood-color="#e8001c" flood-opacity="0.75" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Soft red glow for title -->
+    <filter id="titleGlow" x="-20%" y="-80%" width="140%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#e8001c" flood-opacity="0.6" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Subtle glow for crosshair -->
+    <filter id="crossGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feFlood flood-color="#e8001c" flood-opacity="0.5" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Cover gradient for profile card -->
+    <linearGradient id="coverGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a3a5c"/>
+      <stop offset="60%" stop-color="#1a2744"/>
+      <stop offset="100%" stop-color="#0f1a30"/>
+    </linearGradient>
+
+    <!-- Card shadow -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.7"/>
+    </filter>
+
+    <!-- Scan line texture for "printed" feel -->
+    <pattern id="scanlines" x="0" y="0" width="1" height="3" patternUnits="userSpaceOnUse">
+      <rect width="1" height="3" fill="none"/>
+      <rect y="2" width="1" height="1" fill="#000000" opacity="0.08"/>
+    </pattern>
+
+    <!-- Clip for card -->
+    <clipPath id="cardClip">
+      <rect x="-160" y="-100" width="320" height="200" rx="10"/>
+    </clipPath>
+
+    <!-- Amber glow for flag 2 (different severity) -->
+    <filter id="amberGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#ff6b35" flood-opacity="0.7" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- BACKGROUND -->
+  <rect width="480" height="300" fill="#0f1116"/>
+
+  <!-- Vignette overlay -->
+  <rect width="480" height="300" fill="url(#vigCenter)"/>
+
+  <!-- Faint grid lines 鈥?surveillance monitor aesthetic -->
+  <g opacity="0.06" stroke="#8899bb" stroke-width="0.5">
+    <line x1="0" y1="60" x2="480" y2="60"/>
+    <line x1="0" y1="120" x2="480" y2="120"/>
+    <line x1="0" y1="180" x2="480" y2="180"/>
+    <line x1="0" y1="240" x2="480" y2="240"/>
+    <line x1="80" y1="0" x2="80" y2="300"/>
+    <line x1="160" y1="0" x2="160" y2="300"/>
+    <line x1="240" y1="0" x2="240" y2="300"/>
+    <line x1="320" y1="0" x2="320" y2="300"/>
+    <line x1="400" y1="0" x2="400" y2="300"/>
+  </g>
+
+  <!-- PROFILE CARD 鈥?slightly rotated (1.5deg) -->
+  <g transform="translate(240,152) rotate(1.5)" filter="url(#cardShadow)">
+
+    <!-- Card body -->
+    <rect x="-160" y="-100" width="320" height="200" rx="10" fill="#f0ede8"/>
+
+    <!-- Scanline grain over card -->
+    <rect x="-160" y="-100" width="320" height="200" rx="10" fill="url(#scanlines)" opacity="1"/>
+
+    <!-- Cover area -->
+    <rect x="-160" y="-100" width="320" height="68" rx="10" fill="url(#coverGrad)" clip-path="url(#cardClip)"/>
+    <!-- Bottom of cover is square -->
+    <rect x="-160" y="-55" width="320" height="23" fill="url(#coverGrad)"/>
+
+    <!-- Cover subtle stripes -->
+    <g opacity="0.12" stroke="#ffffff" stroke-width="0.5">
+      <line x1="-160" y1="-88" x2="160" y2="-88"/>
+      <line x1="-160" y1="-76" x2="160" y2="-76"/>
+    </g>
+
+    <!-- Cover text: location -->
+    <text x="90" y="-72" font-family="Arial, sans-serif" font-size="8" fill="#a0b4d4" letter-spacing="1" opacity="0.9">Ho Chi Minh City</text>
+
+    <!-- Divider between cover and body -->
+    <line x1="-160" y1="-32" x2="160" y2="-32" stroke="#ddd8d0" stroke-width="0.8" opacity="0.7"/>
+
+    <!-- Profile photo circle -->
+    <circle cx="-100" cy="-34" r="26" fill="#2a3a5c" stroke="#f0ede8" stroke-width="3"/>
+    <!-- Head -->
+    <circle cx="-100" cy="-41" r="8" fill="#6b7fa8"/>
+    <!-- Body -->
+    <path d="M-116,-26 Q-116,-18 -100,-16 Q-84,-18 -84,-26" fill="#6b7fa8"/>
+
+    <!-- Verified badge (suspicious) -->
+    <circle cx="-77" cy="-23" r="7" fill="#1877f2"/>
+    <text x="-77" y="-20" text-anchor="middle" font-size="8" fill="white" font-weight="bold">✓</text>
+
+    <!-- Name -->
+    <text x="-64" y="-44" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#1a1a2e">Nguyen Van A</text>
+    <!-- Handle / bio -->
+    <text x="-64" y="-30" font-family="Arial, sans-serif" font-size="8.5" fill="#6b7280">@nguyenvana2024 路 Doanh nhan 路 Nha dau tu</text>
+
+    <!-- Friend count 鈥?suspiciously high -->
+    <text x="-64" y="-18" font-family="Arial, sans-serif" font-size="8" fill="#888">
+      <tspan font-weight="600" fill="#1a1a2e">4,892</tspan> ban be 路
+      <tspan font-weight="600" fill="#1a1a2e">12,400</tspan> nguoi theo doi
+    </text>
+
+    <!-- Thin rule -->
+    <line x1="-148" y1="-8" x2="148" y2="-8" stroke="#e0dbd3" stroke-width="0.7"/>
+
+    <!-- Post 1 -->
+    <rect x="-148" y="-4" width="296" height="40" rx="4" fill="#faf8f5"/>
+    <text x="-138" y="8" font-family="Arial, sans-serif" font-size="7.5" fill="#444">
+      <tspan font-weight="600">Nguyen Van A</tspan>
+      <tspan fill="#aaa"> 路 3 phut truoc</tspan>
+    </text>
+    <text x="-138" y="19" font-family="Arial, sans-serif" font-size="7.5" fill="#555">
+      Kiem 50 TRIEU/thang chi voi 30 phut/ngay! Inbox ngay
+    </text>
+    <text x="-138" y="29" font-family="Arial, sans-serif" font-size="7.5" fill="#555">
+      minh de biet bi quyet. Con 2 suat cuoi!!!
+    </text>
+    <text x="-138" y="39" font-family="Arial, sans-serif" font-size="7" fill="#1877f2">Xem them...</text>
+
+    <!-- Post 2 stub -->
+    <rect x="-148" y="40" width="296" height="22" rx="4" fill="#f5f2ef" opacity="0.8"/>
+    <text x="-138" y="51" font-family="Arial, sans-serif" font-size="7" fill="#777">
+      <tspan font-weight="600">Nguyen Van A</tspan>: "Dau tu crypto KHONG RUI RO, loi nhuan 300%..."
+    </text>
+    <text x="-138" y="60" font-family="Arial, sans-serif" font-size="6.5" fill="#aaa">127 nguoi thich 路 43 binh luan</text>
+
+    <!-- Account age 鈥?recently created -->
+    <text x="100" y="62" text-anchor="end" font-family="Arial, sans-serif" font-size="6.5" fill="#aaa">Tham gia: 14/06/2024</text>
+
+  </g>
+
+  <!-- RED FLAG MARKERS -->
+
+  <!-- FLAG 1 鈥?Verified badge area -->
+  <circle cx="163" cy="129" r="14" fill="none" stroke="#e8001c" stroke-width="1.2" opacity="0.6">
+    <animate attributeName="r" values="14;22;14" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="163" cy="129" r="10" fill="none" stroke="#e8001c" stroke-width="0.8" opacity="0.4">
+    <animate attributeName="r" values="10;18;10" dur="2s" begin="0.4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" begin="0.4s" repeatCount="indefinite"/>
+  </circle>
+  <g filter="url(#redGlow)">
+    <line x1="163" y1="129" x2="163" y2="113" stroke="#cc0015" stroke-width="1.8" stroke-linecap="round"/>
+    <polygon points="163,113 175,117 163,121" fill="#e8001c"/>
+    <circle cx="163" cy="129" r="2.5" fill="#e8001c"/>
+  </g>
+
+  <!-- FLAG 2 鈥?Follower count (amber severity) -->
+  <circle cx="230" cy="136" r="13" fill="none" stroke="#ff6b35" stroke-width="1.2" opacity="0.5">
+    <animate attributeName="r" values="13;21;13" dur="2.4s" begin="0.3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0;0.5" dur="2.4s" begin="0.3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="230" cy="136" r="9" fill="none" stroke="#ff6b35" stroke-width="0.8" opacity="0.35">
+    <animate attributeName="r" values="9;17;9" dur="2.4s" begin="0.7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.35;0;0.35" dur="2.4s" begin="0.7s" repeatCount="indefinite"/>
+  </circle>
+  <g filter="url(#amberGlow)">
+    <line x1="230" y1="136" x2="230" y2="120" stroke="#cc4400" stroke-width="1.8" stroke-linecap="round"/>
+    <polygon points="230,120 242,124 230,128" fill="#ff6b35"/>
+    <circle cx="230" cy="136" r="2.5" fill="#ff6b35"/>
+  </g>
+
+  <!-- FLAG 3 鈥?Scam post language -->
+  <circle cx="248" cy="175" r="13" fill="none" stroke="#e8001c" stroke-width="1.2" opacity="0.6">
+    <animate attributeName="r" values="13;21;13" dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0;0.6" dur="1.8s" begin="0.6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="248" cy="175" r="9" fill="none" stroke="#e8001c" stroke-width="0.8" opacity="0.4">
+    <animate attributeName="r" values="9;17;9" dur="1.8s" begin="1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0;0.4" dur="1.8s" begin="1s" repeatCount="indefinite"/>
+  </circle>
+  <g filter="url(#redGlow)">
+    <line x1="248" y1="175" x2="248" y2="159" stroke="#cc0015" stroke-width="1.8" stroke-linecap="round"/>
+    <polygon points="248,159 260,163 248,167" fill="#e8001c"/>
+    <circle cx="248" cy="175" r="2.5" fill="#e8001c"/>
+  </g>
+
+  <!-- FLAG 4 鈥?New account with huge following -->
+  <circle cx="345" cy="211" r="12" fill="none" stroke="#e8001c" stroke-width="1.2" opacity="0.55">
+    <animate attributeName="r" values="12;20;12" dur="2.2s" begin="1.1s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.55;0;0.55" dur="2.2s" begin="1.1s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="345" cy="211" r="8" fill="none" stroke="#e8001c" stroke-width="0.7" opacity="0.35">
+    <animate attributeName="r" values="8;16;8" dur="2.2s" begin="1.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.35;0;0.35" dur="2.2s" begin="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <g filter="url(#redGlow)">
+    <line x1="345" y1="211" x2="345" y2="195" stroke="#cc0015" stroke-width="1.8" stroke-linecap="round"/>
+    <polygon points="345,195 357,199 345,203" fill="#e8001c"/>
+    <circle cx="345" cy="211" r="2.5" fill="#e8001c"/>
+  </g>
+
+  <!-- CROSSHAIR / TARGET -->
+  <g filter="url(#crossGlow)" opacity="0.55">
+    <circle cx="240" cy="152" r="20" fill="none" stroke="#e8001c" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <circle cx="240" cy="152" r="8" fill="none" stroke="#e8001c" stroke-width="0.9"/>
+    <circle cx="240" cy="152" r="2" fill="#e8001c"/>
+    <line x1="215" y1="152" x2="228" y2="152" stroke="#e8001c" stroke-width="1.2"/>
+    <line x1="252" y1="152" x2="265" y2="152" stroke="#e8001c" stroke-width="1.2"/>
+    <line x1="240" y1="127" x2="240" y2="140" stroke="#e8001c" stroke-width="1.2"/>
+    <line x1="240" y1="164" x2="240" y2="177" stroke="#e8001c" stroke-width="1.2"/>
+  </g>
+
+  <!-- TITLE (top-left) -->
+  <rect x="12" y="12" width="54" height="11" rx="2" fill="#e8001c" opacity="0.9"/>
+  <text x="14" y="21" font-family="'Courier New', Courier, monospace" font-size="7" font-weight="700" fill="#ffffff" letter-spacing="1.5">LIVE SCAN</text>
+
+  <text x="12" y="44"
+    font-family="'Arial Black', 'Arial', sans-serif"
+    font-size="20"
+    font-weight="900"
+    fill="#e8001c"
+    letter-spacing="3"
+    filter="url(#titleGlow)">RED FLAG</text>
+  <text x="12" y="60"
+    font-family="'Arial Black', 'Arial', sans-serif"
+    font-size="20"
+    font-weight="900"
+    fill="#ffffff"
+    letter-spacing="3">HUNT</text>
+
+  <text x="12" y="74"
+    font-family="'Courier New', Courier, monospace"
+    font-size="7.5"
+    fill="#6b7280"
+    letter-spacing="0.8">PHAT HIEN HO SO GIA MAO</text>
+
+  <!-- SCORE (top-right) -->
+  <rect x="354" y="12" width="114" height="52" rx="6" fill="#1c1f2e" stroke="#2e3347" stroke-width="1"/>
+  <text x="411" y="26"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="7"
+    fill="#6b7280"
+    letter-spacing="1.5">SCORE</text>
+  <text x="411" y="44"
+    text-anchor="middle"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-size="18"
+    font-weight="900"
+    fill="#e8e4dd">3</text>
+  <text x="424" y="44"
+    font-family="'Arial', sans-serif"
+    font-size="10"
+    fill="#6b7280">/</text>
+  <text x="430" y="44"
+    font-family="'Arial Black', Arial, sans-serif"
+    font-size="14"
+    font-weight="900"
+    fill="#6b7280">5</text>
+  <text x="411" y="58"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="6.5"
+    fill="#e8001c"
+    letter-spacing="0.5">co do tim duoc</text>
+
+  <!-- TIMER (bottom center) -->
+  <rect x="186" y="272" width="108" height="22" rx="5" fill="#1c1f2e" stroke="#e8001c" stroke-width="1" opacity="0.9"/>
+  <circle cx="204" cy="283" r="7" fill="none" stroke="#e8001c" stroke-width="1.2"/>
+  <line x1="204" y1="279" x2="204" y2="283" stroke="#e8001c" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="204" y1="283" x2="207" y2="285" stroke="#e8001c" stroke-width="1.2" stroke-linecap="round"/>
+  <text x="216" y="287"
+    font-family="'Courier New', Courier, monospace"
+    font-size="11"
+    font-weight="700"
+    fill="#e8e4dd"
+    letter-spacing="0.5">42s</text>
+  <circle cx="281" cy="283" r="3" fill="#e8001c">
+    <animate attributeName="opacity" values="1;0.2;1" dur="1s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- BOTTOM LEFT: LEVEL INDICATOR -->
+  <text x="12" y="283"
+    font-family="'Courier New', Courier, monospace"
+    font-size="7.5"
+    fill="#6b7280"
+    letter-spacing="1">LV.2  HO SO #07</text>
+  <rect x="12" y="287" width="90" height="3" rx="1.5" fill="#2e3347"/>
+  <rect x="12" y="287" width="54" height="3" rx="1.5" fill="#e8001c" opacity="0.8"/>
+
+  <!-- BOTTOM RIGHT: HINT PILL -->
+  <rect x="374" y="276" width="94" height="16" rx="8" fill="#1c1f2e" stroke="#2e3347" stroke-width="1"/>
+  <text x="421" y="288"
+    text-anchor="middle"
+    font-family="'Arial', sans-serif"
+    font-size="7"
+    fill="#6b7280">Nhan de xem goi y</text>
+
+  <!-- TOP EDGE: SCAN BAR ANIMATION -->
+  <rect x="0" y="0" width="480" height="2" fill="#e8001c" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.2;0.7" dur="1.5s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Corner brackets -->
+  <path d="M0,18 L0,0 L18,0" fill="none" stroke="#e8001c" stroke-width="1.5" opacity="0.5"/>
+  <path d="M462,0 L480,0 L480,18" fill="none" stroke="#e8001c" stroke-width="1.5" opacity="0.5"/>
+  <path d="M0,282 L0,300 L18,300" fill="none" stroke="#e8001c" stroke-width="1.5" opacity="0.5"/>
+  <path d="M462,300 L480,300 L480,282" fill="none" stroke="#e8001c" stroke-width="1.5" opacity="0.5"/>
+
+</svg>

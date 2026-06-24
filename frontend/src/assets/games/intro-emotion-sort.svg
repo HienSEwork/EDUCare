@@ -1,0 +1,206 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300" font-family="'Segoe UI Rounded', 'SF Pro Rounded', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8f0ff"/>
+      <stop offset="50%" stop-color="#e8f4ff"/>
+      <stop offset="100%" stop-color="#f0fff8"/>
+    </linearGradient>
+
+    <!-- Card glow filters (hue-matched shadows) -->
+    <filter id="teal-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0d9488" flood-opacity="0.45"/>
+    </filter>
+    <filter id="orange-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#f97316" flood-opacity="0.45"/>
+    </filter>
+    <filter id="purple-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#a855f7" flood-opacity="0.45"/>
+    </filter>
+    <filter id="pink-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#ec4899" flood-opacity="0.45"/>
+    </filter>
+    <filter id="green-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#16a34a" flood-opacity="0.45"/>
+    </filter>
+    <filter id="red-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#dc2626" flood-opacity="0.45"/>
+    </filter>
+
+    <!-- Zone pulse glow filters -->
+    <filter id="zone-green-pulse" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="0 0 0 0 0.13  0 0 0 0 0.77  0 0 0 0 0.37  0 0 0 0.5 0"/>
+    </filter>
+    <filter id="zone-red-pulse" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="0 0 0 0 0.94  0 0 0 0 0.27  0 0 0 0 0.27  0 0 0 0.5 0"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="480" height="300" fill="url(#bg)"/>
+
+  <!-- Decorative background atmosphere circles -->
+  <circle cx="60" cy="60" r="45" fill="#ddd6fe" opacity="0.3"/>
+  <circle cx="420" cy="50" r="35" fill="#bfdbfe" opacity="0.3"/>
+  <circle cx="240" cy="280" r="50" fill="#d1fae5" opacity="0.25"/>
+  <circle cx="380" cy="240" r="30" fill="#fce7f3" opacity="0.3"/>
+  <circle cx="90" cy="240" r="28" fill="#fef9c3" opacity="0.35"/>
+
+  <!-- Small ambient floating dots -->
+  <circle cx="155" cy="40" r="4" fill="#a78bfa" opacity="0.5"/>
+  <circle cx="320" cy="30" r="3" fill="#34d399" opacity="0.5"/>
+  <circle cx="450" cy="140" r="5" fill="#f9a8d4" opacity="0.4"/>
+  <circle cx="30" cy="160" r="4" fill="#6ee7b7" opacity="0.4"/>
+  <circle cx="200" cy="270" r="3" fill="#fbbf24" opacity="0.45"/>
+  <circle cx="280" cy="260" r="4" fill="#c084fc" opacity="0.4"/>
+
+  <!-- ===== PROGRESS BADGE ===== -->
+  <rect x="183" y="10" width="114" height="26" rx="13" fill="#2d1b6e" opacity="0.88"/>
+  <text x="240" y="27" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff" letter-spacing="0.3">12 / 20 th岷?/text>
+
+  <!-- ===== LEFT DROP ZONE: L脌NH M岷燦H ===== -->
+  <!-- Animated pulsing glow halo -->
+  <rect x="12" y="44" width="134" height="210" rx="18" fill="#22c55e" opacity="0.12" filter="url(#zone-green-pulse)">
+    <animate attributeName="opacity" values="0.12;0.22;0.12" dur="2.4s" repeatCount="indefinite"/>
+  </rect>
+  <!-- Zone body -->
+  <rect x="12" y="44" width="134" height="210" rx="18"
+    fill="rgba(240,255,248,0.82)"
+    stroke="#22c55e" stroke-width="2.5"/>
+  <!-- Zone header band -->
+  <rect x="12" y="44" width="134" height="40" rx="18" fill="#22c55e" opacity="0.15"/>
+  <rect x="12" y="64" width="134" height="20" fill="#22c55e" opacity="0.15"/>
+  <!-- Zone label -->
+  <text x="79" y="68" text-anchor="middle" font-size="13" font-weight="800" fill="#16a34a">&#x1F49A; L脌NH M岷燦H</text>
+  <!-- Dashed inner drop target -->
+  <rect x="20" y="90" width="118" height="155" rx="12"
+    fill="none" stroke="#86efac" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.7"/>
+  <!-- Drop hint -->
+  <text x="79" y="162" text-anchor="middle" font-size="10" fill="#16a34a" opacity="0.6" font-weight="600">Th岷?v脿o 膽芒y</text>
+  <text x="79" y="178" text-anchor="middle" font-size="18" fill="#16a34a" opacity="0.35">⬇</text>
+
+  <!-- ===== RIGHT DROP ZONE: KH脭NG L脌NH M岷燦H ===== -->
+  <!-- Animated pulsing glow halo -->
+  <rect x="334" y="44" width="134" height="210" rx="18" fill="#ef4444" opacity="0.12" filter="url(#zone-red-pulse)">
+    <animate attributeName="opacity" values="0.12;0.22;0.12" dur="2.8s" repeatCount="indefinite"/>
+  </rect>
+  <!-- Zone body -->
+  <rect x="334" y="44" width="134" height="210" rx="18"
+    fill="rgba(255,245,245,0.82)"
+    stroke="#ef4444" stroke-width="2.5"/>
+  <!-- Zone header band -->
+  <rect x="334" y="44" width="134" height="40" rx="18" fill="#ef4444" opacity="0.15"/>
+  <rect x="334" y="64" width="134" height="20" fill="#ef4444" opacity="0.15"/>
+  <!-- Zone label -->
+  <text x="401" y="68" text-anchor="middle" font-size="10.5" font-weight="800" fill="#dc2626">⚠️ KH脭NG L脌NH M岷燦H</text>
+  <!-- Dashed inner drop target -->
+  <rect x="342" y="90" width="118" height="155" rx="12"
+    fill="none" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.7"/>
+  <!-- Drop hint -->
+  <text x="401" y="162" text-anchor="middle" font-size="10" fill="#dc2626" opacity="0.6" font-weight="600">Th岷?v脿o 膽芒y</text>
+  <text x="401" y="178" text-anchor="middle" font-size="18" fill="#dc2626" opacity="0.35">⬇</text>
+
+  <!-- ===== FLOATING EMOTION CARDS ===== -->
+
+  <!-- Card 1: T峄?tin 鈥?teal, tilt -4deg, upper center-left -->
+  <g transform="translate(158, 98) rotate(-4)">
+    <rect x="-40" y="-30" width="80" height="58" rx="14"
+      fill="rgba(240,253,250,0.97)" stroke="#0d9488" stroke-width="2.2"
+      filter="url(#teal-shadow)"/>
+    <rect x="-40" y="-30" width="80" height="20" rx="14" fill="#0d9488" opacity="0.12"/>
+    <rect x="-40" y="-16" width="80" height="6" fill="#0d9488" opacity="0.12"/>
+    <text x="0" y="-5" text-anchor="middle" font-size="20">&#x1F60A;</text>
+    <text x="0" y="15" text-anchor="middle" font-size="11" font-weight="700" fill="#0d9488">T峄?tin</text>
+  </g>
+
+  <!-- Card 2: Ghen t峄?鈥?orange, tilt +5deg, upper center-right -->
+  <g transform="translate(314, 90) rotate(5)">
+    <rect x="-40" y="-30" width="80" height="58" rx="14"
+      fill="rgba(255,247,237,0.97)" stroke="#f97316" stroke-width="2.2"
+      filter="url(#orange-shadow)"/>
+    <rect x="-40" y="-30" width="80" height="20" rx="14" fill="#f97316" opacity="0.12"/>
+    <rect x="-40" y="-16" width="80" height="6" fill="#f97316" opacity="0.12"/>
+    <text x="0" y="-5" text-anchor="middle" font-size="20">&#x1F624;</text>
+    <text x="0" y="15" text-anchor="middle" font-size="11" font-weight="700" fill="#ea580c">Ghen t峄?/text>
+  </g>
+
+  <!-- Card 3: Chia s岷?鈥?purple, tilt -6deg, lower center-left -->
+  <g transform="translate(168, 208) rotate(-6)">
+    <rect x="-40" y="-30" width="80" height="58" rx="14"
+      fill="rgba(250,245,255,0.97)" stroke="#a855f7" stroke-width="2.2"
+      filter="url(#purple-shadow)"/>
+    <rect x="-40" y="-30" width="80" height="20" rx="14" fill="#a855f7" opacity="0.12"/>
+    <rect x="-40" y="-16" width="80" height="6" fill="#a855f7" opacity="0.12"/>
+    <text x="0" y="-5" text-anchor="middle" font-size="20">&#x1F4AC;</text>
+    <text x="0" y="15" text-anchor="middle" font-size="11" font-weight="700" fill="#9333ea">Chia s岷?/text>
+  </g>
+
+  <!-- Card 4: Lo l岷痭g th谩i qu谩 鈥?pink, tilt +4deg, lower center-right -->
+  <g transform="translate(308, 210) rotate(4)">
+    <rect x="-46" y="-30" width="92" height="58" rx="14"
+      fill="rgba(255,241,248,0.97)" stroke="#ec4899" stroke-width="2.2"
+      filter="url(#pink-shadow)"/>
+    <rect x="-46" y="-30" width="92" height="20" rx="14" fill="#ec4899" opacity="0.12"/>
+    <rect x="-46" y="-16" width="92" height="6" fill="#ec4899" opacity="0.12"/>
+    <text x="0" y="-5" text-anchor="middle" font-size="20">&#x1F630;</text>
+    <text x="0" y="13" text-anchor="middle" font-size="9.5" font-weight="700" fill="#db2777">Lo l岷痭g th谩i qu谩</text>
+  </g>
+
+  <!-- Drag arrow: from active card leftward toward green zone -->
+  <polygon points="148,152 160,146 160,158" fill="#16a34a" opacity="0.8"/>
+  <line x1="162" y1="152" x2="207" y2="152"
+    stroke="#16a34a" stroke-width="2" stroke-dasharray="5,3" opacity="0.75"/>
+
+  <!-- Card 5: V岷璶 膽峄檔g 鈥?green, active drag card, center stage -->
+  <g transform="translate(247, 152) rotate(-2)">
+    <rect x="-40" y="-30" width="80" height="58" rx="14"
+      fill="rgba(240,253,244,0.97)" stroke="#16a34a" stroke-width="2.8"
+      filter="url(#green-shadow)"/>
+    <!-- Active selection ring -->
+    <rect x="-43" y="-33" width="86" height="64" rx="16"
+      fill="none" stroke="#16a34a" stroke-width="1" opacity="0.4" stroke-dasharray="3,3"/>
+    <rect x="-40" y="-30" width="80" height="20" rx="14" fill="#16a34a" opacity="0.15"/>
+    <rect x="-40" y="-16" width="80" height="6" fill="#16a34a" opacity="0.15"/>
+    <text x="0" y="-5" text-anchor="middle" font-size="20">&#x1F3C3;</text>
+    <text x="0" y="15" text-anchor="middle" font-size="11" font-weight="700" fill="#15803d">V岷璶 膽峄檔g</text>
+    <!-- Drag grip indicator dots -->
+    <circle cx="-12" cy="22" r="1.8" fill="#16a34a" opacity="0.5"/>
+    <circle cx="-4" cy="22" r="1.8" fill="#16a34a" opacity="0.5"/>
+    <circle cx="4" cy="22" r="1.8" fill="#16a34a" opacity="0.5"/>
+    <circle cx="12" cy="22" r="1.8" fill="#16a34a" opacity="0.5"/>
+  </g>
+
+  <!-- Card 6: Nghi峄噉 膽i峄噉 tho岷 鈥?red, top center, tilt +3deg -->
+  <g transform="translate(240, 62) rotate(3)">
+    <rect x="-46" y="-26" width="92" height="54" rx="14"
+      fill="rgba(255,242,242,0.97)" stroke="#dc2626" stroke-width="2.2"
+      filter="url(#red-shadow)"/>
+    <rect x="-46" y="-26" width="92" height="18" rx="14" fill="#dc2626" opacity="0.12"/>
+    <rect x="-46" y="-13" width="92" height="6" fill="#dc2626" opacity="0.12"/>
+    <text x="0" y="-2" text-anchor="middle" font-size="18">&#x1F4F1;</text>
+    <text x="0" y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#b91c1c">Nghi峄噉 膽i峄噉 tho岷</text>
+  </g>
+
+  <!-- ===== SPARKLE ACCENTS ===== -->
+  <text x="135" y="86" font-size="10" fill="#a78bfa" opacity="0.5">✶</text>
+  <text x="345" y="79" font-size="8" fill="#34d399" opacity="0.45">✶</text>
+  <text x="193" y="242" font-size="9" fill="#f9a8d4" opacity="0.4">✶</text>
+  <text x="339" y="246" font-size="8" fill="#fbbf24" opacity="0.4">✶</text>
+  <text x="222" y="102" font-size="7" fill="#c084fc" opacity="0.35">✶</text>
+  <text x="268" y="102" font-size="6" fill="#6ee7b7" opacity="0.35">✶</text>
+
+  <!-- Animated floating accent dots -->
+  <circle cx="240" cy="260" r="3" fill="#a855f7" opacity="0.4">
+    <animate attributeName="cy" values="260;255;260" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="145" cy="42" r="2.5" fill="#22c55e" opacity="0.5">
+    <animate attributeName="cy" values="42;38;42" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="336" cy="42" r="2.5" fill="#ef4444" opacity="0.5">
+    <animate attributeName="cy" values="42;38;42" dur="3.2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
