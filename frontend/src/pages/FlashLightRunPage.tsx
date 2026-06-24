@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { RotateCcw, Sparkles, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FLASH_GAME_COPY } from "@/content/uiCopy";
+import GameIntroHero from "@/components/GameIntroHero";
+import introSvg from "@/assets/games/intro-flash-run.svg";
 
 type Orb = {
   id: number;
@@ -31,12 +33,15 @@ export default function FlashLightRunPage() {
   const [playerY, setPlayerY] = useState(BOARD_HEIGHT / 2);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
-  const [isRunning, setIsRunning] = useState(true);
+  const [isRunning, setIsRunning] = useState(false);
   const [orbs, setOrbs] = useState<Orb[]>(() => Array.from({ length: 8 }, (_, index) => randomOrb(index + 1)));
+  const [gamePhase, setGamePhase] = useState<"intro" | "playing">("intro");
   const pressedKeys = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
+    const GAME_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d", " "];
     const onKeyDown = (event: KeyboardEvent) => {
+      if (GAME_KEYS.includes(event.key)) event.preventDefault();
       pressedKeys.current[event.key] = true;
     };
 
@@ -52,6 +57,12 @@ export default function FlashLightRunPage() {
       window.removeEventListener("keyup", onKeyUp);
     };
   }, []);
+
+  useEffect(() => {
+    if (gamePhase === "playing") {
+      setIsRunning(true);
+    }
+  }, [gamePhase]);
 
   useEffect(() => {
     if (!isRunning) {
@@ -157,7 +168,35 @@ export default function FlashLightRunPage() {
     setTimeLeft(45);
     setIsRunning(true);
     setOrbs(Array.from({ length: 8 }, (_, index) => randomOrb(index + 1)));
+    setGamePhase("playing");
   };
+
+  if (gamePhase === "intro") {
+    return (
+      <GameIntroHero
+        illustrationSrc={introSvg}
+        eyebrow="⚡ Mini Game · Arcade"
+        title="Ánh Sáng Tự Tin"
+        description="Thu thập các quả cầu sáng trong 45 giây! Điều hướng bằng phím mũi tên hoặc WASD, tránh các quả cầu tối và kiếm điểm cao nhất."
+        stats={[
+          { label: "Thời gian", value: "45 giây" },
+          { label: "Điều khiển", value: "↑↓←→ / WASD" },
+          { label: "Dạng chơi", value: "Arcade" },
+        ]}
+        rules={[
+          { text: "Dùng phím mũi tên hoặc WASD để di chuyển" },
+          { text: "Thu thập quả cầu vàng ✨: +10 điểm" },
+          { text: "Tránh quả cầu xám !: -8 điểm" },
+          { text: "Kiếm nhiều điểm nhất trong 45 giây!" },
+        ]}
+        startLabel="Bắt đầu chơi!"
+        onStart={() => setGamePhase("playing")}
+        bgGradient="linear-gradient(135deg,#0f0a1e 0%,#1a0533 50%,#0f0a1e 100%)"
+        accentColor="#d946ef"
+        buttonIcon={<Sparkles className="h-5 w-5" />}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen pb-16 pt-8">

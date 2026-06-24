@@ -68,10 +68,37 @@ function getDisplayGame(game: Game) {
   return { ...game, title: display?.title ?? game.title, summary: display?.summary ?? game.summary };
 }
 
-const CARD_ACCENTS = [
-  { from: "#6366f1", to: "#818cf8", glow: "rgba(99,102,241,0.35)", icon: Zap },
-  { from: "#0ea5e9", to: "#38bdf8", glow: "rgba(14,165,233,0.35)", icon: Star },
-  { from: "#8b5cf6", to: "#a78bfa", glow: "rgba(139,92,246,0.35)", icon: FlameKindling },
+/* ── Fixed grid span config for 9 games (0-indexed)
+   lg = 6-col grid | md = 4-col grid | sm = 2-col grid
+   Row layout (lg):
+   Rows 1-2:  [0: 2×2] [1: 4×2]
+   Row 3:     [2: 2×1] [3: 2×1] [4: 2×1]
+   Rows 4-5:  [5: 4×2] [6: 2×2]
+   Row 6:     [7: 3×1] [8: 3×1]
+──────────────────────────────────── */
+const GRID_SPANS: string[] = [
+  "col-span-2 row-span-2",                        // 0 hero square
+  "col-span-2 row-span-2 lg:col-span-4",          // 1 wide banner
+  "col-span-1 row-span-1 md:col-span-2",          // 2 small→medium
+  "col-span-1 row-span-1 md:col-span-2",          // 3 small→medium
+  "col-span-2 row-span-1",                        // 4 standard wide
+  "col-span-2 row-span-2 lg:col-span-4",          // 5 wide banner
+  "col-span-2 row-span-2",                        // 6 square
+  "col-span-2 row-span-1 lg:col-span-3",          // 7 half-wide
+  "col-span-2 row-span-1 lg:col-span-3",          // 8 half-wide
+];
+
+/* ── Preferred display order by slug ── */
+const GAME_ORDER = [
+  "anh-sang-tu-tin",
+  "emotion-sort",
+  "myth-buster",
+  "safe-swipe",
+  "chat-detective",
+  "red-flag-hunt",
+  "teen-path",
+  "quiz-quick",
+  "quiz-long",
 ];
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -83,7 +110,14 @@ export default function GamesPage() {
   useEffect(() => {
     void apiRequest<Game[]>("/games")
       .then((response) => {
-        setGames(response.filter((item) => item.published));
+        const published = response.filter((item) => item.published);
+        // Sort by preferred display order
+        published.sort((a, b) => {
+          const ai = GAME_ORDER.indexOf(a.slug);
+          const bi = GAME_ORDER.indexOf(b.slug);
+          return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+        });
+        setGames(published);
         setError(null);
       })
       .catch((requestError) => {
@@ -115,34 +149,36 @@ export default function GamesPage() {
             </div>
 
             {/* Poki-style dense grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 lg:gap-4 auto-rows-[140px] md:auto-rows-[160px]">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 lg:gap-4 auto-rows-[160px] md:auto-rows-[180px]">
               {games.map(getDisplayGame).map((game, index) => {
                 const isImplemented = supportedPlayPaths.has(game.playPath);
-
-                // Assign dynamic sizes based on index/slug to make it look masonry-like
-                let spanClass = "col-span-2 row-span-1"; // default 2x1 rectangle
-                
-                if (index === 0) spanClass = "col-span-2 row-span-2"; // 2x2 large square
-                else if (index === 1 || index === 4) spanClass = "col-span-2 row-span-2 md:col-span-2 md:row-span-1 lg:col-span-4 lg:row-span-2"; // very large banner
-                else if (index % 3 === 0) spanClass = "col-span-1 row-span-1"; // small square
-                else if (index % 5 === 0) spanClass = "col-span-2 row-span-2 md:col-span-1 md:row-span-2"; // tall rectangle
-                else spanClass = "col-span-2 row-span-1 md:col-span-2 md:row-span-1"; // wide rectangle
+                const spanClass = GRID_SPANS[index] ?? "col-span-2 row-span-1";
 
                 return (
                   <Link
                     to={isImplemented ? game.playPath : "#"}
                     key={game.id}
-                    className={`group relative overflow-hidden rounded-[1.2rem] md:rounded-[1.6rem] bg-black shadow-card transition-transform duration-300 hover:scale-[1.02] hover:z-10 hover:shadow-hover ${spanClass} ${!isImplemented ? "opacity-70 cursor-not-allowed" : ""}`}
+                    className={`group relative overflow-hidden rounded-[1.2rem] md:rounded-[1.6rem] bg-black shadow-card transition-transform duration-300 hover:scale-[1.02] hover:z-10 hover:shadow-hover ${spanClass} ${!isImplemented ? "opacity-60 cursor-not-allowed" : ""}`}
                   >
                     <img
                       src={getGamePhoto(game)}
                       alt={`Ảnh trò chơi ${game.title}`}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
                     />
-                    
+
+                    {/* Always-visible title badge at bottom for context */}
+                    <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
+                    <p className="absolute bottom-2 left-3 right-3 text-xs font-bold text-white/90 drop-shadow leading-tight line-clamp-1">
+                      {game.title}
+                    </p>
+
                     {/* Hover Overlay */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <h3 className="font-heading text-lg font-bold text-white leading-tight drop-shadow-md">
+                    <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <span className="rounded-full bg-white/90 self-start mb-2 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary shadow-soft">
+                        {gameBadge(game)}
+                      </span>
+                      <h3 className="font-heading text-base font-bold text-white leading-tight drop-shadow-md md:text-lg">
                         {game.title}
                       </h3>
                       {isImplemented ? (
@@ -154,13 +190,6 @@ export default function GamesPage() {
                           {GAMES_PAGE_COPY.developingAction}
                         </span>
                       )}
-                    </div>
-                    
-                    {/* Badges on Top Left */}
-                    <div className="absolute top-3 left-3 flex flex-col gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary shadow-soft">
-                        {gameBadge(game)}
-                      </span>
                     </div>
                   </Link>
                 );

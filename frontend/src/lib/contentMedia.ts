@@ -35,17 +35,32 @@ export function getBlogPhoto(post: Pick<BlogPost, "slug" | "title" | "category">
   return confidentTeen;
 }
 
-export function getGamePhoto(game: Pick<Game, "slug" | "title" | "gameType">) {
-  const lookup = normalizeText(`${game.slug} ${game.title} ${game.gameType}`);
+const GAME_THUMBNAIL: Record<string, string> = {
+  "safe-swipe": safeSwipe3d,
+  "chat-detective": chatDetective3d,
+  "red-flag-hunt": redFlagHunt3d,
+  "emotion-sort": emotionSort3d,
+  "teen-path": teenPath3d,
+  "myth-buster": mythBuster3d,
+  "anh-sang-tu-tin": flashRun3d,
+  "flash-light-run": flashRun3d,
+  "quiz-long": quizLong3d,
+  "quiz-quick": quizQuick3d,
+};
 
-  if (game.slug === "safe-swipe") return safeSwipe3d;
-  if (game.slug === "chat-detective") return chatDetective3d;
-  if (game.slug === "red-flag-hunt") return redFlagHunt3d;
-  if (game.slug === "emotion-sort") return emotionSort3d;
-  if (game.slug === "teen-path") return teenPath3d;
-  if (game.slug === "myth-buster") return mythBuster3d;
-  if (lookup.includes("flash") || lookup.includes("anh-sang")) return flashRun3d;
-  if (lookup.includes("long")) return quizLong3d;
+export function getGamePhoto(game: Pick<Game, "slug" | "title" | "gameType">) {
+  if (GAME_THUMBNAIL[game.slug]) return GAME_THUMBNAIL[game.slug];
+
+  // Fallback: keyword match on normalized slug+title
+  const lookup = normalizeText(`${game.slug} ${game.title}`);
+  if (lookup.includes("flash") || lookup.includes("anh-sang") || lookup.includes("tu-tin")) return flashRun3d;
+  if (lookup.includes("myth") || lookup.includes("giai-ma") || lookup.includes("tin-don")) return mythBuster3d;
+  if (lookup.includes("swipe") || lookup.includes("ranh-gioi")) return safeSwipe3d;
+  if (lookup.includes("chat") || lookup.includes("tham-tu")) return chatDetective3d;
+  if (lookup.includes("flag") || lookup.includes("canh-giac")) return redFlagHunt3d;
+  if (lookup.includes("emotion") || lookup.includes("cam-xuc")) return emotionSort3d;
+  if (lookup.includes("teen") || lookup.includes("nga-re")) return teenPath3d;
+  if (lookup.includes("long") || lookup.includes("dai")) return quizLong3d;
 
   return quizQuick3d;
 }

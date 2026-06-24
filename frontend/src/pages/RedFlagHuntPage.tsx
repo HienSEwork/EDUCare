@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Timer, AlertTriangle, CheckCircle2, RefreshCw, ArrowRight, Eye, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RED_FLAG_SCENES, type RedFlagScene, type RedFlagHotspot } from "@/data/redFlagItems";
+import GameIntroHero from "@/components/GameIntroHero";
+import introSvg from "@/assets/games/intro-red-flag-hunt.svg";
 
 type GamePhase = "intro" | "playing" | "result";
 
@@ -240,57 +242,28 @@ export default function RedFlagHuntPage() {
   // ── INTRO ──────────────────────────────────────────────────────────────
   if (phase === "intro") {
     return (
-      <div className="min-h-screen pb-16 pt-8">
-        <div className="container mx-auto max-w-2xl px-4">
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="overflow-hidden rounded-[2.4rem] border border-white/70 bg-[linear-gradient(135deg,rgba(239,68,68,0.10)_0%,rgba(246,241,255,0.96)_50%,rgba(249,115,22,0.10)_100%)] p-8 shadow-card md:p-12"
-          >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-red-500 shadow-soft">
-              <Flag className="h-3.5 w-3.5" /> Mini Game
-            </span>
-            <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">
-              Cảnh Giác Cao Độ 🚩
-            </h1>
-            <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">
-              Nhìn vào các màn hình giả mạo và bấm vào tất cả những dấu hiệu đáng ngờ trước khi hết giờ!
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {[
-                { label: "Màn chơi", value: `${RED_FLAG_SCENES.length} màn` },
-                { label: "Thời gian", value: `${GAME_DURATION}s/màn` },
-                { label: "Dạng chơi", value: "Tìm red flag" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
-                  <p className="mt-2 text-lg font-bold">{item.value}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 space-y-3 rounded-[1.8rem] border border-white/70 bg-white/60 p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Cách chơi</p>
-              {[
-                "Quan sát kỹ màn hình giả mạo được hiển thị",
-                "Bấm vào các vùng có dấu hiệu đáng ngờ",
-                "Mỗi red flag tìm được → nhận điểm + giải thích",
-                "Hết giờ → chuyển màn tiếp theo tự động",
-              ].map((rule, i) => (
-                <div key={i} className="flex items-start gap-3 text-sm text-foreground/80">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-[11px] font-bold text-red-500">{i + 1}</span>
-                  {rule}
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button id="red-flag-start-btn" className="gradient-primary px-8 py-6 text-base font-bold text-primary-foreground" onClick={startGame}>
-                <Eye className="mr-2 h-5 w-5" /> Bắt đầu điều tra!
-              </Button>
-              <Button variant="outline" asChild><Link to="/games">← Về trang game</Link></Button>
-            </div>
-          </motion.section>
-        </div>
-      </div>
+      <GameIntroHero
+        illustrationSrc={introSvg}
+        eyebrow="🚩 Mini Game · Quan sát"
+        title="Cảnh Giác Cao Độ"
+        description="Quan sát các màn hình giả mạo — Facebook, Email, TikTok — và bấm vào mọi dấu hiệu đáng ngờ trước khi hết giờ!"
+        stats={[
+          { label: "Số cảnh", value: `${RED_FLAG_SCENES.length} màn hình` },
+          { label: "Thời gian", value: "60 giây/cảnh" },
+          { label: "Kỹ năng", value: "Quan sát" },
+        ]}
+        rules={[
+          { text: "Quan sát kỹ màn hình giả mạo hiển thị" },
+          { text: "Bấm vào các vùng có dấu hiệu đáng ngờ" },
+          { text: "Tìm hết cờ đỏ trước khi hết 60 giây" },
+          { text: "Sau mỗi cảnh sẽ chuyển sang cảnh tiếp theo" },
+        ]}
+        startLabel="Bắt đầu điều tra!"
+        onStart={startGame}
+        bgGradient="linear-gradient(135deg,#0f1116 0%,#1a0505 50%,#0f1116 100%)"
+        accentColor="#ef4444"
+        buttonIcon={<Flag className="h-5 w-5" />}
+      />
     );
   }
 
