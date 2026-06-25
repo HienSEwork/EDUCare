@@ -327,7 +327,9 @@ public record CourseResponse(
       @NotBlank String summary,
       @NotBlank String content,
       Integer order,
-      Boolean isFree) {
+      Boolean isFree,
+      Integer xpReward,
+      Integer estimatedMinutes) {
   }
 
   public record BlogPostUpsertRequest(
@@ -362,5 +364,28 @@ public record CourseResponse(
       String coverImage,
       String accentColor,
       Boolean published) {
+  }
+
+  // ── Admin User Management ──────────────────────────────────────────────────
+
+  public record AdminUserResponse(
+      String id,
+      String fullName,
+      String email,
+      String username,
+      Integer age,
+      String plan,
+      String role,
+      int xp,
+      int streak,
+      int quizScore,
+      String avatar,
+      String createdAt) {
+  }
+
+  public record AdminUserListResponse(List<AdminUserResponse> users, long total) {
+  }
+
+  public record AdminUserUpdateRequest(String plan, String role) {
   }
 }
