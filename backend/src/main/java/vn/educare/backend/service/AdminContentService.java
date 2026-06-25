@@ -65,6 +65,8 @@ public class AdminContentService {
     lesson.setContent(request.content());
     lesson.setLessonOrder(request.order() == null ? nextLessonOrder() : request.order());
     lesson.setIsFree(Boolean.TRUE.equals(request.isFree()));
+    lesson.setXpReward(request.xpReward() != null ? request.xpReward() : (lesson.getXpReward() != null ? lesson.getXpReward() : 10));
+    lesson.setEstimatedMinutes(request.estimatedMinutes() != null ? request.estimatedMinutes() : (lesson.getEstimatedMinutes() != null ? lesson.getEstimatedMinutes() : 10));
     return contentService.toLessonResponse(lessonRepository.save(lesson));
   }
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -6,9 +6,9 @@ import {
 } from "recharts";
 import {
   BookOpen, FileText, Gamepad2, LogOut, Plus, Shield, Sparkles, Trash2, Users,
-  Home, MessageSquare, BarChart2, Settings, Bell, Search, Crown,
+  Home, MessageSquare, BarChart2, Settings, Bell, Search,
   Trophy, HelpCircle, Database, TrendingUp, ArrowUpRight, Menu,
-  HardDrive, ChevronDown,
+  HardDrive, ChevronDown, AlertTriangle, X,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/sonner";
 import { ApiError, apiRequest } from "@/lib/api/client";
-import type { AdminContentResponse, AdminDashboardResponse } from "@/types/api";
+import type { AdminContentResponse, AdminDashboardResponse, AdminUserListResponse, AdminUserResponse } from "@/types/api";
 
 type SidebarTab = "overview" | "lessons" | "blogPosts" | "quizQuestions" | "games" | "students" | "discussions" | "reports" | "settings";
 type CrudTab = "lessons" | "blogPosts" | "quizQuestions" | "games";
@@ -105,6 +105,19 @@ export default function AdminDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [listSearch, setListSearch] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState<{ label: string; onConfirm: () => void } | null>(null);
+
+  // Students tab state
+  const [students, setStudents] = useState<AdminUserListResponse | null>(null);
+  const [studentSearch, setStudentSearch] = useState("");
+  const [studentPlanFilter, setStudentPlanFilter] = useState<"" | "free" | "popular" | "premium">("");
+  const [studentRoleFilter, setStudentRoleFilter] = useState<"" | "student" | "admin">("");
+  const [studentLoading, setStudentLoading] = useState(false);
+  const [editUser, setEditUser] = useState<AdminUserResponse | null>(null);
+  const [editPlan, setEditPlan] = useState("");
+  const [editRole, setEditRole] = useState("");
+  const [userSaving, setUserSaving] = useState(false);
 
   const [lessonForm, setLessonForm] = useState({ id: null as number | null, slug: "", title: "", summary: "", content: "", order: "", isFree: true });
   const [blogForm, setBlogForm] = useState({ id: null as number | null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: ADMIN_COPY.defaults.blogEmoji });
@@ -130,6 +143,25 @@ export default function AdminDashboardPage() {
 
   useEffect(() => { void loadData(); }, []);
 
+  const loadStudents = useCallback(async (q: string, plan: string, role: string) => {
+    setStudentLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (q.trim()) params.set("q", q.trim());
+      if (plan) params.set("plan", plan);
+      if (role) params.set("role", role);
+      const data = await apiRequest<AdminUserListResponse>(`/admin/users${params.toString() ? `?${params}` : ""}`);
+      setStudents(data);
+    } catch { /* silently keep previous list */ }
+    finally { setStudentLoading(false); }
+  }, []);
+
+  useEffect(() => {
+    if (sidebarTab === "students") {
+      void loadStudents(studentSearch, studentPlanFilter, studentRoleFilter);
+    }
+  }, [sidebarTab, studentSearch, studentPlanFilter, studentRoleFilter, loadStudents]);
+
   const resetLessonForm = () => setLessonForm({ id: null, slug: "", title: "", summary: "", content: "", order: "", isFree: true });
   const resetBlogForm = () => setBlogForm({ id: null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: ADMIN_COPY.defaults.blogEmoji });
   const resetQuizForm = () => setQuizForm({ id: null, slug: "", question: "", options: ["", "", "", ""], correct: "0", explanation: "", category: ADMIN_COPY.defaults.quizCategory, difficulty: ADMIN_COPY.defaults.quizDifficulty, active: true });
@@ -137,6 +169,7 @@ export default function AdminDashboardPage() {
 
   const handleNav = (tab: SidebarTab) => {
     setSidebarTab(tab);
+    setListSearch("");
     if (CRUD_TABS.has(tab)) setActiveTab(tab as CrudTab);
   };
 
@@ -148,6 +181,10 @@ export default function AdminDashboardPage() {
   };
 
   const saveLesson = async () => {
+    if (!lessonForm.slug.trim() || !lessonForm.title.trim() || !lessonForm.summary.trim() || !lessonForm.content.trim()) {
+      toast.error("Vui lòng điền đầy đủ Slug, Tiêu đề, Mô tả và Nội dung");
+      return;
+    }
     setIsSaving(true);
     try {
       const saved = await apiRequest(`/admin/${lessonForm.id ? `lessons/${lessonForm.id}` : "lessons"}`, {
@@ -175,6 +212,10 @@ export default function AdminDashboardPage() {
   };
 
   const saveBlog = async () => {
+    if (!blogForm.slug.trim() || !blogForm.title.trim() || !blogForm.excerpt.trim() || !blogForm.content.trim() || !blogForm.category.trim()) {
+      toast.error("Vui lòng điền đầy đủ Slug, Tiêu đề, Danh mục, Tóm tắt và Nội dung");
+      return;
+    }
     setIsSaving(true);
     try {
       const saved = await apiRequest(`/admin/${blogForm.id ? `blog-posts/${blogForm.id}` : "blog-posts"}`, {
@@ -202,6 +243,11 @@ export default function AdminDashboardPage() {
   };
 
   const saveQuiz = async () => {
+    const filledOptions = quizForm.options.filter(o => o.trim());
+    if (!quizForm.slug.trim() || !quizForm.question.trim() || filledOptions.length < 2 || !quizForm.category.trim()) {
+      toast.error("Vui lòng điền Slug, Câu hỏi, ít nhất 2 đáp án và Danh mục");
+      return;
+    }
     setIsSaving(true);
     try {
       const saved = await apiRequest(`/admin/${quizForm.id ? `quiz-questions/${quizForm.id}` : "quiz-questions"}`, {
@@ -229,6 +275,10 @@ export default function AdminDashboardPage() {
   };
 
   const saveGame = async () => {
+    if (!gameForm.slug.trim() || !gameForm.title.trim() || !gameForm.summary.trim() || !gameForm.playPath.trim()) {
+      toast.error("Vui lòng điền đầy đủ Slug, Tiêu đề, Tóm tắt và Đường dẫn game");
+      return;
+    }
     setIsSaving(true);
     try {
       const saved = await apiRequest(`/admin/${gameForm.id ? `games/${gameForm.id}` : "games"}`, {
@@ -256,6 +306,48 @@ export default function AdminDashboardPage() {
   };
 
   const handleLogout = () => { logout(); navigate("/login", { replace: true }); };
+
+  const openEditUser = (u: AdminUserResponse) => {
+    setEditUser(u);
+    setEditPlan(u.plan);
+    setEditRole(u.role);
+  };
+
+  const saveUser = async () => {
+    if (!editUser) return;
+    setUserSaving(true);
+    try {
+      await apiRequest(`/admin/users/${editUser.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ plan: editPlan.toUpperCase(), role: editRole.toUpperCase() }),
+      });
+      toast.success("Đã cập nhật học viên");
+      setEditUser(null);
+      void loadStudents(studentSearch, studentPlanFilter, studentRoleFilter);
+    } catch (err) { toast.error(fallbackMessage(err, "Không thể cập nhật")); }
+    finally { setUserSaving(false); }
+  };
+
+  const deleteUserById = async (id: string, name: string) => {
+    setConfirmDelete({
+      label: name,
+      onConfirm: async () => {
+        try {
+          await apiRequest<void>(`/admin/users/${id}`, { method: "DELETE" });
+          toast.success("Đã xóa học viên");
+          void loadStudents(studentSearch, studentPlanFilter, studentRoleFilter);
+        } catch (err) { toast.error(fallbackMessage(err, "Không thể xóa")); }
+        finally { setConfirmDelete(null); }
+      },
+    });
+  };
+
+  /* ── Filtered list data ── */
+  const q = listSearch.toLowerCase();
+  const filteredLessons = useMemo(() => content?.lessons.filter(l => l.title.toLowerCase().includes(q) || l.slug.includes(q)) ?? [], [content, q]);
+  const filteredPosts = useMemo(() => content?.blogPosts.filter(p => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)) ?? [], [content, q]);
+  const filteredQuiz = useMemo(() => content?.quizQuestions.filter(qz => qz.question.toLowerCase().includes(q) || qz.category.toLowerCase().includes(q)) ?? [], [content, q]);
+  const filteredGames = useMemo(() => content?.games.filter(g => g.title.toLowerCase().includes(q) || g.slug.includes(q)) ?? [], [content, q]);
 
   if (isLoading) {
     return (
@@ -312,46 +404,56 @@ export default function AdminDashboardPage() {
 
   /* ── List & Editor renderers (CRUD) ── */
   const renderList = () => {
-    if (activeTab === "lessons") return content.lessons.map(lesson => (
-      <button key={lesson.id} onClick={() => setLessonForm({ id: lesson.id, slug: lesson.slug, title: lesson.title, summary: lesson.summary, content: lesson.content, order: String(lesson.order), isFree: lesson.isFree })}
-        className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${lessonForm.id === lesson.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-gray-800">{lesson.title}</p>
-            <p className="mt-0.5 text-xs text-gray-500">{lesson.slug} · Bài {lesson.order}</p>
+    if (activeTab === "lessons") {
+      if (filteredLessons.length === 0) return <p className="py-8 text-center text-xs text-gray-400">{listSearch ? "Không tìm thấy kết quả" : "Chưa có bài học nào"}</p>;
+      return filteredLessons.map(lesson => (
+        <button key={lesson.id} onClick={() => setLessonForm({ id: lesson.id, slug: lesson.slug, title: lesson.title, summary: lesson.summary, content: lesson.content, order: String(lesson.order), isFree: lesson.isFree })}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${lessonForm.id === lesson.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-gray-800">{lesson.title}</p>
+              <p className="mt-0.5 text-xs text-gray-500">{lesson.slug} · Bài {lesson.order}</p>
+            </div>
+            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${lesson.isFree ? "bg-green-50 text-green-600" : "bg-orange-50 text-orange-600"}`}>{lesson.isFree ? "Miễn phí" : "Giới hạn"}</span>
           </div>
-          <span className="shrink-0 rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-semibold text-purple-600">{lesson.isFree ? "Miễn phí" : "Giới hạn"}</span>
-        </div>
-      </button>
-    ));
+        </button>
+      ));
+    }
 
-    if (activeTab === "blogPosts") return content.blogPosts.map(post => (
-      <button key={post.id} onClick={() => setBlogForm({ id: post.id, slug: post.slug, title: post.title, excerpt: post.excerpt, content: post.content, category: post.category, date: post.date, readTimeMinutes: post.readTime.replace(/\D/g, "") || "5", emoji: post.emoji })}
-        className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${blogForm.id === post.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-gray-800">{post.title}</p>
-            <p className="mt-0.5 text-xs text-gray-500">{post.category} · {formatDate(post.date)}</p>
+    if (activeTab === "blogPosts") {
+      if (filteredPosts.length === 0) return <p className="py-8 text-center text-xs text-gray-400">{listSearch ? "Không tìm thấy kết quả" : "Chưa có bài viết nào"}</p>;
+      return filteredPosts.map(post => (
+        <button key={post.id} onClick={() => setBlogForm({ id: post.id, slug: post.slug, title: post.title, excerpt: post.excerpt, content: post.content, category: post.category, date: post.date, readTimeMinutes: post.readTime.replace(/\D/g, "") || "5", emoji: post.emoji })}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${blogForm.id === post.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-gray-800">{post.emoji} {post.title}</p>
+              <p className="mt-0.5 text-xs text-gray-500">{post.category} · {formatDate(post.date)}</p>
+            </div>
+            <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-600">{post.readTime}</span>
           </div>
-          <span className="shrink-0 rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-semibold text-purple-600">{post.readTime}</span>
-        </div>
-      </button>
-    ));
+        </button>
+      ));
+    }
 
-    if (activeTab === "quizQuestions") return content.quizQuestions.map(q => (
-      <button key={q.id} onClick={() => setQuizForm({ id: q.id, slug: q.slug, question: q.question, options: [...q.options, "", "", "", ""].slice(0, 4), correct: String(q.correct), explanation: q.explanation ?? "", category: q.category, difficulty: q.difficulty, active: q.active })}
-        className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${quizForm.id === q.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="line-clamp-2 text-sm font-semibold text-gray-800">{q.question}</p>
-            <p className="mt-0.5 text-xs text-gray-500">{q.category} · {q.difficulty}</p>
+    if (activeTab === "quizQuestions") {
+      if (filteredQuiz.length === 0) return <p className="py-8 text-center text-xs text-gray-400">{listSearch ? "Không tìm thấy kết quả" : "Chưa có câu hỏi nào"}</p>;
+      return filteredQuiz.map(qz => (
+        <button key={qz.id} onClick={() => setQuizForm({ id: qz.id, slug: qz.slug, question: qz.question, options: [...qz.options, "", "", "", ""].slice(0, 4), correct: String(qz.correct), explanation: qz.explanation ?? "", category: qz.category, difficulty: qz.difficulty, active: qz.active })}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${quizForm.id === qz.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="line-clamp-2 text-sm font-semibold text-gray-800">{qz.question}</p>
+              <p className="mt-0.5 text-xs text-gray-500">{qz.category} · {qz.difficulty}</p>
+            </div>
+            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${qz.active ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-400"}`}>{qz.active ? "Đang dùng" : "Ẩn"}</span>
           </div>
-          <span className="shrink-0 rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-semibold text-purple-600">{q.active ? "Đang dùng" : "Ẩn"}</span>
-        </div>
-      </button>
-    ));
+        </button>
+      ));
+    }
 
-    return content.games.map(game => (
+    if (filteredGames.length === 0) return <p className="py-8 text-center text-xs text-gray-400">{listSearch ? "Không tìm thấy kết quả" : "Chưa có trò chơi nào"}</p>;
+    return filteredGames.map(game => (
       <button key={game.id} onClick={() => setGameForm({ id: game.id, slug: game.slug, title: game.title, summary: game.summary, description: game.description, gameType: game.gameType, playPath: game.playPath, coverImage: game.coverImage ?? "", accentColor: game.accentColor ?? "#9b5de5", published: game.published })}
         className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${gameForm.id === game.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
         <div className="flex items-center justify-between gap-3">
@@ -359,7 +461,7 @@ export default function AdminDashboardPage() {
             <p className="truncate text-sm font-semibold text-gray-800">{game.title}</p>
             <p className="mt-0.5 text-xs text-gray-500">{game.gameType} · {game.playPath}</p>
           </div>
-          <span className="shrink-0 rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-semibold text-purple-600">{game.published ? "Hiển thị" : "Nháp"}</span>
+          <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${game.published ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-400"}`}>{game.published ? "Hiển thị" : "Nháp"}</span>
         </div>
       </button>
     ));
@@ -373,7 +475,7 @@ export default function AdminDashboardPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">{ADMIN_COPY.editor.lessons}</p>
             <h2 className="mt-1 text-xl font-bold text-gray-800">{lessonForm.id ? ADMIN_COPY.titles.updateLesson : ADMIN_COPY.titles.createLesson}</h2>
           </div>
-          {lessonForm.id ? <Button variant="outline" size="sm" onClick={deleteLesson} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
+          {lessonForm.id ? <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => setConfirmDelete({ label: lessonForm.title, onConfirm: deleteLesson })} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
         </div>
         <div className="mt-5 space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -396,7 +498,7 @@ export default function AdminDashboardPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">{ADMIN_COPY.editor.blogPosts}</p>
             <h2 className="mt-1 text-xl font-bold text-gray-800">{blogForm.id ? ADMIN_COPY.titles.updateBlogPost : ADMIN_COPY.titles.createBlogPost}</h2>
           </div>
-          {blogForm.id ? <Button variant="outline" size="sm" onClick={deleteBlog} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
+          {blogForm.id ? <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => setConfirmDelete({ label: blogForm.title, onConfirm: deleteBlog })} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
         </div>
         <div className="mt-5 space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -425,22 +527,47 @@ export default function AdminDashboardPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">{ADMIN_COPY.editor.quizQuestions}</p>
             <h2 className="mt-1 text-xl font-bold text-gray-800">{quizForm.id ? ADMIN_COPY.titles.updateQuizQuestion : ADMIN_COPY.titles.createQuizQuestion}</h2>
           </div>
-          {quizForm.id ? <Button variant="outline" size="sm" onClick={deleteQuiz} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
+          {quizForm.id ? <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => setConfirmDelete({ label: quizForm.question.slice(0, 40), onConfirm: deleteQuiz })} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
         </div>
         <div className="mt-5 space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="md:col-span-2"><Label>Slug</Label><Input value={quizForm.slug} onChange={e => setQuizForm(p => ({ ...p, slug: e.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.correctAnswer}</Label><Input type="number" min="0" max="3" value={quizForm.correct} onChange={e => setQuizForm(p => ({ ...p, correct: e.target.value }))} /></div>
-          </div>
+          <div><Label>Slug</Label><Input value={quizForm.slug} onChange={e => setQuizForm(p => ({ ...p, slug: e.target.value }))} /></div>
           <div><Label>{ADMIN_COPY.fields.question}</Label><Textarea value={quizForm.question} onChange={e => setQuizForm(p => ({ ...p, question: e.target.value }))} /></div>
           <div className="grid gap-4 md:grid-cols-2">
             {quizForm.options.map((opt, idx) => (
-              <div key={idx}><Label>{ADMIN_COPY.fields.option} {String.fromCharCode(65 + idx)}</Label><Input value={opt} onChange={e => setQuizForm(p => ({ ...p, options: p.options.map((o, i) => i === idx ? e.target.value : o) }))} /></div>
+              <div key={idx}>
+                <Label className="flex items-center gap-2">
+                  <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold ${quizForm.correct === String(idx) ? "bg-green-500 text-white" : "bg-gray-200 text-gray-600"}`}>{String.fromCharCode(65 + idx)}</span>
+                  {ADMIN_COPY.fields.option} {String.fromCharCode(65 + idx)}
+                  {quizForm.correct === String(idx) && <span className="ml-auto text-[11px] font-semibold text-green-600">✓ Đúng</span>}
+                </Label>
+                <Input value={opt} onChange={e => setQuizForm(p => ({ ...p, options: p.options.map((o, i) => i === idx ? e.target.value : o) }))} />
+              </div>
             ))}
+          </div>
+          <div>
+            <Label>{ADMIN_COPY.fields.correctAnswer}</Label>
+            <div className="mt-1.5 flex gap-2">
+              {quizForm.options.map((opt, idx) => (
+                <button key={idx} type="button"
+                  onClick={() => setQuizForm(p => ({ ...p, correct: String(idx) }))}
+                  className={`flex-1 rounded-xl border py-2 text-sm font-semibold transition-all ${quizForm.correct === String(idx) ? "border-green-400 bg-green-50 text-green-700" : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"}`}>
+                  {String.fromCharCode(65 + idx)}
+                  {opt.trim() && <span className="ml-1 text-[11px] font-normal truncate hidden lg:inline">· {opt.slice(0, 12)}</span>}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div><Label>{ADMIN_COPY.fields.category}</Label><Input value={quizForm.category} onChange={e => setQuizForm(p => ({ ...p, category: e.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.difficulty}</Label><Input value={quizForm.difficulty} onChange={e => setQuizForm(p => ({ ...p, difficulty: e.target.value }))} /></div>
+            <div>
+              <Label>{ADMIN_COPY.fields.difficulty}</Label>
+              <select value={quizForm.difficulty} onChange={e => setQuizForm(p => ({ ...p, difficulty: e.target.value }))}
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100">
+                <option value="easy">Dễ</option>
+                <option value="medium">Trung bình</option>
+                <option value="hard">Khó</option>
+              </select>
+            </div>
           </div>
           <div><Label>{ADMIN_COPY.fields.explanation}</Label><Textarea value={quizForm.explanation} onChange={e => setQuizForm(p => ({ ...p, explanation: e.target.value }))} /></div>
           <label className="flex items-center gap-3 rounded-xl border border-gray-100 px-4 py-3 bg-gray-50"><input type="checkbox" checked={quizForm.active} onChange={e => setQuizForm(p => ({ ...p, active: e.target.checked }))} /><span className="text-sm font-semibold">{ADMIN_COPY.fields.activeQuiz}</span></label>
@@ -456,7 +583,7 @@ export default function AdminDashboardPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">{ADMIN_COPY.editor.games}</p>
             <h2 className="mt-1 text-xl font-bold text-gray-800">{gameForm.id ? ADMIN_COPY.titles.updateGame : ADMIN_COPY.titles.createGame}</h2>
           </div>
-          {gameForm.id ? <Button variant="outline" size="sm" onClick={deleteGame} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
+          {gameForm.id ? <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => setConfirmDelete({ label: gameForm.title, onConfirm: deleteGame })} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
         </div>
         <div className="mt-5 space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -520,12 +647,25 @@ export default function AdminDashboardPage() {
           })}
         </nav>
 
-        {/* Premium card */}
-        <div className="mx-3 mb-4 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 p-4 text-white">
-          <Crown className="h-5 w-5 text-yellow-300" />
-          <p className="mt-2 text-[13px] font-bold leading-snug">Nâng cấp gói Premium</p>
-          <p className="mt-1 text-[11px] text-purple-200 leading-snug">Mở khóa tính năng nâng cao và trải nghiệm không giới hạn.</p>
-          <button onClick={handleLogout} className="mt-3 w-full rounded-xl bg-white py-1.5 text-[12px] font-bold text-purple-600 hover:bg-purple-50 transition-colors">Nâng cấp ngay</button>
+        {/* Admin user info + logout */}
+        <div className="mx-3 mb-4 space-y-2">
+          <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-600 text-sm font-bold text-white">
+                {(user?.fullName ?? "A").charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-[13px] font-semibold text-gray-800">{user?.fullName ?? "Admin"}</p>
+                <p className="truncate text-[11px] text-gray-500">{user?.email}</p>
+              </div>
+            </div>
+            <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-0.5 text-[11px] font-semibold text-purple-700">
+              <Shield className="h-3 w-3" /> Quản trị viên
+            </div>
+          </div>
+          <button onClick={handleLogout} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+            <LogOut className="h-3.5 w-3.5" /> Đăng xuất
+          </button>
         </div>
       </aside>
 
@@ -566,9 +706,6 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden lg:flex text-gray-500">
-              <LogOut className="h-4 w-4" />
-            </Button>
           </div>
         </header>
 
@@ -796,24 +933,173 @@ export default function AdminDashboardPage() {
           {/* ── STUDENTS ── */}
           {sidebarTab === "students" && (
             <div>
-              <h1 className="mb-5 text-xl font-bold text-gray-800">Quản lý học viên</h1>
-              <div className="rounded-2xl bg-white p-5 shadow-sm">
-                <div className="space-y-2">
-                  {dashboard.recentUsers.map(u => (
-                    <div key={u.id} className="flex items-center gap-4 rounded-xl border border-gray-50 p-3 hover:bg-gray-50 transition-colors">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-100 font-bold text-purple-600">
-                        {u.fullName.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-gray-800">{u.fullName}</p>
-                        <p className="text-xs text-gray-500 truncate">{u.email} · @{u.username}</p>
-                      </div>
-                      <span className="rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-semibold text-purple-600">{planLabel(u.plan)}</span>
-                      <span className="text-xs font-semibold text-gray-600 hidden sm:block">{u.xp} XP</span>
-                      <span className="text-xs text-gray-400 hidden md:block">{formatDate(u.createdAt)}</span>
+              {/* Header */}
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <h1 className="text-xl font-bold text-gray-800">
+                  Quản lý học viên
+                  {students && <span className="ml-2 rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-500">{students.total}</span>}
+                </h1>
+              </div>
+
+              {/* Search + filters */}
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <div className="flex min-w-[200px] flex-1 items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2 shadow-sm">
+                  <Search className="h-4 w-4 shrink-0 text-gray-400" />
+                  <input
+                    className="flex-1 bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
+                    placeholder="Tìm theo tên, email, username..."
+                    value={studentSearch}
+                    onChange={e => setStudentSearch(e.target.value)}
+                  />
+                  {studentSearch && (
+                    <button onClick={() => setStudentSearch("")} className="text-gray-400 hover:text-gray-600"><X className="h-3.5 w-3.5" /></button>
+                  )}
+                </div>
+
+                {/* Plan filter chips */}
+                <div className="flex gap-1.5">
+                  {(["", "free", "popular", "premium"] as const).map(p => (
+                    <button key={p} onClick={() => setStudentPlanFilter(p)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${studentPlanFilter === p ? "bg-purple-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
+                      {p === "" ? "Tất cả" : p === "free" ? "Miễn phí" : p === "popular" ? "Popular" : "Premium"}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Role filter */}
+                <div className="flex gap-1.5">
+                  {(["", "student", "admin"] as const).map(r => (
+                    <button key={r} onClick={() => setStudentRoleFilter(r)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${studentRoleFilter === r ? "bg-indigo-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
+                      {r === "" ? "Mọi vai trò" : r === "student" ? "Học viên" : "Admin"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table */}
+              <div className="rounded-2xl bg-white shadow-sm overflow-hidden">
+                {studentLoading ? (
+                  <div className="flex items-center justify-center py-16 text-gray-400 text-sm">Đang tải...</div>
+                ) : !students || students.users.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+                    <Users className="mb-3 h-10 w-10 opacity-30" />
+                    <p className="text-sm font-medium">{studentSearch || studentPlanFilter || studentRoleFilter ? "Không tìm thấy kết quả" : "Chưa có học viên"}</p>
+                  </div>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                        <th className="px-5 py-3.5 text-left">Học viên</th>
+                        <th className="px-5 py-3.5 text-left hidden md:table-cell">Tên đăng nhập</th>
+                        <th className="px-5 py-3.5 text-center">Gói</th>
+                        <th className="px-5 py-3.5 text-center hidden sm:table-cell">Vai trò</th>
+                        <th className="px-5 py-3.5 text-right hidden lg:table-cell">XP</th>
+                        <th className="px-5 py-3.5 text-right hidden xl:table-cell">Ngày tạo</th>
+                        <th className="px-5 py-3.5 text-right">Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {students.users.map(u => (
+                        <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-5 py-3.5">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-100 font-bold text-purple-600 text-sm">
+                                {u.fullName.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="truncate font-semibold text-gray-800">{u.fullName}</p>
+                                <p className="truncate text-xs text-gray-500">{u.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-5 py-3.5 hidden md:table-cell text-gray-500 text-xs">@{u.username}</td>
+                          <td className="px-5 py-3.5 text-center">
+                            <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                              u.plan === "premium" ? "bg-amber-50 text-amber-600" :
+                              u.plan === "popular" ? "bg-blue-50 text-blue-600" :
+                              "bg-green-50 text-green-600"
+                            }`}>{planLabel(u.plan)}</span>
+                          </td>
+                          <td className="px-5 py-3.5 text-center hidden sm:table-cell">
+                            <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-500"}`}>
+                              {u.role === "admin" ? "Admin" : "Học viên"}
+                            </span>
+                          </td>
+                          <td className="px-5 py-3.5 text-right hidden lg:table-cell font-semibold text-gray-700">{u.xp}</td>
+                          <td className="px-5 py-3.5 text-right hidden xl:table-cell text-xs text-gray-400">{formatDate(u.createdAt)}</td>
+                          <td className="px-5 py-3.5 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button onClick={() => openEditUser(u)}
+                                className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                                Sửa
+                              </button>
+                              <button onClick={() => void deleteUserById(u.id, u.fullName)}
+                                className="rounded-lg border border-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors">
+                                Xóa
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── EDIT USER MODAL ── */}
+          {editUser && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+              <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+                <div className="mb-5 flex items-start justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">Chỉnh sửa học viên</p>
+                    <h2 className="mt-1 text-lg font-bold text-gray-800">{editUser.fullName}</h2>
+                    <p className="text-xs text-gray-500">{editUser.email}</p>
+                  </div>
+                  <button onClick={() => setEditUser(null)} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100"><X className="h-5 w-5" /></button>
+                </div>
+
+                {/* Stats row */}
+                <div className="mb-5 grid grid-cols-3 gap-3">
+                  {[
+                    { label: "XP", value: editUser.xp },
+                    { label: "Streak", value: editUser.streak },
+                    { label: "Quiz Score", value: editUser.quizScore },
+                  ].map(s => (
+                    <div key={s.label} className="rounded-xl bg-gray-50 px-3 py-2 text-center">
+                      <p className="text-base font-bold text-gray-800">{s.value}</p>
+                      <p className="text-[11px] text-gray-500">{s.label}</p>
                     </div>
                   ))}
-                  {dashboard.recentUsers.length === 0 && <p className="py-8 text-center text-sm text-gray-400">Không có học viên</p>}
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label>Gói tài khoản</Label>
+                    <select value={editPlan} onChange={e => setEditPlan(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100">
+                      <option value="free">Miễn phí (Free)</option>
+                      <option value="popular">Popular</option>
+                      <option value="premium">Premium</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Vai trò</Label>
+                    <select value={editRole} onChange={e => setEditRole(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100">
+                      <option value="student">Học viên (Student)</option>
+                      <option value="admin">Quản trị viên (Admin)</option>
+                    </select>
+                  </div>
+                  <div className="flex gap-3 pt-1">
+                    <Button variant="outline" className="flex-1" onClick={() => setEditUser(null)} disabled={userSaving}>Hủy</Button>
+                    <Button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white" onClick={saveUser} disabled={userSaving}>
+                      {userSaving ? "Đang lưu..." : "Lưu thay đổi"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -863,11 +1149,53 @@ export default function AdminDashboardPage() {
                 </Button>
               </div>
               <div className="grid gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
-                <div className="rounded-2xl bg-white p-4 shadow-sm">
-                  <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400">Danh sách ({activeTab === "lessons" ? content.lessons.length : activeTab === "blogPosts" ? content.blogPosts.length : activeTab === "quizQuestions" ? content.quizQuestions.length : content.games.length})</p>
-                  <div className="max-h-[calc(100vh-220px)] overflow-y-auto pr-1 space-y-1.5">{renderList()}</div>
+                {/* List panel */}
+                <div className="flex flex-col rounded-2xl bg-white shadow-sm overflow-hidden">
+                  {/* Search */}
+                  <div className="border-b border-gray-100 px-4 py-3">
+                    <div className="flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2">
+                      <Search className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                      <input
+                        className="flex-1 bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
+                        placeholder="Tìm kiếm..."
+                        value={listSearch}
+                        onChange={e => setListSearch(e.target.value)}
+                      />
+                      {listSearch && (
+                        <button onClick={() => setListSearch("")} className="text-gray-400 hover:text-gray-600">
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <p className="mt-2 text-[11px] text-gray-400">
+                      {activeTab === "lessons" ? filteredLessons.length : activeTab === "blogPosts" ? filteredPosts.length : activeTab === "quizQuestions" ? filteredQuiz.length : filteredGames.length} mục
+                    </p>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-3 space-y-1.5 max-h-[calc(100vh-260px)]">{renderList()}</div>
                 </div>
+                {/* Editor panel */}
                 <div className="rounded-2xl bg-white p-6 shadow-sm max-h-[calc(100vh-180px)] overflow-y-auto">{renderEditor()}</div>
+              </div>
+            </div>
+          )}
+
+          {/* ── CONFIRM DELETE MODAL ── */}
+          {confirmDelete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+              <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                  <AlertTriangle className="h-6 w-6 text-red-600" />
+                </div>
+                <h3 className="mt-4 text-lg font-bold text-gray-800">Xác nhận xóa</h3>
+                <p className="mt-2 text-sm text-gray-500">
+                  Bạn có chắc muốn xóa <span className="font-semibold text-gray-700">"{confirmDelete.label}"</span>? Hành động này không thể hoàn tác.
+                </p>
+                <div className="mt-6 flex gap-3">
+                  <Button variant="outline" className="flex-1" onClick={() => setConfirmDelete(null)}>Hủy</Button>
+                  <Button className="flex-1 bg-red-600 hover:bg-red-700 text-white" onClick={() => { confirmDelete.onConfirm(); setConfirmDelete(null); }}>
+                    <Trash2 className="mr-1.5 h-4 w-4" />Xóa
+                  </Button>
+                </div>
               </div>
             </div>
           )}
