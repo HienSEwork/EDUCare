@@ -229,7 +229,7 @@
   <line x1="330" y1="125" x2="330" y2="195" stroke="#1e4a8a" stroke-width="0.6" opacity="0.4"/>
 
   <!-- "?" inside magnifying glass -->
-  <text x="330" y="180" font-family="Georgia, serif" font-size="72" fill="#3a80e8" text-anchor="middle" font-weight="bold" opacity="0.85" filter="url(#blueGlow)">?</text>
+  <text x="330" y="180" font-family="Arial, 'Segoe UI', sans-serif" font-size="72" fill="#3a80e8" text-anchor="middle" font-weight="bold" opacity="0.85" filter="url(#blueGlow)">?</text>
 
   <!-- Lens edge glint (top-left arc) -->
   <path d="M 275 125 A 75 75 0 0 1 340 88" fill="none" stroke="#6090e0" stroke-width="2" opacity="0.25" stroke-linecap="round"/>

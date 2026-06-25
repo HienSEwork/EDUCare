@@ -139,14 +139,14 @@
   <!-- CATEGORY BADGE top-left -->
   <g filter="url(#glowTeal)">
     <rect x="12" y="12" width="72" height="22" rx="11" fill="#00736A" opacity="0.92"/>
-    <text x="48" y="27" font-family="'Arial Black', 'Impact', sans-serif" font-size="10" font-weight="900" fill="#A0FFF5" text-anchor="middle" letter-spacing="0.5">C啤 Th峄?/text>
+    <text x="48" y="27" font-family="'Arial Black', Arial, sans-serif" font-size="10" font-weight="900" fill="#A0FFF5" text-anchor="middle" letter-spacing="0.5">C啤 Th峄?/text>
   </g>
 
   <!-- STREAK BADGE top-right -->
   <g filter="url(#glowOrange)">
     <rect x="380" y="12" width="88" height="22" rx="11" fill="#7A3000" opacity="0.95"/>
     <rect x="380" y="12" width="88" height="22" rx="11" fill="none" stroke="#FF9500" stroke-width="1.2" opacity="0.8"/>
-    <text x="424" y="27" font-family="'Arial Black', 'Impact', sans-serif" font-size="10" font-weight="900" fill="#FFD080" text-anchor="middle" letter-spacing="0.5">馃敟 STREAK x3</text>
+    <text x="424" y="27" font-family="'Arial Black', Arial, sans-serif" font-size="10" font-weight="900" fill="#FFD080" text-anchor="middle" letter-spacing="0.5">馃敟 STREAK x3</text>
   </g>
 
   <!-- THUNDERBOLT left side -->
@@ -203,34 +203,34 @@
   <circle cx="240" cy="145" r="32" fill="#180C00" opacity="0.85"/>
 
   <!-- Timer number -->
-  <text x="240" y="152" font-family="'Arial Black', 'Impact', sans-serif" font-size="22" font-weight="900" fill="#FFD060" text-anchor="middle" filter="url(#glowYellow)" letter-spacing="-1">6s</text>
+  <text x="240" y="152" font-family="'Arial Black', Arial, sans-serif" font-size="22" font-weight="900" fill="#FFD060" text-anchor="middle" filter="url(#glowYellow)" letter-spacing="-1">6s</text>
 
   <!-- MAIN QUESTION TEXT -->
   <!-- Glow layer -->
-  <text x="240" y="80" font-family="'Arial Black', 'Impact', sans-serif" font-size="28" font-weight="900" fill="#FFD000" text-anchor="middle" filter="url(#glowText)" letter-spacing="3" opacity="0.9">膼脷NG / SAI?</text>
+  <text x="240" y="80" font-family="'Arial Black', Arial, sans-serif" font-size="28" font-weight="900" fill="#FFD000" text-anchor="middle" filter="url(#glowText)" letter-spacing="3" opacity="0.9">膼脷NG / SAI?</text>
   <!-- Crisp layer -->
-  <text x="240" y="80" font-family="'Arial Black', 'Impact', sans-serif" font-size="28" font-weight="900" fill="#FFF5C0" text-anchor="middle" letter-spacing="3">膼脷NG / SAI?</text>
+  <text x="240" y="80" font-family="'Arial Black', Arial, sans-serif" font-size="28" font-weight="900" fill="#FFF5C0" text-anchor="middle" letter-spacing="3">膼脷NG / SAI?</text>
 
   <!-- Divider line under headline -->
   <line x1="148" y1="88" x2="332" y2="88" stroke="#FF9500" stroke-width="1" opacity="0.4"/>
 
   <!-- Question body text -->
-  <text x="240" y="210" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="11" font-weight="700" fill="#FFF5E0" text-anchor="middle" opacity="0.88" letter-spacing="0.3">Tim ng瓢峄漣 tr瓢峄焠g th脿nh 膽岷璸 kho岷g</text>
-  <text x="240" y="224" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="11" font-weight="700" fill="#FFF5E0" text-anchor="middle" opacity="0.88" letter-spacing="0.3">100,000 l岷 m峄梚 ng脿y. 膼煤ng hay sai?</text>
+  <text x="240" y="210" font-family="'Arial', Arial, 'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#FFF5E0" text-anchor="middle" opacity="0.88" letter-spacing="0.3">Tim ng瓢峄漣 tr瓢峄焠g th脿nh 膽岷璸 kho岷g</text>
+  <text x="240" y="224" font-family="'Arial', Arial, 'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#FFF5E0" text-anchor="middle" opacity="0.88" letter-spacing="0.3">100,000 l岷 m峄梚 ng脿y. 膼煤ng hay sai?</text>
 
   <!-- BOTTOM BUTTONS -->
   <!-- 膼脷NG button (green, left) -->
   <g filter="url(#glowGreen)" opacity="0.95">
     <rect x="68" y="252" width="148" height="36" rx="8" fill="url(#btnGreen)"/>
     <rect x="68" y="252" width="148" height="36" rx="8" fill="none" stroke="#00FF88" stroke-width="1.2" opacity="0.6"/>
-    <text x="142" y="275" font-family="'Arial Black', 'Impact', sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">鉁?膼脷NG</text>
+    <text x="142" y="275" font-family="'Arial Black', Arial, sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">鉁?膼脷NG</text>
   </g>
 
   <!-- SAI button (red, right) -->
   <g filter="url(#glowRed)" opacity="0.95">
     <rect x="264" y="252" width="148" height="36" rx="8" fill="url(#btnRed)"/>
     <rect x="264" y="252" width="148" height="36" rx="8" fill="none" stroke="#FF3B1F" stroke-width="1.2" opacity="0.6"/>
-    <text x="338" y="275" font-family="'Arial Black', 'Impact', sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">鉁?SAI</text>
+    <text x="338" y="275" font-family="'Arial Black', Arial, sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">鉁?SAI</text>
   </g>
 
   <!-- Decorative ambient sparks -->

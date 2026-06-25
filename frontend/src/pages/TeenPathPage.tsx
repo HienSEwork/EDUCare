@@ -224,21 +224,36 @@ export default function TeenPathPage() {
   if (!currentNode) return null;
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
-      <div className="container mx-auto max-w-2xl px-4">
-        {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          {history.length > 0 ? (
-            <button onClick={handleBack} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              ← Quay lại
-            </button>
-          ) : <div />}
-          <span className="text-xs text-muted-foreground">
-            <Star className="inline h-3 w-3 text-yellow-500 mr-1" />
-            {unlockedEndings.size}/{TEEN_PATH_STORY.endings.length} ending
-          </span>
-        </div>
+    <div
+      className="min-h-screen pb-16 pt-0"
+      style={{ background: "linear-gradient(160deg,#1a0533 0%,#3d0d56 40%,#7a2500 80%,#ff8c00 100%)" }}
+    >
+      {/* Top HUD bar */}
+      <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 backdrop-blur-sm"
+        style={{ background: "rgba(26,5,51,0.72)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        {history.length > 0 ? (
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-white/80 hover:bg-white/10 hover:text-white transition-all"
+          >
+            ← Quay lại
+          </button>
+        ) : (
+          <button
+            onClick={() => setPhase("intro")}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-white/60 hover:bg-white/10 hover:text-white/90 transition-all"
+          >
+            ✕ Thoát
+          </button>
+        )}
+        <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-yellow-300">
+          <Star className="h-3 w-3" />
+          {unlockedEndings.size}/{TEEN_PATH_STORY.endings.length} ending
+        </span>
+      </div>
 
+      <div className="container mx-auto max-w-2xl px-4 pt-6">
         {/* Scene panel */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -248,67 +263,57 @@ export default function TeenPathPage() {
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.3 }}
           >
-            {/* Visual panel */}
+            {/* Visual scene */}
             <div
-              className="relative flex min-h-[200px] items-center justify-center rounded-[2rem] border border-white/70 overflow-hidden shadow-card mb-4"
+              className="relative flex min-h-[220px] items-center justify-center rounded-[2rem] overflow-hidden mb-4 shadow-card"
               style={{ background: bgStyle }}
             >
-              <div className="flex flex-col items-center gap-3 p-8">
+              {/* Decorative stars */}
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                {[...Array(8)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute rounded-full bg-white/30"
+                    style={{
+                      width: i % 2 === 0 ? 3 : 2,
+                      height: i % 2 === 0 ? 3 : 2,
+                      top: `${10 + i * 10}%`,
+                      left: `${5 + i * 12}%`,
+                      opacity: 0.4 + (i % 3) * 0.2,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="flex flex-col items-center gap-4 p-10">
                 <motion.span
                   key={currentNodeId + "_avatar"}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/80 bg-white/60 text-5xl shadow-card"
+                  initial={{ scale: 0, rotate: -10 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", bounce: 0.5 }}
+                  className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/50 bg-white/20 text-6xl shadow-card backdrop-blur-sm"
                 >
                   {SPEAKER_EMOJI_MAP[currentNode.speaker] ?? "💬"}
                 </motion.span>
-                <p className="text-sm font-bold" style={{ color: "#4b5563" }}>
-                  {speaker?.name ?? "Người kể chuyện"}
-                </p>
+                <div className="rounded-full bg-black/30 px-4 py-1.5 backdrop-blur-sm">
+                  <p className="text-sm font-bold text-white/90">
+                    {speaker?.name ?? "Người kể chuyện"}
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Dialogue box */}
-            <div className="rounded-[1.8rem] border border-white/70 bg-white/90 p-6 shadow-card min-h-[120px]">
-              <p className="font-heading text-base leading-7 md:text-lg">
+            {/* Dialogue box — dark-themed */}
+            <div className="rounded-[1.8rem] border border-white/15 bg-white/10 p-6 shadow-card min-h-[120px] backdrop-blur-sm">
+              <p className="font-heading text-base leading-7 text-white md:text-lg">
                 <TypewriterText key={currentNodeId} text={currentNode.text} onDone={handleTextDone} />
               </p>
             </div>
 
-            {/* Choices */}
-            <AnimatePresence>
-              {textDone && currentNode.choices && !currentNode.isEnding && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="mt-4 space-y-3"
-                >
-                  <p className="text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    Bạn sẽ làm gì?
-                  </p>
-                  {currentNode.choices.map((choice) => (
-                    <button
-                      key={choice.id}
-                      id={`teen-path-choice-${choice.id}`}
-                      onClick={() => handleChoice(choice.nextNodeId)}
-                      className="group w-full rounded-[1.4rem] border border-white/65 bg-white/80 px-5 py-4 text-left text-sm font-semibold shadow-soft transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-card"
-                    >
-                      <div className="flex items-center gap-3">
-                        {choice.icon && <span className="text-lg">{choice.icon}</span>}
-                        <span>{choice.text}</span>
-                        <ChevronRight className="ml-auto h-4 w-4 opacity-40 group-hover:opacity-100" />
-                      </div>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {/* Skip typewriter */}
             {!textDone && (
               <button
-                className="mt-3 w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="mt-3 w-full text-center text-xs text-white/40 hover:text-white/70 transition-colors"
                 onClick={() => {
                   setTextDone(true);
                   textDoneRef.current = true;
@@ -317,6 +322,36 @@ export default function TeenPathPage() {
                 Bấm để bỏ qua animation ▼
               </button>
             )}
+
+            {/* Choices */}
+            <AnimatePresence>
+              {textDone && currentNode.choices && !currentNode.isEnding && (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="mt-5 space-y-3"
+                >
+                  <p className="text-center text-xs font-bold uppercase tracking-widest text-white/50">
+                    Bạn sẽ làm gì?
+                  </p>
+                  {currentNode.choices.map((choice) => (
+                    <button
+                      key={choice.id}
+                      id={`teen-path-choice-${choice.id}`}
+                      onClick={() => handleChoice(choice.nextNodeId)}
+                      className="group w-full rounded-[1.4rem] border border-white/20 bg-white/10 px-5 py-4 text-left text-sm font-semibold text-white shadow-soft backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-purple-400/60 hover:bg-purple-500/30 hover:shadow-card"
+                    >
+                      <div className="flex items-center gap-3">
+                        {choice.icon && <span className="text-xl">{choice.icon}</span>}
+                        <span>{choice.text}</span>
+                        <ChevronRight className="ml-auto h-4 w-4 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </AnimatePresence>
       </div>

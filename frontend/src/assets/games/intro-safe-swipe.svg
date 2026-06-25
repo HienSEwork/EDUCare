@@ -166,7 +166,7 @@
 
     <!-- Card icon area 鈥?warning symbol -->
     <circle cx="240" cy="104" r="16" fill="#fef3c7"/>
-    <text x="240" y="110" font-family="serif" font-size="18" fill="#d97706"
+    <text x="240" y="110" font-family="Arial, 'Segoe UI', sans-serif" font-size="18" fill="#d97706"
           text-anchor="middle" font-weight="bold">!</text>
 
     <!-- Scenario label -->
