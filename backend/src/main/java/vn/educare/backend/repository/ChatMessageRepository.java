@@ -7,4 +7,5 @@ import vn.educare.backend.model.ChatMessageEntity;
 public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, Long> {
   List<ChatMessageEntity> findTop50ByRoomIdOrderByCreatedAtDesc(Long roomId);
   long countByRoomId(Long roomId);
+  java.util.Optional<ChatMessageEntity> findFirstByRoomIdOrderByIdDesc(Long roomId);
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { BookOpen, FileText, Gamepad2, LogOut, Plus, Shield, Sparkles, Trash2, Users } from "lucide-react";
+import { BookOpen, FileText, Gamepad2, LogOut, Plus, Shield, Sparkles, Trash2, Users, AlertTriangle, HelpCircle, Smile } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { ADMIN_COPY } from "@/content/uiCopy";
@@ -10,9 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/sonner";
 import { ApiError, apiRequest } from "@/lib/api/client";
-import type { AdminContentResponse, AdminDashboardResponse } from "@/types/api";
+import type { AdminContentResponse, AdminDashboardResponse, CommunityReport, AnonymousQuestion, ChatStickerResponse } from "@/types/api";
 
-type AdminTab = "lessons" | "blogPosts" | "quizQuestions" | "games";
+type AdminTab = "lessons" | "blogPosts" | "quizQuestions" | "games" | "reports" | "questions" | "stickers";
 
 type EditableLesson = {
   id: number;
@@ -88,10 +88,32 @@ export default function AdminDashboardPage() {
   const { user, logout } = useAuth();
   const [dashboard, setDashboard] = useState<AdminDashboardResponse | null>(null);
   const [content, setContent] = useState<AdminContentResponse | null>(null);
+  const [stickers, setStickers] = useState<ChatStickerResponse[]>([]);
   const [activeTab, setActiveTab] = useState<AdminTab>("lessons");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [reports, setReports] = useState<CommunityReport[]>([]);
+  const [questions, setQuestions] = useState<AnonymousQuestion[]>([]);
+  const [selectedReport, setSelectedReport] = useState<CommunityReport | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<AnonymousQuestion | null>(null);
+  const [answerText, setAnswerText] = useState("");
+
+  const [stickerForm, setStickerForm] = useState({
+    id: null as number | null,
+    name: "",
+    url: "",
+    type: "STICKER" as "STICKER" | "GIF",
+    category: "study",
+    keywordsString: "",
+  });
+
+  useEffect(() => {
+    setSelectedReport(null);
+    setSelectedQuestion(null);
+    setAnswerText("");
+  }, [activeTab]);
   const [lessonForm, setLessonForm] = useState({
     id: null as number | null,
     slug: "",
@@ -110,7 +132,7 @@ export default function AdminDashboardPage() {
     category: "",
     date: new Date().toISOString().slice(0, 10),
     readTimeMinutes: "5",
-    emoji: ADMIN_COPY.defaults.blogEmoji,
+    emoji: ADMIN_COPY.defaults.blogEmoji as string,
   });
   const [quizForm, setQuizForm] = useState({
     id: null as number | null,
@@ -119,8 +141,8 @@ export default function AdminDashboardPage() {
     options: ["", "", "", ""],
     correct: "0",
     explanation: "",
-    category: ADMIN_COPY.defaults.quizCategory,
-    difficulty: ADMIN_COPY.defaults.quizDifficulty,
+    category: ADMIN_COPY.defaults.quizCategory as string,
+    difficulty: ADMIN_COPY.defaults.quizDifficulty as string,
     active: true,
   });
   const [gameForm, setGameForm] = useState({
@@ -129,7 +151,7 @@ export default function AdminDashboardPage() {
     title: "",
     summary: "",
     description: "",
-    gameType: "QUIZ",
+    gameType: "QUIZ" as string,
     playPath: "",
     coverImage: "hero-illustration.png",
     accentColor: "#9b5de5",
@@ -140,17 +162,58 @@ export default function AdminDashboardPage() {
     setIsLoading(true);
 
     try {
-      const [dashboardResponse, contentResponse] = await Promise.all([
+      const [dashboardResponse, contentResponse, reportsResponse, questionsResponse, stickersResponse] = await Promise.all([
         apiRequest<AdminDashboardResponse>("/admin/dashboard"),
         apiRequest<AdminContentResponse>("/admin/content"),
+        apiRequest<CommunityReport[]>("/community/admin/reports"),
+        apiRequest<AnonymousQuestion[]>("/community/admin/questions"),
+        apiRequest<ChatStickerResponse[]>("/community/stickers"),
       ]);
       setDashboard(dashboardResponse);
       setContent(contentResponse);
+      setReports(reportsResponse);
+      setQuestions(questionsResponse);
+      setStickers(stickersResponse);
       setError(null);
     } catch (requestError) {
       setError(fallbackMessage(requestError, ADMIN_COPY.loadError));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const resolveReport = async (reportId: number, deleteContent: boolean) => {
+    setIsSaving(true);
+    try {
+      await apiRequest(`/community/admin/reports/${reportId}/resolve?deleteContent=${deleteContent}`, {
+        method: "PUT",
+      });
+      toast.success(deleteContent ? "Đã xóa nội dung vi phạm thành công." : "Đã bác bỏ báo cáo.");
+      await loadData();
+      setSelectedReport(null);
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể xử lý báo cáo."));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const answerQuestion = async (questionId: number) => {
+    if (!answerText.trim()) return;
+    setIsSaving(true);
+    try {
+      await apiRequest(`/community/admin/questions/${questionId}/answer`, {
+        method: "POST",
+        body: JSON.stringify({ answer: answerText.trim() }),
+      });
+      toast.success("Đã gửi câu trả lời cho câu hỏi ẩn danh thành công.");
+      await loadData();
+      setSelectedQuestion(null);
+      setAnswerText("");
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể gửi câu trả lời."));
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -197,11 +260,76 @@ export default function AdminDashboardPage() {
       published: true,
     });
 
+  const resetStickerForm = () =>
+    setStickerForm({
+      id: null,
+      name: "",
+      url: "",
+      type: "STICKER",
+      category: "study",
+      keywordsString: "",
+    });
+
   const createNew = () => {
     if (activeTab === "lessons") resetLessonForm();
     if (activeTab === "blogPosts") resetBlogForm();
     if (activeTab === "quizQuestions") resetQuizForm();
     if (activeTab === "games") resetGameForm();
+    if (activeTab === "stickers") resetStickerForm();
+  };
+
+  const saveSticker = async () => {
+    setIsSaving(true);
+    try {
+      const keywords = stickerForm.keywordsString
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean);
+
+      const saved = await apiRequest<ChatStickerResponse>(
+        stickerForm.id ? `/admin/stickers/${stickerForm.id}` : "/admin/stickers",
+        {
+          method: stickerForm.id ? "PUT" : "POST",
+          body: JSON.stringify({
+            name: stickerForm.name,
+            url: stickerForm.url,
+            type: stickerForm.type,
+            category: stickerForm.category,
+            keywords,
+          }),
+        }
+      );
+      toast.success("Đã lưu nhãn dán/GIF thành công.");
+      await loadData();
+      setStickerForm({
+        id: saved.id,
+        name: saved.name,
+        url: saved.url,
+        type: saved.type,
+        category: saved.category,
+        keywordsString: saved.keywords ? saved.keywords.join(", ") : "",
+      });
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể lưu nhãn dán/GIF."));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const deleteSticker = async () => {
+    if (!stickerForm.id) return;
+    if (!window.confirm("Bạn có chắc chắn muốn xóa nhãn dán/GIF này?")) return;
+    setIsSaving(true);
+    try {
+      await apiRequest<void>(`/admin/stickers/${stickerForm.id}`, { method: "DELETE" });
+      toast.success("Đã xóa nhãn dán/GIF thành công.");
+      resetStickerForm();
+      await loadData();
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể xóa nhãn dán/GIF."));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const saveLesson = async () => {
@@ -452,6 +580,27 @@ export default function AdminDashboardPage() {
       icon: Gamepad2,
       count: content.metrics.games,
     },
+    {
+      id: "stickers" as const,
+      label: "Nhãn dán / GIF",
+      caption: "Quản lý kho nhãn dán và ảnh động GIF của phòng chat.",
+      icon: Smile,
+      count: stickers.length,
+    },
+    {
+      id: "reports" as const,
+      label: "Báo cáo vi phạm",
+      caption: "Duyệt hoặc bác bỏ nội dung bị báo cáo.",
+      icon: AlertTriangle,
+      count: reports.filter((r) => r.status === "PENDING").length,
+    },
+    {
+      id: "questions" as const,
+      label: "Câu hỏi ẩn danh",
+      caption: "Trả lời các câu hỏi ẩn danh từ học sinh.",
+      icon: HelpCircle,
+      count: questions.filter((q) => !q.answer || q.answer.trim() === "").length,
+    },
   ];
 
   const stats = [
@@ -518,21 +667,143 @@ export default function AdminDashboardPage() {
       ));
     }
 
-    return content.games.map((game) => (
-      <button
-        key={game.id}
-        onClick={() => setGameForm({ id: game.id, slug: game.slug, title: game.title, summary: game.summary, description: game.description, gameType: game.gameType, playPath: game.playPath, coverImage: game.coverImage ?? "", accentColor: game.accentColor ?? "#9b5de5", published: game.published })}
-        className={`w-full rounded-[1.4rem] border px-4 py-4 text-left transition-all ${gameForm.id === game.id ? "border-primary/30 bg-primary/10 shadow-[0_18px_40px_rgba(120,63,217,0.12)]" : "border-white/70 bg-white/72 hover:bg-white/88"}`}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="truncate text-base font-semibold text-foreground">{game.title}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{game.gameType} · {game.playPath}</p>
+    if (activeTab === "games") {
+      return content.games.map((game) => (
+        <button
+          key={game.id}
+          onClick={() => setGameForm({ id: game.id, slug: game.slug, title: game.title, summary: game.summary, description: game.description, gameType: game.gameType, playPath: game.playPath, coverImage: game.coverImage ?? "", accentColor: game.accentColor ?? "#9b5de5", published: game.published })}
+          className={`w-full rounded-[1.4rem] border px-4 py-4 text-left transition-all ${gameForm.id === game.id ? "border-primary/30 bg-primary/10 shadow-[0_18px_40px_rgba(120,63,217,0.12)]" : "border-white/70 bg-white/72 hover:bg-white/88"}`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="truncate text-base font-semibold text-foreground">{game.title}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{game.gameType} · {game.playPath}</p>
+            </div>
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{game.published ? "Hiển thị" : "Nháp"}</span>
           </div>
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{game.published ? "Hiển thị" : "Nháp"}</span>
-        </div>
-      </button>
-    ));
+        </button>
+      ));
+    }
+
+    if (activeTab === "reports") {
+      return reports.map((report) => (
+        <button
+          key={report.id}
+          onClick={() => setSelectedReport(report)}
+          className={`w-full rounded-[1.4rem] border px-4 py-4 text-left transition-all ${
+            selectedReport?.id === report.id
+              ? "border-primary/30 bg-primary/10 shadow-[0_18px_40px_rgba(120,63,217,0.12)]"
+              : "border-white/70 bg-white/72 hover:bg-white/88"
+          }`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="line-clamp-2 text-base font-semibold text-foreground">
+                Lý do: {report.reason}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
+                {report.contentPreview}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Bởi: {report.reporterName} · {formatDate(report.createdAt)}
+              </p>
+            </div>
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                report.status === "PENDING"
+                  ? "bg-amber-100 text-amber-800"
+                  : report.status === "RESOLVED"
+                  ? "bg-emerald-100 text-emerald-800"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
+              {report.status === "PENDING"
+                ? "Chờ duyệt"
+                : report.status === "RESOLVED"
+                ? "Đã xử lý"
+                : "Đã bác bỏ"}
+            </span>
+          </div>
+        </button>
+      ));
+    }
+
+    if (activeTab === "questions") {
+      return questions.map((q) => (
+        <button
+          key={q.id}
+          onClick={() => {
+            setSelectedQuestion(q);
+            setAnswerText(q.answer || "");
+          }}
+          className={`w-full rounded-[1.4rem] border px-4 py-4 text-left transition-all ${
+            selectedQuestion?.id === q.id
+              ? "border-primary/30 bg-primary/10 shadow-[0_18px_40px_rgba(120,63,217,0.12)]"
+              : "border-white/70 bg-white/72 hover:bg-white/88"
+          }`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="line-clamp-2 text-base font-semibold text-foreground">
+                {q.question}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Gửi lúc: {formatDate(q.createdAt)}
+              </p>
+            </div>
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                !q.answer || q.answer.trim() === ""
+                  ? "bg-amber-100 text-amber-800"
+                  : "bg-emerald-100 text-emerald-800"
+              }`}
+            >
+              {!q.answer || q.answer.trim() === "" ? "Chưa trả lời" : "Đã trả lời"}
+            </span>
+          </div>
+        </button>
+      ));
+    }
+
+    if (activeTab === "stickers") {
+      return stickers.map((st) => (
+        <button
+          key={st.id}
+          onClick={() =>
+            setStickerForm({
+              id: st.id,
+              name: st.name,
+              url: st.url,
+              type: st.type,
+              category: st.category,
+              keywordsString: st.keywords ? st.keywords.join(", ") : "",
+            })
+          }
+          className={`w-full rounded-[1.4rem] border px-4 py-3 text-left transition-all ${
+            stickerForm.id === st.id
+              ? "border-primary/30 bg-primary/10 shadow-[0_18px_40px_rgba(120,63,217,0.12)]"
+              : "border-white/70 bg-white/72 hover:bg-white/88"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-white/60 p-1">
+              <img src={st.url} alt={st.name} className="h-full w-full object-contain" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-base font-semibold text-foreground">{st.name}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground truncate">
+                Chủ đề: {st.category} · Từ khóa: {st.keywords?.join(", ")}
+              </p>
+            </div>
+            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary">
+              {st.type}
+            </span>
+          </div>
+        </button>
+      ));
+    }
+
+    return null;
   };
 
   const renderEditor = () => {
@@ -643,40 +914,306 @@ export default function AdminDashboardPage() {
       );
     }
 
-    return (
-      <>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/90">{ADMIN_COPY.editor.games}</p>
-            <h2 className="mt-2 font-heading text-3xl font-bold text-foreground">{gameForm.id ? ADMIN_COPY.titles.updateGame : ADMIN_COPY.titles.createGame}</h2>
+    if (activeTab === "games") {
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/90">{ADMIN_COPY.editor.games}</p>
+              <h2 className="mt-2 font-heading text-3xl font-bold text-foreground">{gameForm.id ? ADMIN_COPY.titles.updateGame : ADMIN_COPY.titles.createGame}</h2>
+            </div>
+            {gameForm.id ? (
+              <Button variant="outline" size="sm" onClick={deleteGame} disabled={isSaving}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                {ADMIN_COPY.actions.delete}
+              </Button>
+            ) : null}
           </div>
-          {gameForm.id ? (
-            <Button variant="outline" size="sm" onClick={deleteGame} disabled={isSaving}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              {ADMIN_COPY.actions.delete}
-            </Button>
-          ) : null}
-        </div>
-        <div className="mt-6 space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div><Label>Slug</Label><Input value={gameForm.slug} onChange={(event) => setGameForm((current) => ({ ...current, slug: event.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.gameType}</Label><Input value={gameForm.gameType} onChange={(event) => setGameForm((current) => ({ ...current, gameType: event.target.value }))} /></div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div><Label>{ADMIN_COPY.fields.title}</Label><Input value={gameForm.title} onChange={(event) => setGameForm((current) => ({ ...current, title: event.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.playPath}</Label><Input value={gameForm.playPath} onChange={(event) => setGameForm((current) => ({ ...current, playPath: event.target.value }))} /></div>
-          </div>
-          <div><Label>{ADMIN_COPY.fields.summary}</Label><Textarea value={gameForm.summary} onChange={(event) => setGameForm((current) => ({ ...current, summary: event.target.value }))} /></div>
-          <div><Label>{ADMIN_COPY.fields.content}</Label><Textarea className="min-h-[220px]" value={gameForm.description} onChange={(event) => setGameForm((current) => ({ ...current, description: event.target.value }))} /></div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div><Label>{ADMIN_COPY.fields.coverImage}</Label><Input value={gameForm.coverImage} onChange={(event) => setGameForm((current) => ({ ...current, coverImage: event.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.accentColor}</Label><Input value={gameForm.accentColor} onChange={(event) => setGameForm((current) => ({ ...current, accentColor: event.target.value }))} /></div>
+          <div className="mt-6 space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div><Label>Slug</Label><Input value={gameForm.slug} onChange={(event) => setGameForm((current) => ({ ...current, slug: event.target.value }))} /></div>
+              <div><Label>{ADMIN_COPY.fields.gameType}</Label><Input value={gameForm.gameType} onChange={(event) => setGameForm((current) => ({ ...current, gameType: event.target.value }))} /></div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div><Label>{ADMIN_COPY.fields.title}</Label><Input value={gameForm.title} onChange={(event) => setGameForm((current) => ({ ...current, title: event.target.value }))} /></div>
+              <div><Label>{ADMIN_COPY.fields.playPath}</Label><Input value={gameForm.playPath} onChange={(event) => setGameForm((current) => ({ ...current, playPath: event.target.value }))} /></div>
+            </div>
+            <div><Label>{ADMIN_COPY.fields.summary}</Label><Textarea value={gameForm.summary} onChange={(event) => setGameForm((current) => ({ ...current, summary: event.target.value }))} /></div>
+            <div><Label>{ADMIN_COPY.fields.content}</Label><Textarea className="min-h-[220px]" value={gameForm.description} onChange={(event) => setGameForm((current) => ({ ...current, description: event.target.value }))} /></div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div><Label>{ADMIN_COPY.fields.coverImage}</Label><Input value={gameForm.coverImage} onChange={(event) => setGameForm((current) => ({ ...current, coverImage: event.target.value }))} /></div>
+              <div><Label>{ADMIN_COPY.fields.accentColor}</Label><Input value={gameForm.accentColor} onChange={(event) => setGameForm((current) => ({ ...current, accentColor: event.target.value }))} /></div>
           </div>
           <label className="flex items-center gap-3 rounded-[1.25rem] border border-white/70 bg-white/78 px-4 py-3"><input type="checkbox" checked={gameForm.published} onChange={(event) => setGameForm((current) => ({ ...current, published: event.target.checked }))} /><span className="text-sm font-semibold">{ADMIN_COPY.fields.publishFrontend}</span></label>
           <Button className="gradient-primary text-primary-foreground" onClick={saveGame} disabled={isSaving}>{isSaving ? ADMIN_COPY.actions.saving : ADMIN_COPY.actions.save}</Button>
         </div>
       </>
-    );
+      );
+    }
+
+    if (activeTab === "reports") {
+      if (!selectedReport) {
+        return (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <AlertTriangle className="h-12 w-12 opacity-30 mb-2" />
+            <p>Chọn một báo cáo vi phạm từ danh sách bên trái để xử lý.</p>
+          </div>
+        );
+      }
+
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/90">
+                Chi tiết báo cáo vi phạm
+              </p>
+              <h2 className="mt-2 font-heading text-3xl font-bold text-foreground">
+                Xử lý báo cáo #{selectedReport.id}
+              </h2>
+            </div>
+          </div>
+          <div className="mt-6 space-y-5">
+            <div className="rounded-[1.35rem] border border-white/70 bg-white/78 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Nội dung bị báo cáo</p>
+              <p className="mt-2 text-base leading-relaxed text-foreground whitespace-pre-wrap">
+                {selectedReport.contentPreview}
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label>Người báo cáo</Label>
+                <Input value={selectedReport.reporterName} readOnly className="bg-muted" />
+              </div>
+              <div>
+                <Label>Thời gian báo cáo</Label>
+                <Input value={formatDate(selectedReport.createdAt)} readOnly className="bg-muted" />
+              </div>
+            </div>
+
+            <div>
+              <Label>Lý do báo cáo</Label>
+              <Input value={selectedReport.reason} readOnly className="bg-muted" />
+            </div>
+
+            <div>
+              <Label>Trạng thái</Label>
+              <Input
+                value={
+                  selectedReport.status === "PENDING"
+                    ? "Chờ duyệt"
+                    : selectedReport.status === "RESOLVED"
+                    ? "Đã xử lý (Xóa nội dung)"
+                    : "Đã bác bỏ"
+                }
+                readOnly
+                className="bg-muted font-semibold"
+              />
+            </div>
+
+            {selectedReport.status === "PENDING" && (
+              <div className="flex flex-wrap items-center gap-3 pt-4">
+                <Button
+                  className="gradient-primary text-primary-foreground rounded-full px-6"
+                  onClick={() => void resolveReport(selectedReport.id, true)}
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Đang xử lý..." : "Xóa nội dung vi phạm"}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-full px-6 border-white/80 bg-white/75"
+                  onClick={() => void resolveReport(selectedReport.id, false)}
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Đang xử lý..." : "Bác bỏ báo cáo"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </>
+      );
+    }
+
+    if (activeTab === "questions") {
+      if (!selectedQuestion) {
+        return (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <HelpCircle className="h-12 w-12 opacity-30 mb-2" />
+            <p>Chọn một câu hỏi ẩn danh từ danh sách bên trái để phản hồi.</p>
+          </div>
+        );
+      }
+
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/90">
+                Câu hỏi ẩn danh từ học sinh
+              </p>
+              <h2 className="mt-2 font-heading text-3xl font-bold text-foreground">
+                Trả lời câu hỏi #{selectedQuestion.id}
+              </h2>
+            </div>
+          </div>
+          <div className="mt-6 space-y-5">
+            <div className="rounded-[1.35rem] border border-white/70 bg-white/78 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Câu hỏi</p>
+              <p className="mt-2 text-base leading-relaxed text-foreground whitespace-pre-wrap">
+                {selectedQuestion.question}
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Gửi lúc: {formatDate(selectedQuestion.createdAt)}
+              </p>
+            </div>
+
+            <div>
+              <Label>{ADMIN_COPY.fields.content}</Label>
+              <Textarea
+                className="min-h-[160px] rounded-[1.35rem]"
+                placeholder="Nhập câu trả lời của chuyên gia/admin..."
+                value={answerText}
+                onChange={(e) => setAnswerText(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <Button
+                className="gradient-primary text-primary-foreground rounded-full px-6"
+                onClick={() => void answerQuestion(selectedQuestion.id)}
+                disabled={isSaving || !answerText.trim()}
+              >
+                {isSaving ? "Đang gửi..." : "Gửi câu trả lời"}
+              </Button>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    if (activeTab === "stickers") {
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/90">
+                Quản lý Nhãn dán & GIF
+              </p>
+              <h2 className="mt-2 font-heading text-3xl font-bold text-foreground">
+                {stickerForm.id ? "Cập nhật nhãn dán / GIF" : "Thêm nhãn dán / GIF mới"}
+              </h2>
+            </div>
+            {stickerForm.id ? (
+              <Button variant="outline" size="sm" onClick={deleteSticker} disabled={isSaving}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                {ADMIN_COPY.actions.delete}
+              </Button>
+            ) : null}
+          </div>
+          <div className="mt-6 space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label>Tên hiển thị</Label>
+                <Input
+                  value={stickerForm.name}
+                  onChange={(event) =>
+                    setStickerForm((current) => ({ ...current, name: event.target.value }))
+                  }
+                  placeholder="Ví dụ: Gấu học bài, Cười lớn..."
+                />
+              </div>
+              <div>
+                <Label>Phân loại (Type)</Label>
+                <select
+                  value={stickerForm.type}
+                  onChange={(event) =>
+                    setStickerForm((current) => ({
+                      ...current,
+                      type: event.target.value as "STICKER" | "GIF",
+                    }))
+                  }
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="STICKER">STICKER (Ảnh tĩnh)</option>
+                  <option value="GIF">GIF (Ảnh động)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <Label>Đường dẫn hình ảnh (URL)</Label>
+              <Input
+                value={stickerForm.url}
+                onChange={(event) =>
+                  setStickerForm((current) => ({ ...current, url: event.target.value }))
+                }
+                placeholder="https://..."
+              />
+              {stickerForm.url && (
+                <div className="mt-2 flex items-center gap-3 rounded-xl border border-white/70 bg-white/40 p-3">
+                  <span className="text-xs text-muted-foreground font-semibold">Preview:</span>
+                  <div className="flex h-20 w-20 items-center justify-center rounded-lg border bg-white/80 p-1">
+                    <img
+                      src={stickerForm.url}
+                      alt="Preview"
+                      className="h-full w-full object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://placehold.co/100x100?text=Error";
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label>Chủ đề (Category)</Label>
+                <select
+                  value={stickerForm.category}
+                  onChange={(event) =>
+                    setStickerForm((current) => ({ ...current, category: event.target.value }))
+                  }
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="study">📚 Học tập (study)</option>
+                  <option value="motivation">🔥 Động lực (motivation)</option>
+                  <option value="emotion">🥺 Cảm xúc (emotion)</option>
+                  <option value="funny">😂 Vui nhộn (funny)</option>
+                  <option value="congrats">🎉 Chúc mừng (congrats)</option>
+                </select>
+              </div>
+              <div>
+                <Label>Từ khóa tìm kiếm (Keywords - ngăn cách bằng dấu phẩy)</Label>
+                <Input
+                  value={stickerForm.keywordsString}
+                  onChange={(event) =>
+                    setStickerForm((current) => ({
+                      ...current,
+                      keywordsString: event.target.value,
+                    }))
+                  }
+                  placeholder="gau, hoc tap, study, cute"
+                />
+              </div>
+            </div>
+
+            <Button
+              className="gradient-primary text-primary-foreground mt-2"
+              onClick={saveSticker}
+              disabled={isSaving || !stickerForm.name.trim() || !stickerForm.url.trim()}
+            >
+              {isSaving ? ADMIN_COPY.actions.saving : ADMIN_COPY.actions.save}
+            </Button>
+          </div>
+        </>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -720,8 +1257,16 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="mt-5 space-y-3">
-            <Button className="h-12 w-full rounded-[1.25rem] gradient-primary text-primary-foreground" onClick={createNew}><Plus className="h-4 w-4" />{ADMIN_COPY.createNew}</Button>
-            <Button variant="outline" className="h-12 w-full rounded-[1.25rem] border-white/80 bg-white/75" onClick={handleLogout}><LogOut className="h-4 w-4" />Đăng xuất</Button>
+            {activeTab !== "reports" && activeTab !== "questions" && (
+              <Button className="h-12 w-full rounded-[1.25rem] gradient-primary text-primary-foreground" onClick={createNew}>
+                <Plus className="h-4 w-4" />
+                {ADMIN_COPY.createNew}
+              </Button>
+            )}
+            <Button variant="outline" className="h-12 w-full rounded-[1.25rem] border-white/80 bg-white/75" onClick={handleLogout}>
+              <LogOut className="h-4 w-4" />
+              Đăng xuất
+            </Button>
           </div>
         </aside>
 
@@ -756,7 +1301,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="grid grid-cols-2 gap-3 border-b border-white/70 px-5 py-4">
                 <div className="rounded-[1.3rem] bg-primary/8 px-4 py-3"><p className="text-xs uppercase tracking-[0.18em] text-primary/90">Người dùng mới</p><p className="mt-2 text-xl font-bold text-foreground">{dashboard.recentUsers.length}</p></div>
-                <div className="rounded-[1.3rem] bg-primary/8 px-4 py-3"><p className="text-xs uppercase tracking-[0.18em] text-primary/90">Gói premium</p><p className="mt-2 text-xl font-bold text-foreground">{dashboard.planDistribution.find((item) => item.plan === "PREMIUM")?.total ?? 0}</p></div>
+                <div className="rounded-[1.3rem] bg-primary/8 px-4 py-3"><p className="text-xs uppercase tracking-[0.18em] text-primary/90">Gói premium</p><p className="mt-2 text-xl font-bold text-foreground">{dashboard.planDistribution.find((item) => item.plan === "premium")?.total ?? 0}</p></div>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5"><div className="space-y-3">{renderList()}</div></div>
             </section>

@@ -40,14 +40,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     if (SecurityContextHolder.getContext().getAuthentication() == null) {
-      AppUserDetails userDetails = (AppUserDetails) userDetailsService.loadUserByUsername(userId);
-      if (jwtService.isTokenValid(token, userDetails.user())) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-            userDetails,
-            null,
-            userDetails.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+      try {
+        AppUserDetails userDetails = (AppUserDetails) userDetailsService.loadUserByUsername(userId);
+        if (jwtService.isTokenValid(token, userDetails.user())) {
+          UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+              userDetails,
+              null,
+              userDetails.getAuthorities());
+          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+      } catch (org.springframework.security.core.userdetails.UsernameNotFoundException ex) {
+        // User not found in database (e.g. old token from a previous database seed/state).
+        // Let the filter chain proceed without setting the authentication context.
       }
     }
 

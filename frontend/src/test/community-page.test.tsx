@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import CommunityPage from "@/pages/CommunityPage";
@@ -15,10 +15,20 @@ vi.mock("@/lib/api/client", () => ({
   apiRequest: (...args: unknown[]) => mockApiRequest(...args),
 }));
 
+const mockCategories = [
+  { id: 1, name: "Cảm xúc & Tâm lý", slug: "cam-xuc-tam-ly", description: "Desc 1", icon: "Smile", colorTheme: "emerald" },
+];
+
 describe("CommunityPage", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     mockUseAuth.mockReturnValue({ user: null });
-    mockApiRequest.mockResolvedValue([]);
+    mockApiRequest.mockImplementation((url: string) => {
+      if (url.includes("/community/categories")) {
+        return Promise.resolve(mockCategories);
+      }
+      return Promise.resolve([]);
+    });
   });
 
   it("renders login prompt and empty state for guests", async () => {
@@ -28,8 +38,11 @@ describe("CommunityPage", () => {
       </BrowserRouter>,
     );
 
-    await waitFor(() => expect(mockApiRequest).toHaveBeenCalledWith("/community/posts"));
-    expect(screen.getByText("Đăng nhập để bắt đầu thảo luận, gửi phản hồi và tham gia sâu hơn vào cộng đồng EDUcare.")).toBeInTheDocument();
-    expect(screen.getByText("Chưa có chủ đề nào. Bạn có thể là người mở đầu cuộc trò chuyện hôm nay.")).toBeInTheDocument();
+    const categoryCard = await screen.findByText("Cảm xúc & Tâm lý");
+    fireEvent.click(categoryCard);
+
+    await waitFor(() => expect(mockApiRequest).toHaveBeenCalledWith(expect.stringContaining("/community/posts")));
+    expect(screen.getByText("Đăng nhập để chia sẻ câu chuyện và câu hỏi của bạn trong chuyên mục này.")).toBeInTheDocument();
+    expect(screen.getByText("Chưa có bài viết nào trong chủ đề này. Hãy là người mở đầu thảo luận nhé!")).toBeInTheDocument();
   });
 });

@@ -19,7 +19,10 @@ import vn.educare.backend.api.AuthDtos.GameUpsertRequest;
 import vn.educare.backend.api.AuthDtos.LessonResponse;
 import vn.educare.backend.api.AuthDtos.LessonUpsertRequest;
 import vn.educare.backend.api.AuthDtos.QuizQuestionUpsertRequest;
+import vn.educare.backend.api.AuthDtos.ChatStickerRequest;
+import vn.educare.backend.api.AuthDtos.ChatStickerResponse;
 import vn.educare.backend.service.AdminContentService;
+import vn.educare.backend.service.CommunityService;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ import vn.educare.backend.service.AdminContentService;
 public class AdminContentController {
 
   private final AdminContentService adminContentService;
+  private final CommunityService communityService;
 
   @GetMapping("/api/admin/content")
   public AdminContentResponse overview() {
@@ -91,5 +95,20 @@ public class AdminContentController {
   @DeleteMapping("/api/admin/games/{id}")
   public void deleteGame(@PathVariable Long id) {
     adminContentService.deleteGame(id);
+  }
+
+  @PostMapping("/api/admin/stickers")
+  public ChatStickerResponse createSticker(@Valid @RequestBody ChatStickerRequest request) {
+    return communityService.saveSticker(null, request);
+  }
+
+  @PutMapping("/api/admin/stickers/{id}")
+  public ChatStickerResponse updateSticker(@PathVariable Long id, @Valid @RequestBody ChatStickerRequest request) {
+    return communityService.saveSticker(id, request);
+  }
+
+  @DeleteMapping("/api/admin/stickers/{id}")
+  public void deleteSticker(@PathVariable Long id) {
+    communityService.deleteSticker(id);
   }
 }

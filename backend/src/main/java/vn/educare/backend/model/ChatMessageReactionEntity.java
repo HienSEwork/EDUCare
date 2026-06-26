@@ -1,5 +1,4 @@
 package vn.educare.backend.model;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,27 +9,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "chat_rooms")
+@Table(name = "chat_message_reactions")
 @Getter
 @Setter
-public class ChatRoomEntity {
+public class ChatMessageReactionEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, unique = true)
-  private String slug;
+  @Column(name = "message_id", nullable = false)
+  private Long messageId;
+
+  @Column(name = "user_id", nullable = false)
+  private String userId;
 
   @Column(nullable = false)
-  private String name;
-
-  @Column(nullable = false, columnDefinition = "TEXT")
-  private String description;
-
-  @Column(name = "owner_id")
-  private String ownerId;
-
-  @Column(name = "pinned_message_id")
-  private Long pinnedMessageId;
+  private String emoji;
 }

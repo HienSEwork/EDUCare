@@ -316,6 +316,16 @@ export interface GameUpsertRequest {
   published: boolean;
 }
 
+export interface CommunityCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon: string | null;
+  colorTheme: string | null;
+  createdAt: string;
+}
+
 export interface CommunityReply {
   id: number;
   author: string;
@@ -325,6 +335,9 @@ export interface CommunityReply {
   likes: number;
   liked: boolean;
   createdAt: string;
+  parentId?: number | null;
+  authorRole?: string | null;
+  imageUrl?: string | null;
 }
 
 export interface CommunityPost {
@@ -337,6 +350,14 @@ export interface CommunityPost {
   liked: boolean;
   createdAt: string;
   replies: CommunityReply[];
+  linkUrl?: string | null;
+  linkTitle?: string | null;
+  linkDescription?: string | null;
+  linkImage?: string | null;
+  pinned?: boolean;
+  categoryId: number;
+  title?: string | null;
+  imageUrl?: string | null;
 }
 
 export interface ChatRoom {
@@ -345,6 +366,39 @@ export interface ChatRoom {
   name: string;
   description: string;
   messageCount: number;
+  ownerId: string | null;
+  pinnedMessageId?: number | null;
+  pinnedMessageAuthor?: string | null;
+  pinnedMessageContent?: string | null;
+  lastMessageContent?: string | null;
+  lastMessageTime?: string | null;
+}
+
+export interface CommunityReport {
+  id: number;
+  reporterName: string;
+  postId: number | null;
+  replyId: number | null;
+  reason: string;
+  status: "PENDING" | "RESOLVED" | "DISMISSED";
+  createdAt: string;
+  contentPreview: string;
+}
+
+export interface ChatMessageReaction {
+  id: number;
+  userId: string;
+  username: string;
+  emoji: string;
+}
+
+export interface ChatRoomMember {
+  userId: string;
+  username: string;
+  role: "OWNER" | "MEMBER";
+  status: "PENDING" | "ACTIVE";
+  xp: number;
+  userRole: string;
 }
 
 export interface ChatMessage {
@@ -353,6 +407,14 @@ export interface ChatMessage {
   authorId: string | null;
   content: string;
   createdAt: string;
+  reactions?: ChatMessageReaction[];
+  authorXp?: number;
+  authorStreak?: number;
+  authorRole?: string;
+  imageUrl?: string | null;
+  audioUrl?: string | null;
+  audioName?: string | null;
+  isSystem?: boolean;
 }
 
 export interface AnonymousQuestion {
@@ -392,4 +454,22 @@ export interface SubscriptionPlan {
 export interface CheckoutResponse {
   checkoutUrl: string;
 }
+
+export interface ChatStickerResponse {
+  id: number;
+  name: string;
+  url: string;
+  type: "STICKER" | "GIF";
+  category: string;
+  keywords: string[];
+}
+
+export interface ChatStickerRequest {
+  name: string;
+  url: string;
+  type: "STICKER" | "GIF";
+  category: string;
+  keywords: string[];
+}
+
 
