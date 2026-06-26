@@ -52,6 +52,9 @@ public class UserEntity {
   @Column(name = "avatar_url")
   private String avatarUrl;
 
+  @Column(length = 10)
+  private String gender;
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private UserRole role = UserRole.STUDENT;

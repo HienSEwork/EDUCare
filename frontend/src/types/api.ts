@@ -18,6 +18,7 @@ export interface User {
   createdAt: string;
   subscriptionEndDate?: string | null;
   subscriptionPlanId?: string | null;
+  gender?: string | null;
 }
 
 export interface AuthResponse {
@@ -377,6 +378,30 @@ export interface LeaderboardResponse {
     quizScore: number;
     avatar: string;
   }>;
+}
+
+export interface GameScoreEntry {
+  rank: number;
+  playerName: string;
+  score: number;
+  difficulty: string;
+  streak: number;
+  xp: number;
+  playedAt: string;
+  isMe: boolean;
+}
+
+export interface GameLeaderboardResponse {
+  gameSlug: string;
+  gameTitle: string;
+  top: GameScoreEntry[];
+  myBest: GameScoreEntry | null;
+}
+
+export interface GameScoreSubmitResponse {
+  rank: number;
+  personalBest: boolean;
+  leaderboard: GameLeaderboardResponse;
 }
 
 export interface SubscriptionPlan {

@@ -60,13 +60,25 @@ function AdminDashboardRoute() {
   return <AdminDashboardPage />;
 }
 
+const GAME_PLAY_ROUTES = new Set([
+  "/games/flash-light-run",
+  "/games/myth-buster",
+  "/games/safe-swipe",
+  "/games/chat-detective",
+  "/games/red-flag-hunt",
+  "/games/emotion-sort",
+  "/games/teen-path",
+]);
+
 function AppShell() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isGameRoute = GAME_PLAY_ROUTES.has(location.pathname);
+  const hideNavbar = isAdminRoute || isGameRoute;
 
   return (
     <div className="flex min-h-screen flex-col">
-      {isAdminRoute ? null : <Navbar />}
+      {hideNavbar ? null : <Navbar />}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -102,7 +114,7 @@ function AppShell() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {isAdminRoute ? null : <Footer />}
+      {isAdminRoute || isGameRoute ? null : <Footer />}
     </div>
   );
 }

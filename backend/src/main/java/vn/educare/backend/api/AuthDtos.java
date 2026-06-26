@@ -366,6 +366,31 @@ public record CourseResponse(
       Boolean published) {
   }
 
+  // ── Game Scores ────────────────────────────────────────────────────────────
+
+  public record GameScoreSubmitRequest(int score, String difficulty) {}
+
+  public record GameScoreEntry(
+      int rank,
+      String playerName,
+      int score,
+      String difficulty,
+      int streak,
+      int xp,
+      String playedAt,
+      boolean isMe) {}
+
+  public record GameLeaderboardResponse(
+      String gameSlug,
+      String gameTitle,
+      List<GameScoreEntry> top,
+      GameScoreEntry myBest) {}
+
+  public record GameScoreSubmitResponse(
+      int rank,
+      boolean personalBest,
+      GameLeaderboardResponse leaderboard) {}
+
   // ── Admin User Management ──────────────────────────────────────────────────
 
   public record AdminUserResponse(
