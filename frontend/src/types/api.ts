@@ -472,4 +472,30 @@ export interface ChatStickerRequest {
   keywords: string[];
 }
 
+// ── Admin User Management ─────────────────────────────────────────────────────
+
+export interface AdminUserResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  username: string;
+  age: number;
+  plan: UserPlan;
+  role: UserRole;
+  xp: number;
+  streak: number;
+  quizScore: number;
+  avatar: string | null;
+  createdAt: string;
+}
+
+export interface AdminUserListResponse {
+  users: AdminUserResponse[];
+  total: number;
+}
+
+export interface AdminUserUpdateRequest {
+  plan?: string;
+  role?: string;
+}
 

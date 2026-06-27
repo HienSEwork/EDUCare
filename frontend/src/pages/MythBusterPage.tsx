@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ALL_MYTHS, type Myth } from "@/data/myths";
+import GameIntroHero from "@/components/GameIntroHero";
+import introSvg from "@/assets/games/intro-myth-buster.svg";
 
 const TIME_PER_QUESTION = 8;
 const TOTAL_QUESTIONS = 20;
@@ -152,78 +154,28 @@ export default function MythBusterPage() {
   // ─── INTRO ───────────────────────────────────────────────────────────────
   if (phase === "intro") {
     return (
-      <div className="min-h-screen pb-16 pt-8">
-        <div className="container mx-auto max-w-3xl px-4">
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="overflow-hidden rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,94,143,0.12)_0%,rgba(246,241,255,0.96)_50%,rgba(67,97,238,0.10)_100%)] p-8 shadow-card md:p-12"
-          >
-            {/* Hero badge */}
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/88 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-[#ff5d8f] shadow-soft">
-              <Zap className="h-3.5 w-3.5" /> Mini Game
-            </span>
-
-            <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">
-              Giải Mã Tin Đồn 🧠
-            </h1>
-            <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">
-              {TOTAL_QUESTIONS} câu hỏi Đúng / Sai về sức khỏe tuổi teen. Mỗi câu chỉ có{" "}
-              <strong>{TIME_PER_QUESTION} giây</strong> — phản xạ nhanh, kiến thức vững!
-            </p>
-
-            {/* Stats */}
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {[
-                { label: "Số câu", value: `${TOTAL_QUESTIONS} câu` },
-                { label: "Thời gian/câu", value: `${TIME_PER_QUESTION} giây` },
-                { label: "Streak bonus", value: `x${STREAK_BONUS_AT} → +${STREAK_BONUS_SECONDS}s` },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                    {item.label}
-                  </p>
-                  <p className="mt-2 text-lg font-bold">{item.value}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Rules */}
-            <div className="mt-8 space-y-3 rounded-[1.8rem] border border-white/70 bg-white/60 p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Luật chơi</p>
-              {[
-                "Đọc câu phát biểu và chọn Đúng hoặc Sai",
-                "Mỗi câu đúng cộng điểm, combo x5 nhận thêm thời gian",
-                "Sau mỗi câu sẽ hiện giải thích khoa học ngắn gọn",
-                "Hết giờ → tự động tính là sai và chuyển câu kế",
-              ].map((rule, i) => (
-                <div key={i} className="flex items-start gap-3 text-sm text-foreground/80">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">
-                    {i + 1}
-                  </span>
-                  {rule}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button
-                id="myth-buster-start-btn"
-                className="gradient-primary px-8 py-6 text-base font-bold text-primary-foreground"
-                onClick={startGame}
-              >
-                <Sparkles className="mr-2 h-5 w-5" /> Bắt đầu ngay!
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/games">← Về trang game</Link>
-              </Button>
-            </div>
-          </motion.section>
-        </div>
-      </div>
+      <GameIntroHero
+        illustrationSrc={introSvg}
+        eyebrow="⚡ Mini Game · Đúng / Sai"
+        title="Giải Mã Tin Đồn"
+        description="20 câu hỏi Đúng/Sai siêu tốc về sức khỏe tuổi teen. Streak 5 câu liên tiếp = +3 giây thưởng!"
+        stats={[
+          { label: "Số câu", value: "20 câu" },
+          { label: "Thời gian", value: "8 giây/câu" },
+          { label: "Streak bonus", value: "+3 giây" },
+        ]}
+        rules={[
+          { text: "Đọc câu phát biểu và chọn ĐÚNG hoặc SAI" },
+          { text: "Mỗi câu chỉ có 8 giây để trả lời" },
+          { text: "Đúng 5 câu liên tiếp được +3 giây thưởng" },
+          { text: "Xem giải thích ngắn sau mỗi câu trả lời" },
+        ]}
+        startLabel="Bắt đầu thử thách!"
+        onStart={startGame}
+        bgGradient="linear-gradient(135deg,#1a0a00 0%,#2d1200 50%,#0a1a2d 100%)"
+        accentColor="#f77f00"
+        buttonIcon={<Zap className="h-5 w-5" />}
+      />
     );
   }
 

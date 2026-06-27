@@ -1,0 +1,266 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" width="480" height="300">
+  <defs>
+    <!-- Background diagonal split gradient -->
+    <linearGradient id="bgLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a0800"/>
+      <stop offset="100%" stop-color="#2a1000"/>
+    </linearGradient>
+    <linearGradient id="bgRight" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1520"/>
+      <stop offset="100%" stop-color="#0a0f1a"/>
+    </linearGradient>
+    <!-- Full background base -->
+    <linearGradient id="bgBase" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a0800"/>
+      <stop offset="40%" stop-color="#1a0e05"/>
+      <stop offset="100%" stop-color="#050d18"/>
+    </linearGradient>
+    <!-- Radial center glow -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3D1800" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Timer ring gradient -->
+    <linearGradient id="timerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF9500"/>
+      <stop offset="100%" stop-color="#FF3B1F"/>
+    </linearGradient>
+
+    <!-- Glow filters -->
+    <filter id="glowYellow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#FFD000" flood-opacity="0.9" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowYellowSoft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feFlood flood-color="#FF9500" flood-opacity="0.6" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowGreen" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#00FF88" flood-opacity="0.8" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowRed" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#FF3B1F" flood-opacity="0.8" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowOrange" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#FF9500" flood-opacity="0.7" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowText" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#FFD000" flood-opacity="0.7" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowTeal" x="-30%" y="-40%" width="160%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#00CEB8" flood-opacity="0.6" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="timerGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#FF6A00" flood-opacity="0.6" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="pulseRingGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feFlood flood-color="#FF9500" flood-opacity="0.5" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Button gradients -->
+    <linearGradient id="btnGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00C060"/>
+      <stop offset="100%" stop-color="#007A38"/>
+    </linearGradient>
+    <linearGradient id="btnRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF3B1F"/>
+      <stop offset="100%" stop-color="#A01800"/>
+    </linearGradient>
+    <!-- Diagonal split clip paths -->
+    <clipPath id="leftSplit">
+      <polygon points="0,0 300,0 140,300 0,300"/>
+    </clipPath>
+    <clipPath id="rightSplit">
+      <polygon points="300,0 480,0 480,300 140,300"/>
+    </clipPath>
+  </defs>
+
+  <!-- BACKGROUND -->
+  <rect width="480" height="300" fill="url(#bgBase)"/>
+  <!-- Warm left zone -->
+  <rect width="480" height="300" fill="url(#bgLeft)" clip-path="url(#leftSplit)" opacity="0.7"/>
+  <!-- Cool right zone -->
+  <rect width="480" height="300" fill="url(#bgRight)" clip-path="url(#rightSplit)" opacity="0.5"/>
+  <!-- Subtle radial vignette from center -->
+  <rect width="480" height="300" fill="url(#centerGlow)"/>
+
+  <!-- CATEGORY BADGE top-left -->
+  <g filter="url(#glowTeal)">
+    <rect x="12" y="12" width="72" height="22" rx="11" fill="#00736A" opacity="0.92"/>
+    <text x="48" y="27" font-family="'Arial Black', 'Impact', sans-serif" font-size="10" font-weight="900" fill="#A0FFF5" text-anchor="middle" letter-spacing="0.5">C啤 Th峄?/text>
+  </g>
+
+  <!-- STREAK BADGE top-right -->
+  <g filter="url(#glowOrange)">
+    <rect x="380" y="12" width="88" height="22" rx="11" fill="#7A3000" opacity="0.95"/>
+    <rect x="380" y="12" width="88" height="22" rx="11" fill="none" stroke="#FF9500" stroke-width="1.2" opacity="0.8"/>
+    <text x="424" y="27" font-family="'Arial Black', 'Impact', sans-serif" font-size="10" font-weight="900" fill="#FFD080" text-anchor="middle" letter-spacing="0.5">馃敟 STREAK x3</text>
+  </g>
+
+  <!-- THUNDERBOLT left side -->
+  <!-- Outer glow layer -->
+  <g filter="url(#glowYellowSoft)" opacity="0.7">
+    <polygon points="68,58 48,138 72,130 54,195 96,108 70,118" fill="#FFD000"/>
+  </g>
+  <!-- Sharp bolt -->
+  <g filter="url(#glowYellow)">
+    <polygon points="68,58 48,138 72,130 54,195 96,108 70,118" fill="#FFE500"/>
+    <polygon points="68,68 54,126 70,120 60,175 84,118 66,126" fill="#FFFAAA" opacity="0.4"/>
+  </g>
+
+  <!-- CHECKMARK right side -->
+  <g filter="url(#glowGreen)">
+    <polyline points="378,118 392,136 418,106" fill="none" stroke="#00FF88" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="398" cy="120" r="22" fill="none" stroke="#00FF88" stroke-width="1.5" opacity="0.3"/>
+  </g>
+  <!-- X mark right side below checkmark -->
+  <g filter="url(#glowRed)">
+    <line x1="374" y1="152" x2="422" y2="192" stroke="#FF3B1F" stroke-width="5.5" stroke-linecap="round"/>
+    <line x1="422" y1="152" x2="374" y2="192" stroke="#FF3B1F" stroke-width="5.5" stroke-linecap="round"/>
+    <circle cx="398" cy="172" r="22" fill="none" stroke="#FF3B1F" stroke-width="1.5" opacity="0.3"/>
+  </g>
+
+  <!-- TIMER RING center -->
+  <!-- Pulsing outer ring -->
+  <circle cx="240" cy="145" r="52" fill="none" stroke="#FF9500" stroke-width="1" opacity="0.18" filter="url(#pulseRingGlow)">
+    <animate attributeName="r" values="52;62;52" dur="1.8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.18;0.04;0.18" dur="1.8s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Second pulse ring -->
+  <circle cx="240" cy="145" r="48" fill="none" stroke="#FF6A00" stroke-width="1.5" opacity="0.12" filter="url(#pulseRingGlow)">
+    <animate attributeName="r" values="48;58;48" dur="1.8s" begin="0.3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.12;0.03;0.12" dur="1.8s" begin="0.3s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Timer track ring (dark) -->
+  <circle cx="240" cy="145" r="40" fill="none" stroke="#2A1500" stroke-width="7"/>
+
+  <!-- Timer progress arc at 60% -->
+  <!-- Circumference of r=40: 2*PI*40 = 251.3 | 60% = 150.8 -->
+  <circle cx="240" cy="145" r="40"
+    fill="none"
+    stroke="url(#timerGrad)"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-dasharray="150.8 251.3"
+    stroke-dashoffset="0"
+    transform="rotate(-90,240,145)"
+    filter="url(#timerGlow)"/>
+
+  <!-- Timer inner face -->
+  <circle cx="240" cy="145" r="32" fill="#180C00" opacity="0.85"/>
+
+  <!-- Timer number -->
+  <text x="240" y="152" font-family="'Arial Black', 'Impact', sans-serif" font-size="22" font-weight="900" fill="#FFD060" text-anchor="middle" filter="url(#glowYellow)" letter-spacing="-1">6s</text>
+
+  <!-- MAIN QUESTION TEXT -->
+  <!-- Glow layer -->
+  <text x="240" y="80" font-family="'Arial Black', 'Impact', sans-serif" font-size="28" font-weight="900" fill="#FFD000" text-anchor="middle" filter="url(#glowText)" letter-spacing="3" opacity="0.9">膼脷NG / SAI?</text>
+  <!-- Crisp layer -->
+  <text x="240" y="80" font-family="'Arial Black', 'Impact', sans-serif" font-size="28" font-weight="900" fill="#FFF5C0" text-anchor="middle" letter-spacing="3">膼脷NG / SAI?</text>
+
+  <!-- Divider line under headline -->
+  <line x1="148" y1="88" x2="332" y2="88" stroke="#FF9500" stroke-width="1" opacity="0.4"/>
+
+  <!-- Question body text -->
+  <text x="240" y="210" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="11" font-weight="700" fill="#FFF5E0" text-anchor="middle" opacity="0.88" letter-spacing="0.3">Tim ng瓢峄漣 tr瓢峄焠g th脿nh 膽岷璸 kho岷g</text>
+  <text x="240" y="224" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="11" font-weight="700" fill="#FFF5E0" text-anchor="middle" opacity="0.88" letter-spacing="0.3">100,000 l岷 m峄梚 ng脿y. 膼煤ng hay sai?</text>
+
+  <!-- BOTTOM BUTTONS -->
+  <!-- 膼脷NG button (green, left) -->
+  <g filter="url(#glowGreen)" opacity="0.95">
+    <rect x="68" y="252" width="148" height="36" rx="8" fill="url(#btnGreen)"/>
+    <rect x="68" y="252" width="148" height="36" rx="8" fill="none" stroke="#00FF88" stroke-width="1.2" opacity="0.6"/>
+    <text x="142" y="275" font-family="'Arial Black', 'Impact', sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">鉁?膼脷NG</text>
+  </g>
+
+  <!-- SAI button (red, right) -->
+  <g filter="url(#glowRed)" opacity="0.95">
+    <rect x="264" y="252" width="148" height="36" rx="8" fill="url(#btnRed)"/>
+    <rect x="264" y="252" width="148" height="36" rx="8" fill="none" stroke="#FF3B1F" stroke-width="1.2" opacity="0.6"/>
+    <text x="338" y="275" font-family="'Arial Black', 'Impact', sans-serif" font-size="15" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">鉁?SAI</text>
+  </g>
+
+  <!-- Decorative ambient sparks -->
+  <g opacity="0.5">
+    <circle cx="120" cy="40" r="1.5" fill="#FFD000">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2.1s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="360" cy="55" r="1" fill="#FF9500">
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="1.7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="30" cy="200" r="1.5" fill="#FFD000">
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="450" cy="100" r="1" fill="#FF6A00">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="1.9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="200" cy="30" r="1" fill="#FFDD00">
+      <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.3s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Mini bolt spark -->
+    <polygon points="136,72 130,88 137,85 131,100 144,80 137,83" fill="#FFE000" opacity="0.35"/>
+    <!-- Hairline tension line toward bolt -->
+    <line x1="200" y1="145" x2="152" y2="145" stroke="#FF9500" stroke-width="0.5" opacity="0.15"/>
+    <!-- Hairline toward check/X -->
+    <line x1="280" y1="145" x2="374" y2="130" stroke="#00FF88" stroke-width="0.5" opacity="0.1"/>
+  </g>
+
+  <!-- Progress bar -->
+  <rect x="68" y="242" width="344" height="3" rx="1.5" fill="#2A1500" opacity="0.8"/>
+  <rect x="68" y="242" width="138" height="3" rx="1.5" fill="#FF9500" opacity="0.7"/>
+  <!-- Question count label -->
+  <text x="240" y="239" font-family="'Arial', sans-serif" font-size="8" fill="#FF9500" text-anchor="middle" letter-spacing="1" opacity="0.7">C脗U 5 / 12</text>
+</svg>

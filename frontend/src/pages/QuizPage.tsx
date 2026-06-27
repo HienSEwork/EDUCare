@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import { CheckCircle2, ChevronLeft, ChevronRight, Sparkles, Trophy } from "lucide-react";
+import GameIntroHero from "@/components/GameIntroHero";
+import introSvg from "@/assets/games/intro-quiz.svg";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
 import { QUIZ_COPY } from "@/content/uiCopy";
@@ -24,6 +26,7 @@ export default function QuizPage() {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get("mode") === "long" ? "long" : "quick";
   const [sessionNonce, setSessionNonce] = useState(0);
+  const [gamePhase, setGamePhase] = useState<"intro" | "playing">("intro");
 
   const [session, setSession] = useState<QuizSessionResponse | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -127,6 +130,46 @@ export default function QuizPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (gamePhase === "intro") {
+    const isLong = mode === "long";
+    return (
+      <GameIntroHero
+        illustrationSrc={introSvg}
+        eyebrow={isLong ? "📚 Quiz · Bộ câu hỏi dài" : "⚡ Quiz · Siêu nhanh"}
+        title={isLong ? "Trắc Nghiệm Chuyên Sâu" : "Quiz Siêu Tốc"}
+        description={
+          isLong
+            ? "Bộ 20 câu hỏi kiến thức sức khỏe toàn diện. Suy nghĩ kỹ, trả lời đúng và kiếm điểm XP khủng!"
+            : "10 câu hỏi nhanh về sức khỏe tuổi teen. Không giới hạn thời gian — thể hiện kiến thức của bạn!"
+        }
+        stats={
+          isLong
+            ? [
+                { label: "Số câu", value: "20 câu" },
+                { label: "Phần thưởng", value: "XP + Huy hiệu" },
+                { label: "Độ khó", value: "Trung bình" },
+              ]
+            : [
+                { label: "Số câu", value: "10 câu" },
+                { label: "Phần thưởng", value: "XP + Điểm" },
+                { label: "Tốc độ", value: "Siêu nhanh" },
+              ]
+        }
+        rules={[
+          { text: "Đọc câu hỏi và chọn đáp án đúng nhất" },
+          { text: "Bạn có thể thay đổi đáp án trước khi nộp" },
+          { text: "Trả lời hết tất cả câu hỏi rồi mới nộp bài" },
+          { text: "Kết quả và điểm XP được cập nhật ngay!" },
+        ]}
+        startLabel={isLong ? "Bắt đầu làm bài!" : "Bắt đầu quiz!"}
+        onStart={() => setGamePhase("playing")}
+        bgGradient="linear-gradient(135deg,rgba(255,230,240,0.92) 0%,rgba(246,241,255,0.96) 50%,rgba(227,245,255,0.92) 100%)"
+        accentColor="#7c3aed"
+        buttonIcon={<Sparkles className="h-5 w-5" />}
+      />
+    );
+  }
 
   if (isLoading) {
     return (

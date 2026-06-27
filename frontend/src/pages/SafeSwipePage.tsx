@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCw, Shield, AlertTriangle, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCw, Shield, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ALL_SWIPE_CARDS, type SwipeCard } from "@/data/safeSwipeCards";
+import GameIntroHero from "@/components/GameIntroHero";
+import introSvg from "@/assets/games/intro-safe-swipe.svg";
 
 type GamePhase = "intro" | "playing" | "result";
 
@@ -56,7 +58,7 @@ function SwipeCardUI({ card, onSwipe, isTop }: { card: SwipeCard; onSwipe: (dir:
 
   return (
     <motion.div
-      style={{ x, rotate, zIndex: isTop ? 10 : 5 }}
+      style={{ x, rotate, zIndex: isTop ? 10 : 5, touchAction: "none" }}
       drag={isTop ? "x" : false}
       dragConstraints={{ left: -300, right: 300 }}
       onDragEnd={handleDragEnd}
@@ -154,61 +156,31 @@ export default function SafeSwipePage() {
   // ── INTRO ──────────────────────────────────────────────────────────
   if (phase === "intro") {
     return (
-      <div className="min-h-screen pb-16 pt-8">
-        <div className="container mx-auto max-w-2xl px-4">
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="overflow-hidden rounded-[2.4rem] border border-white/70 bg-[linear-gradient(135deg,rgba(155,93,229,0.12)_0%,rgba(246,241,255,0.96)_50%,rgba(6,214,160,0.10)_100%)] p-8 shadow-card md:p-12"
-          >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#9b5de5] shadow-soft">
-              <Shield className="h-3.5 w-3.5" /> Mini Game
-            </span>
-            <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">
-              Ranh Giới An Toàn 🛡️
-            </h1>
-            <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">
-              30 tình huống thực tế. Vuốt phải nếu <strong className="text-green-600">an toàn</strong>, vuốt trái nếu <strong className="text-red-500">nguy hiểm</strong>. Bạn nhận ra bao nhiêu cạm bẫy?
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {[
-                { label: "Số thẻ", value: "30 thẻ" },
-                { label: "Chủ đề", value: "5 chủ đề" },
-                { label: "Dạng chơi", value: "Vuốt thẻ" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
-                  <p className="mt-2 text-lg font-bold">{item.value}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 space-y-3 rounded-[1.8rem] border border-white/70 bg-white/60 p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Cách chơi</p>
-              {[
-                "Đọc tình huống trên thẻ bài",
-                "Vuốt PHẢI (hoặc bấm ✅) nếu tình huống AN TOÀN",
-                "Vuốt TRÁI (hoặc bấm ⚠️) nếu tình huống NGUY HIỂM",
-                "Sau mỗi thẻ sẽ có giải thích ngắn gọn",
-              ].map((rule, i) => (
-                <div key={i} className="flex items-start gap-3 text-sm text-foreground/80">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-primary">{i + 1}</span>
-                  {rule}
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button id="safe-swipe-start-btn" className="gradient-primary px-8 py-6 text-base font-bold text-primary-foreground" onClick={startGame}>
-                <Shield className="mr-2 h-5 w-5" /> Bắt đầu ngay!
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/games">← Về trang game</Link>
-              </Button>
-            </div>
-          </motion.section>
-        </div>
-      </div>
+      <GameIntroHero
+        illustrationSrc={introSvg}
+        eyebrow="🛡️ Mini Game · An toàn mạng"
+        title="Ranh Giới An Toàn"
+        description="30 tình huống thực tế — vuốt phải nếu an toàn, vuốt trái nếu nguy hiểm. Bạn nhận ra bao nhiêu cạm bẫy?"
+        stats={[
+          { label: "Số thẻ", value: "30 thẻ" },
+          { label: "Chủ đề", value: "5 chủ đề" },
+          { label: "Dạng chơi", value: "Vuốt thẻ" },
+        ]}
+        rules={[
+          { text: "Đọc tình huống hiển thị trên thẻ" },
+          { text: "Vuốt PHẢI (✅) nếu tình huống AN TOÀN" },
+          { text: "Vuốt TRÁI (⚠️) nếu tình huống NGUY HIỂM" },
+          { text: "Sau mỗi thẻ có giải thích ngay lập tức" },
+        ]}
+        startLabel="Bắt đầu ngay!"
+        onStart={startGame}
+        bgGradient="linear-gradient(135deg,#0d1117 0%,#1a1f2e 50%,#0f1923 100%)"
+        accentColor="#9b5de5"
+        buttonIcon={<Shield className="h-5 w-5" />}
+      />
     );
   }
+
 
   // ── RESULT ─────────────────────────────────────────────────────────
   if (phase === "result") {

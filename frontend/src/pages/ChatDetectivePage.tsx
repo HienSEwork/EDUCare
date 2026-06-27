@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, ArrowRight, RefreshCw, Trophy, Star, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CHAT_SCENARIOS, type ChatScenario, type ChatScene } from "@/data/chatScenarios";
+import GameIntroHero from "@/components/GameIntroHero";
+import introSvg from "@/assets/games/intro-chat-detective.svg";
 
 type GamePhase = "intro" | "select" | "playing" | "result";
 
@@ -137,45 +139,28 @@ export default function ChatDetectivePage() {
   // ── INTRO ──────────────────────────────────────────────────────────────
   if (phase === "intro") {
     return (
-      <div className="min-h-screen pb-16 pt-8">
-        <div className="container mx-auto max-w-2xl px-4">
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="overflow-hidden rounded-[2.4rem] border border-white/70 bg-[linear-gradient(135deg,rgba(14,165,233,0.10)_0%,rgba(246,241,255,0.96)_50%,rgba(139,92,246,0.10)_100%)] p-8 shadow-card md:p-12"
-          >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-[#0ea5e9] shadow-soft">
-              <Search className="h-3.5 w-3.5" /> Mini Game
-            </span>
-            <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">
-              Thám Tử Mạng 🕵️
-            </h1>
-            <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">
-              Bạn nhận được những tin nhắn nguy hiểm. Đọc kỹ từng tin và chọn cách phản hồi đúng đắn để vượt qua mọi tình huống!
-            </p>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              {[
-                { label: "Kịch bản", value: `${CHAT_SCENARIOS.length} tình huống` },
-                { label: "Dạng chơi", value: "Chat simulator" },
-                { label: "Kỹ năng", value: "Phán đoán" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
-                  <p className="mt-2 text-lg font-bold">{item.value}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button id="chat-detective-start-btn" className="gradient-primary px-8 py-6 text-base font-bold text-primary-foreground" onClick={() => setPhase("select")}>
-                <MessageCircle className="mr-2 h-5 w-5" /> Chọn kịch bản!
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/games">← Về trang game</Link>
-              </Button>
-            </div>
-          </motion.section>
-        </div>
-      </div>
+      <GameIntroHero
+        illustrationSrc={introSvg}
+        eyebrow="🕵️ Mini Game · Chat simulator"
+        title="Thám Tử Mạng"
+        description="Nhập vai trong các cuộc trò chuyện nguy hiểm. Đọc kỹ từng tin nhắn và chọn cách phản hồi đúng đắn để vượt qua mọi tình huống!"
+        stats={[
+          { label: "Kịch bản", value: `${CHAT_SCENARIOS.length} tình huống` },
+          { label: "Dạng chơi", value: "Chat simulator" },
+          { label: "Kỹ năng", value: "Phán đoán" },
+        ]}
+        rules={[
+          { text: "Chọn một kịch bản để bắt đầu" },
+          { text: "Đọc từng tin nhắn xuất hiện theo thứ tự" },
+          { text: "Chọn cách phản hồi phù hợp nhất" },
+          { text: "Mỗi lựa chọn dẫn đến kết cục khác nhau" },
+        ]}
+        startLabel="Chọn kịch bản!"
+        onStart={() => setPhase("select")}
+        bgGradient="linear-gradient(135deg,#0a0d14 0%,#0f172a 50%,#0a0d14 100%)"
+        accentColor="#0ea5e9"
+        buttonIcon={<MessageCircle className="h-5 w-5" />}
+      />
     );
   }
 
