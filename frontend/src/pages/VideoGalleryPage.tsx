@@ -51,7 +51,6 @@ export default function VideoGalleryPage() {
   const [isMoreLoading, setIsMoreLoading] = useState(false);
 
   const playerRef = useRef<any>(null);
-  const [sentinelNode, setSentinelNode] = useState<HTMLDivElement | null>(null);
 
   // Hiển thị nút "Lên đầu trang" khi cuộn xuống dưới
   useEffect(() => {
@@ -220,35 +219,14 @@ export default function VideoGalleryPage() {
     setVisibleVideosCount(6);
   }, [selectedCourseTab, searchQuery]);
 
-  // Infinite Scroll bằng Intersection Observer
-  useEffect(() => {
-    if (loading || isMoreLoading || !sentinelNode) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const totalAvailable = searchQuery !== ""
-          ? searchedVideos.length
-          : selectedCourseTab === "all"
-            ? shuffledVideos.length
-            : allVideos.filter(v => String(v.courseId) === selectedCourseTab).length;
-
-        if (entries[0].isIntersecting && totalAvailable > visibleVideosCount) {
-          setIsMoreLoading(true);
-          setTimeout(() => {
-            setVisibleVideosCount((prev) => prev + 6);
-            setIsMoreLoading(false);
-          }, 1000); // Delay 1 giây mô phỏng tải chậm để thấy Skeleton Card của Youtube
-        }
-      },
-      { threshold: 0.1, rootMargin: "50px" }
-    );
-
-    observer.observe(sentinelNode);
-
-    return () => {
-      observer.unobserve(sentinelNode);
-    };
-  }, [loading, shuffledVideos, selectedCourseTab, searchQuery, visibleVideosCount, isMoreLoading, searchedVideos.length, allVideos, sentinelNode]);
+  // Hàm tải thêm video bằng nút Xem thêm
+  const handleLoadMore = () => {
+    setIsMoreLoading(true);
+    setTimeout(() => {
+      setVisibleVideosCount((prev) => prev + 6);
+      setIsMoreLoading(false);
+    }, 800); // Tạo độ trễ nhẹ để hiển thị hiệu ứng Skeleton mượt mà
+  };
 
   // Nhóm các khóa học có ít nhất 1 bài học video (để làm Tab)
   const coursesWithVideos = courses.map((course) => {
@@ -541,15 +519,33 @@ export default function VideoGalleryPage() {
                         {searchedVideos.slice(0, visibleVideosCount).map((lesson) => (
                           <VideoCard key={lesson.id} lesson={lesson} />
                         ))}
-                        {/* Skeleton Cards để giữ chỗ */}
-                        {searchedVideos.length > visibleVideosCount && [1, 2, 3].map((n) => (
+                        {/* Skeleton Cards để giữ chỗ khi đang tải */}
+                        {isMoreLoading && [1, 2, 3].map((n) => (
                           <VideoCardSkeleton key={`skeleton-${n}`} />
                         ))}
                       </div>
 
-                      {/* Sentinel thực sự đặt dưới cùng ngoài Grid */}
+                      {/* Nút Xem thêm */}
                       {searchedVideos.length > visibleVideosCount && (
-                        <div ref={setSentinelNode} className="h-2 w-full mt-4" />
+                        <div className="w-full flex justify-center py-8">
+                          <Button
+                            onClick={handleLoadMore}
+                            disabled={isMoreLoading}
+                            className="gradient-primary text-primary-foreground rounded-full px-8 py-6 font-semibold flex items-center gap-2 hover:scale-105 active:scale-95 shadow-md hover:shadow-primary/20 transition-all duration-200"
+                          >
+                            {isMoreLoading ? (
+                              <>
+                                <RefreshCw className="h-5 w-5 animate-spin" />
+                                Đang tải thêm...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="h-5 w-5" />
+                                Xem thêm bài giảng
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       )}
 
                       {/* Kết thúc danh sách tìm kiếm */}
@@ -575,15 +571,33 @@ export default function VideoGalleryPage() {
                     {shuffledVideos.slice(0, visibleVideosCount).map((lesson) => (
                       <VideoCard key={lesson.id} lesson={lesson} />
                     ))}
-                    {/* Skeleton Cards để giữ chỗ */}
-                    {shuffledVideos.length > visibleVideosCount && [1, 2, 3].map((n) => (
+                    {/* Skeleton Cards để giữ chỗ khi đang tải */}
+                    {isMoreLoading && [1, 2, 3].map((n) => (
                       <VideoCardSkeleton key={`skeleton-${n}`} />
                     ))}
                   </div>
 
-                  {/* Sentinel thực sự đặt dưới cùng ngoài Grid */}
+                  {/* Nút Xem thêm */}
                   {shuffledVideos.length > visibleVideosCount && (
-                    <div ref={setSentinelNode} className="h-2 w-full mt-4" />
+                    <div className="w-full flex justify-center py-8">
+                      <Button
+                        onClick={handleLoadMore}
+                        disabled={isMoreLoading}
+                        className="gradient-primary text-primary-foreground rounded-full px-8 py-6 font-semibold flex items-center gap-2 hover:scale-105 active:scale-95 shadow-md hover:shadow-primary/20 transition-all duration-200"
+                      >
+                        {isMoreLoading ? (
+                          <>
+                            <RefreshCw className="h-5 w-5 animate-spin" />
+                            Đang tải thêm...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-5 w-5" />
+                            Xem thêm bài giảng
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   )}
 
                   {/* Kết thúc danh sách mặc định */}
@@ -615,15 +629,33 @@ export default function VideoGalleryPage() {
                           {courseVideos.slice(0, visibleVideosCount).map((lesson) => (
                             <VideoCard key={lesson.id} lesson={lesson} />
                           ))}
-                          {/* Skeleton Cards để giữ chỗ */}
-                          {courseVideos.length > visibleVideosCount && [1, 2, 3].map((n) => (
+                          {/* Skeleton Cards để giữ chỗ khi đang tải */}
+                          {isMoreLoading && [1, 2, 3].map((n) => (
                             <VideoCardSkeleton key={`skeleton-${n}`} />
                           ))}
                         </div>
 
-                        {/* Sentinel thực sự đặt dưới cùng ngoài Grid */}
+                        {/* Nút Xem thêm */}
                         {courseVideos.length > visibleVideosCount && (
-                          <div ref={setSentinelNode} className="h-2 w-full mt-4" />
+                          <div className="w-full flex justify-center py-8">
+                            <Button
+                              onClick={handleLoadMore}
+                              disabled={isMoreLoading}
+                              className="gradient-primary text-primary-foreground rounded-full px-8 py-6 font-semibold flex items-center gap-2 hover:scale-105 active:scale-95 shadow-md hover:shadow-primary/20 transition-all duration-200"
+                            >
+                              {isMoreLoading ? (
+                                <>
+                                  <RefreshCw className="h-5 w-5 animate-spin" />
+                                  Đang tải thêm...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="h-5 w-5" />
+                                  Xem thêm bài giảng
+                                </>
+                              )}
+                            </Button>
+                          </div>
                         )}
 
                         {/* Kết thúc danh sách khóa học cụ thể */}

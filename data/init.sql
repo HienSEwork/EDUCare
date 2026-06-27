@@ -94,7 +94,11 @@ CREATE TABLE `chat_messages` (
   `user_id` varchar(36) DEFAULT NULL,
   `author_name` varchar(120) NOT NULL,
   `content` text NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `image_url` varchar(500) DEFAULT NULL,
+  `audio_url` varchar(500) DEFAULT NULL,
+  `audio_name` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_system` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -151,7 +155,11 @@ CREATE TABLE `community_posts` (
   `anonymous` tinyint(1) NOT NULL DEFAULT 0,
   `content` text NOT NULL,
   `likes_count` int(11) NOT NULL DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `link_url` varchar(512) DEFAULT NULL,
+  `link_title` varchar(255) DEFAULT NULL,
+  `link_description` varchar(512) DEFAULT NULL,
+  `link_image` varchar(512) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -177,6 +185,7 @@ CREATE TABLE `community_replies` (
   `id` bigint(20) NOT NULL,
   `post_id` bigint(20) NOT NULL,
   `user_id` varchar(36) DEFAULT NULL,
+  `parent_id` bigint(20) DEFAULT NULL,
   `author_name` varchar(120) NOT NULL,
   `anonymous` tinyint(1) NOT NULL DEFAULT 0,
   `content` text NOT NULL,
@@ -2497,7 +2506,8 @@ ALTER TABLE `community_post_likes`
 ALTER TABLE `community_replies`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_community_reply_post` (`post_id`),
-  ADD KEY `fk_community_reply_user` (`user_id`);
+  ADD KEY `fk_community_reply_user` (`user_id`),
+  ADD KEY `fk_community_reply_parent` (`parent_id`);
 
 --
 -- Indexes for table `community_reply_likes`
@@ -2816,7 +2826,8 @@ ALTER TABLE `community_post_likes`
 --
 ALTER TABLE `community_replies`
   ADD CONSTRAINT `fk_community_reply_post` FOREIGN KEY (`post_id`) REFERENCES `community_posts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_community_reply_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_community_reply_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_community_reply_parent` FOREIGN KEY (`parent_id`) REFERENCES `community_replies` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `community_reply_likes`
@@ -2996,6 +3007,180 @@ ALTER TABLE `payment_transactions`
 --
 ALTER TABLE `recommend_questions`
   ADD CONSTRAINT `fk_recommend_questions_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE;
+
+--
+-- Modifications for V12 Community Features Redesign
+--
+ALTER TABLE `chat_rooms` ADD COLUMN `owner_id` varchar(36) DEFAULT NULL;
+ALTER TABLE `chat_rooms` ADD CONSTRAINT `fk_chat_rooms_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+CREATE TABLE `chat_room_members` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `room_id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` varchar(50) NOT NULL DEFAULT 'ACTIVE',
+  `role` varchar(50) NOT NULL DEFAULT 'MEMBER',
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_chat_room_members_room` FOREIGN KEY (`room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_chat_room_members_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `community_reports` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `reporter_id` varchar(36) NOT NULL,
+  `post_id` bigint(20) DEFAULT NULL,
+  `reply_id` bigint(20) DEFAULT NULL,
+  `reason` varchar(255) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'PENDING',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_community_reports_reporter` FOREIGN KEY (`reporter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_community_reports_post` FOREIGN KEY (`post_id`) REFERENCES `community_posts` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_community_reports_reply` FOREIGN KEY (`reply_id`) REFERENCES `community_replies` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Modifications for V13 Chat Gamification
+--
+CREATE TABLE `chat_message_reactions` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `message_id` bigint(20) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `emoji` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_chat_message_reactions_user` (`message_id`, `user_id`),
+  CONSTRAINT `fk_chat_message_reactions_message` FOREIGN KEY (`message_id`) REFERENCES `chat_messages` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_chat_message_reactions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Modifications for V15 Community Optimization
+--
+ALTER TABLE `community_posts` ADD COLUMN `pinned` tinyint(1) NOT NULL DEFAULT 0;
+
+ALTER TABLE `chat_rooms` ADD COLUMN `pinned_message_id` bigint(20) DEFAULT NULL;
+ALTER TABLE `chat_rooms` ADD CONSTRAINT `fk_chat_rooms_pinned_msg` FOREIGN KEY (`pinned_message_id`) REFERENCES `chat_messages` (`id`) ON DELETE SET NULL;
+
+--
+-- Modifications for V17 Community Forum Redesign
+--
+CREATE TABLE `community_categories` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(120) NOT NULL,
+  `slug` varchar(120) NOT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `icon` varchar(100) DEFAULT NULL,
+  `color_theme` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_comm_cat_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `community_categories` (`id`, `name`, `slug`, `description`, `icon`, `color_theme`) VALUES
+(1, 'Cảm xúc & Tâm lý', 'cam-xuc-tam-ly', 'Nơi chia sẻ, giải tỏa những lo lắng, áp lực tinh thần học tập và cuộc sống.', 'Smile', 'emerald'),
+(2, 'Học tập & Định hướng', 'hoc-tap-dinh-huong', 'Chia sẻ phương pháp học tập hiệu quả, tài liệu ôn thi và thảo luận định hướng tương lai.', 'BookOpen', 'indigo'),
+(3, 'Gia đình & Bạn bè', 'gia-dinh-ban-be', 'Tâm sự về những mâu thuẫn, cách ứng xử và gắn kết tình cảm với bố mẹ, bạn bè.', 'Users', 'amber'),
+(4, 'An toàn & Kỹ năng', 'an-toan-ky-nang', 'Trang bị kỹ năng tự bảo vệ mình trên không gian mạng và phòng chống bạo lực học đường.', 'Shield', 'rose'),
+(5, 'Góc tâm sự tự do', 'tam-su-tu-do', 'Không gian chia sẻ tự do mọi câu chuyện đời thường thú vị của bạn.', 'MessageCircle', 'violet');
+
+ALTER TABLE `community_posts` ADD COLUMN `category_id` bigint(20) DEFAULT NULL;
+ALTER TABLE `community_posts` ADD COLUMN `title` varchar(255) DEFAULT NULL;
+ALTER TABLE `community_posts` ADD COLUMN `image_url` varchar(500) DEFAULT NULL;
+ALTER TABLE `community_posts` ADD CONSTRAINT `fk_community_posts_category` FOREIGN KEY (`category_id`) REFERENCES `community_categories` (`id`) ON DELETE SET NULL;
+
+UPDATE `community_posts` SET `category_id` = 1 WHERE `category_id` IS NULL;
+
+ALTER TABLE `community_replies` ADD COLUMN `image_url` varchar(500) DEFAULT NULL;
+
+--
+-- Modifications for V18 Chat Room Management
+--
+-- Modifications for V19 Chat Sticker Management
+--
+CREATE TABLE IF NOT EXISTS `chat_stickers` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(120) NOT NULL,
+  `url` varchar(512) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `category` varchar(50) NOT NULL,
+  `keywords` varchar(500) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `chat_stickers` (`name`, `url`, `type`, `category`, `keywords`) VALUES
+('🧸 Gấu học bài', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f9f8.png', 'STICKER', 'study', 'gau, hoc tap, doc sach, study, reading, cute'),
+('🎓 Tốt nghiệp', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f393.png', 'STICKER', 'study', 'tot nghiep, bang, grad, study, thi cu'),
+('📝 Ghi chép', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4dd.png', 'STICKER', 'study', 'viet, ghi chep, not, memo, write'),
+('💡 Sáng tạo', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4a1.png', 'STICKER', 'study', 'y tuong, sang tao, bong den, idea, light'),
+('📚 Sách vở', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4da.png', 'STICKER', 'study', 'sach, hoc, books, study, thu vien'),
+('🔥 Quyết tâm', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f525.png', 'STICKER', 'motivation', 'lua, quyet tam, chay, fire, hot'),
+('💪 Cố lên', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4aa.png', 'STICKER', 'motivation', 'suc manh, co len, co bap, strong, fight'),
+('💯 Điểm tuyệt đối', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4af.png', 'STICKER', 'motivation', '100 diem, tuyet doi, perfect, good, win'),
+('🏆 Cúp vô địch', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f3c6.png', 'STICKER', 'motivation', 'cup, vo dich, chien thang, trophy, winner'),
+('🚀 Bứt phá', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f680.png', 'STICKER', 'motivation', 'ten lua, but pha, bay cao, rocket, go'),
+('❤️ Yêu thương', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/2764.png', 'STICKER', 'emotion', 'tim do, yeu, love, heart'),
+('Mat tim', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f60d.png', 'STICKER', 'emotion', 'mat tim, yeu thich, thich, love, crush'),
+('🤔 Suy nghĩ', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f914.png', 'STICKER', 'emotion', 'suy nghi, phan van, think, wonder'),
+('🙏 Trân trọng', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f64f.png', 'STICKER', 'emotion', 'cam on, cau nguyen, pray, thanks, respect'),
+('🥺 Chia sẻ', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f97a.png', 'STICKER', 'emotion', 'buon, mong doi, chia se, please, sad'),
+('😭 Khóc thương', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f62d.png', 'STICKER', 'emotion', 'khoc, hu hu, buon ba, cry, sad'),
+('😂 Cười lớn', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f602.png', 'STICKER', 'funny', 'cuoi, haha, funny, laugh, lol'),
+('😎 Ngầu', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f60e.png', 'STICKER', 'funny', 'kinh ram, ngau, cool, pro, smart'),
+('✨ Tỏa sáng', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/2728.png', 'STICKER', 'funny', 'lap lanh, sao, sparkles, bright, magic'),
+('🥳 Tiệc tùng', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f973.png', 'STICKER', 'funny', 'vui ve, party, celebrate, happy'),
+('🤩 Ngưỡng mộ', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f929.png', 'STICKER', 'funny', 'mat sao, vip, star eyes, admire, wow'),
+('🎉 Chúc mừng', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f389.png', 'STICKER', 'congrats', 'chuc mung, phao hoa, tada, congrats, party'),
+('👍 Tuyệt vời', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f44d.png', 'STICKER', 'congrats', 'like, tot, tuyet, thumbs up, good'),
+('👏 Vỗ tay', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f44f.png', 'STICKER', 'congrats', 'vo tay, hoan ho, clapping, bravo'),
+('💖 Yêu thương nhiều', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f496.png', 'STICKER', 'congrats', 'trai tim lap lanh, yeu quy, love, heart'),
+('Cố gắng học tập ✍️', 'https://i.giphy.com/6XX4V0O8a0xdS.gif', 'GIF', 'study', 'hoc tap, study, viet bai, write, focus, anime'),
+('Đọc sách thư giãn 📚', 'https://i.giphy.com/d31w24psGYeekCZy.gif', 'GIF', 'study', 'doc sach, read, book, chill, thu gian'),
+('Tập trung tối đa 🧠', 'https://i.giphy.com/1oBwBVLGoLteCP2kyD.gif', 'GIF', 'study', 'tap trung, suy nghi, think, focus, work'),
+('Nghiên cứu hăng say 🔬', 'https://i.giphy.com/l0K408vxIo667ELyo.gif', 'GIF', 'study', 'tim toi, nghien cuu, hoc tap, science, look'),
+('Cố lên bạn ơi! 🔥', 'https://i.giphy.com/g9kHnL5ReUUww.gif', 'GIF', 'motivation', 'co len, fighting, quyet tam, power, minions'),
+('Quyết tâm chiến thắng 🚀', 'https://i.giphy.com/KEVNWkmWm6dm8.gif', 'GIF', 'motivation', 'quyet tam, but pha, fighting, co len, yes'),
+('Tự tin tỏa sáng ✨', 'https://i.giphy.com/1CUPpMbgUPCvRXdpc3.gif', 'GIF', 'motivation', 'tu tin, meo ngau, cool, confidence, cat'),
+('Bắt đầu thôi! 🏁', 'https://i.giphy.com/l0G18VkBYupF9ja36.gif', 'GIF', 'motivation', 'bat dau, dong y, san sang, ready, go, start'),
+('Gửi cái ôm ấm áp 🤗', 'https://i.giphy.com/ABjJcFelbuanC.gif', 'GIF', 'emotion', 'om, chia se, comfort, hug, love, cute'),
+('Vỗ về an ủi 🌸', 'https://i.giphy.com/xcIlI0798VgnPYUQwj.gif', 'GIF', 'emotion', 'an ui, vo ve, comfort, pat, cat, cute'),
+('Khóc một chút rồi thôi 😭', 'https://i.giphy.com/59d1zo8SUSaUU.gif', 'GIF', 'emotion', 'khoc, buon, cry, sad, comfort'),
+('Thở phào nhẹ nhõm 😌', 'https://i.giphy.com/5tmRHwTlHAA9WkVxTU.gif', 'GIF', 'emotion', 'nhe nhom, het ap luc, relief, sigh, happy'),
+('Cười sảng khoái 😂', 'https://i.giphy.com/3o7TKSjRrfIPjeiVyM.gif', 'GIF', 'funny', 'cuoi, funny, haha, laugh, happy'),
+('Mèo nhảy múa 🐱', 'https://i.giphy.com/wW95fEq09hOI8.gif', 'GIF', 'funny', 'nhay mua, dance, meo, funny, cat'),
+('Thả tim ngập tràn 💖', 'https://i.giphy.com/paXjnIZYvglz2.gif', 'GIF', 'funny', 'trai tim, love, heart, cute, de thuong'),
+('Xin chào bạn nhé 👋', 'https://i.giphy.com/qGvmdlfJ0FtBSwxqA3.gif', 'GIF', 'funny', 'xin chao, hello, hi, welcome'),
+('Tuyệt vời quá! 🎉', 'https://i.giphy.com/879RsXB8GvEuY95LNl.gif', 'GIF', 'congrats', 'tuyet voi, chuc mung, awesome, great, congrats'),
+('Vỗ tay tán thưởng 👏', 'https://i.giphy.com/tODygE8KCqBzy.gif', 'GIF', 'congrats', 'vo tay, hoan ho, applause, clapping, good'),
+('Bắn pháo hoa ăn mừng 🎆', 'https://i.giphy.com/26tOZ42Mg6pbTUPHW.gif', 'GIF', 'congrats', 'phao hoa, chuc mung, celebrate, party, fireworks'),
+('Cảm ơn rất nhiều! 🙏', 'https://i.giphy.com/26gsjCZpPolPr3sBy.gif', 'GIF', 'congrats', 'cam on, thank you, thanks, appreciate'),
+('📖 Sách mở', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4d6.png', 'STICKER', 'study', 'sach mo, book, open, doc, study'),
+('✏️ Bút chì', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/270f.png', 'STICKER', 'study', 'but chi, pencil, viet, write, study'),
+('🏫 Trường học', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f3eb.png', 'STICKER', 'study', 'truong hoc, school, study'),
+('⭐ Ngôi sao', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/2b50.png', 'STICKER', 'motivation', 'sao, star, hot, motivation, win'),
+('🎯 Mục tiêu', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f3af.png', 'STICKER', 'motivation', 'muc tieu, target, bullseye, focus, motivation'),
+('🦁 Sư tử dũng mãnh', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f981.png', 'STICKER', 'motivation', 'su tu, lion, brave, strong, motivation'),
+('🤝 Đồng hành', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f91d.png', 'STICKER', 'emotion', 'bat tay, handshake, dong hanh, help, team'),
+('🤗 Ôm ấm áp', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f917.png', 'STICKER', 'emotion', 'om, hug, cam xuc, emotion, friendly'),
+('😢 Tiếc nuối', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f622.png', 'STICKER', 'emotion', 'buon, khoc nhe, sad, cry, emotion'),
+('🤪 Nhí nhố', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f92a.png', 'STICKER', 'funny', 'nghich, funny, crazy, vui'),
+('👻 Con ma vui vẻ', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f47b.png', 'STICKER', 'funny', 'con ma, ghost, funny, cuoi, treu'),
+('😸 Mèo vui sướng', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f638.png', 'STICKER', 'funny', 'meo cuoi, cat, happy, funny'),
+('🥂 Cạn ly ăn mừng', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f942.png', 'STICKER', 'congrats', 'chuc mung, can ly, cheers, congrats'),
+('🎖️ Huy chương danh dự', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f396.png', 'STICKER', 'congrats', 'huy chuong, medal, congrats, win'),
+('🎈 Bong bóng bay', 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f388.png', 'STICKER', 'congrats', 'bong bong, balloon, congrats, party'),
+('Chăm chỉ học bài ✍️', 'https://i.giphy.com/SgltyjZnNFBoFFvcg4.gif', 'GIF', 'study', 'viet, write, study, anime, hard'),
+('Học nhóm thảo luận 👥', 'https://i.giphy.com/fSYjlNlW2eDJCSgGvt.gif', 'GIF', 'study', 'thao luan, hoc nhom, study, group, discuss'),
+('Hành động ngay! 💪', 'https://i.giphy.com/UqZ4imFIoljlr5O2sM.gif', 'GIF', 'motivation', 'quyet tam, do it, shia, motivation, fight'),
+('Thành công xuất sắc 🎯', 'https://i.giphy.com/OoTKFwKiOAbYc.gif', 'GIF', 'motivation', 'thanh cong, win, kid, motivation, success'),
+('Buồn rười rượi 😢', 'https://i.giphy.com/ISOckXUybVfQ4.gif', 'GIF', 'emotion', 'buon, sad, stitch, emotion, cry'),
+('Gửi tình yêu thương ❤️', 'https://i.giphy.com/5OqXb948EBkyUcnwHt.gif', 'GIF', 'emotion', 'om, hug, love, emotion, bear'),
+('Minion cười ngặt nghẽo 😂', 'https://i.giphy.com/11s7Ke7jcNxCHS.gif', 'GIF', 'funny', 'cuoi, minion, laugh, funny, lol'),
+('Mèo quẩy hết mình 🕺', 'https://i.giphy.com/GeimqsH0TLDt4tScGw.gif', 'GIF', 'funny', 'nhay, cat, dance, funny, happy'),
+('Tiệc tùng tưng bừng 🎉', 'https://i.giphy.com/dq5W62htggVeOI7oO6.gif', 'GIF', 'congrats', 'party, celebrate, congrats, fun'),
+('Pháo hoa rực rỡ 🎆', 'https://i.giphy.com/13n4Hd98ewKJsQ.gif', 'GIF', 'congrats', 'phao hoa, congrats, beautiful, fireworks');
+
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 

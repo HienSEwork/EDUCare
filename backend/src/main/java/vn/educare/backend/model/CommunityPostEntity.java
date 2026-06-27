@@ -37,4 +37,28 @@ public class CommunityPostEntity {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
+
+  @Column(name = "link_url", length = 512)
+  private String linkUrl;
+
+  @Column(name = "link_title")
+  private String linkTitle;
+
+  @Column(name = "link_description", length = 512)
+  private String linkDescription;
+
+  @Column(name = "link_image", length = 512)
+  private String linkImage;
+
+  @Column(nullable = false)
+  private Boolean pinned = false;
+
+  @Column(name = "category_id")
+  private Long categoryId;
+
+  @Column
+  private String title;
+
+  @Column(name = "image_url", length = 500)
+  private String imageUrl;
 }

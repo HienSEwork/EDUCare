@@ -32,6 +32,18 @@ public class ChatMessageEntity {
   @Column(nullable = false, columnDefinition = "TEXT")
   private String content;
 
+  @Column(name = "image_url")
+  private String imageUrl;
+
+  @Column(name = "audio_url")
+  private String audioUrl;
+
+  @Column(name = "audio_name")
+  private String audioName;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
+
+  @Column(name = "is_system", nullable = false)
+  private Boolean isSystem = false;
 }

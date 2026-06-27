@@ -40,4 +40,10 @@ public class CommunityReplyEntity {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
+
+  @Column(name = "parent_id")
+  private Long parentId;
+
+  @Column(name = "image_url", length = 500)
+  private String imageUrl;
 }

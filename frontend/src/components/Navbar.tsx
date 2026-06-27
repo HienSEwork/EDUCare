@@ -29,6 +29,7 @@ import { getAvatarTone, getInitials } from "@/lib/avatarTheme";
 import { cn } from "@/lib/utils";
 import { NAV_COPY } from "@/content/socialCopy";
 import type { DashboardResponse, NotificationItem } from "@/types/api";
+import { toast } from "sonner";
 
 const DROPDOWN_CLOSE_DELAY = 800;
 const DEFAULT_HEADER_SHELL_WIDTH = "max-w-[1080px]";
@@ -104,6 +105,32 @@ export default function Navbar() {
       window.clearInterval(intervalId);
     };
   }, [user]);
+
+  const handleAcceptInvite = async (slug: string) => {
+    try {
+      await apiRequest(`/community/chat-rooms/${slug}/accept`, { method: "POST" });
+      toast.success("Đã đồng ý tham gia nhóm chat.");
+      const response = await apiRequest<DashboardResponse>("/dashboard");
+      setNotifications(response.notifications);
+      setNotificationCount(response.notifications.filter((item) => !item.read).length);
+      window.dispatchEvent(new Event("chat_room_update"));
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Có lỗi xảy ra");
+    }
+  };
+
+  const handleRejectInvite = async (slug: string) => {
+    try {
+      await apiRequest(`/community/chat-rooms/${slug}/reject`, { method: "POST" });
+      toast.success("Đã từ chối lời mời.");
+      const response = await apiRequest<DashboardResponse>("/dashboard");
+      setNotifications(response.notifications);
+      setNotificationCount(response.notifications.filter((item) => !item.read).length);
+      window.dispatchEvent(new Event("chat_room_update"));
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Có lỗi xảy ra");
+    }
+  };
 
   const clearCloseTimer = () => {
     if (closeTimerRef.current !== null) {
@@ -254,6 +281,25 @@ export default function Navbar() {
                                 {!notification.read ? <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-primary" /> : null}
                               </div>
                               <p className="mt-1 text-sm leading-6 text-muted-foreground">{notification.message}</p>
+                              {notification.type.startsWith("chat_invite:") && !notification.read ? (
+                                <div className="mt-2 flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleAcceptInvite(notification.type.replace("chat_invite:", ""))}
+                                    className="bg-primary text-white text-xs px-3 py-1 h-7 rounded-lg hover:bg-primary/90"
+                                  >
+                                    Đồng ý
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleRejectInvite(notification.type.replace("chat_invite:", ""))}
+                                    className="bg-transparent border-red-200 text-red-600 text-xs px-3 py-1 h-7 rounded-lg hover:bg-red-50 hover:text-red-700"
+                                  >
+                                    Từ chối
+                                  </Button>
+                                </div>
+                              ) : null}
                               <p className="mt-2 text-xs text-muted-foreground">{formatDate(notification.createdAt)}</p>
                             </div>
                           ))

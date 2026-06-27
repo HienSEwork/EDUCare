@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
@@ -8,7 +9,7 @@ import {
   BookOpen, FileText, Gamepad2, LogOut, Plus, Shield, Sparkles, Trash2, Users,
   Home, MessageSquare, BarChart2, Settings, Bell, Search,
   Trophy, HelpCircle, Database, TrendingUp, ArrowUpRight, Menu,
-  HardDrive, ChevronDown, AlertTriangle, X,
+  HardDrive, ChevronDown, AlertTriangle, X, Smile,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -18,10 +19,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/sonner";
 import { ApiError, apiRequest } from "@/lib/api/client";
-import type { AdminContentResponse, AdminDashboardResponse, AdminUserListResponse, AdminUserResponse } from "@/types/api";
+import type { AdminContentResponse, AdminDashboardResponse, AdminUserListResponse, AdminUserResponse, CommunityReport, AnonymousQuestion, ChatStickerResponse } from "@/types/api";
 
-type SidebarTab = "overview" | "lessons" | "blogPosts" | "quizQuestions" | "games" | "students" | "discussions" | "reports" | "settings";
-type CrudTab = "lessons" | "blogPosts" | "quizQuestions" | "games";
+type SidebarTab = "overview" | "lessons" | "blogPosts" | "quizQuestions" | "games" | "students" | "discussions" | "reports" | "settings" | "questions" | "stickers";
+type CrudTab = "lessons" | "blogPosts" | "quizQuestions" | "games" | "stickers" | "reports" | "questions";
 
 type EditableLesson = { id: number; slug: string; title: string; summary: string; content: string; order: number; isFree: boolean };
 type EditableBlogPost = { id: number; slug: string; title: string; excerpt: string; content: string; category: string; date: string; readTime: string; emoji: string };
@@ -89,11 +90,13 @@ const SIDEBAR_NAV: { id: SidebarTab; label: string; Icon: React.ElementType }[] 
   { id: "students", label: "Học viên", Icon: Users },
   { id: "discussions", label: "Thảo luận", Icon: MessageSquare },
   { id: "games", label: "Kho nội dung", Icon: Database },
-  { id: "reports", label: "Báo cáo", Icon: BarChart2 },
+  { id: "stickers", label: "Nhãn dán & GIF", Icon: Smile },
+  { id: "reports", label: "Báo cáo vi phạm", Icon: AlertTriangle },
+  { id: "questions", label: "Câu hỏi ẩn danh", Icon: HelpCircle },
   { id: "settings", label: "Cài đặt", Icon: Settings },
 ];
 
-const CRUD_TABS = new Set<SidebarTab>(["lessons", "blogPosts", "quizQuestions", "games"]);
+const CRUD_TABS = new Set<SidebarTab>(["lessons", "blogPosts", "quizQuestions", "games", "stickers", "reports", "questions"]);
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -119,25 +122,89 @@ export default function AdminDashboardPage() {
   const [editRole, setEditRole] = useState("");
   const [userSaving, setUserSaving] = useState(false);
 
+  // Custom states from HEAD
+  const [stickers, setStickers] = useState<ChatStickerResponse[]>([]);
+  const [reports, setReports] = useState<CommunityReport[]>([]);
+  const [questions, setQuestions] = useState<AnonymousQuestion[]>([]);
+  const [selectedReport, setSelectedReport] = useState<CommunityReport | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<AnonymousQuestion | null>(null);
+  const [answerText, setAnswerText] = useState("");
+
+  const [stickerForm, setStickerForm] = useState({
+    id: null as number | null,
+    name: "",
+    url: "",
+    type: "STICKER" as "STICKER" | "GIF",
+    category: "study",
+    keywordsString: "",
+  });
+
+  useEffect(() => {
+    setSelectedReport(null);
+    setSelectedQuestion(null);
+    setAnswerText("");
+  }, [sidebarTab]);
+
   const [lessonForm, setLessonForm] = useState({ id: null as number | null, slug: "", title: "", summary: "", content: "", order: "", isFree: true });
-  const [blogForm, setBlogForm] = useState({ id: null as number | null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: ADMIN_COPY.defaults.blogEmoji });
-  const [quizForm, setQuizForm] = useState({ id: null as number | null, slug: "", question: "", options: ["", "", "", ""], correct: "0", explanation: "", category: ADMIN_COPY.defaults.quizCategory, difficulty: ADMIN_COPY.defaults.quizDifficulty, active: true });
+  const [blogForm, setBlogForm] = useState({ id: null as number | null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: ADMIN_COPY.defaults.blogEmoji as string });
+  const [quizForm, setQuizForm] = useState({ id: null as number | null, slug: "", question: "", options: ["", "", "", ""], correct: "0", explanation: "", category: ADMIN_COPY.defaults.quizCategory as string, difficulty: ADMIN_COPY.defaults.quizDifficulty as string, active: true });
   const [gameForm, setGameForm] = useState({ id: null as number | null, slug: "", title: "", summary: "", description: "", gameType: "QUIZ", playPath: "", coverImage: "hero-illustration.png", accentColor: "#9b5de5", published: true });
 
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [d, c] = await Promise.all([
+      const [d, c, reportsResponse, questionsResponse, stickersResponse] = await Promise.all([
         apiRequest<AdminDashboardResponse>("/admin/dashboard"),
         apiRequest<AdminContentResponse>("/admin/content"),
+        apiRequest<CommunityReport[]>("/community/admin/reports"),
+        apiRequest<AnonymousQuestion[]>("/community/admin/questions"),
+        apiRequest<ChatStickerResponse[]>("/community/stickers"),
       ]);
       setDashboard(d);
       setContent(c);
+      setReports(reportsResponse);
+      setQuestions(questionsResponse);
+      setStickers(stickersResponse);
       setError(null);
     } catch (err) {
       setError(fallbackMessage(err, ADMIN_COPY.loadError));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const resolveReport = async (reportId: number, deleteContent: boolean) => {
+    setIsSaving(true);
+    try {
+      await apiRequest(`/community/admin/reports/${reportId}/resolve?deleteContent=${deleteContent}`, {
+        method: "PUT",
+      });
+      toast.success(deleteContent ? "Đã xóa nội dung vi phạm thành công." : "Đã bác bỏ báo cáo.");
+      await loadData();
+      setSelectedReport(null);
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể xử lý báo cáo."));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const answerQuestion = async (questionId: number) => {
+    if (!answerText.trim()) return;
+    setIsSaving(true);
+    try {
+      await apiRequest(`/community/admin/questions/${questionId}/answer`, {
+        method: "POST",
+        body: JSON.stringify({ answer: answerText.trim() }),
+      });
+      toast.success("Đã gửi câu trả lời cho câu hỏi ẩn danh thành công.");
+      await loadData();
+      setSelectedQuestion(null);
+      setAnswerText("");
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể gửi câu trả lời."));
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -173,11 +240,75 @@ export default function AdminDashboardPage() {
     if (CRUD_TABS.has(tab)) setActiveTab(tab as CrudTab);
   };
 
+  const resetStickerForm = () =>
+    setStickerForm({
+      id: null,
+      name: "",
+      url: "",
+      type: "STICKER",
+      category: "study",
+      keywordsString: "",
+    });
+
   const createNew = () => {
     if (activeTab === "lessons") resetLessonForm();
     else if (activeTab === "blogPosts") resetBlogForm();
     else if (activeTab === "quizQuestions") resetQuizForm();
-    else resetGameForm();
+    else if (activeTab === "games") resetGameForm();
+    else if (activeTab === "stickers") resetStickerForm();
+  };
+
+  const saveSticker = async () => {
+    setIsSaving(true);
+    try {
+      const keywords = stickerForm.keywordsString
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean);
+
+      const saved = await apiRequest<ChatStickerResponse>(
+        stickerForm.id ? `/admin/stickers/${stickerForm.id}` : "/admin/stickers",
+        {
+          method: stickerForm.id ? "PUT" : "POST",
+          body: JSON.stringify({
+            name: stickerForm.name,
+            url: stickerForm.url,
+            type: stickerForm.type,
+            category: stickerForm.category,
+            keywords,
+          }),
+        }
+      );
+      toast.success("Đã lưu nhãn dán/GIF thành công.");
+      await loadData();
+      setStickerForm({
+        id: saved.id,
+        name: saved.name,
+        url: saved.url,
+        type: saved.type,
+        category: saved.category,
+        keywordsString: saved.keywords ? saved.keywords.join(", ") : "",
+      });
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể lưu nhãn dán/GIF."));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const deleteSticker = async () => {
+    if (!stickerForm.id) return;
+    setIsSaving(true);
+    try {
+      await apiRequest<void>(`/admin/stickers/${stickerForm.id}`, { method: "DELETE" });
+      toast.success("Đã xóa nhãn dán/GIF thành công.");
+      resetStickerForm();
+      await loadData();
+    } catch (requestError) {
+      toast.error(fallbackMessage(requestError, "Không thể xóa nhãn dán/GIF."));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const saveLesson = async () => {
@@ -348,6 +479,9 @@ export default function AdminDashboardPage() {
   const filteredPosts = useMemo(() => content?.blogPosts.filter(p => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)) ?? [], [content, q]);
   const filteredQuiz = useMemo(() => content?.quizQuestions.filter(qz => qz.question.toLowerCase().includes(q) || qz.category.toLowerCase().includes(q)) ?? [], [content, q]);
   const filteredGames = useMemo(() => content?.games.filter(g => g.title.toLowerCase().includes(q) || g.slug.includes(q)) ?? [], [content, q]);
+  const filteredStickers = useMemo(() => stickers.filter(s => s.name.toLowerCase().includes(q) || s.category.toLowerCase().includes(q)) ?? [], [stickers, q]);
+  const filteredReports = useMemo(() => reports.filter(r => r.reason.toLowerCase().includes(q) || r.contentPreview.toLowerCase().includes(q)) ?? [], [reports, q]);
+  const filteredQuestions = useMemo(() => questions.filter(qs => qs.question.toLowerCase().includes(q) || (qs.answer && qs.answer.toLowerCase().includes(q))) ?? [], [questions, q]);
 
   if (isLoading) {
     return (
@@ -452,19 +586,116 @@ export default function AdminDashboardPage() {
       ));
     }
 
-    if (filteredGames.length === 0) return <p className="py-8 text-center text-xs text-gray-400">{listSearch ? "Không tìm thấy kết quả" : "Chưa có trò chơi nào"}</p>;
-    return filteredGames.map(game => (
-      <button key={game.id} onClick={() => setGameForm({ id: game.id, slug: game.slug, title: game.title, summary: game.summary, description: game.description, gameType: game.gameType, playPath: game.playPath, coverImage: game.coverImage ?? "", accentColor: game.accentColor ?? "#9b5de5", published: game.published })}
-        className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${gameForm.id === game.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-gray-800">{game.title}</p>
-            <p className="mt-0.5 text-xs text-gray-500">{game.gameType} · {game.playPath}</p>
+    if (activeTab === "games") {
+      if (filteredGames.length === 0) return <p className="py-8 text-center text-xs text-gray-400">{listSearch ? "Không tìm thấy kết quả" : "Chưa có trò chơi nào"}</p>;
+      return filteredGames.map(game => (
+        <button key={game.id} onClick={() => setGameForm({ id: game.id, slug: game.slug, title: game.title, summary: game.summary, description: game.description, gameType: game.gameType, playPath: game.playPath, coverImage: game.coverImage ?? "", accentColor: game.accentColor ?? "#9b5de5", published: game.published })}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${gameForm.id === game.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-gray-800">{game.title}</p>
+              <p className="mt-0.5 text-xs text-gray-500">{game.gameType} · {game.playPath}</p>
+            </div>
+            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${game.published ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-400"}`}>{game.published ? "Hiển thị" : "Nháp"}</span>
           </div>
-          <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${game.published ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-400"}`}>{game.published ? "Hiển thị" : "Nháp"}</span>
-        </div>
-      </button>
-    ));
+        </button>
+      ));
+    }
+
+    if (activeTab === "stickers") {
+      if (filteredStickers.length === 0) return <p className="py-8 text-center text-xs text-gray-400">Không tìm thấy nhãn dán/GIF nào</p>;
+      return filteredStickers.map(st => (
+        <button key={st.id} onClick={() => setStickerForm({ id: st.id, name: st.name, url: st.url, type: st.type, category: st.category, keywordsString: st.keywords ? st.keywords.join(", ") : "" })}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${stickerForm.id === st.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-white/60 p-1">
+              <img src={st.url} alt={st.name} className="h-full w-full object-contain" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-gray-800">{st.name}</p>
+              <p className="mt-0.5 text-xs text-gray-500 truncate">Chủ đề: {st.category} · Từ khóa: {st.keywords?.join(", ")}</p>
+            </div>
+            <span className="shrink-0 rounded-full bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-600">{st.type}</span>
+          </div>
+        </button>
+      ));
+    }
+
+    if (activeTab === "reports") {
+      if (filteredReports.length === 0) return <p className="py-8 text-center text-xs text-gray-400">Không tìm thấy báo cáo nào</p>;
+      return filteredReports.map((report) => (
+        <button
+          key={report.id}
+          onClick={() => setSelectedReport(report)}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${selectedReport?.id === report.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"
+            }`}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="line-clamp-2 text-sm font-semibold text-gray-800">
+                Lý do: {report.reason}
+              </p>
+              <p className="mt-1 text-xs text-gray-500 line-clamp-1">
+                {report.contentPreview}
+              </p>
+              <p className="mt-1 text-[11px] text-gray-400">
+                Bởi: {report.reporterName} · {formatDate(report.createdAt)}
+              </p>
+            </div>
+            <span
+              className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${report.status === "PENDING"
+                  ? "bg-amber-50 text-amber-600"
+                  : report.status === "RESOLVED"
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "bg-gray-100 text-gray-400"
+                }`}
+            >
+              {report.status === "PENDING"
+                ? "Chờ duyệt"
+                : report.status === "RESOLVED"
+                  ? "Đã xử lý"
+                  : "Đã bác bỏ"}
+            </span>
+          </div>
+        </button>
+      ));
+    }
+
+    if (activeTab === "questions") {
+      if (filteredQuestions.length === 0) return <p className="py-8 text-center text-xs text-gray-400">Không tìm thấy câu hỏi nào</p>;
+      return filteredQuestions.map((q) => (
+        <button
+          key={q.id}
+          onClick={() => {
+            setSelectedQuestion(q);
+            setAnswerText(q.answer || "");
+          }}
+          className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${selectedQuestion?.id === q.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"
+            }`}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="line-clamp-2 text-sm font-semibold text-gray-800">
+                {q.question}
+              </p>
+              <p className="mt-1 text-[11px] text-gray-400">
+                Gửi lúc: {formatDate(q.createdAt)}
+              </p>
+            </div>
+            <span
+              className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${!q.answer || q.answer.trim() === ""
+                  ? "bg-amber-50 text-amber-600"
+                  : "bg-emerald-50 text-emerald-600"
+                }`}
+            >
+              {!q.answer || q.answer.trim() === "" ? "Chưa trả lời" : "Đã trả lời"}
+            </span>
+          </div>
+        </button>
+      ));
+    }
+
+    return null;
   };
 
   const renderEditor = () => {
@@ -576,39 +807,198 @@ export default function AdminDashboardPage() {
       </>
     );
 
-    return (
-      <>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">{ADMIN_COPY.editor.games}</p>
-            <h2 className="mt-1 text-xl font-bold text-gray-800">{gameForm.id ? ADMIN_COPY.titles.updateGame : ADMIN_COPY.titles.createGame}</h2>
+    if (activeTab === "games") {
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">{ADMIN_COPY.editor.games}</p>
+              <h2 className="mt-1 text-xl font-bold text-gray-800">{gameForm.id ? ADMIN_COPY.titles.updateGame : ADMIN_COPY.titles.createGame}</h2>
+            </div>
+            {gameForm.id ? <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => setConfirmDelete({ label: gameForm.title, onConfirm: deleteGame })} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
           </div>
-          {gameForm.id ? <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => setConfirmDelete({ label: gameForm.title, onConfirm: deleteGame })} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
-        </div>
-        <div className="mt-5 space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div><Label>Slug</Label><Input value={gameForm.slug} onChange={e => setGameForm(p => ({ ...p, slug: e.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.gameType}</Label><Input value={gameForm.gameType} onChange={e => setGameForm(p => ({ ...p, gameType: e.target.value }))} /></div>
+          <div className="mt-5 space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div><Label>Slug</Label><Input value={gameForm.slug} onChange={e => setGameForm(p => ({ ...p, slug: e.target.value }))} /></div>
+              <div><Label>{ADMIN_COPY.fields.gameType}</Label><Input value={gameForm.gameType} onChange={e => setGameForm(p => ({ ...p, gameType: e.target.value }))} /></div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div><Label>{ADMIN_COPY.fields.title}</Label><Input value={gameForm.title} onChange={e => setGameForm(p => ({ ...p, title: e.target.value }))} /></div>
+              <div><Label>{ADMIN_COPY.fields.playPath}</Label><Input value={gameForm.playPath} onChange={e => setGameForm(p => ({ ...p, playPath: e.target.value }))} /></div>
+            </div>
+            <div><Label>{ADMIN_COPY.fields.summary}</Label><Textarea value={gameForm.summary} onChange={e => setGameForm(p => ({ ...p, summary: e.target.value }))} /></div>
+            <div><Label>{ADMIN_COPY.fields.content}</Label><Textarea className="min-h-[200px]" value={gameForm.description} onChange={e => setGameForm(p => ({ ...p, description: e.target.value }))} /></div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div><Label>{ADMIN_COPY.fields.coverImage}</Label><Input value={gameForm.coverImage} onChange={e => setGameForm(p => ({ ...p, coverImage: e.target.value }))} /></div>
+              <div><Label>{ADMIN_COPY.fields.accentColor}</Label><Input value={gameForm.accentColor} onChange={e => setGameForm(p => ({ ...p, accentColor: e.target.value }))} /></div>
+            </div>
+            <label className="flex items-center gap-3 rounded-xl border border-gray-100 px-4 py-3 bg-gray-50"><input type="checkbox" checked={gameForm.published} onChange={e => setGameForm(p => ({ ...p, published: e.target.checked }))} /><span className="text-sm font-semibold">{ADMIN_COPY.fields.publishFrontend}</span></label>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveGame} disabled={isSaving}>{isSaving ? ADMIN_COPY.actions.saving : ADMIN_COPY.actions.save}</Button>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div><Label>{ADMIN_COPY.fields.title}</Label><Input value={gameForm.title} onChange={e => setGameForm(p => ({ ...p, title: e.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.playPath}</Label><Input value={gameForm.playPath} onChange={e => setGameForm(p => ({ ...p, playPath: e.target.value }))} /></div>
+        </>
+      );
+    }
+
+    if (activeTab === "stickers") {
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">NHÃN DÁN & GIF</p>
+              <h2 className="mt-1 text-xl font-bold text-gray-800">{stickerForm.id ? "Cập nhật Nhãn dán / GIF" : "Thêm mới Nhãn dán / GIF"}</h2>
+            </div>
+            {stickerForm.id ? <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50" onClick={() => setConfirmDelete({ label: stickerForm.name, onConfirm: deleteSticker })} disabled={isSaving}><Trash2 className="mr-1.5 h-4 w-4" />{ADMIN_COPY.actions.delete}</Button> : null}
           </div>
-          <div><Label>{ADMIN_COPY.fields.summary}</Label><Textarea value={gameForm.summary} onChange={e => setGameForm(p => ({ ...p, summary: e.target.value }))} /></div>
-          <div><Label>{ADMIN_COPY.fields.content}</Label><Textarea className="min-h-[200px]" value={gameForm.description} onChange={e => setGameForm(p => ({ ...p, description: e.target.value }))} /></div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div><Label>{ADMIN_COPY.fields.coverImage}</Label><Input value={gameForm.coverImage} onChange={e => setGameForm(p => ({ ...p, coverImage: e.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.accentColor}</Label><Input value={gameForm.accentColor} onChange={e => setGameForm(p => ({ ...p, accentColor: e.target.value }))} /></div>
+          <div className="mt-5 space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div><Label>Tên hiển thị</Label><Input value={stickerForm.name} onChange={e => setStickerForm(p => ({ ...p, name: e.target.value }))} /></div>
+              <div>
+                <Label>Loại</Label>
+                <select className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100" value={stickerForm.type} onChange={e => setStickerForm(p => ({ ...p, type: e.target.value as "STICKER" | "GIF" }))}>
+                  <option value="STICKER">STICKER</option>
+                  <option value="GIF">GIF</option>
+                </select>
+              </div>
+            </div>
+            <div><Label>Đường dẫn hình ảnh (URL)</Label><Input value={stickerForm.url} onChange={e => setStickerForm(p => ({ ...p, url: e.target.value }))} /></div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label>Chủ đề (Category)</Label>
+                <select className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100" value={stickerForm.category} onChange={e => setStickerForm(p => ({ ...p, category: e.target.value }))}>
+                  <option value="study">Học tập (study)</option>
+                  <option value="motivation">Động lực (motivation)</option>
+                  <option value="emotion">Cảm xúc (emotion)</option>
+                  <option value="funny">Vui nhộn (funny)</option>
+                  <option value="congrats">Chúc mừng (congrats)</option>
+                </select>
+              </div>
+              <div><Label>Từ khóa (phân cách bằng dấu phẩy)</Label><Input value={stickerForm.keywordsString} onChange={e => setStickerForm(p => ({ ...p, keywordsString: e.target.value }))} placeholder="gau, hoc tap, study, cute" /></div>
+            </div>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveSticker} disabled={isSaving || !stickerForm.name.trim() || !stickerForm.url.trim()}>{isSaving ? ADMIN_COPY.actions.saving : ADMIN_COPY.actions.save}</Button>
           </div>
-          <label className="flex items-center gap-3 rounded-xl border border-gray-100 px-4 py-3 bg-gray-50"><input type="checkbox" checked={gameForm.published} onChange={e => setGameForm(p => ({ ...p, published: e.target.checked }))} /><span className="text-sm font-semibold">{ADMIN_COPY.fields.publishFrontend}</span></label>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveGame} disabled={isSaving}>{isSaving ? ADMIN_COPY.actions.saving : ADMIN_COPY.actions.save}</Button>
-        </div>
-      </>
-    );
+        </>
+      );
+    }
+
+    if (activeTab === "reports") {
+      if (!selectedReport) {
+        return (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+            <AlertTriangle className="h-12 w-12 opacity-30 mb-2" />
+            <p className="text-sm">Chọn một báo cáo vi phạm từ danh sách bên trái để xử lý.</p>
+          </div>
+        );
+      }
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">Báo cáo vi phạm</p>
+              <h2 className="mt-1 text-xl font-bold text-gray-800">Xử lý báo cáo #{selectedReport.id}</h2>
+            </div>
+          </div>
+          <div className="mt-5 space-y-4">
+            <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-purple-600">Nội dung bị báo cáo</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-gray-800 whitespace-pre-wrap">{selectedReport.contentPreview}</p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label>Người báo cáo</Label>
+                <Input value={selectedReport.reporterName} readOnly className="bg-gray-50 border-gray-100 text-gray-700" />
+              </div>
+              <div>
+                <Label>Thời gian báo cáo</Label>
+                <Input value={formatDate(selectedReport.createdAt)} readOnly className="bg-gray-50 border-gray-100 text-gray-700" />
+              </div>
+            </div>
+            <div>
+              <Label>Lý do báo cáo</Label>
+              <Input value={selectedReport.reason} readOnly className="bg-gray-50 border-gray-100 text-gray-700" />
+            </div>
+            <div>
+              <Label>Trạng thái</Label>
+              <Input
+                value={
+                  selectedReport.status === "PENDING"
+                    ? "Chờ duyệt"
+                    : selectedReport.status === "RESOLVED"
+                      ? "Đã xử lý (Xóa nội dung)"
+                      : "Đã bác bỏ"
+                }
+                readOnly
+                className="bg-gray-50 border-gray-100 font-semibold text-gray-800"
+              />
+            </div>
+            {selectedReport.status === "PENDING" && (
+              <div className="flex items-center gap-3 pt-2">
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={() => void resolveReport(selectedReport.id, true)} disabled={isSaving}>
+                  {isSaving ? "Đang xử lý..." : "Xóa nội dung vi phạm"}
+                </Button>
+                <Button variant="outline" onClick={() => void resolveReport(selectedReport.id, false)} disabled={isSaving}>
+                  {isSaving ? "Đang xử lý..." : "Bác bỏ báo cáo"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </>
+      );
+    }
+
+    if (activeTab === "questions") {
+      if (!selectedQuestion) {
+        return (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+            <HelpCircle className="h-12 w-12 opacity-30 mb-2" />
+            <p className="text-sm">Chọn một câu hỏi ẩn danh từ danh sách bên trái để phản hồi.</p>
+          </div>
+        );
+      }
+      return (
+        <>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">Hỏi đáp ẩn danh</p>
+              <h2 className="mt-1 text-xl font-bold text-gray-800">Trả lời câu hỏi #{selectedQuestion.id}</h2>
+            </div>
+          </div>
+          <div className="mt-5 space-y-4">
+            <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-purple-600">Câu hỏi</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-gray-800 whitespace-pre-wrap">{selectedQuestion.question}</p>
+              <p className="mt-2 text-[10px] text-gray-400">Gửi lúc: {formatDate(selectedQuestion.createdAt)}</p>
+            </div>
+            <div>
+              <Label>Nội dung câu trả lời</Label>
+              <Textarea
+                className="min-h-[120px] rounded-xl"
+                placeholder="Nhập câu trả lời của chuyên gia/admin..."
+                value={answerText}
+                onChange={(e) => setAnswerText(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={() => void answerQuestion(selectedQuestion.id)} disabled={isSaving || !answerText.trim()}>
+                {isSaving ? "Đang gửi..." : "Gửi câu trả lời"}
+              </Button>
+            </div>
+          </div>
+        </>
+      );
+    }
+    return null;
   };
 
   /* ── Sidebar & main title helpers ── */
-  const crudTitle: Record<CrudTab, string> = { lessons: "Quản lý bài học", blogPosts: "Quản lý bài viết", quizQuestions: "Quản lý Quiz", games: "Kho trò chơi" };
+  const crudTitle: Record<CrudTab, string> = {
+    lessons: "Quản lý bài học",
+    blogPosts: "Quản lý bài viết",
+    quizQuestions: "Quản lý Quiz",
+    games: "Kho trò chơi",
+    stickers: "Nhãn dán & GIF",
+    reports: "Báo cáo vi phạm",
+    questions: "Câu hỏi ẩn danh"
+  };
   const pageTitle = sidebarTab === "overview" ? "Dashboard" : sidebarTab === "students" ? "Học viên" : sidebarTab === "discussions" ? "Thảo luận" : sidebarTab === "reports" ? "Báo cáo" : sidebarTab === "settings" ? "Cài đặt" : crudTitle[activeTab];
 
   return (
@@ -630,10 +1020,13 @@ export default function AdminDashboardPage() {
             const active = sidebarTab === id;
             const count = id === "lessons" ? content.metrics.lessons
               : id === "blogPosts" ? content.metrics.blogPosts
-              : id === "quizQuestions" ? content.metrics.quizQuestions
-              : id === "games" ? content.metrics.games
-              : id === "students" ? dashboard.summary.totalUsers
-              : undefined;
+                : id === "quizQuestions" ? content.metrics.quizQuestions
+                  : id === "games" ? content.metrics.games
+                    : id === "students" ? dashboard.summary.totalUsers
+                      : id === "stickers" ? stickers.length
+                        : id === "reports" ? reports.filter(r => r.status === "PENDING").length
+                          : id === "questions" ? questions.filter(qs => !qs.answer || qs.answer.trim() === "").length
+                            : undefined;
             return (
               <button key={id} onClick={() => handleNav(id)}
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${active ? "bg-purple-600 font-semibold text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}>
@@ -1015,11 +1408,10 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="px-5 py-3.5 hidden md:table-cell text-gray-500 text-xs">@{u.username}</td>
                           <td className="px-5 py-3.5 text-center">
-                            <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                              u.plan === "premium" ? "bg-amber-50 text-amber-600" :
-                              u.plan === "popular" ? "bg-blue-50 text-blue-600" :
-                              "bg-green-50 text-green-600"
-                            }`}>{planLabel(u.plan)}</span>
+                            <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${u.plan === "premium" ? "bg-amber-50 text-amber-600" :
+                                u.plan === "popular" ? "bg-blue-50 text-blue-600" :
+                                  "bg-green-50 text-green-600"
+                              }`}>{planLabel(u.plan)}</span>
                           </td>
                           <td className="px-5 py-3.5 text-center hidden sm:table-cell">
                             <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${u.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-500"}`}>
@@ -1130,7 +1522,7 @@ export default function AdminDashboardPage() {
           )}
 
           {/* ── PLACEHOLDER PAGES ── */}
-          {(sidebarTab === "reports" || sidebarTab === "settings") && (
+          {sidebarTab === "settings" && (
             <div className="flex h-64 items-center justify-center rounded-2xl bg-white shadow-sm">
               <div className="text-center">
                 <p className="text-3xl mb-3">🚧</p>
@@ -1144,9 +1536,11 @@ export default function AdminDashboardPage() {
             <div>
               <div className="mb-5 flex items-center justify-between">
                 <h1 className="text-xl font-bold text-gray-800">{crudTitle[activeTab]}</h1>
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={createNew}>
-                  <Plus className="mr-1.5 h-4 w-4" />Tạo mới
-                </Button>
+                {activeTab !== "reports" && activeTab !== "questions" && (
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={createNew}>
+                    <Plus className="mr-1.5 h-4 w-4" />Tạo mới
+                  </Button>
+                )}
               </div>
               <div className="grid gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
                 {/* List panel */}
@@ -1168,7 +1562,13 @@ export default function AdminDashboardPage() {
                       )}
                     </div>
                     <p className="mt-2 text-[11px] text-gray-400">
-                      {activeTab === "lessons" ? filteredLessons.length : activeTab === "blogPosts" ? filteredPosts.length : activeTab === "quizQuestions" ? filteredQuiz.length : filteredGames.length} mục
+                      {activeTab === "lessons" ? filteredLessons.length
+                        : activeTab === "blogPosts" ? filteredPosts.length
+                          : activeTab === "quizQuestions" ? filteredQuiz.length
+                            : activeTab === "stickers" ? filteredStickers.length
+                              : activeTab === "reports" ? filteredReports.length
+                                : activeTab === "questions" ? filteredQuestions.length
+                                  : filteredGames.length} mục
                     </p>
                   </div>
                   <div className="flex-1 overflow-y-auto p-3 space-y-1.5 max-h-[calc(100vh-260px)]">{renderList()}</div>

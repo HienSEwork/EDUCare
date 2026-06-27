@@ -35,3 +35,7 @@ vite-dev.err.log
 *.sln
 *.sw?
 .env
+
+# Agent Customizations & Session Logs
+.agents/
+.session_logs/

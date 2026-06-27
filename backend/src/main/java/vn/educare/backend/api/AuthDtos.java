@@ -215,10 +215,36 @@ public record CourseResponse(
   public record AddXpRequest(@Min(1) @Max(500) int amount) {
   }
 
-  public record CommunityPostRequest(@NotBlank @Size(max = 2000) String content, boolean anonymous) {
+  public record CommunityCategoryResponse(
+      Long id,
+      String name,
+      String slug,
+      String description,
+      String icon,
+      String colorTheme,
+      String createdAt
+  ) {
   }
 
-  public record CommunityReplyRequest(@NotBlank @Size(max = 1000) String content, boolean anonymous) {
+  public record CommunityPostRequest(
+      @NotBlank @Size(max = 2000) String content,
+      boolean anonymous,
+      String linkUrl,
+      String linkTitle,
+      String linkDescription,
+      String linkImage,
+      Long categoryId,
+      String title,
+      String imageUrl
+  ) {
+  }
+
+  public record CommunityReplyRequest(
+      @NotBlank @Size(max = 1000) String content,
+      boolean anonymous,
+      Long parentId,
+      String imageUrl
+  ) {
   }
 
   public record CommunityPostResponse(
@@ -230,7 +256,15 @@ public record CourseResponse(
       int likes,
       boolean liked,
       String createdAt,
-      List<CommunityReplyResponse> replies) {
+      List<CommunityReplyResponse> replies,
+      String linkUrl,
+      String linkTitle,
+      String linkDescription,
+      String linkImage,
+      boolean pinned,
+      Long categoryId,
+      String title,
+      String imageUrl) {
   }
 
   public record CommunityReplyResponse(
@@ -241,16 +275,69 @@ public record CourseResponse(
       boolean anonymous,
       int likes,
       boolean liked,
-      String createdAt) {
+      String createdAt,
+      Long parentId,
+      String authorRole,
+      String imageUrl) {
   }
 
-  public record ChatRoomResponse(Long id, String slug, String name, String description, long messageCount) {
+  public record ChatRoomResponse(
+      Long id, 
+      String slug, 
+      String name, 
+      String description, 
+      long messageCount, 
+      String ownerId,
+      Long pinnedMessageId,
+      String pinnedMessageAuthor,
+      String pinnedMessageContent,
+      String lastMessageContent,
+      String lastMessageTime) {
   }
 
-  public record ChatMessageRequest(@NotBlank @Size(max = 1000) String content) {
+  public record ChatRoomMemberResponse(
+      String userId,
+      String username,
+      String role,
+      String status,
+      Integer xp,
+      String userRole
+  ) {}
+
+  public record ChatRoomUpdateRequest(
+      @NotBlank @Size(max = 120) String name,
+      @NotBlank @Size(max = 1000) String description
+  ) {}
+
+  public record ChatMessageRequest(
+      @NotBlank @Size(max = 1000) String content,
+      String imageUrl,
+      String audioUrl,
+      String audioName
+  ) {
   }
 
-  public record ChatMessageResponse(Long id, String author, String authorId, String content, String createdAt) {
+  public record ChatMessageReactionResponse(Long id, String userId, String username, String emoji) {
+  }
+
+  public record ChatMessageReactionRequest(@NotBlank String emoji) {
+  }
+
+  public record ChatMessageResponse(
+      Long id,
+      String author,
+      String authorId,
+      String content,
+      String createdAt,
+      List<ChatMessageReactionResponse> reactions,
+      Integer authorXp,
+      Integer authorStreak,
+      String authorRole,
+      String imageUrl,
+      String audioUrl,
+      String audioName,
+      Boolean isSystem
+  ) {
   }
 
   public record AnonymousQuestionRequest(@NotBlank @Size(max = 1000) String question) {
@@ -368,6 +455,45 @@ public record CourseResponse(
       Boolean published) {
   }
 
+  public record ChatRoomCreateRequest(@NotBlank @Size(max = 120) String name, @NotBlank @Size(max = 500) String description) {
+  }
+
+  public record ChatRoomInviteRequest(@NotBlank String username) {
+  }
+
+  public record CommunityReportRequest(Long postId, Long replyId, @NotBlank String reason) {
+  }
+
+  public record CommunityReportResponse(
+      Long id,
+      String reporterName,
+      Long postId,
+      Long replyId,
+      String reason,
+      String status,
+      String createdAt,
+      String contentPreview) {
+  }
+
+  public record AnonymousQuestionAnswerRequest(@NotBlank String answer) {
+  }
+
+  public record ChatStickerResponse(
+      Long id,
+      String name,
+      String url,
+      String type,
+      String category,
+      List<String> keywords
+  ) {}
+
+  public record ChatStickerRequest(
+      @NotBlank String name,
+      @NotBlank String url,
+      @NotBlank String type,
+      @NotBlank String category,
+      List<String> keywords
+  ) {}
   // ── Admin User Management ──────────────────────────────────────────────────
 
   public record AdminUserResponse(
