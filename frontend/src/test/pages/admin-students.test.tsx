@@ -78,6 +78,9 @@ describe("AdminDashboardPage — Students tab", () => {
       if (path === "/admin/dashboard") return Promise.resolve(mockDashboard);
       if (path === "/admin/content") return Promise.resolve(mockContent);
       if (path.startsWith("/admin/users")) return Promise.resolve(mockStudentList);
+      if (path === "/community/admin/reports") return Promise.resolve([]);
+      if (path === "/community/admin/questions") return Promise.resolve([]);
+      if (path === "/community/stickers") return Promise.resolve([]);
       return Promise.reject(new Error("Unknown path: " + path));
     });
   });
@@ -223,7 +226,10 @@ describe("AdminDashboardPage — Students tab", () => {
       if (path === "/admin/dashboard") return Promise.resolve(mockDashboard);
       if (path === "/admin/content") return Promise.resolve(mockContent);
       if (path.startsWith("/admin/users")) return Promise.resolve({ users: [], total: 0 });
-      return Promise.reject(new Error());
+      if (path === "/community/admin/reports") return Promise.resolve([]);
+      if (path === "/community/admin/questions") return Promise.resolve([]);
+      if (path === "/community/stickers") return Promise.resolve([]);
+      return Promise.reject(new Error("Unknown path: " + path));
     });
 
     renderAdmin();
