@@ -19,39 +19,41 @@ const footerGroups = {
 
 export default function Footer() {
   return (
-    <footer id="contact-footer" className="mt-20 border-t border-white/50 bg-transparent">
-      <div className="container mx-auto px-4 pb-10 pt-6">
-        <div className="theme-section overflow-hidden rounded-[2.4rem] border border-white/60 bg-[linear-gradient(135deg,rgba(255,232,241,0.9)_0%,rgba(245,241,255,0.96)_50%,rgba(227,245,255,0.88)_100%)] p-8 shadow-card md:p-10">
-          <div className="grid gap-8 lg:grid-cols-[1.25fr_0.8fr_0.8fr_0.9fr]">
-            <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-primary">EDUcare</p>
-              <h3 className="font-heading text-3xl font-bold">Đồng hành cùng tuổi teen theo cách gần gũi hơn.</h3>
-              <p className="mt-4 max-w-md text-sm leading-7 text-muted-foreground">
-                Nơi bạn có thể học, đọc, chơi và trò chuyện trong một không gian nhẹ nhàng, an toàn và dễ quay lại mỗi ngày.
-              </p>
-            </div>
-
-            <FooterColumn title="Nội dung" items={footerGroups.content} />
-            <FooterColumn title="Cộng đồng" items={footerGroups.community} />
-
-            <div className="surface-panel-soft rounded-[1.8rem] p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Liên hệ</p>
-              <p className="mt-4 text-sm text-muted-foreground">hello@educare.vn</p>
-              <p className="mt-2 text-sm text-muted-foreground">1900 6868</p>
-              <div className="mt-5 space-y-2">
-                {footerGroups.company.map((item) => (
-                  <Link key={item.to} to={item.to} className="block text-sm font-semibold text-foreground/80 transition-colors hover:text-primary">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
+    <footer id="contact-footer" className="mt-20 border-t border-gray-100 bg-slate-50 py-16 text-gray-600">
+      <div className="container mx-auto px-4">
+        <div className="grid gap-10 lg:grid-cols-[1.5fr_0.8fr_0.8fr_1fr]">
+          <div>
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-pink-600">EDUcare</p>
+            <h3 className="font-heading text-2xl font-extrabold text-gray-900 leading-tight">
+              Đồng hành cùng tuổi teen theo cách gần gũi hơn.
+            </h3>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-500">
+              Nơi bạn có thể học, đọc, chơi và trò chuyện trong một không gian nhẹ nhàng, an toàn và dễ quay lại mỗi ngày.
+            </p>
           </div>
 
-          <div className="mt-8 flex flex-col gap-3 border-t border-white/55 pt-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-            <p>© 2026 EDUcare. Thiết kế để đồng hành cùng hành trình lớn lên lành mạnh hơn.</p>
-            <p>Khi cần hỗ trợ khẩn cấp, hãy tìm đến người lớn đáng tin cậy hoặc kênh hỗ trợ phù hợp gần bạn.</p>
+          <FooterColumn title="Nội dung" items={footerGroups.content} />
+          <FooterColumn title="Cộng đồng" items={footerGroups.community} />
+
+          <div className="rounded-3xl border border-pink-100/80 bg-white p-6 shadow-sm">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-pink-600">Liên hệ</p>
+            <p className="mt-4 text-sm font-bold text-gray-700">hello@educare.vn</p>
+            <p className="mt-1 text-sm font-bold text-gray-700">1900 6868</p>
+            <div className="mt-5 space-y-2 border-t border-gray-100 pt-4">
+              {footerGroups.company.map((item) => (
+                <Link key={item.to} to={item.to} className="block text-sm font-bold text-gray-700 transition-colors hover:text-pink-600">
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
+        </div>
+
+        <div className="mt-12 flex flex-col gap-4 border-t border-gray-200 pt-6 text-xs text-gray-400 md:flex-row md:items-center md:justify-between">
+          <p>© 2026 EDUcare. Thiết kế để đồng hành cùng hành trình lớn lên lành mạnh hơn.</p>
+          <p className="max-w-md md:text-right">
+            Khi cần hỗ trợ khẩn cấp, hãy tìm đến người lớn đáng tin cậy hoặc kênh hỗ trợ phù hợp gần bạn.
+          </p>
         </div>
       </div>
     </footer>
@@ -67,10 +69,10 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h4 className="font-heading text-lg font-bold">{title}</h4>
+      <h4 className="font-heading text-base font-extrabold text-gray-900">{title}</h4>
       <div className="mt-4 space-y-3">
         {items.map((item) => (
-          <Link key={item.to} to={item.to} className="block text-sm text-muted-foreground transition-colors hover:text-foreground">
+          <Link key={item.to} to={item.to} className="block text-sm text-gray-500 transition-colors hover:text-pink-600">
             {item.label}
           </Link>
         ))}

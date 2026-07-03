@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { Link } from "react-router-dom";
 import { ImagePlus, Mic, MicOff, Send, Sparkles, Volume2, Plus, UserPlus, UserMinus, Pin, Settings, Users, LogOut, Search, Maximize2, Minimize2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -195,6 +196,7 @@ export default function ChatRoomsPage() {
   }, [isMaximized]);
 
   useEffect(() => {
+    if (!user) return;
     const fetchStickers = async () => {
       try {
         const list = await apiRequest<ChatStickerResponse[]>("/community/stickers");
@@ -204,7 +206,7 @@ export default function ChatRoomsPage() {
       }
     };
     void fetchStickers();
-  }, []);
+  }, [user]);
   const [error, setError] = useState<string | null>(null);
   const [isRoomsLoading, setIsRoomsLoading] = useState(true);
   const [isMessagesLoading, setIsMessagesLoading] = useState(false);
@@ -318,8 +320,9 @@ export default function ChatRoomsPage() {
   };
 
   useEffect(() => {
+    if (!user) return;
     void loadMembers();
-  }, [activeRoom]);
+  }, [activeRoom, user]);
 
   const handleAcceptInvite = async (slug: string) => {
     try {
@@ -439,6 +442,7 @@ export default function ChatRoomsPage() {
   };
 
   useEffect(() => {
+    if (!user) return;
     let active = true;
 
     const loadRooms = async () => {
@@ -485,7 +489,7 @@ export default function ChatRoomsPage() {
       window.clearInterval(intervalId);
       window.removeEventListener("chat_room_update", handleUpdateEvent);
     };
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (activeRoom) {
@@ -499,7 +503,7 @@ export default function ChatRoomsPage() {
   }, [activeRoom]);
 
   useEffect(() => {
-    if (!activeRoom) {
+    if (!user || !activeRoom) {
       return;
     }
 
@@ -627,7 +631,7 @@ export default function ChatRoomsPage() {
       if (reconnectTimeoutId) window.clearTimeout(reconnectTimeoutId);
       if (wsRef.current) wsRef.current.close();
     };
-  }, [activeRoom]);
+  }, [activeRoom, user]);
 
   useEffect(() => {
     return () => {
@@ -982,6 +986,41 @@ export default function ChatRoomsPage() {
     { id: "funny", label: "😂 Vui nhộn" },
     { id: "congrats", label: "🎉 Chúc mừng" },
   ];
+
+  if (!user) {
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center px-4 py-16 bg-gradient-to-br from-pink-50/50 via-purple-50/30 to-teal-50/40">
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-md w-full text-center p-8 rounded-[2.5rem] border border-pink-100/80 bg-white/90 shadow-[0_20px_50px_rgba(244,63,94,0.12)] backdrop-blur-sm"
+        >
+          <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-pink-100 to-rose-100/50 flex items-center justify-center mb-6 shadow-sm">
+            <Users className="h-10 w-10 text-pink-600 animate-pulse" />
+          </div>
+          <h2 className="font-heading text-2xl font-black text-gray-900 leading-tight">
+            Kết nối cùng cộng đồng
+          </h2>
+          <p className="mt-3.5 text-sm text-gray-500 leading-relaxed font-medium">
+            Hãy đăng nhập để tham gia các phòng chat thảo luận, chia sẻ tâm tư thầm kín và kết bạn trong không gian an toàn, riêng tư của EDUcare nhé! 💬
+          </p>
+          <div className="mt-8 flex flex-col gap-3">
+            <Link to="/login">
+              <Button className="w-full h-13 gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 font-bold text-white shadow-[0_6px_20px_rgba(244,63,94,0.25)] transition-all hover:scale-[1.02] hover:shadow-[0_8px_24px_rgba(244,63,94,0.35)]">
+                Đăng nhập ngay
+              </Button>
+            </Link>
+            <Link to="/register">
+              <Button variant="outline" className="w-full h-13 rounded-full border-2 border-pink-200 bg-white font-bold text-pink-600 transition-all hover:bg-pink-50/30 hover:scale-[1.02]">
+                Tạo tài khoản mới
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className={isMaximized ? "" : "min-h-screen pb-16 pt-8"}>

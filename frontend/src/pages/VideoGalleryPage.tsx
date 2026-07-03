@@ -363,10 +363,10 @@ export default function VideoGalleryPage() {
               transition={{ duration: 0.5 }}
             >
               <span className="inline-flex rounded-full bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-primary shadow-soft mb-4">
-                AI-Powered Previews
+                Tóm tắt bài học
               </span>
               <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4 text-foreground">
-                Thư viện <span className="text-gradient">Video AI</span> - Góc Xem Thử
+                Thư viện <span className="text-gradient">Video</span> - Góc Xem Thử
               </h1>
               <p className="text-foreground/80 text-base md:text-lg mb-6 leading-relaxed">
                 Nắm bắt nhanh kiến thức cốt lõi dưới 2 phút. Hãy chọn bài giảng, xem thử video để mở khóa thử thách và nhận trọn vẹn điểm XP!

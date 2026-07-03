@@ -31,6 +31,9 @@ import { NAV_COPY } from "@/content/socialCopy";
 import type { DashboardResponse, NotificationItem } from "@/types/api";
 import { toast } from "sonner";
 
+// Brand Logo image
+import imgLogo from "@/assets/home/Logo.png";
+
 const DROPDOWN_CLOSE_DELAY = 800;
 const DEFAULT_HEADER_SHELL_WIDTH = "max-w-[1080px]";
 const AUTH_HEADER_SHELL_WIDTH = "max-w-[780px]";
@@ -149,22 +152,21 @@ export default function Navbar() {
         data-ui="floating-header-shell"
         className={cn(
           "mx-auto flex w-full items-center rounded-full border border-sky-200/40 bg-[linear-gradient(135deg,rgba(186,230,253,0.18)_0%,rgba(224,242,254,0.22)_52%,rgba(186,230,253,0.16)_100%)] px-4 shadow-[0_8px_32px_rgba(14,116,144,0.08)] backdrop-blur-md lg:px-5",
-          isAuthPage ? AUTH_HEADER_SHELL_WIDTH : DEFAULT_HEADER_SHELL_WIDTH,
+          DEFAULT_HEADER_SHELL_WIDTH,
         )}
       >
         <div className="flex min-h-[64px] w-full items-center gap-2 lg:min-h-[72px]">
-          <div className="flex min-w-[148px] items-center">
+          <div className="flex items-center">
             <Link
               to="/"
-              aria-label="EDUcare — Đồng hành cùng tuổi teen"
-              className="group inline-flex items-center gap-2 rounded-full border border-sky-200/60 bg-white/80 px-4 py-2.5 shadow-[0_6px_20px_rgba(14,116,144,0.10)] backdrop-blur-sm transition-transform hover:-translate-y-0.5"
+              aria-label="EDUcare — Giáo dục giới tính"
+              className="group inline-flex items-center rounded-full border border-pink-200/60 bg-white/90 p-1.5 shadow-[0_6px_20px_rgba(244,63,94,0.10)] backdrop-blur-sm transition-transform hover:-translate-y-0.5"
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-sky-400 text-[11px] font-black text-white shadow-sm">
-                E
-              </span>
-              <span className="bg-[linear-gradient(135deg,#3b5bdb_0%,#0ea5e9_100%)] bg-clip-text font-heading text-[1.18rem] font-bold tracking-[-0.03em] text-transparent lg:text-[1.26rem]">
-                EDUcare
-              </span>
+              <img
+                src={imgLogo}
+                alt="EDUcare Logo"
+                className="h-11 w-11 shrink-0 rounded-full object-cover shadow-sm border border-pink-100/90 contrast-[1.12] saturate-[1.3]"
+              />
             </Link>
           </div>
 
@@ -193,7 +195,7 @@ export default function Navbar() {
                       setOpenDropdown((current) => (current === group.label ? null : group.label));
                     }}
                     className={cn(
-                      "flex items-center gap-1 rounded-full px-4 py-2 text-[15px] font-semibold transition-colors",
+                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-bold uppercase tracking-wider transition-colors",
                       openDropdown === group.label ? "text-foreground" : "text-foreground/75 hover:text-foreground",
                     )}
                   >
@@ -224,7 +226,7 @@ export default function Navbar() {
                   key={group.to}
                   to={group.to}
                   className={cn(
-                    "rounded-full px-4 py-2 text-[15px] font-semibold transition-colors",
+                    "rounded-full px-4 py-2 text-[13px] font-bold uppercase tracking-wider transition-colors",
                     location.pathname === group.to ? "text-foreground" : "text-foreground/75 hover:text-foreground",
                   )}
                 >
