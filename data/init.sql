@@ -2545,7 +2545,8 @@ ALTER TABLE `games`
 ALTER TABLE `lessons`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `slug` (`slug`),
-  ADD UNIQUE KEY `lesson_order` (`lesson_order`),
+  ADD KEY `lesson_order` (`lesson_order`),
+  ADD UNIQUE KEY `uq_course_lesson_order` (`course_id`, `lesson_order`),
   ADD KEY `fk_lessons_course` (`course_id`);
 
 --

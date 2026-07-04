@@ -821,7 +821,15 @@ function FillBlankBlock({
   const sentence = data?.sentence ?? "";
   const blanks = data?.blanks ?? {};
   const instruction = data?.instruction ?? "Điền vào chỗ trống:";
-  const wordPool = data?.words ?? [];
+  const wordPool = useMemo(() => {
+    const words = data?.words ?? [];
+    const arr = [...words];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [data?.words]);
 
   const [localFilled, setLocalFilled] = useState<Record<string, string>>({});
   const [localSuccess, setLocalSuccess] = useState(false);
@@ -1019,6 +1027,7 @@ function renderBlockContent(
   if (block.blockType === "interaction") {
     return (
       <InteractionBlock
+        key={block.id}
         data={data}
         onComplete={onInteractionCorrect ?? (() => { })}
         isCompleted={isCompleted}
@@ -1030,6 +1039,7 @@ function renderBlockContent(
   if (block.blockType === "scenario-choice") {
     return (
       <ScenarioChoiceBlock
+        key={block.id}
         data={data}
         onComplete={onInteractionCorrect ?? (() => { })}
         isCompleted={isCompleted}
@@ -1041,6 +1051,7 @@ function renderBlockContent(
   if (block.blockType === "matching") {
     return (
       <MatchingBlock
+        key={block.id}
         data={data}
         onComplete={onInteractionCorrect ?? (() => { })}
         isCompleted={isCompleted}
@@ -1052,6 +1063,7 @@ function renderBlockContent(
   if (block.blockType === "fill-blank") {
     return (
       <FillBlankBlock
+        key={block.id}
         data={data}
         onComplete={onInteractionCorrect ?? (() => { })}
         isCompleted={isCompleted}
@@ -1063,6 +1075,7 @@ function renderBlockContent(
   if (block.blockType === "sorting") {
     return (
       <SortingBlock
+        key={block.id}
         data={data}
         onComplete={onInteractionCorrect ?? (() => { })}
         isCompleted={isCompleted}
@@ -1074,6 +1087,7 @@ function renderBlockContent(
   if (block.blockType === "flashcard") {
     return (
       <FlashcardBlock
+        key={block.id}
         data={data}
         onComplete={onInteractionCorrect ?? (() => { })}
         isCompleted={isCompleted}

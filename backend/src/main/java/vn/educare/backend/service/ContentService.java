@@ -198,7 +198,7 @@ public CourseResponse course(Long id) {
     );
   }
 
-  private CourseResponse toCourseResponse(CourseEntity course) {
+  public CourseResponse toCourseResponse(CourseEntity course) {
     var lessons = lessonRepository.findAllByCourseIdOrderByLessonOrderAsc(course.getId())
         .stream()
         .map(this::toLessonResponse)

@@ -44,7 +44,7 @@ function getDisplayPost(post: BlogPost) {
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORY);
+  const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

@@ -273,6 +273,15 @@ export interface AdminContentResponse {
   games: Game[];
 }
 
+export interface CourseUpsertRequest {
+  title: string;
+  description: string;
+  thumbnail: string;
+  colorTheme: string;
+  order: number | null;
+  categoryId: number | null;
+}
+
 export interface LessonUpsertRequest {
   slug: string;
   title: string;
@@ -280,6 +289,28 @@ export interface LessonUpsertRequest {
   content: string;
   order: number | null;
   isFree: boolean;
+  courseId: number | null;
+  xpReward: number | null;
+  estimatedMinutes: number | null;
+  teaserVideoId: string | null;
+  fullVideoId: string | null;
+}
+
+export interface LessonSourceUpsertRequest {
+  sourceName: string;
+  sourceUrl: string;
+  sourceType: string;
+}
+
+export interface MicroLessonUpsertRequest {
+  title: string;
+  order: number | null;
+}
+
+export interface MicroLessonBlockUpsertRequest {
+  blockType: string;
+  contentJson: string;
+  orderIndex: number | null;
 }
 
 export interface BlogPostUpsertRequest {

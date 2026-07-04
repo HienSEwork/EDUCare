@@ -8,24 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.educare.backend.api.ApiException;
-import vn.educare.backend.api.AuthDtos.AdminContentMetrics;
-import vn.educare.backend.api.AuthDtos.AdminContentResponse;
-import vn.educare.backend.api.AuthDtos.AdminQuizQuestionResponse;
-import vn.educare.backend.api.AuthDtos.BlogPostResponse;
-import vn.educare.backend.api.AuthDtos.BlogPostUpsertRequest;
-import vn.educare.backend.api.AuthDtos.GameResponse;
-import vn.educare.backend.api.AuthDtos.GameUpsertRequest;
-import vn.educare.backend.api.AuthDtos.LessonResponse;
-import vn.educare.backend.api.AuthDtos.LessonUpsertRequest;
-import vn.educare.backend.api.AuthDtos.QuizQuestionUpsertRequest;
-import vn.educare.backend.model.BlogPostEntity;
-import vn.educare.backend.model.GameEntity;
-import vn.educare.backend.model.LessonEntity;
-import vn.educare.backend.model.QuizQuestionEntity;
-import vn.educare.backend.repository.BlogPostRepository;
-import vn.educare.backend.repository.GameRepository;
-import vn.educare.backend.repository.LessonRepository;
-import vn.educare.backend.repository.QuizQuestionRepository;
+import vn.educare.backend.api.AuthDtos.*;
+import vn.educare.backend.model.*;
+import vn.educare.backend.repository.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +20,11 @@ public class AdminContentService {
   private final BlogPostRepository blogPostRepository;
   private final QuizQuestionRepository quizQuestionRepository;
   private final GameRepository gameRepository;
+  private final CourseRepository courseRepository;
+  private final CategoryRepository categoryRepository;
+  private final LessonSourceRepository lessonSourceRepository;
+  private final MicroLessonRepository microLessonRepository;
+  private final MicroLessonBlockRepository microLessonBlockRepository;
   private final ContentService contentService;
   private final ObjectMapper objectMapper;
 
@@ -65,8 +55,11 @@ public class AdminContentService {
     lesson.setContent(request.content());
     lesson.setLessonOrder(request.order() == null ? nextLessonOrder() : request.order());
     lesson.setIsFree(Boolean.TRUE.equals(request.isFree()));
+    lesson.setCourseId(request.courseId());
     lesson.setXpReward(request.xpReward() != null ? request.xpReward() : (lesson.getXpReward() != null ? lesson.getXpReward() : 10));
     lesson.setEstimatedMinutes(request.estimatedMinutes() != null ? request.estimatedMinutes() : (lesson.getEstimatedMinutes() != null ? lesson.getEstimatedMinutes() : 10));
+    lesson.setTeaserVideoId(request.teaserVideoId());
+    lesson.setFullVideoId(request.fullVideoId());
     return contentService.toLessonResponse(lessonRepository.save(lesson));
   }
 
@@ -183,5 +176,225 @@ public class AdminContentService {
 
   private int nextQuizSortOrder() {
     return quizQuestionRepository.findAllByOrderBySortOrderAsc().stream().mapToInt(QuizQuestionEntity::getSortOrder).max().orElse(0) + 1;
+  }
+
+  // Course CRUD
+  @Transactional(readOnly = true)
+  public List<CourseResponse> getCourses() {
+    return courseRepository.findAll().stream()
+        .map(contentService::toCourseResponse)
+        .toList();
+  }
+
+  @Transactional
+  public CourseResponse saveCourse(Long id, CourseUpsertRequest request) {
+    CourseEntity course = id == null ? new CourseEntity() : courseRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Course not found"));
+    
+    if (course.getCreatedAt() == null) {
+      course.setCreatedAt(Instant.now());
+    }
+    course.setUpdatedAt(Instant.now());
+    course.setTitle(request.title());
+    course.setDescription(request.description());
+    course.setThumbnail(request.thumbnail());
+    course.setColorTheme(request.colorTheme());
+    course.setCourseOrder(request.order() == null ? nextCourseOrder() : request.order());
+    
+    if (request.categoryId() != null) {
+      CategoryEntity category = categoryRepository.findById(request.categoryId())
+          .orElseThrow(() -> new ApiException(404, "Category not found"));
+      course.setCategory(category);
+    } else {
+      course.setCategory(null);
+    }
+    
+    return contentService.toCourseResponse(courseRepository.save(course));
+  }
+
+  @Transactional
+  public void deleteCourse(Long id) {
+    CourseEntity course = courseRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Course not found"));
+    courseRepository.delete(course);
+  }
+
+  // Lesson Sources
+  @Transactional
+  public LessonSourceResponse saveLessonSource(Long lessonId, Long id, LessonSourceUpsertRequest request) {
+    LessonSourceEntity source = id == null ? new LessonSourceEntity() : lessonSourceRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Lesson source not found"));
+    
+    if (lessonId != null) {
+      source.setLessonId(lessonId);
+    }
+    source.setSourceName(request.sourceName());
+    source.setSourceUrl(request.sourceUrl());
+    source.setSourceType(request.sourceType() == null ? "website" : request.sourceType());
+    
+    return toLessonSourceResponse(lessonSourceRepository.save(source));
+  }
+
+  @Transactional
+  public void deleteLessonSource(Long id) {
+    LessonSourceEntity source = lessonSourceRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Lesson source not found"));
+    lessonSourceRepository.delete(source);
+  }
+
+  // Micro Lessons
+  @Transactional
+  public MicroLessonResponse saveMicroLesson(Long lessonId, Long id, MicroLessonUpsertRequest request) {
+    MicroLessonEntity ml = id == null ? new MicroLessonEntity() : microLessonRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Micro lesson not found"));
+    
+    if (ml.getCreatedAt() == null) {
+      ml.setCreatedAt(Instant.now());
+    }
+    ml.setUpdatedAt(Instant.now());
+    if (lessonId != null) {
+      ml.setLessonId(lessonId);
+    }
+    ml.setTitle(request.title());
+    ml.setMicroOrder(request.order() == null ? nextMicroOrder(ml.getLessonId()) : request.order());
+    
+    return toMicroLessonResponse(microLessonRepository.save(ml));
+  }
+
+  @Transactional
+  public void deleteMicroLesson(Long id) {
+    MicroLessonEntity ml = microLessonRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Micro lesson not found"));
+    
+    // Also delete associated blocks to maintain database integrity
+    microLessonBlockRepository.deleteAll(microLessonBlockRepository.findAllByMicroLessonIdOrderByOrderIndexAsc(id));
+    microLessonRepository.delete(ml);
+  }
+
+  // Micro Lesson Blocks
+  @Transactional
+  public MicroLessonBlockResponse saveMicroLessonBlock(Long microLessonId, Long id, MicroLessonBlockUpsertRequest request) {
+    MicroLessonBlockEntity block = id == null ? new MicroLessonBlockEntity() : microLessonBlockRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Micro lesson block not found"));
+    
+    if (block.getCreatedAt() == null) {
+      block.setCreatedAt(Instant.now());
+    }
+    block.setUpdatedAt(Instant.now());
+    if (microLessonId != null) {
+      block.setMicroLessonId(microLessonId);
+    }
+    block.setBlockType(request.blockType());
+    block.setContentJson(request.contentJson());
+    block.setOrderIndex(request.orderIndex() == null ? nextBlockOrderIndex(block.getMicroLessonId()) : request.orderIndex());
+    
+    return toMicroLessonBlockResponse(microLessonBlockRepository.save(block));
+  }
+
+  @Transactional
+  public void deleteMicroLessonBlock(Long id) {
+    MicroLessonBlockEntity block = microLessonBlockRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Micro lesson block not found"));
+    microLessonBlockRepository.delete(block);
+  }
+
+  private int nextCourseOrder() {
+    return courseRepository.findAll().stream()
+        .mapToInt(c -> c.getCourseOrder() != null ? c.getCourseOrder() : 0)
+        .max()
+        .orElse(0) + 1;
+  }
+
+  private int nextMicroOrder(Long lessonId) {
+    if (lessonId == null) return 1;
+    return microLessonRepository.findAllByLessonIdOrderByMicroOrderAsc(lessonId).stream()
+        .mapToInt(ml -> ml.getMicroOrder() != null ? ml.getMicroOrder() : 0)
+        .filter(order -> order < 99)
+        .max()
+        .orElse(0) + 1;
+  }
+
+  private int nextBlockOrderIndex(Long microLessonId) {
+    if (microLessonId == null) return 1;
+    return microLessonBlockRepository.findAllByMicroLessonIdOrderByOrderIndexAsc(microLessonId).stream()
+        .mapToInt(b -> b.getOrderIndex() != null ? b.getOrderIndex() : 0)
+        .max()
+        .orElse(0) + 1;
+  }
+
+  private LessonSourceResponse toLessonSourceResponse(LessonSourceEntity s) {
+    return new LessonSourceResponse(s.getId(), s.getSourceName(), s.getSourceUrl(), s.getSourceType());
+  }
+
+  private MicroLessonResponse toMicroLessonResponse(MicroLessonEntity ml) {
+    List<MicroLessonBlockResponse> blocks = microLessonBlockRepository
+        .findAllByMicroLessonIdOrderByOrderIndexAsc(ml.getId()).stream()
+        .map(b -> new MicroLessonBlockResponse(b.getId(), b.getBlockType(), b.getContentJson(), b.getOrderIndex()))
+        .toList();
+    return new MicroLessonResponse(ml.getId(), ml.getTitle(), ml.getMicroOrder(), false, blocks);
+  }
+
+  private MicroLessonBlockResponse toMicroLessonBlockResponse(MicroLessonBlockEntity b) {
+    return new MicroLessonBlockResponse(b.getId(), b.getBlockType(), b.getContentJson(), b.getOrderIndex());
+  }
+
+  @Transactional(readOnly = true)
+  public List<CategoryResponse> getCategories() {
+    return categoryRepository.findAll().stream()
+        .map(this::toCategoryResponse)
+        .toList();
+  }
+
+  @Transactional
+  public CategoryResponse saveCategory(CategoryUpsertRequest request) {
+    if (categoryRepository.existsBySlug(request.slug())) {
+      throw new ApiException(400, "Đường dẫn danh mục (slug) đã tồn tại");
+    }
+    CategoryEntity cat = new CategoryEntity();
+    cat.setName(request.name());
+    cat.setSlug(request.slug());
+    cat.setIcon(request.icon() == null || request.icon().isBlank() ? "HelpCircle" : request.icon());
+    cat.setColorTheme(request.colorTheme() == null || request.colorTheme().isBlank() ? "#4361ee" : request.colorTheme());
+    return toCategoryResponse(categoryRepository.save(cat));
+  }
+
+  @Transactional
+  public CategoryResponse updateCategory(Long id, CategoryUpsertRequest request) {
+    CategoryEntity cat = categoryRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Danh mục không tồn tại"));
+    if (!cat.getSlug().equals(request.slug()) && categoryRepository.existsBySlug(request.slug())) {
+      throw new ApiException(400, "Đường dẫn danh mục (slug) đã tồn tại");
+    }
+    cat.setName(request.name());
+    cat.setSlug(request.slug());
+    cat.setIcon(request.icon() == null || request.icon().isBlank() ? "HelpCircle" : request.icon());
+    cat.setColorTheme(request.colorTheme() == null || request.colorTheme().isBlank() ? "#4361ee" : request.colorTheme());
+    return toCategoryResponse(categoryRepository.save(cat));
+  }
+
+  @Transactional
+  public void deleteCategory(Long id) {
+    CategoryEntity cat = categoryRepository.findById(id)
+        .orElseThrow(() -> new ApiException(404, "Danh mục không tồn tại"));
+    
+    // Dissociate courses belonging to this category
+    List<CourseEntity> courses = courseRepository.findAllByCategoryId(id);
+    for (CourseEntity course : courses) {
+      course.setCategory(null);
+      courseRepository.save(course);
+    }
+    
+    categoryRepository.delete(cat);
+  }
+
+  private CategoryResponse toCategoryResponse(CategoryEntity cat) {
+    if (cat == null) return null;
+    return new CategoryResponse(
+        cat.getId(),
+        cat.getSlug(),
+        cat.getName(),
+        cat.getIcon(),
+        cat.getColorTheme()
+    );
   }
 }

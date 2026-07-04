@@ -134,3 +134,9 @@ A task is only complete when:
 - Schema, API, and frontend types are not out of sync.
 - No local artifacts are tracked by git.
 - The worktree is clean, or only reasonable ignored local files remain.
+
+## Interaction and Modification Rules
+
+- The AI Agent must ALWAYS ask the user for explicit confirmation/permission in the chat before making any code modifications or running commands that edit the codebase.
+- If the user is only asking a question or soliciting feedback, the AI Agent must only answer the question and discuss the topic, and must NOT make any edits to the source code files.
+

@@ -6,4 +6,5 @@ import vn.educare.backend.model.CourseEntity;
 
 public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
   List<CourseEntity> findAllByOrderByCourseOrderAsc();
+  List<CourseEntity> findAllByCategoryId(Long categoryId);
 }

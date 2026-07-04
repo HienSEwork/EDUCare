@@ -410,6 +410,15 @@ public record CourseResponse(
       boolean active) {
   }
 
+  public record CourseUpsertRequest(
+      @NotBlank String title,
+      String description,
+      String thumbnail,
+      String colorTheme,
+      Integer order,
+      Long categoryId) {
+  }
+
   public record LessonUpsertRequest(
       @NotBlank String slug,
       @NotBlank String title,
@@ -417,9 +426,30 @@ public record CourseResponse(
       @NotBlank String content,
       Integer order,
       Boolean isFree,
+      Long courseId,
       Integer xpReward,
-      Integer estimatedMinutes) {
+      Integer estimatedMinutes,
+      String teaserVideoId,
+      String fullVideoId) {
   }
+
+  public record LessonSourceUpsertRequest(
+      @NotBlank String sourceName,
+      @NotBlank String sourceUrl,
+      String sourceType) {
+  }
+
+  public record MicroLessonUpsertRequest(
+      @NotBlank String title,
+      Integer order) {
+  }
+
+  public record MicroLessonBlockUpsertRequest(
+      @NotBlank String blockType,
+      @NotBlank String contentJson,
+      Integer orderIndex) {
+  }
+
 
   public record BlogPostUpsertRequest(
       @NotBlank String slug,
@@ -516,4 +546,11 @@ public record CourseResponse(
 
   public record AdminUserUpdateRequest(String plan, String role) {
   }
+
+  public record CategoryUpsertRequest(
+      @NotBlank String name,
+      @NotBlank String slug,
+      String icon,
+      String colorTheme
+  ) {}
 }

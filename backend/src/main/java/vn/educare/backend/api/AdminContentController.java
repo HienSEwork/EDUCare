@@ -1,5 +1,6 @@
 package vn.educare.backend.api;
 
+import java.util.List;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,17 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import vn.educare.backend.api.AuthDtos.AdminContentResponse;
-import vn.educare.backend.api.AuthDtos.AdminQuizQuestionResponse;
-import vn.educare.backend.api.AuthDtos.BlogPostResponse;
-import vn.educare.backend.api.AuthDtos.BlogPostUpsertRequest;
-import vn.educare.backend.api.AuthDtos.GameResponse;
-import vn.educare.backend.api.AuthDtos.GameUpsertRequest;
-import vn.educare.backend.api.AuthDtos.LessonResponse;
-import vn.educare.backend.api.AuthDtos.LessonUpsertRequest;
-import vn.educare.backend.api.AuthDtos.QuizQuestionUpsertRequest;
-import vn.educare.backend.api.AuthDtos.ChatStickerRequest;
-import vn.educare.backend.api.AuthDtos.ChatStickerResponse;
+import vn.educare.backend.api.AuthDtos.*;
 import vn.educare.backend.service.AdminContentService;
 import vn.educare.backend.service.CommunityService;
 
@@ -111,4 +102,90 @@ public class AdminContentController {
   public void deleteSticker(@PathVariable Long id) {
     communityService.deleteSticker(id);
   }
+
+  // Course Endpoints
+  @GetMapping("/api/admin/courses")
+  public List<CourseResponse> getCourses() {
+    return adminContentService.getCourses();
+  }
+
+  @PostMapping("/api/admin/courses")
+  public CourseResponse createCourse(@Valid @RequestBody CourseUpsertRequest request) {
+    return adminContentService.saveCourse(null, request);
+  }
+
+  @PutMapping("/api/admin/courses/{id}")
+  public CourseResponse updateCourse(@PathVariable Long id, @Valid @RequestBody CourseUpsertRequest request) {
+    return adminContentService.saveCourse(id, request);
+  }
+
+  @DeleteMapping("/api/admin/courses/{id}")
+  public void deleteCourse(@PathVariable Long id) {
+    adminContentService.deleteCourse(id);
+  }
+
+  // Lesson Sources Endpoints
+  @PostMapping("/api/admin/lessons/{lessonId}/sources")
+  public LessonSourceResponse createLessonSource(@PathVariable Long lessonId, @Valid @RequestBody LessonSourceUpsertRequest request) {
+    return adminContentService.saveLessonSource(lessonId, null, request);
+  }
+
+  @DeleteMapping("/api/admin/lessons/sources/{id}")
+  public void deleteLessonSource(@PathVariable Long id) {
+    adminContentService.deleteLessonSource(id);
+  }
+
+  // Micro Lessons Endpoints
+  @PostMapping("/api/admin/lessons/{lessonId}/micro-lessons")
+  public MicroLessonResponse createMicroLesson(@PathVariable Long lessonId, @Valid @RequestBody MicroLessonUpsertRequest request) {
+    return adminContentService.saveMicroLesson(lessonId, null, request);
+  }
+
+  @PutMapping("/api/admin/micro-lessons/{id}")
+  public MicroLessonResponse updateMicroLesson(@PathVariable Long id, @Valid @RequestBody MicroLessonUpsertRequest request) {
+    return adminContentService.saveMicroLesson(null, id, request);
+  }
+
+  @DeleteMapping("/api/admin/micro-lessons/{id}")
+  public void deleteMicroLesson(@PathVariable Long id) {
+    adminContentService.deleteMicroLesson(id);
+  }
+
+  // Micro Lesson Blocks Endpoints
+  @PostMapping("/api/admin/micro-lessons/{microLessonId}/blocks")
+  public MicroLessonBlockResponse createMicroLessonBlock(@PathVariable Long microLessonId, @Valid @RequestBody MicroLessonBlockUpsertRequest request) {
+    return adminContentService.saveMicroLessonBlock(microLessonId, null, request);
+  }
+
+  @PutMapping("/api/admin/micro-lessons/blocks/{id}")
+  public MicroLessonBlockResponse updateMicroLessonBlock(@PathVariable Long id, @Valid @RequestBody MicroLessonBlockUpsertRequest request) {
+    return adminContentService.saveMicroLessonBlock(null, id, request);
+  }
+
+  @DeleteMapping("/api/admin/micro-lessons/blocks/{id}")
+  public void deleteMicroLessonBlock(@PathVariable Long id) {
+    adminContentService.deleteMicroLessonBlock(id);
+  }
+
+  // Categories Endpoints
+  @GetMapping("/api/admin/categories")
+  public List<CategoryResponse> getCategories() {
+    return adminContentService.getCategories();
+  }
+
+  @PostMapping("/api/admin/categories")
+  public CategoryResponse createCategory(@Valid @RequestBody CategoryUpsertRequest request) {
+    return adminContentService.saveCategory(request);
+  }
+
+  @PutMapping("/api/admin/categories/{id}")
+  public CategoryResponse updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryUpsertRequest request) {
+    return adminContentService.updateCategory(id, request);
+  }
+
+  @DeleteMapping("/api/admin/categories/{id}")
+  public void deleteCategory(@PathVariable Long id) {
+    adminContentService.deleteCategory(id);
+  }
 }
+
