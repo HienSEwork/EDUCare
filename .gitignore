@@ -6,23 +6,41 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-# fe
+vite-dev.log
+vite-dev.err.log
+
+# Frontend (fe)
 node_modules
+frontend/node_modules
 dist
+frontend/dist
 dist-ssr
 .vite
-frontend/node_modules
+
+# Backend (be)
 backend/node_modules
-frontend/dist
 backend/dist
 backend/target
+backend/bin
+
+# Environments & Secrets (CRITICAL)
+.env
+.env.*
+*.local
 frontend/.env
 backend/.env
 .env.production
-.env.*.local
-vite-dev.log
-vite-dev.err.log
-*.local
+.env.development
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.jks
+credentials.json
+client_secret.json
+auth.json
+secrets.yml
 
 # Editor directories and files
 .vscode/*
@@ -34,4 +52,3 @@ vite-dev.err.log
 *.njsproj
 *.sln
 *.sw?
-.env
