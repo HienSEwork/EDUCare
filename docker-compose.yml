@@ -51,6 +51,12 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      # Let's Encrypt certificates (issued by Certbot on host)
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      # Certbot webroot for HTTP challenge & auto-renewal
+      - /var/www/certbot:/var/www/certbot:ro
     depends_on:
       - backend
     networks:
