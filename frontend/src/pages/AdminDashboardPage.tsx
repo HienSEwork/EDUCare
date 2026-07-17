@@ -21,9 +21,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/sonner";
 import { ApiError, apiRequest } from "@/lib/api/client";
-import type { AdminContentResponse, AdminDashboardResponse, AdminUserListResponse, AdminUserResponse, CommunityReport, AnonymousQuestion, ChatStickerResponse, Course, Category, Lesson, LessonSource, MicroLesson, MicroLessonBlock } from "@/types/api";
+import type { AdminContentResponse, AdminDashboardResponse, AdminUserListResponse, AdminUserResponse, CommunityReport, AnonymousQuestion, ChatStickerResponse, Course, Category, Lesson, LessonSource, MicroLesson, MicroLessonBlock, SubscriptionPlan } from "@/types/api";
 
-type SidebarTab = "overview" | "courses" | "lessons" | "blogPosts" | "quizQuestions" | "games" | "students" | "discussions" | "reports" | "settings" | "questions" | "stickers";
+type SidebarTab = "overview" | "courses" | "lessons" | "blogPosts" | "quizQuestions" | "games" | "students" | "plans" | "discussions" | "reports" | "settings" | "questions" | "stickers";
 type CrudTab = "courses" | "lessons" | "blogPosts" | "quizQuestions" | "games" | "stickers" | "reports" | "questions";
 
 type EditableLesson = { id: number; slug: string; title: string; summary: string; content: string; order: number; isFree: boolean };
@@ -90,6 +90,7 @@ const SIDEBAR_NAV: { id: SidebarTab; label: string; Icon: React.ElementType }[] 
   { id: "blogPosts", label: "Bài viết", Icon: FileText },
   { id: "quizQuestions", label: "Quiz", Icon: Sparkles },
   { id: "students", label: "Học viên", Icon: Users },
+  { id: "plans", label: "Quản lý gói VIP", Icon: Trophy },
   { id: "discussions", label: "Thảo luận", Icon: MessageSquare },
   { id: "games", label: "Kho nội dung", Icon: Database },
   { id: "stickers", label: "Nhãn dán & GIF", Icon: Smile },
@@ -124,6 +125,23 @@ export default function AdminDashboardPage() {
   const [editPlan, setEditPlan] = useState("");
   const [editRole, setEditRole] = useState("");
   const [userSaving, setUserSaving] = useState(false);
+
+  // VIP plans state
+  const [plansList, setPlansList] = useState<SubscriptionPlan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(false);
+  const [showPlanModal, setShowPlanModal] = useState(false);
+  const [editPlanObj, setEditPlanObj] = useState<SubscriptionPlan | null>(null);
+  const [planForm, setPlanForm] = useState({
+    id: "",
+    name: "",
+    price: "",
+    durationDays: "",
+    description: "",
+    active: true,
+    startDate: "",
+    endDate: "",
+    planType: "REGULAR" as "REGULAR" | "TRIAL" | "PROMOTION"
+  });
 
   // Custom states from HEAD
   const [stickers, setStickers] = useState<ChatStickerResponse[]>([]);
@@ -214,7 +232,7 @@ export default function AdminDashboardPage() {
 
   const [sources, setSources] = useState<LessonSource[]>([]);
   const [newSource, setNewSource] = useState({ sourceName: "", sourceUrl: "", sourceType: "website" });
-  
+
   const [microLessons, setMicroLessons] = useState<MicroLesson[]>([]);
   const [selectedMicroLesson, setSelectedMicroLesson] = useState<MicroLesson | null>(null);
   const [newMicroLessonTitle, setNewMicroLessonTitle] = useState("");
@@ -267,7 +285,7 @@ export default function AdminDashboardPage() {
       teaserVideoId: lesson.teaserVideoId ?? "",
       fullVideoId: lesson.fullVideoId ?? ""
     });
-    
+
     try {
       const fullLesson = await apiRequest<Lesson>(`/lessons/${lesson.slug}`);
       setSources(fullLesson.sources || []);
@@ -492,8 +510,8 @@ export default function AdminDashboardPage() {
           const blocks = ml.blocks || [];
           for (let bIdx = 0; bIdx < blocks.length; bIdx++) {
             const block = blocks[bIdx];
-            const contentJsonStr = typeof block.contentJson === "string" 
-              ? block.contentJson 
+            const contentJsonStr = typeof block.contentJson === "string"
+              ? block.contentJson
               : JSON.stringify(block.contentJson || {});
 
             await apiRequest(`/admin/micro-lessons/${newMlId}/blocks`, {
@@ -601,7 +619,7 @@ export default function AdminDashboardPage() {
       toast.error("Vui lòng chọn loại block");
       return;
     }
-    
+
     // Ngăn chặn trùng lặp các loại slide độc bản (chỉ được phép có 1 slide mỗi loại trong một chương)
     const uniqueTypes = new Set(["hook", "takeaway", "sorting", "interaction", "reflection", "scenario-choice"]);
     if (uniqueTypes.has(blockForm.blockType) && selectedMicroLesson) {
@@ -619,9 +637,9 @@ export default function AdminDashboardPage() {
       const correctAnswers = Object.values(blockFields.blanks || {}).map((b: any) => b.correct);
       const distractors = blockFields.distractors || [];
       const combinedWords = [...correctAnswers, ...distractors];
-      
+
       const words = combinedWords.filter((w: string) => w.trim() !== "");
-      
+
       const { distractors: _, ...cleanFields } = finalBlockFields;
       finalBlockFields = {
         ...cleanFields,
@@ -645,12 +663,12 @@ export default function AdminDashboardPage() {
           })
         }
       );
-      
+
       setMicroLessons(prev => prev.map(ml => {
         if (ml.id === microLessonId) {
           const blocks = ml.blocks || [];
           const exists = blocks.some(b => b.id === saved.id);
-          const newBlocks = exists 
+          const newBlocks = exists
             ? blocks.map(b => b.id === saved.id ? saved : b)
             : [...blocks, saved];
           return { ...ml, blocks: newBlocks };
@@ -661,7 +679,7 @@ export default function AdminDashboardPage() {
       if (selectedMicroLesson && selectedMicroLesson.id === microLessonId) {
         const blocks = selectedMicroLesson.blocks || [];
         const exists = blocks.some(b => b.id === saved.id);
-        const newBlocks = exists 
+        const newBlocks = exists
           ? blocks.map(b => b.id === saved.id ? saved : b)
           : [...blocks, saved];
         setSelectedMicroLesson({ ...selectedMicroLesson, blocks: newBlocks });
@@ -681,7 +699,7 @@ export default function AdminDashboardPage() {
   const handleDeleteBlock = async (microLessonId: number, blockId: number) => {
     try {
       await apiRequest<void>(`/admin/micro-lessons/blocks/${blockId}`, { method: "DELETE" });
-      
+
       setMicroLessons(prev => prev.map(ml => {
         if (ml.id === microLessonId) {
           return { ...ml, blocks: (ml.blocks || []).filter(b => b.id !== blockId) };
@@ -718,13 +736,13 @@ export default function AdminDashboardPage() {
 
     const blocks = [...(selectedMicroLesson.blocks || [])];
     const draggedItem = blocks[draggedItemIndex];
-    
+
     blocks.splice(draggedItemIndex, 1);
     blocks.splice(index, 0, draggedItem);
 
     const updatedMicroLesson = { ...selectedMicroLesson, blocks };
     setSelectedMicroLesson(updatedMicroLesson);
-    
+
     setMicroLessons(prev => prev.map(ml => ml.id === selectedMicroLesson.id ? updatedMicroLesson : ml));
     setDraggedItemIndex(null);
 
@@ -925,6 +943,141 @@ export default function AdminDashboardPage() {
       void loadStudents(studentSearch, studentPlanFilter, studentRoleFilter);
     }
   }, [sidebarTab, studentSearch, studentPlanFilter, studentRoleFilter, loadStudents]);
+
+  const loadPlans = useCallback(async () => {
+    setPlansLoading(true);
+    try {
+      const data = await apiRequest<SubscriptionPlan[]>("/admin/plans");
+      setPlansList(data || []);
+    } catch {
+      toast.error("Không thể tải danh sách gói cước.");
+    } finally {
+      setPlansLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (sidebarTab === "plans") {
+      void loadPlans();
+    }
+  }, [sidebarTab, loadPlans]);
+
+  const resetPlanForm = () => setPlanForm({
+    id: "",
+    name: "",
+    price: "",
+    durationDays: "",
+    description: "",
+    active: true,
+    startDate: "",
+    endDate: "",
+    planType: "REGULAR"
+  });
+
+  const formatToLocalDatetime = (isoStr: string | null | undefined) => {
+    if (!isoStr) return "";
+    try {
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return "";
+      const tzOffset = d.getTimezoneOffset() * 60000;
+      return new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
+    } catch (e) {
+      return "";
+    }
+  };
+
+  const handleEditPlan = (plan: SubscriptionPlan) => {
+    setEditPlanObj(plan);
+    setPlanForm({
+      id: plan.id,
+      name: plan.name,
+      price: plan.price.toString(),
+      durationDays: plan.durationDays.toString(),
+      description: plan.description || "",
+      active: plan.active,
+      startDate: formatToLocalDatetime(plan.startDate),
+      endDate: formatToLocalDatetime(plan.endDate),
+      planType: plan.planType || "REGULAR"
+    });
+    setShowPlanModal(true);
+  };
+
+  const handleSavePlan = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!planForm.id.trim() || !planForm.name.trim() || !planForm.price.trim() || !planForm.durationDays.trim()) {
+      toast.error("Vui lòng điền đầy đủ các thông tin bắt buộc.");
+      return;
+    }
+    const priceNum = Number(planForm.price);
+    const daysNum = Number(planForm.durationDays);
+    if (isNaN(priceNum) || priceNum < 0) {
+      toast.error("Giá cước phải là số và không được âm.");
+      return;
+    }
+    if (isNaN(daysNum) || daysNum < 1) {
+      toast.error("Số ngày hiệu lực phải lớn hơn hoặc bằng 1.");
+      return;
+    }
+
+    if (planForm.startDate && planForm.endDate) {
+      if (new Date(planForm.startDate) > new Date(planForm.endDate)) {
+        toast.error("Ngày bắt đầu ưu đãi phải trước ngày kết thúc.");
+        return;
+      }
+    }
+
+    setIsSaving(true);
+    try {
+      const body = {
+        id: planForm.id.trim(),
+        name: planForm.name.trim(),
+        price: priceNum,
+        durationDays: daysNum,
+        description: planForm.description.trim(),
+        active: planForm.active,
+        startDate: planForm.startDate ? new Date(planForm.startDate).toISOString() : null,
+        endDate: planForm.endDate ? new Date(planForm.endDate).toISOString() : null,
+        planType: planForm.planType
+      };
+
+      if (editPlanObj) {
+        await apiRequest(`/admin/plans/${editPlanObj.id}`, {
+          method: "PUT",
+          body: JSON.stringify(body)
+        });
+        toast.success("Cập nhật gói cước thành công.");
+      } else {
+        await apiRequest("/admin/plans", {
+          method: "POST",
+          body: JSON.stringify(body)
+        });
+        toast.success("Thêm gói cước mới thành công.");
+      }
+      setShowPlanModal(false);
+      resetPlanForm();
+      setEditPlanObj(null);
+      void loadPlans();
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Có lỗi xảy ra khi lưu gói cước.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeletePlan = (planId: string) => {
+    setConfirmDelete({
+      label: `Bạn có chắc chắn muốn xóa gói cước "${planId}"?`,
+      onConfirm: async () => {
+        try {
+          await apiRequest(`/admin/plans/${planId}`, { method: "DELETE" });
+          toast.success("Xóa gói cước thành công.");
+          void loadPlans();
+        } catch (err) {
+          toast.error(err instanceof ApiError ? err.message : "Có lỗi xảy ra khi xóa gói cước.");
+        }
+      }
+    });
+  };
 
   const resetLessonForm = () => setLessonForm({
     id: null,
@@ -1290,14 +1443,14 @@ export default function AdminDashboardPage() {
     if (activeTab === "courses" || activeTab === "lessons") {
       if (editingLessonInCourse !== null) {
         const courseLessons = content?.lessons.filter(l => String(l.courseId) === String(courseForm.id)) || [];
-        const filteredCourseLessons = courseLessons.filter(l => 
-          l.title.toLowerCase().includes(listSearch.toLowerCase()) || 
+        const filteredCourseLessons = courseLessons.filter(l =>
+          l.title.toLowerCase().includes(listSearch.toLowerCase()) ||
           l.slug.toLowerCase().includes(listSearch.toLowerCase())
         );
 
         return (
           <div className="space-y-1.5 animate-fadeIn">
-            <button 
+            <button
               onClick={() => {
                 setEditingLessonInCourse(null);
                 setListSearch("");
@@ -1310,8 +1463,8 @@ export default function AdminDashboardPage() {
               <p className="py-8 text-center text-xs text-gray-400 italic">Không tìm thấy bài học nào</p>
             ) : (
               filteredCourseLessons.map(lesson => (
-                <button 
-                  key={lesson.id} 
+                <button
+                  key={lesson.id}
                   onClick={async () => {
                     await selectLessonForEdit(lesson);
                     setEditingLessonInCourse(lesson);
@@ -1436,10 +1589,10 @@ export default function AdminDashboardPage() {
             </div>
             <span
               className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${report.status === "PENDING"
-                  ? "bg-amber-50 text-amber-600"
-                  : report.status === "RESOLVED"
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-gray-100 text-gray-400"
+                ? "bg-amber-50 text-amber-600"
+                : report.status === "RESOLVED"
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "bg-gray-100 text-gray-400"
                 }`}
             >
               {report.status === "PENDING"
@@ -1476,8 +1629,8 @@ export default function AdminDashboardPage() {
             </div>
             <span
               className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${!q.answer || q.answer.trim() === ""
-                  ? "bg-amber-50 text-amber-600"
-                  : "bg-emerald-50 text-emerald-600"
+                ? "bg-amber-50 text-amber-600"
+                : "bg-emerald-50 text-emerald-600"
                 }`}
             >
               {!q.answer || q.answer.trim() === "" ? "Chưa trả lời" : "Đã trả lời"}
@@ -1492,16 +1645,16 @@ export default function AdminDashboardPage() {
 
   const renderBlockFieldEditor = () => {
     if (!blockForm.blockType) return null;
-    
+
     if (blockForm.blockType === "hook") {
       return (
         <div className="space-y-3">
           <div>
             <Label className="text-xs">Tiêu đề Hook (Câu hỏi/Lời dẫn thu hút)</Label>
-            <Input 
-              value={blockFields.title || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, title: e.target.value }))} 
-              placeholder="Bạn có biết...?" 
+            <Input
+              value={blockFields.title || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, title: e.target.value }))}
+              placeholder="Bạn có biết...?"
               className="text-xs"
             />
           </div>
@@ -1516,19 +1669,19 @@ export default function AdminDashboardPage() {
           <Label className="text-xs">Các ý giải thích (Gạch đầu dòng)</Label>
           {bullets.map((bullet: string, idx: number) => (
             <div key={idx} className="flex gap-2">
-              <Input 
-                value={bullet} 
+              <Input
+                value={bullet}
                 onChange={e => {
                   const newBullets = [...bullets];
                   newBullets[idx] = e.target.value;
                   setBlockFields((p: any) => ({ ...p, bullets: newBullets }));
-                }} 
-                placeholder={`Gạch đầu dòng ${idx + 1}`} 
+                }}
+                placeholder={`Gạch đầu dòng ${idx + 1}`}
                 className="text-xs"
               />
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="text-red-500 hover:text-red-700 h-8 px-2"
                 onClick={() => {
                   const newBullets = bullets.filter((_: any, i: number) => i !== idx);
@@ -1539,9 +1692,9 @@ export default function AdminDashboardPage() {
               </Button>
             </div>
           ))}
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             className="text-xs h-7"
             onClick={() => setBlockFields((p: any) => ({ ...p, bullets: [...(p.bullets || []), ""] }))}
           >
@@ -1556,19 +1709,19 @@ export default function AdminDashboardPage() {
         <div className="space-y-3">
           <div>
             <Label className="text-xs">Tiêu đề Tình huống</Label>
-            <Input 
-              value={blockFields.title || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, title: e.target.value }))} 
-              placeholder="VD: Quyết định khó khăn" 
+            <Input
+              value={blockFields.title || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, title: e.target.value }))}
+              placeholder="VD: Quyết định khó khăn"
               className="text-xs"
             />
           </div>
           <div>
             <Label className="text-xs">Nội dung Tình huống</Label>
-            <Textarea 
-              value={blockFields.body || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, body: e.target.value }))} 
-              placeholder="Mô tả tình huống thực tế xảy ra..." 
+            <Textarea
+              value={blockFields.body || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, body: e.target.value }))}
+              placeholder="Mô tả tình huống thực tế xảy ra..."
               className="text-xs min-h-[80px]"
             />
           </div>
@@ -1582,10 +1735,10 @@ export default function AdminDashboardPage() {
         <div className="space-y-4">
           <div>
             <Label className="text-xs">Câu hỏi trắc nghiệm</Label>
-            <Input 
-              value={blockFields.question || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, question: e.target.value }))} 
-              placeholder="Đặt câu hỏi lựa chọn hành vi..." 
+            <Input
+              value={blockFields.question || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, question: e.target.value }))}
+              placeholder="Đặt câu hỏi lựa chọn hành vi..."
               className="text-xs"
             />
           </div>
@@ -1596,11 +1749,11 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-gray-500">Phương án {idx + 1}</span>
                   {choices.length > 2 && (
-                    <button 
+                    <button
                       onClick={() => {
                         const newChoices = choices.filter((_: any, i: number) => i !== idx);
                         setBlockFields((p: any) => ({ ...p, choices: newChoices }));
-                      }} 
+                      }}
                       className="text-[9px] text-red-500 hover:underline"
                     >
                       Xóa phương án
@@ -1608,46 +1761,46 @@ export default function AdminDashboardPage() {
                   )}
                 </div>
                 <div className="grid gap-2 sm:grid-cols-[1fr_80px_60px]">
-                  <Input 
-                    value={choice.text || ""} 
+                  <Input
+                    value={choice.text || ""}
                     onChange={e => {
                       const newChoices = [...choices];
                       newChoices[idx] = { ...newChoices[idx], text: e.target.value };
                       setBlockFields((p: any) => ({ ...p, choices: newChoices }));
-                    }} 
-                    placeholder="Nội dung trả lời..." 
+                    }}
+                    placeholder="Nội dung trả lời..."
                     className="text-xs h-8"
                   />
                   <div className="flex items-center gap-1">
-                    <input 
-                      type="checkbox" 
-                      checked={!!choice.correct} 
+                    <input
+                      type="checkbox"
+                      checked={!!choice.correct}
                       onChange={e => {
                         const newChoices = choices.map((c: any, i: number) => ({
                           ...c,
                           correct: i === idx ? e.target.checked : false
                         }));
                         setBlockFields((p: any) => ({ ...p, choices: newChoices }));
-                      }} 
+                      }}
                     />
                     <span className="text-[10px] font-medium">Đúng</span>
                   </div>
-                  <Input 
-                    value={choice.emoji || ""} 
+                  <Input
+                    value={choice.emoji || ""}
                     onChange={e => {
                       const newChoices = [...choices];
                       newChoices[idx] = { ...newChoices[idx], emoji: e.target.value };
                       setBlockFields((p: any) => ({ ...p, choices: newChoices }));
-                    }} 
-                    placeholder="Emoji" 
+                    }}
+                    placeholder="Emoji"
                     className="text-xs h-8"
                   />
                 </div>
               </div>
             ))}
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="text-xs h-7"
               onClick={() => setBlockFields((p: any) => ({ ...p, choices: [...choices, { text: "", correct: false, emoji: "💬" }] }))}
             >
@@ -1663,10 +1816,10 @@ export default function AdminDashboardPage() {
         <div className="space-y-3">
           <div>
             <Label className="text-xs">Câu hỏi Suy ngẫm</Label>
-            <Textarea 
-              value={blockFields.question || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, question: e.target.value }))} 
-              placeholder="Bạn nghĩ sao về điều này...?" 
+            <Textarea
+              value={blockFields.question || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, question: e.target.value }))}
+              placeholder="Bạn nghĩ sao về điều này...?"
               className="text-xs min-h-[80px]"
             />
           </div>
@@ -1681,19 +1834,19 @@ export default function AdminDashboardPage() {
           <Label className="text-xs">Các điều cần nhớ (Takeaways)</Label>
           {items.map((item: string, idx: number) => (
             <div key={idx} className="flex gap-2">
-              <Input 
-                value={item} 
+              <Input
+                value={item}
                 onChange={e => {
                   const newItems = [...items];
                   newItems[idx] = e.target.value;
                   setBlockFields((p: any) => ({ ...p, items: newItems }));
-                }} 
-                placeholder={`Điều cần nhớ ${idx + 1}`} 
+                }}
+                placeholder={`Điều cần nhớ ${idx + 1}`}
                 className="text-xs"
               />
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="text-red-500 hover:text-red-700 h-8 px-2"
                 onClick={() => {
                   const newItems = items.filter((_: any, i: number) => i !== idx);
@@ -1704,9 +1857,9 @@ export default function AdminDashboardPage() {
               </Button>
             </div>
           ))}
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             className="text-xs h-7"
             onClick={() => setBlockFields((p: any) => ({ ...p, items: [...(p.items || []), ""] }))}
           >
@@ -1724,29 +1877,29 @@ export default function AdminDashboardPage() {
         <div className="space-y-4">
           <div>
             <Label className="text-xs">Hướng dẫn phân loại *</Label>
-            <Input 
-              value={blockFields.instruction || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, instruction: e.target.value }))} 
-              placeholder="VD: Hãy phân loại các hành vi vào đúng hộp:" 
+            <Input
+              value={blockFields.instruction || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, instruction: e.target.value }))}
+              placeholder="VD: Hãy phân loại các hành vi vào đúng hộp:"
               className="text-xs"
             />
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <Label className="text-xs">Tiêu đề Hộp trái (Left Box)</Label>
-              <Input 
-                value={leftBox.title || ""} 
-                onChange={e => setBlockFields((p: any) => ({ ...p, leftBox: { ...leftBox, title: e.target.value } }))} 
-                placeholder="VD: Lành mạnh" 
+              <Input
+                value={leftBox.title || ""}
+                onChange={e => setBlockFields((p: any) => ({ ...p, leftBox: { ...leftBox, title: e.target.value } }))}
+                placeholder="VD: Lành mạnh"
                 className="text-xs"
               />
             </div>
             <div>
               <Label className="text-xs">Tiêu đề Hộp phải (Right Box)</Label>
-              <Input 
-                value={rightBox.title || ""} 
-                onChange={e => setBlockFields((p: any) => ({ ...p, rightBox: { ...rightBox, title: e.target.value } }))} 
-                placeholder="VD: Không lành mạnh" 
+              <Input
+                value={rightBox.title || ""}
+                onChange={e => setBlockFields((p: any) => ({ ...p, rightBox: { ...rightBox, title: e.target.value } }))}
+                placeholder="VD: Không lành mạnh"
                 className="text-xs"
               />
             </div>
@@ -1758,11 +1911,11 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-gray-500">Thẻ {idx + 1}</span>
                   {items.length > 1 && (
-                    <button 
+                    <button
                       onClick={() => {
                         const newItems = items.filter((_: any, i: number) => i !== idx);
                         setBlockFields((p: any) => ({ ...p, items: newItems }));
-                      }} 
+                      }}
                       className="text-[9px] text-red-500 hover:underline font-semibold"
                     >
                       Xóa
@@ -1770,14 +1923,14 @@ export default function AdminDashboardPage() {
                   )}
                 </div>
                 <div className="grid gap-2 sm:grid-cols-[1fr_120px]">
-                  <Input 
-                    value={item.text || ""} 
+                  <Input
+                    value={item.text || ""}
                     onChange={e => {
                       const newItems = [...items];
                       newItems[idx] = { ...newItems[idx], text: e.target.value };
                       setBlockFields((p: any) => ({ ...p, items: newItems }));
-                    }} 
-                    placeholder="Nội dung thẻ..." 
+                    }}
+                    placeholder="Nội dung thẻ..."
                     className="text-xs h-8"
                   />
                   <select
@@ -1795,9 +1948,9 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
             ))}
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="text-xs h-7"
               onClick={() => setBlockFields((p: any) => ({ ...p, items: [...items, { text: "", correctBox: "left" }] }))}
             >
@@ -1814,10 +1967,10 @@ export default function AdminDashboardPage() {
         <div className="space-y-4">
           <div>
             <Label className="text-xs">Hướng dẫn ghép cặp *</Label>
-            <Input 
-              value={blockFields.instruction || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, instruction: e.target.value }))} 
-              placeholder="VD: Ghép cặp các khái niệm cảm xúc dậy thì và định nghĩa tương ứng:" 
+            <Input
+              value={blockFields.instruction || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, instruction: e.target.value }))}
+              placeholder="VD: Ghép cặp các khái niệm cảm xúc dậy thì và định nghĩa tương ứng:"
               className="text-xs"
             />
           </div>
@@ -1828,11 +1981,11 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold text-purple-600">Cặp thứ {idx + 1}</span>
                   {pairs.length > 1 && (
-                    <button 
+                    <button
                       onClick={() => {
                         const newPairs = pairs.filter((_: any, i: number) => i !== idx);
                         setBlockFields((p: any) => ({ ...p, pairs: newPairs }));
-                      }} 
+                      }}
                       className="text-[9px] text-red-500 hover:underline font-semibold"
                     >
                       Xóa cặp này
@@ -1842,26 +1995,26 @@ export default function AdminDashboardPage() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <Label className="text-[10px] text-gray-400">Vế trái (Khái niệm)</Label>
-                    <Input 
-                      value={pair.left || ""} 
+                    <Input
+                      value={pair.left || ""}
                       onChange={e => {
                         const newPairs = [...pairs];
                         newPairs[idx] = { ...newPairs[idx], left: e.target.value };
                         setBlockFields((p: any) => ({ ...p, pairs: newPairs }));
-                      }} 
+                      }}
                       placeholder="VD: Hormone dậy thì"
                       className="text-xs h-8"
                     />
                   </div>
                   <div>
                     <Label className="text-[10px] text-gray-400">Vế phải (Định nghĩa)</Label>
-                    <Input 
-                      value={pair.right || ""} 
+                    <Input
+                      value={pair.right || ""}
                       onChange={e => {
                         const newPairs = [...pairs];
                         newPairs[idx] = { ...newPairs[idx], right: e.target.value };
                         setBlockFields((p: any) => ({ ...p, pairs: newPairs }));
-                      }} 
+                      }}
                       placeholder="VD: Chất hóa học kích hoạt cảm xúc"
                       className="text-xs h-8"
                     />
@@ -1869,9 +2022,9 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
             ))}
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="text-xs h-7"
               onClick={() => setBlockFields((p: any) => ({ ...p, pairs: [...pairs, { left: "", right: "" }] }))}
             >
@@ -1888,19 +2041,19 @@ export default function AdminDashboardPage() {
         <div className="space-y-4">
           <div>
             <Label className="text-xs">Hướng dẫn điền chỗ trống *</Label>
-            <Input 
-              value={blockFields.instruction || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, instruction: e.target.value }))} 
-              placeholder="VD: Điền các từ thích hợp để hoàn thành đoạn văn..." 
+            <Input
+              value={blockFields.instruction || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, instruction: e.target.value }))}
+              placeholder="VD: Điền các từ thích hợp để hoàn thành đoạn văn..."
               className="text-xs"
             />
           </div>
           <div>
             <Label className="text-xs">Đoạn văn chứa ô trống *</Label>
-            <Textarea 
-              value={blockFields.sentence || ""} 
-              onChange={e => setBlockFields((p: any) => ({ ...p, sentence: e.target.value }))} 
-              placeholder="VD: Ở tuổi dậy thì, các [blank1] tăng vọt kích hoạt vùng [blank2]..." 
+            <Textarea
+              value={blockFields.sentence || ""}
+              onChange={e => setBlockFields((p: any) => ({ ...p, sentence: e.target.value }))}
+              placeholder="VD: Ở tuổi dậy thì, các [blank1] tăng vọt kích hoạt vùng [blank2]..."
               className="text-xs min-h-[80px]"
             />
             <p className="mt-1 text-[10px] text-gray-400">
@@ -1918,14 +2071,14 @@ export default function AdminDashboardPage() {
                     <span className="text-[10px] font-mono text-purple-600 shrink-0 font-bold bg-purple-50 px-2 py-1 rounded-lg">
                       [{key}]
                     </span>
-                    <Input 
-                      value={blanks[key]?.correct || ""} 
+                    <Input
+                      value={blanks[key]?.correct || ""}
                       onChange={e => {
                         const newBlanks = { ...blanks };
                         newBlanks[key] = { correct: e.target.value };
                         setBlockFields((p: any) => ({ ...p, blanks: newBlanks }));
-                      }} 
-                      placeholder="Nhập từ đáp án chính xác..." 
+                      }}
+                      placeholder="Nhập từ đáp án chính xác..."
                       className="text-xs h-7 flex-1"
                     />
                     <button
@@ -1942,11 +2095,11 @@ export default function AdminDashboardPage() {
                 ))
               )}
             </div>
-            
+
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="text-[10px] h-7"
                 onClick={() => {
                   const currentKeys = Object.keys(blanks);
@@ -1972,14 +2125,14 @@ export default function AdminDashboardPage() {
                     <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg shrink-0">
                       Nhiễu {idx + 1}
                     </span>
-                    <Input 
-                      value={w} 
+                    <Input
+                      value={w}
                       onChange={e => {
                         const newDistractors = [...(blockFields.distractors || [])];
                         newDistractors[idx] = e.target.value;
                         setBlockFields((p: any) => ({ ...p, distractors: newDistractors }));
-                      }} 
-                      placeholder="VD: bắt buộc, áp đặt..." 
+                      }}
+                      placeholder="VD: bắt buộc, áp đặt..."
                       className="text-xs h-7 flex-1"
                     />
                     <button
@@ -1997,9 +2150,9 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="text-[10px] h-7 text-amber-600 border-amber-200"
                 onClick={() => {
                   const newDistractors = [...(blockFields.distractors || []), ""];
@@ -2025,8 +2178,8 @@ export default function AdminDashboardPage() {
               {[...Object.values(blanks).map((b: any) => b.correct).filter(Boolean), ...(blockFields.distractors || []).filter(Boolean)].map((w: string, idx: number) => {
                 const isCorrect = Object.values(blanks).some((b: any) => b.correct === w);
                 return (
-                  <span 
-                    key={idx} 
+                  <span
+                    key={idx}
                     className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border shadow-sm ${isCorrect ? "bg-purple-50 text-purple-700 border-purple-200" : "bg-amber-50 text-amber-700 border-amber-200"}`}
                   >
                     {w}
@@ -2043,15 +2196,15 @@ export default function AdminDashboardPage() {
       const nodes = blockFields.nodes || {};
       const nodeKeys = Object.keys(nodes);
       const startNode = blockFields.startNode || "step1";
-      
-      const activeNodeKey = nodeKeys.includes(activeScenarioNodeKey) 
-        ? activeScenarioNodeKey 
+
+      const activeNodeKey = nodeKeys.includes(activeScenarioNodeKey)
+        ? activeScenarioNodeKey
         : (nodeKeys[0] || "step1");
-        
+
       if (!nodes[activeNodeKey]) {
         nodes[activeNodeKey] = { text: "", choices: [] };
       }
-      
+
       const activeNode = nodes[activeNodeKey];
       const choices = activeNode.choices || [];
 
@@ -2065,17 +2218,17 @@ export default function AdminDashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <Label className="text-xs font-semibold text-gray-700">Tiêu đề cuộc phiêu lưu *</Label>
-              <Input 
-                value={blockFields.title || ""} 
-                onChange={e => setBlockFields((p: any) => ({ ...p, title: e.target.value }))} 
-                placeholder="VD: Cuộc phiêu lưu: Đón nhận cảm xúc..." 
+              <Input
+                value={blockFields.title || ""}
+                onChange={e => setBlockFields((p: any) => ({ ...p, title: e.target.value }))}
+                placeholder="VD: Cuộc phiêu lưu: Đón nhận cảm xúc..."
                 className="text-xs"
               />
             </div>
             <div>
               <Label className="text-xs font-semibold text-gray-700">Bước khởi đầu cuộc phiêu lưu *</Label>
-              <select 
-                value={startNode} 
+              <select
+                value={startNode}
                 onChange={e => setBlockFields((p: any) => ({ ...p, startNode: e.target.value }))}
                 className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 outline-none h-9 font-semibold"
               >
@@ -2116,24 +2269,23 @@ export default function AdminDashboardPage() {
                 + Thêm phân cảnh mới
               </Button>
             </div>
-            
+
             <div className="flex gap-2.5 overflow-x-auto pb-2 pt-1 scrollbar-thin">
               {nodeKeys.map(k => {
                 const node = nodes[k] || { text: "", choices: [] };
                 const isStart = k === startNode;
                 const isCurrent = k === activeNodeKey;
                 const isEnd = (node.choices || []).length === 0;
-                
+
                 return (
                   <button
                     key={k}
                     type="button"
                     onClick={() => setActiveScenarioNodeKey(k)}
-                    className={`flex-shrink-0 w-[140px] text-left p-2.5 rounded-xl border transition-all select-none ${
-                      isCurrent 
-                        ? "border-purple-500 bg-purple-50/30 ring-2 ring-purple-500/20 shadow-md" 
-                        : "border-gray-150 bg-white hover:border-gray-300 hover:bg-gray-50"
-                    }`}
+                    className={`flex-shrink-0 w-[140px] text-left p-2.5 rounded-xl border transition-all select-none ${isCurrent
+                      ? "border-purple-500 bg-purple-50/30 ring-2 ring-purple-500/20 shadow-md"
+                      : "border-gray-150 bg-white hover:border-gray-300 hover:bg-gray-50"
+                      }`}
                   >
                     <div className="flex items-center justify-between gap-1 mb-1">
                       <span className="text-[10px] font-bold text-gray-800 truncate block flex-1 font-mono">{k}</span>
@@ -2189,8 +2341,8 @@ export default function AdminDashboardPage() {
                       const newNodes = { ...nodes };
                       delete newNodes[activeNodeKey];
                       const remainingKeys = Object.keys(newNodes);
-                      setBlockFields((p: any) => ({ 
-                        ...p, 
+                      setBlockFields((p: any) => ({
+                        ...p,
                         nodes: newNodes,
                         startNode: p.startNode === activeNodeKey ? (remainingKeys[0] || "step1") : p.startNode
                       }));
@@ -2208,8 +2360,8 @@ export default function AdminDashboardPage() {
             <div className="space-y-3">
               <div>
                 <Label className="text-xs font-semibold text-gray-700">Nội dung dẫn dắt hoặc kể câu chuyện *</Label>
-                <Textarea 
-                  value={activeNode.text || ""} 
+                <Textarea
+                  value={activeNode.text || ""}
                   onChange={e => {
                     const newNodes = { ...nodes };
                     newNodes[activeNodeKey] = { ...newNodes[activeNodeKey], text: e.target.value };
@@ -2264,8 +2416,8 @@ export default function AdminDashboardPage() {
                             Xóa lựa chọn
                           </button>
                         </div>
-                        <Input 
-                          value={choice.text || ""} 
+                        <Input
+                          value={choice.text || ""}
                           onChange={e => {
                             const newNodes = { ...nodes };
                             const newChoices = [...choices];
@@ -2273,7 +2425,7 @@ export default function AdminDashboardPage() {
                             newNodes[activeNodeKey] = { ...newNodes[activeNodeKey], choices: newChoices };
                             setBlockFields((p: any) => ({ ...p, nodes: newNodes }));
                           }}
-                          placeholder="Văn bản trên nút bấm (VD: Tự suy diễn: Chắc bạn ghét mình...)" 
+                          placeholder="Văn bản trên nút bấm (VD: Tự suy diễn: Chắc bạn ghét mình...)"
                           className="text-xs h-8 bg-white"
                         />
                         <div className="flex flex-wrap items-center justify-between gap-1.5 pt-1.5 border-t border-dashed border-gray-200">
@@ -2295,7 +2447,7 @@ export default function AdminDashboardPage() {
                               ))}
                             </select>
                           </div>
-                          
+
                           <Button
                             variant="outline"
                             size="sm"
@@ -2316,14 +2468,14 @@ export default function AdminDashboardPage() {
                                 toast.error("Tên mã bước đã tồn tại trong kịch bản");
                                 return;
                               }
-                              
+
                               const newNodes = { ...nodes };
                               newNodes[cleaned] = { text: "", choices: [] };
-                              
+
                               const newChoices = [...choices];
                               newChoices[cIdx] = { ...newChoices[cIdx], nextNode: cleaned };
                               newNodes[activeNodeKey] = { ...newNodes[activeNodeKey], choices: newChoices };
-                              
+
                               setBlockFields((p: any) => ({ ...p, nodes: newNodes }));
                               setActiveScenarioNodeKey(cleaned);
                               toast.success(`Đã tạo nhanh phân cảnh "${cleaned}" và liên kết thành công!`);
@@ -2346,14 +2498,14 @@ export default function AdminDashboardPage() {
     return (
       <div>
         <Label className="text-xs">Dữ liệu JSON cấu hình thô</Label>
-        <Textarea 
+        <Textarea
           className="font-mono text-xs min-h-[120px]"
-          value={JSON.stringify(blockFields, null, 2)} 
+          value={JSON.stringify(blockFields, null, 2)}
           onChange={e => {
             try {
               setBlockFields(JSON.parse(e.target.value));
-            } catch {}
-          }} 
+            } catch { }
+          }}
         />
       </div>
     );
@@ -2366,12 +2518,12 @@ export default function AdminDashboardPage() {
         <div className="h-5 bg-gray-800 flex justify-center items-center">
           <div className="w-12 h-2.5 bg-black rounded-full"></div>
         </div>
-        
+
         <div className="flex-1 bg-gradient-to-b from-[#1a1b2f] to-[#0d0e15] p-3 overflow-y-auto text-white flex flex-col justify-center">
           <div className="text-[9px] text-center uppercase tracking-widest text-purple-400 font-bold mb-3">
             Mobile Mock Preview
           </div>
-          
+
           {blockForm.blockType === "hook" && (
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 text-center shadow-lg">
               <span className="text-2xl text-purple-400">✨</span>
@@ -2452,7 +2604,7 @@ export default function AdminDashboardPage() {
             </div>
           )}
         </div>
-        
+
         <div className="h-3 bg-gray-800 flex justify-center items-center">
           <div className="w-16 h-0.5 bg-white/30 rounded-full"></div>
         </div>
@@ -2570,25 +2722,25 @@ export default function AdminDashboardPage() {
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <Label>YouTube Teaser Video URL / ID</Label>
-              <Input 
-                value={lessonForm.teaserVideoId} 
+              <Input
+                value={lessonForm.teaserVideoId}
                 onChange={e => {
                   const val = e.target.value;
                   setLessonForm(p => ({ ...p, teaserVideoId: extractYoutubeId(val) }));
-                }} 
-                placeholder="Nhập ID hoặc dán link YouTube..." 
+                }}
+                placeholder="Nhập ID hoặc dán link YouTube..."
               />
               {lessonForm.teaserVideoId && <p className="mt-1 text-[10px] text-gray-400">Đã nhận diện ID: {lessonForm.teaserVideoId}</p>}
             </div>
             <div>
               <Label>YouTube Full Video URL / ID</Label>
-              <Input 
-                value={lessonForm.fullVideoId} 
+              <Input
+                value={lessonForm.fullVideoId}
                 onChange={e => {
                   const val = e.target.value;
                   setLessonForm(p => ({ ...p, fullVideoId: extractYoutubeId(val) }));
-                }} 
-                placeholder="Nhập ID hoặc dán link YouTube..." 
+                }}
+                placeholder="Nhập ID hoặc dán link YouTube..."
               />
               {lessonForm.fullVideoId && <p className="mt-1 text-[10px] text-gray-400">Đã nhận diện ID: {lessonForm.fullVideoId}</p>}
             </div>
@@ -2618,7 +2770,7 @@ export default function AdminDashboardPage() {
         {lessonForm.id && (
           <div className="border-t border-gray-100 pt-6 space-y-4">
             <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">🔗 Tài liệu tham khảo của bài học</h3>
-            
+
             {sources.length > 0 ? (
               <div className="overflow-x-auto rounded-xl border border-gray-100">
                 <table className="w-full text-left text-xs text-gray-500">
@@ -2673,11 +2825,11 @@ export default function AdminDashboardPage() {
                 <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
                   {microLessons.map(ml => (
                     <div key={ml.id} className="group flex items-center justify-between gap-1">
-                      <button 
+                      <button
                         onClick={() => {
                           setSelectedMicroLesson(ml);
                           setEditingBlock(null);
-                        }} 
+                        }}
                         className={`flex-1 text-left px-3 py-2 rounded-lg text-xs font-semibold transition-all border ${selectedMicroLesson?.id === ml.id ? "bg-purple-600 text-white border-purple-600" : "bg-white hover:bg-gray-50 border-gray-200 text-gray-700"}`}
                       >
                         {ml.title}
@@ -2706,24 +2858,23 @@ export default function AdminDashboardPage() {
                         {editingBlock === null && (
                           <div className="space-y-3 animate-fadeIn">
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Các khối nội dung (Blocks)</p>
-                            
+
                             {(selectedMicroLesson.blocks || []).length > 0 ? (
                               <div className="space-y-2">
                                 {(selectedMicroLesson.blocks || []).map((b, idx) => (
-                                  <div 
-                                    key={b.id} 
+                                  <div
+                                    key={b.id}
                                     draggable
                                     onDragStart={(e) => handleDragStart(e, idx)}
                                     onDragOver={(e) => handleDragOver(e, idx)}
                                     onDrop={(e) => handleDrop(e, idx)}
                                     onDragEnd={handleDragEnd}
-                                    className={`flex items-start justify-between gap-3 p-3 rounded-xl border transition-all cursor-grab active:cursor-grabbing select-none ${
-                                      draggedItemIndex === idx 
-                                        ? "opacity-40 border-dashed border-purple-300 bg-purple-50/10" 
-                                        : editingBlock?.id === b.id 
-                                          ? "border-purple-200 bg-purple-50/30" 
-                                          : "border-gray-100 bg-white hover:border-purple-100 hover:shadow-sm"
-                                    }`}
+                                    className={`flex items-start justify-between gap-3 p-3 rounded-xl border transition-all cursor-grab active:cursor-grabbing select-none ${draggedItemIndex === idx
+                                      ? "opacity-40 border-dashed border-purple-300 bg-purple-50/10"
+                                      : editingBlock?.id === b.id
+                                        ? "border-purple-200 bg-purple-50/30"
+                                        : "border-gray-100 bg-white hover:border-purple-100 hover:shadow-sm"
+                                      }`}
                                   >
                                     <div className="flex items-start gap-2.5 min-w-0">
                                       <span className="text-gray-300 font-bold self-center select-none text-xs">⠿</span>
@@ -2752,7 +2903,7 @@ export default function AdminDashboardPage() {
                           <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                             <p className="text-xs font-bold text-purple-700">{editingBlock ? "📝 ĐANG BIÊN TẬP SLIDE" : "✨ THÊM SLIDE MỚI"}</p>
                             {editingBlock && (
-                              <button 
+                              <button
                                 onClick={() => {
                                   setEditingBlock(null);
                                   setBlockForm({ id: null, blockType: "explanation", contentJson: "" });
@@ -2764,12 +2915,12 @@ export default function AdminDashboardPage() {
                               </button>
                             )}
                           </div>
-                          
+
                           <div className="grid gap-3 sm:grid-cols-2">
                             <div>
                               <Label className="text-[10px]">Loại Slide</Label>
-                              <select 
-                                value={blockForm.blockType} 
+                              <select
+                                value={blockForm.blockType}
                                 onChange={e => {
                                   const type = e.target.value as MicroLessonBlock["blockType"];
                                   setBlockForm(p => ({ ...p, blockType: type }));
@@ -2784,7 +2935,7 @@ export default function AdminDashboardPage() {
                                   else if (type === "fill-blank") setBlockFields({ instruction: "", sentence: "", blanks: {} });
                                   else if (type === "scenario-choice") setBlockFields({ title: "Cuộc phiêu lưu mới", startNode: "step1", nodes: { step1: { text: "Nội dung khởi đầu...", choices: [] } } });
                                   else setBlockFields({});
-                                }} 
+                                }}
                                 className="w-full rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-700 outline-none"
                               >
                                 <option value="hook">{getBlockTypeLabel("hook", "Hook (Khởi động)")}</option>
@@ -2806,9 +2957,9 @@ export default function AdminDashboardPage() {
                           </div>
 
                           <div className="flex justify-end gap-2 border-t border-gray-100 pt-3">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
+                            <Button
+                              variant="outline"
+                              size="sm"
                               onClick={() => {
                                 setEditingBlock(null);
                                 setBlockForm({ id: null, blockType: "explanation", contentJson: "" });
@@ -2818,9 +2969,9 @@ export default function AdminDashboardPage() {
                             >
                               Hủy
                             </Button>
-                            <Button 
-                              size="sm" 
-                              className="bg-purple-600 text-white hover:bg-purple-700 text-xs h-8" 
+                            <Button
+                              size="sm"
+                              className="bg-purple-600 text-white hover:bg-purple-700 text-xs h-8"
                               onClick={() => handleSaveBlock(selectedMicroLesson.id)}
                             >
                               Lưu Slide
@@ -2881,8 +3032,8 @@ export default function AdminDashboardPage() {
               <div>
                 <Label>Danh mục *</Label>
                 <div className="flex gap-1.5 items-center">
-                  <select 
-                    value={courseForm.categoryId} 
+                  <select
+                    value={courseForm.categoryId}
                     onChange={e => {
                       const val = e.target.value;
                       if (val === "NEW_CATEGORY") {
@@ -2890,7 +3041,7 @@ export default function AdminDashboardPage() {
                       } else {
                         setCourseForm(p => ({ ...p, categoryId: val }));
                       }
-                    }} 
+                    }}
                     className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 outline-none"
                   >
                     <option value="">-- Không chọn / Chưa phân loại --</option>
@@ -2944,9 +3095,9 @@ export default function AdminDashboardPage() {
               <div className="border-t border-gray-100 pt-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">📚 Danh sách bài học thuộc khóa này ({courseLessons.length})</h3>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
+                  <Button
+                    size="sm"
+                    variant="outline"
                     className="border-purple-200 text-purple-600 hover:bg-purple-50 h-8 text-xs font-semibold"
                     onClick={() => {
                       resetLessonForm();
@@ -2983,9 +3134,9 @@ export default function AdminDashboardPage() {
                           <p className="text-xs font-bold text-gray-800 truncate">{lesson.title}</p>
                           <p className="text-[10px] text-gray-400 mt-0.5">Bài {lesson.order} · {lesson.slug}</p>
                         </div>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
+                        <Button
+                          size="sm"
+                          variant="ghost"
                           className="text-purple-600 hover:text-purple-700 font-bold text-xs h-7 px-2 shrink-0 bg-white shadow-sm border border-gray-100"
                           onClick={async () => {
                             await selectLessonForEdit(lesson);
@@ -3016,7 +3167,7 @@ export default function AdminDashboardPage() {
           </div>
         );
       }
-      
+
       if (editingLessonInCourse !== null) {
         return (
           <div className="space-y-4">
@@ -3032,12 +3183,12 @@ export default function AdminDashboardPage() {
             <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">Quản lý bài học</p>
             <h2 className="mt-1 text-xl font-bold text-gray-800">Khóa học: {courseForm.title}</h2>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-gray-800">📚 Danh sách bài học ({courseLessons.length})</h3>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 className="bg-purple-600 hover:bg-purple-700 text-white h-8 text-xs font-semibold"
                 onClick={() => {
                   resetLessonForm();
@@ -3074,9 +3225,9 @@ export default function AdminDashboardPage() {
                       <p className="text-xs font-bold text-gray-800 truncate">{lesson.title}</p>
                       <p className="text-[10px] text-gray-400 mt-0.5">Bài {lesson.order} · {lesson.slug}</p>
                     </div>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       className="text-purple-600 hover:text-purple-700 font-bold text-xs h-7 px-2 shrink-0 bg-white shadow-sm border border-gray-100"
                       onClick={async () => {
                         await selectLessonForEdit(lesson);
@@ -3374,7 +3525,7 @@ export default function AdminDashboardPage() {
     reports: "Báo cáo vi phạm",
     questions: "Câu hỏi ẩn danh"
   };
-  const pageTitle = sidebarTab === "overview" ? "Dashboard" : sidebarTab === "students" ? "Học viên" : sidebarTab === "discussions" ? "Thảo luận" : sidebarTab === "reports" ? "Báo cáo" : sidebarTab === "settings" ? "Cài đặt" : crudTitle[activeTab];
+  const pageTitle = sidebarTab === "overview" ? "Dashboard" : sidebarTab === "students" ? "Học viên" : sidebarTab === "plans" ? "Quản lý gói VIP" : sidebarTab === "discussions" ? "Thảo luận" : sidebarTab === "reports" ? "Báo cáo" : sidebarTab === "settings" ? "Cài đặt" : crudTitle[activeTab];
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f5f6fa]">
@@ -3784,8 +3935,8 @@ export default function AdminDashboardPage() {
                           <td className="px-5 py-3.5 hidden md:table-cell text-gray-500 text-xs">@{u.username}</td>
                           <td className="px-5 py-3.5 text-center">
                             <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${u.plan === "premium" ? "bg-amber-50 text-amber-600" :
-                                u.plan === "popular" ? "bg-blue-50 text-blue-600" :
-                                  "bg-green-50 text-green-600"
+                              u.plan === "popular" ? "bg-blue-50 text-blue-600" :
+                                "bg-green-50 text-green-600"
                               }`}>{planLabel(u.plan)}</span>
                           </td>
                           <td className="px-5 py-3.5 text-center hidden sm:table-cell">
@@ -3803,6 +3954,110 @@ export default function AdminDashboardPage() {
                               </button>
                               <button onClick={() => void deleteUserById(u.id, u.fullName)}
                                 className="rounded-lg border border-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors">
+                                Xóa
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── VIP PLANS ── */}
+          {sidebarTab === "plans" && (
+            <div>
+              {/* Header */}
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                  Quản lý gói VIP
+                  <span className="rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-bold text-purple-600 border border-purple-100">
+                    {plansList.length}
+                  </span>
+                </h1>
+                <Button
+                  onClick={() => {
+                    resetPlanForm();
+                    setEditPlanObj(null);
+                    setShowPlanModal(true);
+                  }}
+                  className="rounded-xl bg-purple-600 font-bold text-xs text-white hover:bg-purple-700 flex items-center gap-1 h-9 px-3.5 shadow-sm active:scale-[0.98] transition-all"
+                >
+                  <Plus className="h-4 w-4" />
+                  Thêm gói cước mới
+                </Button>
+              </div>
+
+              {/* Table */}
+              <div className="rounded-2xl bg-white shadow-sm overflow-hidden">
+                {plansLoading ? (
+                  <div className="flex items-center justify-center py-16 text-gray-400 text-sm">Đang tải...</div>
+                ) : plansList.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+                    <Trophy className="mb-3 h-10 w-10 opacity-30 text-purple-500" />
+                    <p className="text-sm font-medium">Chưa cấu hình gói cước nào</p>
+                  </div>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-[11px] font-semibold uppercase tracking-wider text-gray-400 bg-gray-50/50">
+                        <th className="px-5 py-3.5 text-left">Mã gói cước</th>
+                        <th className="px-5 py-3.5 text-left">Tên gói cước</th>
+                        <th className="px-5 py-3.5 text-left">Giá cước</th>
+                        <th className="px-5 py-3.5 text-left">Thời hạn (Ngày)</th>
+                        <th className="px-5 py-3.5 text-left">Phân loại</th>
+                        <th className="px-5 py-3.5 text-center">Trạng thái</th>
+                        <th className="px-5 py-3.5 text-left">Mô tả</th>
+                        <th className="px-5 py-3.5 text-right">Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {plansList.map((plan) => (
+                        <tr key={plan.id} className="text-gray-700 hover:bg-gray-50/50 transition-colors">
+                          <td className="px-5 py-4 font-bold text-gray-900 text-xs">{plan.id}</td>
+                          <td className="px-5 py-4 font-semibold text-gray-800">{plan.name}</td>
+                          <td className="px-5 py-4 font-extrabold text-purple-700">
+                            {plan.price === 0 ? "Miễn phí" : `${Number(plan.price).toLocaleString("vi-VN")}đ`}
+                          </td>
+                          <td className="px-5 py-4 font-medium text-slate-600">{plan.durationDays} ngày</td>
+                          <td className="px-5 py-4 text-left">
+                            <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${plan.planType === 'TRIAL'
+                                ? "bg-violet-50 text-violet-600 border border-violet-100"
+                                : plan.planType === 'PROMOTION'
+                                  ? "bg-amber-50 text-amber-600 border border-amber-100"
+                                  : "bg-blue-50 text-blue-600 border border-blue-100"
+                              }`}>
+                              {plan.planType === 'TRIAL'
+                                ? "Dùng thử"
+                                : plan.planType === 'PROMOTION'
+                                  ? "Khuyến mãi"
+                                  : "Đăng ký mua"}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4 text-center">
+                            <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold ${plan.active ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-gray-100 text-gray-500 border border-gray-200"
+                              }`}>
+                              {plan.active ? "Đang chạy" : "Đã ẩn"}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4 text-xs text-gray-500 max-w-xs truncate" title={plan.description || ""}>
+                            {plan.description || "—"}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleEditPlan(plan)}
+                                className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                              >
+                                Sửa
+                              </button>
+                              <button
+                                onClick={() => handleDeletePlan(plan.id)}
+                                className="rounded-lg border border-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors"
+                              >
                                 Xóa
                               </button>
                             </div>
@@ -3872,6 +4127,182 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
+          {/* ── PLAN CRUD MODAL ── */}
+          {showPlanModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
+              <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-155">
+                <div className="mb-5 flex items-start justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-purple-600">
+                      {editPlanObj ? "Chỉnh sửa gói VIP" : "Thêm gói cước VIP mới"}
+                    </p>
+                    <h2 className="mt-1 text-lg font-bold text-gray-800">
+                      {editPlanObj ? editPlanObj.name : "Thông tin gói cước"}
+                    </h2>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowPlanModal(false);
+                      setEditPlanObj(null);
+                      resetPlanForm();
+                    }}
+                    className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSavePlan} className="space-y-4">
+                  <div>
+                    <Label className="text-xs font-semibold">Mã gói cước (Plan ID) *</Label>
+                    <Input
+                      placeholder="Ví dụ: VIP_3M, VIP_2Y"
+                      value={planForm.id}
+                      onChange={(e) => setPlanForm({ ...planForm, id: e.target.value })}
+                      disabled={!!editPlanObj}
+                      className="mt-1 rounded-xl focus:ring-purple-500/20"
+                      required
+                    />
+                    {!editPlanObj && (
+                      <p className="text-[10px] text-gray-400 mt-1 italic">
+                        * Lưu ý: Mã ID này là duy nhất và không thể thay đổi sau khi tạo.
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Label className="text-xs font-semibold">Tên gói cước hiển thị *</Label>
+                    <Input
+                      placeholder="Ví dụ: Học viên VIP 3 Tháng"
+                      value={planForm.name}
+                      onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
+                      className="mt-1 rounded-xl"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs font-semibold">Giá cước (VNĐ) *</Label>
+                      <Input
+                        type="number"
+                        placeholder="Ví dụ: 79000"
+                        value={planForm.price}
+                        onChange={(e) => setPlanForm({ ...planForm, price: e.target.value })}
+                        className="mt-1 rounded-xl"
+                        min="0"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs font-semibold">Số ngày hiệu lực *</Label>
+                      <Input
+                        type="number"
+                        placeholder="Ví dụ: 90"
+                        value={planForm.durationDays}
+                        onChange={(e) => setPlanForm({ ...planForm, durationDays: e.target.value })}
+                        className="mt-1 rounded-xl"
+                        min="1"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs font-semibold">Trạng thái hoạt động *</Label>
+                    <select
+                      value={planForm.active ? "true" : "false"}
+                      onChange={(e) => setPlanForm({ ...planForm, active: e.target.value === "true" })}
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                    >
+                      <option value="true">Bật (Hoạt động & hiển thị trên bảng giá)</option>
+                      <option value="false">Tắt (Ẩn khỏi bảng giá & ngừng cho dùng thử)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs font-semibold">Phân loại gói cước *</Label>
+                    <select
+                      value={planForm.planType}
+                      onChange={(e) => setPlanForm({ ...planForm, planType: e.target.value as any })}
+                      className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                    >
+                      <option value="REGULAR">Gói cước đăng ký mua (REGULAR)</option>
+                      <option value="TRIAL">Gói dùng thử tự động (TRIAL)</option>
+                      <option value="PROMOTION">Gói khuyến mãi đặc biệt (PROMOTION)</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs font-semibold">Bắt đầu ưu đãi (Tùy chọn)</Label>
+                      <Input
+                        type="datetime-local"
+                        value={planForm.startDate}
+                        onChange={(e) => setPlanForm({ ...planForm, startDate: e.target.value })}
+                        onClick={(e) => {
+                          try {
+                            e.currentTarget.showPicker();
+                          } catch (err) { }
+                        }}
+                        className="mt-1 rounded-xl text-xs cursor-pointer"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs font-semibold">Kết thúc ưu đãi (Tùy chọn)</Label>
+                      <Input
+                        type="datetime-local"
+                        value={planForm.endDate}
+                        onChange={(e) => setPlanForm({ ...planForm, endDate: e.target.value })}
+                        onClick={(e) => {
+                          try {
+                            e.currentTarget.showPicker();
+                          } catch (err) { }
+                        }}
+                        className="mt-1 rounded-xl text-xs cursor-pointer"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs font-semibold">Mô tả chi tiết</Label>
+                    <Textarea
+                      placeholder="Nhập mô tả các tính năng hoặc ưu đãi đi kèm của gói cước này..."
+                      value={planForm.description}
+                      onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })}
+                      className="mt-1 rounded-xl min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 rounded-xl h-10 text-xs font-bold"
+                      onClick={() => {
+                        setShowPlanModal(false);
+                        setEditPlanObj(null);
+                        resetPlanForm();
+                      }}
+                      disabled={isSaving}
+                    >
+                      Hủy
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-xl h-10 text-xs font-bold"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Đang lưu..." : (editPlanObj ? "Lưu thay đổi" : "Tạo gói cước")}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
           {/* ── DISCUSSIONS ── */}
           {sidebarTab === "discussions" && (
             <div>
@@ -3914,8 +4345,8 @@ export default function AdminDashboardPage() {
                 {activeTab !== "reports" && activeTab !== "questions" && (
                   <div className="flex items-center gap-2">
                     {activeTab === "courses" && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         className="border-purple-200 text-purple-700 hover:bg-purple-50 h-9 text-xs font-semibold"
                         onClick={() => setShowImportModal(true)}
                       >
@@ -3942,12 +4373,12 @@ export default function AdminDashboardPage() {
                           {activeTab === "lessons" && (
                             <div className="flex flex-col gap-1">
                               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Lọc theo khóa học</span>
-                              <select 
-                                value={selectedCourseFilter} 
+                              <select
+                                value={selectedCourseFilter}
                                 onChange={e => {
                                   setSelectedCourseFilter(e.target.value);
                                   setListSearch("");
-                                }} 
+                                }}
                                 className="w-full rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-700 outline-none focus:border-purple-400"
                               >
                                 <option value="all">-- Tất cả khóa học --</option>
@@ -4058,23 +4489,23 @@ export default function AdminDashboardPage() {
                       {editingCategory ? "Cập nhật các thông tin hiển thị của danh mục" : "Tạo một danh mục phân loại khóa học mới"}
                     </p>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div>
                       <Label className="text-xs">Tên danh mục *</Label>
-                      <Input 
-                        value={newCategoryName} 
-                        onChange={e => setNewCategoryName(e.target.value)} 
-                        placeholder="VD: 🧠 Cảm xúc & Stress" 
+                      <Input
+                        value={newCategoryName}
+                        onChange={e => setNewCategoryName(e.target.value)}
+                        placeholder="VD: 🧠 Cảm xúc & Stress"
                         className="text-xs"
                       />
                     </div>
                     <div>
                       <Label className="text-xs">Đường dẫn tĩnh (Slug) *</Label>
-                      <Input 
-                        value={newCategorySlug} 
-                        onChange={e => setNewCategorySlug(e.target.value)} 
-                        placeholder="VD: cam-xuc-stress" 
+                      <Input
+                        value={newCategorySlug}
+                        onChange={e => setNewCategorySlug(e.target.value)}
+                        placeholder="VD: cam-xuc-stress"
                         className="text-xs"
                       />
                     </div>
@@ -4114,10 +4545,10 @@ export default function AdminDashboardPage() {
                           />
                         ))}
                         <div className="h-6 w-px bg-gray-200 mx-1" />
-                        <input 
-                          type="color" 
-                          value={newCategoryColor} 
-                          onChange={e => setNewCategoryColor(e.target.value)} 
+                        <input
+                          type="color"
+                          value={newCategoryColor}
+                          onChange={e => setNewCategoryColor(e.target.value)}
                           className="h-6 w-6 cursor-pointer rounded-full border border-gray-200 p-0.5 shrink-0"
                           title="Tùy chọn màu khác"
                         />
@@ -4126,9 +4557,9 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="flex gap-2 justify-end pt-2 border-t border-gray-100">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="text-xs"
                       onClick={() => {
                         setShowNewCategoryModal(false);
@@ -4142,9 +4573,9 @@ export default function AdminDashboardPage() {
                     >
                       Hủy
                     </Button>
-                    <Button 
-                      size="sm" 
-                      className="text-xs bg-purple-600 hover:bg-purple-700 text-white" 
+                    <Button
+                      size="sm"
+                      className="text-xs bg-purple-600 hover:bg-purple-700 text-white"
                       onClick={handleCreateCategory}
                       disabled={isSaving}
                     >
@@ -4165,8 +4596,8 @@ export default function AdminDashboardPage() {
                     <h3 className="text-base font-bold text-gray-800">Quản lý danh mục</h3>
                     <p className="text-xs text-gray-400">Danh sách các danh mục phân loại khóa học hiện tại</p>
                   </div>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="bg-purple-600 hover:bg-purple-700 text-white text-xs gap-1"
                     onClick={() => {
                       startAddCategory();
@@ -4191,7 +4622,7 @@ export default function AdminDashboardPage() {
                         {categories.map(cat => (
                           <tr key={cat.id} className="hover:bg-gray-50/50">
                             <td className="p-3">
-                              <span 
+                              <span
                                 className="h-7 w-7 rounded-lg flex items-center justify-center text-white shrink-0"
                                 style={{ backgroundColor: cat.colorTheme || "#4361ee" }}
                               >
@@ -4224,9 +4655,9 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="flex justify-end pt-3 border-t border-gray-100 shrink-0">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="text-xs"
                     onClick={() => setShowCategoryManagerModal(false)}
                   >

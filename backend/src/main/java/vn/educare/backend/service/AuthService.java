@@ -13,6 +13,7 @@ import vn.educare.backend.api.AuthDtos.LoginRequest;
 import vn.educare.backend.api.AuthDtos.RegisterRequest;
 import vn.educare.backend.api.AuthDtos.UserResponse;
 import vn.educare.backend.model.LessonProgressEntity;
+import vn.educare.backend.model.PlanType;
 import vn.educare.backend.model.UserEntity;
 import vn.educare.backend.model.UserPlan;
 import vn.educare.backend.model.UserRole;
@@ -64,10 +65,14 @@ public class AuthService {
     user.setUpdatedAt(Instant.now());
     userRepository.save(user);
 
-    // Grant free trial subscription if trial plan exists in DB (meaning promotion is active)
-    java.util.Optional<SubscriptionPlanEntity> trialPlanOpt = subscriptionPlanRepository.findById("VIP_TRIAL");
-    if (trialPlanOpt.isPresent()) {
-        SubscriptionPlanEntity trialPlan = trialPlanOpt.get();
+    // Tìm kiếm động gói cước dùng thử hoạt động đầu tiên
+    List<SubscriptionPlanEntity> trials = subscriptionPlanRepository.findByPlanType(PlanType.TRIAL);
+    SubscriptionPlanEntity trialPlan = trials.stream()
+        .filter(SubscriptionPlanEntity::getActive)
+        .findFirst()
+        .orElse(null);
+
+    if (trialPlan != null) {
         user.setPlan(UserPlan.POPULAR);
         userRepository.save(user);
 

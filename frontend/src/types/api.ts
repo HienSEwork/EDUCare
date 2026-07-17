@@ -480,6 +480,10 @@ export interface SubscriptionPlan {
   price: number;
   durationDays: number;
   description: string | null;
+  active: boolean;
+  startDate?: string | null;
+  endDate?: string | null;
+  planType: "REGULAR" | "TRIAL" | "PROMOTION";
 }
 
 export interface CheckoutResponse {

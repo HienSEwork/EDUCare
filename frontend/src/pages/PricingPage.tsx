@@ -16,6 +16,7 @@ interface PlanItem {
   color: string;
   popular: boolean;
   badge?: string;
+  planType?: "REGULAR" | "TRIAL" | "PROMOTION";
 }
 
 const plans: PlanItem[] = [
@@ -32,6 +33,7 @@ const plans: PlanItem[] = [
     ],
     color: "border-slate-200/80 bg-white/40",
     popular: false,
+    planType: "REGULAR"
   },
   {
     id: "VIP_1M",
@@ -49,6 +51,7 @@ const plans: PlanItem[] = [
     color: "border-primary bg-primary/5 shadow-soft",
     popular: true,
     badge: "⚡ Gợi ý cho bạn",
+    planType: "REGULAR"
   },
   {
     id: "PREMIUM_4M",
@@ -65,6 +68,7 @@ const plans: PlanItem[] = [
     color: "border-pink-300/80 bg-pink-50/20",
     popular: false,
     badge: "💎 Tiết kiệm nhất",
+    planType: "REGULAR"
   },
 ];
 
@@ -116,7 +120,11 @@ const mapPlanToItem = (apiPlan: SubscriptionPlan): PlanItem => {
   let popular = false;
   let badge: string | undefined = undefined;
 
-  if (isVip) {
+  if (apiPlan.planType === "PROMOTION") {
+    color = "border-amber-400 bg-gradient-to-b from-amber-500/[0.08] via-amber-500/[0.02] to-amber-500/[0.01] shadow-[0_15px_40px_rgba(245,158,11,0.15)]";
+    popular = true;
+    badge = "🔥 Ưu đãi cực Hot";
+  } else if (isVip) {
     color = "border-primary bg-primary/5 shadow-soft";
     popular = true;
     badge = "⚡ Gợi ý cho bạn";
@@ -134,7 +142,8 @@ const mapPlanToItem = (apiPlan: SubscriptionPlan): PlanItem => {
     features: features,
     color: color,
     popular: popular,
-    badge: badge
+    badge: badge,
+    planType: apiPlan.planType
   };
 };
 
@@ -170,20 +179,50 @@ export default function PricingPage() {
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [trialDuration, setTrialDuration] = useState<number>(7); // Mặc định là 7 ngày nếu tải lỗi
+  const [activeTrials, setActiveTrials] = useState<SubscriptionPlan[]>([]);
+  const [allPlans, setAllPlans] = useState<SubscriptionPlan[]>([]);
+
+  const userSubPlan = user?.subscriptionPlanId 
+    ? allPlans.find(p => p.id === user.subscriptionPlanId)
+    : null;
+  const isUserOnTrial = userSubPlan 
+    ? userSubPlan.planType === "TRIAL"
+    : user?.subscriptionPlanId === "VIP_TRIAL";
+
+  const formatPromoDate = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "";
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return "";
+      return d.toLocaleDateString("vi-VN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+    } catch (e) {
+      return "";
+    }
+  };
 
   useEffect(() => {
     const fetchPlans = async () => {
       try {
         const apiPlans = await apiRequest<SubscriptionPlan[]>("/payments/plans");
         if (Array.isArray(apiPlans) && apiPlans.length > 0) {
-          // Lấy thông tin số ngày dùng thử của gói VIP_TRIAL
-          const trial = apiPlans.find(p => p.id === "VIP_TRIAL");
-          if (trial) {
+          setAllPlans(apiPlans);
+          // Lấy thông tin số ngày dùng thử của gói TRIAL hoạt động đầu tiên làm mặc định
+          const trial = apiPlans.find(p => p.planType === "TRIAL");
+          if (trial && trial.active) {
             setTrialDuration(trial.durationDays);
           }
-          
-          // Lọc bỏ gói VIP_TRIAL để không vẽ thẻ cước cho gói ẩn này
-          const displayable = apiPlans.filter(p => p.id !== "VIP_TRIAL");
+          // Lấy tất cả các gói TRIAL hoạt động
+          const trials = apiPlans.filter(p => p.planType === "TRIAL" && p.active);
+          setActiveTrials(trials);
+
+          // Lọc bỏ các gói TRIAL để không vẽ thẻ cước cho gói dùng thử này
+          const displayable = apiPlans.filter(p => p.planType !== "TRIAL");
           const sorted = [...displayable].sort((a, b) => {
             const priceA = a.price ? Number(a.price) : 0;
             const priceB = b.price ? Number(b.price) : 0;
@@ -273,39 +312,58 @@ export default function PricingPage() {
           </motion.p>
         </div>
 
-        {/* Trial Promotion Banner - Chỉ hiện nếu chưa đăng nhập hoặc chưa được kích hoạt dùng thử / gói VIP */}
-        {(!user || (user.subscriptionPlanId !== "VIP_TRIAL" && user.plan !== "popular" && user.plan !== "premium")) && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.15 }}
-            className="mx-auto max-w-2xl mb-10 rounded-[2rem] bg-gradient-to-r from-pink-500/10 via-primary/10 to-pink-500/10 border border-primary/20 p-5 text-center shadow-soft"
-          >
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-lg animate-pulse">🎁</span>
-              <div className="text-center sm:text-left">
-                <h3 className="font-bold text-slate-800 text-sm sm:text-base">Món quà chào mừng từ EDUcare!</h3>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                  Tất cả tài khoản mới đăng ký đều được tự động kích hoạt dùng thử VIP <strong className="text-pink-650 font-black">{trialDuration} ngày</strong> miễn phí.
-                </p>
+        {/* Trial Promotion Banners - Hiện các gói dùng thử hoạt động mà người dùng chưa sở hữu */}
+        {activeTrials.map((trialPlan) => {
+          const isEligible = !user || (user.subscriptionPlanId !== trialPlan.id && user.plan !== "popular" && user.plan !== "premium");
+          
+          return isEligible && (
+            <motion.div
+              key={trialPlan.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              className="mx-auto max-w-2xl mb-6 rounded-3xl bg-pink-50/90 border border-pink-200/80 p-5 shadow-[0_8px_30px_rgba(244,63,94,0.06)] hover:shadow-[0_8px_30px_rgba(244,63,94,0.1)] transition-all duration-300"
+            >
+              <div className="flex items-center gap-4 text-left">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-pink-100 text-pink-600 font-bold text-lg animate-pulse">🎁</span>
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-bold text-slate-800 text-sm sm:text-base">
+                      {trialPlan.name}
+                    </h3>
+                    <span className="rounded-full bg-pink-100 text-pink-700 text-[10px] font-black px-2 py-0.5 uppercase tracking-wider animate-pulse">Ưu đãi Hot</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-600 font-semibold mt-1 leading-relaxed">
+                    {trialPlan.description || `Tất cả tài khoản mới đăng ký đều được tự động kích hoạt dùng thử VIP ${trialPlan.durationDays} ngày miễn phí.`}
+                  </p>
+                  {(trialPlan.startDate || trialPlan.endDate) && (
+                    <div className="mt-2.5 flex items-center gap-1.5 text-xs text-slate-700 bg-white/90 border border-pink-200/60 rounded-xl py-1 px-3 w-fit font-bold shadow-sm">
+                      <span className="text-pink-600">⏱️ Thời gian áp dụng:</span>
+                      <span>
+                        {trialPlan.startDate ? `từ ${formatPromoDate(trialPlan.startDate)} ` : ""}
+                        {trialPlan.endDate ? `đến ${formatPromoDate(trialPlan.endDate)}` : "vô thời hạn"}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          );
+        })}
 
         {/* Active Trial Info Banner */}
-        {user?.subscriptionPlanId === "VIP_TRIAL" && (
+        {isUserOnTrial && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mx-auto max-w-2xl mb-10 rounded-[2rem] bg-emerald-50 border border-emerald-200 p-5 text-center shadow-soft"
+            className="mx-auto max-w-2xl mb-10 rounded-3xl bg-emerald-50 border border-emerald-200 p-5 shadow-soft"
           >
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold text-lg">⚡</span>
-              <div className="text-center sm:text-left">
+            <div className="flex items-center gap-4 text-left">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold text-lg">⚡</span>
+              <div className="flex-1">
                 <h3 className="font-bold text-emerald-850 text-sm sm:text-base">Bạn đang sử dụng quyền dùng thử VIP miễn phí!</h3>
-                <p className="text-xs sm:text-sm text-emerald-700 font-medium">
-                  Hạn dùng thử đến ngày: <strong className="font-black">{formatExpiryDate(user.subscriptionEndDate || "")}</strong>. Hãy trải nghiệm trọn vẹn trước khi nâng cấp gói cước chính thức nhé!
+                <p className="text-xs sm:text-sm text-emerald-700 font-medium mt-0.5">
+                  Hạn dùng thử đến ngày: <strong className="font-black">{formatExpiryDate(user?.subscriptionEndDate || "")}</strong>. Hãy trải nghiệm trọn vẹn trước khi nâng cấp gói cước chính thức nhé!
                 </p>
               </div>
             </div>
@@ -335,9 +393,13 @@ export default function PricingPage() {
             const isPremium = plan.id.toUpperCase().includes("PREMIUM");
             const isVip = plan.id.toUpperCase().includes("VIP");
 
+            const isPromo = plan.planType === "PROMOTION";
+
             // Dynamic card styles
             let cardStyle = "border-slate-200/80 bg-white/70 shadow-md hover:scale-[1.02] hover:shadow-lg";
-            if (isVip1Y) {
+            if (isPromo) {
+              cardStyle = plan.color;
+            } else if (isVip1Y) {
               cardStyle = "border-pink-400 bg-gradient-to-b from-pink-500/[0.08] via-pink-500/[0.02] to-pink-500/[0.01] shadow-[0_15px_40px_rgba(244,63,94,0.15)] md:scale-[1.03] md:-translate-y-1 z-10 hover:scale-[1.05] hover:shadow-[0_15px_40px_rgba(244,63,94,0.22)]";
             } else if (isVip1M) {
               cardStyle = "border-primary/50 bg-gradient-to-b from-primary/[0.04] to-primary/[0.005] shadow-md hover:scale-[1.02] hover:shadow-lg";
@@ -357,13 +419,14 @@ export default function PricingPage() {
               >
                 <div>
                   {plan.badge && (
-                    <span className={`absolute -top-3 left-6 rounded-full px-3.5 py-1 text-[11px] font-black shadow-soft uppercase tracking-wider ${
-                      isVip1Y
+                    <span className={`absolute -top-3 left-6 rounded-full px-3.5 py-1 text-[11px] font-black shadow-soft uppercase tracking-wider ${isPromo
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white animate-pulse"
+                      : isVip1Y
                         ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
                         : isVip
                           ? "bg-primary text-white"
                           : "bg-pink-500 text-white"
-                    }`}>
+                      }`}>
                       {plan.badge}
                     </span>
                   )}
@@ -382,13 +445,12 @@ export default function PricingPage() {
                   <ul className="space-y-3.5">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2.5 text-[14px] md:text-[15px] font-semibold text-slate-600 leading-relaxed">
-                        <Check className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${
-                          isVip1Y
-                            ? "text-pink-500 font-bold"
-                            : isPremium
-                              ? "text-pink-500 animate-pulse"
-                              : "text-primary"
-                        }`} />
+                        <Check className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${isVip1Y
+                          ? "text-pink-500 font-bold"
+                          : isPremium
+                            ? "text-pink-500 animate-pulse"
+                            : "text-primary"
+                          }`} />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -429,15 +491,14 @@ export default function PricingPage() {
                     <Button
                       onClick={() => handleSelectPlan(plan)}
                       disabled={loadingPlanId !== null}
-                      className={`w-full rounded-2xl h-12 font-black text-sm transition-all active:scale-[0.98] ${
-                        isVip1Y
-                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20 border-0"
-                          : isVip1M || isVip
-                            ? "bg-primary text-primary-foreground hover:bg-primary/95 shadow-soft hover:shadow-lg hover:shadow-primary/20 border-0"
-                            : isPremium
-                              ? "bg-pink-500 text-white hover:bg-pink-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20 border-0"
-                              : "border-2 border-slate-200 bg-white/80 hover:bg-slate-50 text-slate-800"
-                      }`}
+                      className={`w-full rounded-2xl h-12 font-black text-sm transition-all active:scale-[0.98] ${isVip1Y
+                        ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20 border-0"
+                        : isVip1M || isVip
+                          ? "bg-primary text-primary-foreground hover:bg-primary/95 shadow-soft hover:shadow-lg hover:shadow-primary/20 border-0"
+                          : isPremium
+                            ? "bg-pink-500 text-white hover:bg-pink-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20 border-0"
+                            : "border-2 border-slate-200 bg-white/80 hover:bg-slate-50 text-slate-800"
+                        }`}
                       variant={isVip1Y || isVip1M || isVip || isPremium ? "default" : "outline"}
                     >
                       {loadingPlanId === plan.id ? (

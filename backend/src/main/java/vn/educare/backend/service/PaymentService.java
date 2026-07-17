@@ -289,6 +289,6 @@ public class PaymentService {
 
   @Transactional(readOnly = true)
   public java.util.List<SubscriptionPlanEntity> getAllPlans() {
-    return planRepository.findAll();
+    return planRepository.findByActiveTrue();
   }
 }

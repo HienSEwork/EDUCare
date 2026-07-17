@@ -8,4 +8,6 @@ public interface UserSubscriptionRepository extends JpaRepository<UserSubscripti
   List<UserSubscriptionEntity> findByUserIdAndStatus(String userId, String status);
   List<UserSubscriptionEntity> findByUserId(String userId);
   List<UserSubscriptionEntity> findByStatus(String status);
+  boolean existsByPlanId(String planId);
+  void deleteByPlanId(String planId);
 }

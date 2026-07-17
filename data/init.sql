@@ -5394,18 +5394,22 @@ CREATE TABLE `subscription_plans` (
   `price` decimal(10,2) NOT NULL,
   `duration_days` int(11) NOT NULL,
   `description` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `start_date` timestamp NULL DEFAULT NULL,
+  `end_date` timestamp NULL DEFAULT NULL,
+  `plan_type` varchar(50) NOT NULL DEFAULT 'REGULAR'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `subscription_plans`
 --
 
-INSERT INTO `subscription_plans` (`id`, `name`, `price`, `duration_days`, `description`, `created_at`) VALUES
-('FREE', 'Học viên Miễn phí', 0.00, 99999, 'Truy cập các nội dung cơ bản của EDUcare.', '2026-06-26 08:23:16'),
-('VIP_TRIAL', 'Học thử VIP 7 Ngày', 0.00, 7, 'Đăng ký tài khoản mới được học thử 7 ngày.', '2026-06-26 08:23:16'),
-('VIP_1M', 'Học viên VIP 1 Tháng', 49000.00, 30, '      \r\n      Xem 100% bài học chuyên sâu,\r\n      Hệ thống câu hỏi khuyên học động,\r\n      Làm tất cả bài tập quiz,\r\n      Chơi game tình huống đầy đủ,\r\n      Tích lũy Streak & XP xếp hạng,\r\n      Hỗ trợ tư vấn trực tuyến', '2026-06-26 08:23:16'),
-('VIP_1Y', 'Học viên VIP 1 Năm', 99000.00, 365, '      \r\n      Xem 100% bài học chuyên sâu,\r\n      Hệ thống câu hỏi khuyên học động,\r\n      Làm tất cả bài tập quiz,\r\n      Chơi game tình huống đầy đủ,\r\n      Tích lũy Streak & XP xếp hạng,\r\n      Hỗ trợ tư vấn trực tuyến', '2026-06-26 08:23:16');
+INSERT INTO `subscription_plans` (`id`, `name`, `price`, `duration_days`, `description`, `created_at`, `active`, `start_date`, `end_date`, `plan_type`) VALUES
+('FREE', 'Học viên Miễn phí', 0.00, 99999, 'Truy cập các nội dung cơ bản của EDUcare.', '2026-06-26 08:23:16', 1, NULL, NULL, 'REGULAR'),
+('VIP_TRIAL', 'Học thử VIP 7 Ngày', 0.00, 7, 'Đăng ký tài khoản mới được học thử 7 ngày.', '2026-06-26 08:23:16', 1, NULL, NULL, 'TRIAL'),
+('VIP_1M', 'Học viên VIP 1 Tháng', 49000.00, 30, '      \r\n      Xem 100% bài học chuyên sâu,\r\n      Hệ thống câu hỏi khuyên học động,\r\n      Làm tất cả bài tập quiz,\r\n      Chơi game tình huống đầy đủ,\r\n      Tích lũy Streak & XP xếp hạng,\r\n      Hỗ trợ tư vấn trực tuyến', '2026-06-26 08:23:16', 1, NULL, NULL, 'REGULAR'),
+('VIP_1Y', 'Học viên VIP 1 Năm', 99000.00, 365, '      \r\n      Xem 100% bài học chuyên sâu,\r\n      Hệ thống câu hỏi khuyên học động,\r\n      Làm tất cả bài tập quiz,\r\n      Chơi game tình huống đầy đủ,\r\n      Tích lũy Streak & XP xếp hạng,\r\n      Hỗ trợ tư vấn trực tuyến', '2026-06-26 08:23:16', 1, NULL, NULL, 'REGULAR');
 
 -- --------------------------------------------------------
 
