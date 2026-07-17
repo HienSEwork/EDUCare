@@ -227,6 +227,7 @@ export default function AdminDashboardPage() {
   });
   const [blockFields, setBlockFields] = useState<any>({});
   const [activeScenarioNodeKey, setActiveScenarioNodeKey] = useState<string>("step1");
+  const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
 
   const selectBlockForEdit = (block: MicroLessonBlock) => {
     setEditingBlock(block);
@@ -312,10 +313,10 @@ export default function AdminDashboardPage() {
           })
         }
       );
-      toast.success(courseForm.id ? "Cập nhật khóa học thành công" : "Tạo khóa học thành công");
       const coursesRes = await apiRequest<Course[]>("/admin/courses");
       setCourses(coursesRes);
       resetCourseForm();
+      toast.success(courseForm.id ? "Cập nhật khóa học thành công" : "Tạo khóa học thành công");
     } catch (err) {
       toast.error(fallbackMessage(err, "Không thể lưu khóa học"));
     } finally {
@@ -511,7 +512,7 @@ export default function AdminDashboardPage() {
       setShowImportModal(false);
       setImportJsonText("");
       setSelectedImportCategoryId("");
-      await loadData();
+      await loadData(true);
     } catch (err: any) {
       toast.error(`Có lỗi xảy ra trong quá trình nhập: ${err.message || "Lỗi mạng hoặc dữ liệu không hợp lệ"}`);
     } finally {
@@ -632,7 +633,9 @@ export default function AdminDashboardPage() {
     setIsSaving(true);
     try {
       const saved = await apiRequest<MicroLessonBlock>(
-        `/admin/micro-lessons/${microLessonId}/blocks${blockForm.id ? `/${blockForm.id}` : ""}`,
+        blockForm.id
+          ? `/admin/micro-lessons/blocks/${blockForm.id}`
+          : `/admin/micro-lessons/${microLessonId}/blocks`,
         {
           method: blockForm.id ? "PUT" : "POST",
           body: JSON.stringify({
@@ -698,6 +701,49 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedItemIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/html", e.currentTarget.outerHTML);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = async (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedItemIndex === null || draggedItemIndex === index || !selectedMicroLesson) return;
+
+    const blocks = [...(selectedMicroLesson.blocks || [])];
+    const draggedItem = blocks[draggedItemIndex];
+    
+    blocks.splice(draggedItemIndex, 1);
+    blocks.splice(index, 0, draggedItem);
+
+    const updatedMicroLesson = { ...selectedMicroLesson, blocks };
+    setSelectedMicroLesson(updatedMicroLesson);
+    
+    setMicroLessons(prev => prev.map(ml => ml.id === selectedMicroLesson.id ? updatedMicroLesson : ml));
+    setDraggedItemIndex(null);
+
+    try {
+      const blockIds = blocks.map(b => b.id);
+      await apiRequest<void>(`/admin/micro-lessons/${selectedMicroLesson.id}/blocks/reorder`, {
+        method: "PUT",
+        body: JSON.stringify({ blockIds })
+      });
+      toast.success("Đã cập nhật thứ tự slide thành công");
+    } catch (err) {
+      toast.error("Lỗi khi đồng bộ thứ tự slide");
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItemIndex(null);
+  };
+
   function extractYoutubeId(url: string | null | undefined): string {
     if (!url) return "";
     if (url.length === 11) return url;
@@ -710,8 +756,8 @@ export default function AdminDashboardPage() {
   const [quizForm, setQuizForm] = useState({ id: null as number | null, slug: "", question: "", options: ["", "", "", ""], correct: "0", explanation: "", category: ADMIN_COPY.defaults.quizCategory as string, difficulty: ADMIN_COPY.defaults.quizDifficulty as string, active: true });
   const [gameForm, setGameForm] = useState({ id: null as number | null, slug: "", title: "", summary: "", description: "", gameType: "QUIZ", playPath: "", coverImage: "hero-illustration.png", accentColor: "#9b5de5", published: true });
 
-  const loadData = async () => {
-    setIsLoading(true);
+  const loadData = async (silent = false) => {
+    if (!silent) setIsLoading(true);
     try {
       const [d, c, reportsResponse, questionsResponse, stickersResponse, coursesResponse, categoriesResponse] = await Promise.all([
         apiRequest<AdminDashboardResponse>("/admin/dashboard"),
@@ -777,9 +823,9 @@ export default function AdminDashboardPage() {
             colorTheme: newCategoryColor
           })
         });
-        toast.success("Cập nhật danh mục thành công");
         setCategories(p => p.map(cat => cat.id === updatedCat.id ? updatedCat : cat));
-        void loadData();
+        await loadData(true);
+        toast.success("Cập nhật danh mục thành công");
       } else {
         // Create new category
         const newCat = await apiRequest<any>("/admin/categories", {
@@ -815,7 +861,7 @@ export default function AdminDashboardPage() {
         await apiRequest(`/admin/categories/${catId}`, { method: "DELETE" });
         toast.success("Xóa danh mục thành công");
         setCategories(p => p.filter(cat => cat.id !== catId));
-        void loadData();
+        void loadData(true);
       } catch (err) {
         toast.error(fallbackMessage(err, "Không thể xóa danh mục."));
       } finally {
@@ -831,7 +877,7 @@ export default function AdminDashboardPage() {
         method: "PUT",
       });
       toast.success(deleteContent ? "Đã xóa nội dung vi phạm thành công." : "Đã bác bỏ báo cáo.");
-      await loadData();
+      await loadData(true);
       setSelectedReport(null);
     } catch (requestError) {
       toast.error(fallbackMessage(requestError, "Không thể xử lý báo cáo."));
@@ -849,7 +895,7 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({ answer: answerText.trim() }),
       });
       toast.success("Đã gửi câu trả lời cho câu hỏi ẩn danh thành công.");
-      await loadData();
+      await loadData(true);
       setSelectedQuestion(null);
       setAnswerText("");
     } catch (requestError) {
@@ -950,8 +996,8 @@ export default function AdminDashboardPage() {
           }),
         }
       );
+      await loadData(true);
       toast.success("Đã lưu nhãn dán/GIF thành công.");
-      await loadData();
       setStickerForm({
         id: saved.id,
         name: saved.name,
@@ -974,7 +1020,7 @@ export default function AdminDashboardPage() {
       await apiRequest<void>(`/admin/stickers/${stickerForm.id}`, { method: "DELETE" });
       toast.success("Đã xóa nhãn dán/GIF thành công.");
       resetStickerForm();
-      await loadData();
+      await loadData(true);
     } catch (requestError) {
       toast.error(fallbackMessage(requestError, "Không thể xóa nhãn dán/GIF."));
     } finally {
@@ -1005,8 +1051,8 @@ export default function AdminDashboardPage() {
           fullVideoId: lessonForm.fullVideoId
         }),
       });
+      await loadData(true);
       toast.success(ADMIN_COPY.actions.saveSuccess.lesson);
-      await loadData();
       const item = saved;
       setLessonForm({
         id: item.id,
@@ -1033,7 +1079,7 @@ export default function AdminDashboardPage() {
       await apiRequest<void>(`/admin/lessons/${lessonForm.id}`, { method: "DELETE" });
       toast.success(ADMIN_COPY.actions.deleteSuccess.lesson);
       resetLessonForm();
-      await loadData();
+      await loadData(true);
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.deleteLesson)); }
     finally { setIsSaving(false); }
   };
@@ -1049,8 +1095,8 @@ export default function AdminDashboardPage() {
         method: blogForm.id ? "PUT" : "POST",
         body: JSON.stringify({ slug: blogForm.slug, title: blogForm.title, excerpt: blogForm.excerpt, content: blogForm.content, category: blogForm.category, date: blogForm.date, readTimeMinutes: Number(blogForm.readTimeMinutes) || 5, emoji: blogForm.emoji }),
       });
+      await loadData(true);
       toast.success(ADMIN_COPY.actions.saveSuccess.blogPost);
-      await loadData();
       const item = saved as EditableBlogPost;
       setBlogForm({ id: item.id, slug: item.slug, title: item.title, excerpt: item.excerpt, content: item.content, category: item.category, date: item.date, readTimeMinutes: item.readTime.replace(/\D/g, "") || "5", emoji: item.emoji });
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.saveBlogPost)); }
@@ -1064,7 +1110,7 @@ export default function AdminDashboardPage() {
       await apiRequest<void>(`/admin/blog-posts/${blogForm.id}`, { method: "DELETE" });
       toast.success(ADMIN_COPY.actions.deleteSuccess.blogPost);
       resetBlogForm();
-      await loadData();
+      await loadData(true);
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.deleteBlogPost)); }
     finally { setIsSaving(false); }
   };
@@ -1081,8 +1127,8 @@ export default function AdminDashboardPage() {
         method: quizForm.id ? "PUT" : "POST",
         body: JSON.stringify({ slug: quizForm.slug, question: quizForm.question, options: quizForm.options.map(o => o.trim()).filter(Boolean), correct: Number(quizForm.correct) || 0, explanation: quizForm.explanation, category: quizForm.category, difficulty: quizForm.difficulty, active: quizForm.active }),
       });
+      await loadData(true);
       toast.success(ADMIN_COPY.actions.saveSuccess.quizQuestion);
-      await loadData();
       const item = saved as EditableQuizQuestion;
       setQuizForm({ id: item.id, slug: item.slug, question: item.question, options: [...item.options, "", "", "", ""].slice(0, 4), correct: String(item.correct), explanation: item.explanation ?? "", category: item.category, difficulty: item.difficulty, active: item.active });
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.saveQuizQuestion)); }
@@ -1096,7 +1142,7 @@ export default function AdminDashboardPage() {
       await apiRequest<void>(`/admin/quiz-questions/${quizForm.id}`, { method: "DELETE" });
       toast.success(ADMIN_COPY.actions.deleteSuccess.quizQuestion);
       resetQuizForm();
-      await loadData();
+      await loadData(true);
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.deleteQuizQuestion)); }
     finally { setIsSaving(false); }
   };
@@ -1112,8 +1158,8 @@ export default function AdminDashboardPage() {
         method: gameForm.id ? "PUT" : "POST",
         body: JSON.stringify({ slug: gameForm.slug, title: gameForm.title, summary: gameForm.summary, description: gameForm.description, gameType: gameForm.gameType, playPath: gameForm.playPath, coverImage: gameForm.coverImage, accentColor: gameForm.accentColor, published: gameForm.published }),
       });
+      await loadData(true);
       toast.success(ADMIN_COPY.actions.saveSuccess.game);
-      await loadData();
       const item = saved as EditableGame;
       setGameForm({ id: item.id, slug: item.slug, title: item.title, summary: item.summary, description: item.description, gameType: item.gameType, playPath: item.playPath, coverImage: item.coverImage ?? "", accentColor: item.accentColor ?? "#9b5de5", published: item.published });
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.saveGame)); }
@@ -1127,7 +1173,7 @@ export default function AdminDashboardPage() {
       await apiRequest<void>(`/admin/games/${gameForm.id}`, { method: "DELETE" });
       toast.success(ADMIN_COPY.actions.deleteSuccess.game);
       resetGameForm();
-      await loadData();
+      await loadData(true);
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.deleteGame)); }
     finally { setIsSaving(false); }
   };
@@ -2565,7 +2611,7 @@ export default function AdminDashboardPage() {
 
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={resetLessonForm}>Hủy</Button>
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveLesson} disabled={isSaving}>Lưu thông tin cơ bản</Button>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveLesson} disabled={isSaving}>{isSaving ? "Đang lưu..." : "Lưu thông tin cơ bản"}</Button>
           </div>
         </div>
 
@@ -2664,17 +2710,34 @@ export default function AdminDashboardPage() {
                             {(selectedMicroLesson.blocks || []).length > 0 ? (
                               <div className="space-y-2">
                                 {(selectedMicroLesson.blocks || []).map((b, idx) => (
-                                  <div key={b.id} className={`flex items-start justify-between gap-3 p-3 rounded-xl border transition-all ${editingBlock?.id === b.id ? "border-purple-200 bg-purple-50/30" : "border-gray-100 bg-white hover:border-gray-200"}`}>
-                                    <div className="min-w-0">
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600">Slide {idx + 1}</span>
-                                        <span className="text-xs font-semibold text-gray-800">{b.blockType}</span>
+                                  <div 
+                                    key={b.id} 
+                                    draggable
+                                    onDragStart={(e) => handleDragStart(e, idx)}
+                                    onDragOver={(e) => handleDragOver(e, idx)}
+                                    onDrop={(e) => handleDrop(e, idx)}
+                                    onDragEnd={handleDragEnd}
+                                    className={`flex items-start justify-between gap-3 p-3 rounded-xl border transition-all cursor-grab active:cursor-grabbing select-none ${
+                                      draggedItemIndex === idx 
+                                        ? "opacity-40 border-dashed border-purple-300 bg-purple-50/10" 
+                                        : editingBlock?.id === b.id 
+                                          ? "border-purple-200 bg-purple-50/30" 
+                                          : "border-gray-100 bg-white hover:border-purple-100 hover:shadow-sm"
+                                    }`}
+                                  >
+                                    <div className="flex items-start gap-2.5 min-w-0">
+                                      <span className="text-gray-300 font-bold self-center select-none text-xs">⠿</span>
+                                      <div className="min-w-0">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-600">Slide {idx + 1}</span>
+                                          <span className="text-xs font-semibold text-gray-800">{b.blockType}</span>
+                                        </div>
+                                        <p className="mt-1 text-[11px] text-gray-500 truncate max-w-[300px] font-sans font-medium">{getBlockSummaryText(b.blockType, b.contentJson)}</p>
                                       </div>
-                                      <p className="mt-1 text-[11px] text-gray-500 truncate max-w-[300px] font-sans font-medium">{getBlockSummaryText(b.blockType, b.contentJson)}</p>
                                     </div>
-                                    <div className="flex gap-2 shrink-0">
-                                      <button onClick={() => selectBlockForEdit(b)} className="text-[11px] text-purple-600 hover:underline font-semibold">Sửa</button>
-                                      <button onClick={() => handleDeleteBlock(selectedMicroLesson.id, b.id)} className="text-[11px] text-red-500 hover:underline font-semibold">Xóa</button>
+                                    <div className="flex gap-2 shrink-0 self-center">
+                                      <button onClick={(e) => { e.stopPropagation(); selectBlockForEdit(b); }} className="text-[11px] text-purple-600 hover:underline font-semibold">Sửa</button>
+                                      <button onClick={(e) => { e.stopPropagation(); handleDeleteBlock(selectedMicroLesson.id, b.id); }} className="text-[11px] text-red-500 hover:underline font-semibold">Xóa</button>
                                     </div>
                                   </div>
                                 ))}
@@ -2871,7 +2934,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="flex justify-end gap-3 border-t border-gray-100 pt-4">
               <Button variant="outline" onClick={resetCourseForm} disabled={isSaving}>Hủy</Button>
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveCourse} disabled={isSaving}>Lưu lại</Button>
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveCourse} disabled={isSaving}>{isSaving ? "Đang lưu..." : "Lưu lại"}</Button>
             </div>
           </div>
 
@@ -4085,7 +4148,7 @@ export default function AdminDashboardPage() {
                       onClick={handleCreateCategory}
                       disabled={isSaving}
                     >
-                      {editingCategory ? "Lưu thay đổi" : "Tạo danh mục"}
+                      {isSaving ? "Đang lưu..." : (editingCategory ? "Lưu thay đổi" : "Tạo danh mục")}
                     </Button>
                   </div>
                 </div>

@@ -50,7 +50,7 @@
       {
         "id": "58",
         "course_id": "13",
-        "slug": "ban-dang-gioi-ben-trong-ban-nghi-minh-la-ai",
+        "slug": "ban-dang-gio-ben-trong-ban-nghi-minh-la-ai",
         "title": "Bản dạng giới: Bên trong bạn nghĩ mình là ai?",
         "summary": "Phân biệt giới tính sinh học với bản dạng giới, tìm hiểu về hợp giới, chuyển giới và phi nhị nguyên.",
         "content": "Bài học giúp bạn thấu hiểu sự khác biệt giữa cơ thể và tâm trí, cách xưng hô tôn trọng đại từ (Pronouns) và chấp nhận sự đa dạng giới.",
@@ -683,7 +683,7 @@
         "id": "2003",
         "micro_lesson_id": "301",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Nam ngồi thẫn thờ trước tờ giấy viết bài tự giới thiệu bản thân đầu năm học. Nam chỉ biết viết: *\\\"Tôi tên Nam, 14 tuổi, thích đá bóng\\\"*. Nam cảm thấy hình như thế là chưa đủ, cậu ấy còn thích vẽ anime, hay khóc khi xem phim cảm động, và cực kỳ ghét tiếng ồn. Nam tự hỏi: *\\\"Liệu những phần tính cách này có được tính là 'mình' không?\\\"*\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Nam ngồi thẫn thờ trước tờ giấy viết bài tự giới thiệu bản thân đầu năm học. Nam chỉ biết viết: \\\"Tôi tên Nam, 14 tuổi, thích đá bóng\\\". Nam cảm thấy hình như thế là chưa đủ, cậu ấy còn thích vẽ anime, hay khóc khi xem phim cảm động, và cực kỳ ghét tiếng ồn. Nam tự hỏi: \\\"Liệu những phần tính cách này có được tính là 'mình' không?\\\"\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -692,7 +692,7 @@
         "id": "2004",
         "micro_lesson_id": "301",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn mảnh ghép mà bạn nghĩ cũng thuộc về \\\"bản dạng\\\" của một người:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn mảnh ghép mà bạn nghĩ cũng thuộc về \\\"bản dạng\\\" của một người:\", \"choices\": [{\"text\": \"A. Màu sắc yêu thích và phong cách ăn mặc.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"B. Nhóm nhạc bạn cuồng nhiệt đu trend.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"C. Cách bạn phản ứng khi buồn hoặc giận.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"D. Tất cả các ý trên đều tạo nên bạn.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -746,7 +746,7 @@
         "id": "2010",
         "micro_lesson_id": "302",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu là Vy, bạn sẽ làm gì để cân bằng giữa việc 'hòa nhập' và 'là chính mình'?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu là Vy, bạn sẽ làm gì để cân bằng giữa việc 'hòa nhập' và 'là chính mình'?\", \"choices\": [{\"text\": \"Cố gắng mặc váy giống các bạn dù thấy cực kỳ uncomfy\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Tự tin mặc đồ rộng, trượt ván đến chỗ hẹn và chia sẻ niềm vui đó với bạn bè.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -800,7 +800,7 @@
         "id": "2016",
         "micro_lesson_id": "303",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn một lời nhắn gửi đến Minh để cậu ấy bớt áp lực:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn một lời nhắn gửi đến Minh để cậu ấy bớt áp lực:\", \"choices\": [{\"text\": \"\\\"Nhanh lên Minh ơi, không chọn nhanh là tụt hậu đấy!\\\"\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"\\\"Bình tĩnh nè Minh, tuổi 15 là để thử và sai, chưa biết mình là ai cũng hoàn toàn OK!\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -854,7 +854,7 @@
         "id": "2022",
         "micro_lesson_id": "304",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu là Khang, bạn sẽ chọn bước đi nào để giải tỏa cảm xúc này?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu là Khang, bạn sẽ chọn bước đi nào để giải tỏa cảm xúc này?\", \"choices\": [{\"text\": \"Từ bỏ đam mê nấu ăn, cắm đầu vào học Toán để bố vui lòng.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Nấu một món thật ngon cho bố ăn thử, rồi nhẹ nhàng chia sẻ niềm vui của mình khi làm bếp.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -908,7 +908,7 @@
         "id": "2028",
         "micro_lesson_id": "305",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Bạn sẽ gửi lời khích lệ nào để Linh tự tin bước lên bục giảng?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Bạn sẽ gửi lời khích lệ nào để Linh tự tin bước lên bục giảng?\", \"choices\": [{\"text\": \"\\\"Cứ tự tin lên Linh ơi, giọng khàn của bạn nghe rất cuốn hút và đặc biệt mà!\\\"\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"\\\"Đeo khẩu trang thuyết trình cũng được mà, đỡ ngại.\\\"\", \"correct\": false, \"emoji\": \"🛑\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -962,7 +962,7 @@
         "id": "2034",
         "micro_lesson_id": "306",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Chọn biểu cảm mô tả đúng nhất cảm xúc của bạn khi nghĩ về bản thân hiện tại:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Chọn biểu cảm mô tả đúng nhất cảm xúc của bạn khi nghĩ về bản thân hiện tại:\", \"choices\": [{\"text\": \"🔍\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"🌀\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"😎\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"😶\", \"correct\": false, \"emoji\": \"🛑\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1016,7 +1016,7 @@
         "id": "2040",
         "micro_lesson_id": "307",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Bạn sẽ khuyên Hải điều gì trước phản ứng của bạn bè?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Bạn sẽ khuyên Hải điều gì trước phản ứng của bạn bè?\", \"choices\": [{\"text\": \"Hãy cất cuốn sổ thơ đi và quay lại chơi game để không bị trêu nữa.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Cứ tiếp tục viết thơ và tận hưởng sở thích mới, vì con người ai rồi cũng thay đổi mà!\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1124,7 +1124,7 @@
         "id": "2052",
         "micro_lesson_id": "309",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy điền vào chỗ trống:* Giới tính sinh học là do ________ quyết định khi sinh ra, còn bản dạng giới là do ________ cảm nhận.\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy điền vào chỗ trống:* Giới tính sinh học là do ________ quyết định khi sinh ra, còn bản dạng giới là do ________ cảm nhận.\", \"choices\": [{\"text\": \"Cơ thể / Suy nghĩ bên trong\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Suy nghĩ bên trong / Cơ thể\", \"correct\": false, \"emoji\": \"🛑\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1169,7 +1169,7 @@
         "id": "2057",
         "micro_lesson_id": "310",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong giờ sinh hoạt lớp, một bạn nam thắc mắc: *\\\"Thế tụi mình sinh ra là nam, thấy mình là nam thì gọi là gì?\\\"* Cả lớp ngơ ngác nhìn nhau vì trước giờ chỉ nghe từ \\\"Chuyển giới\\\" chứ chưa nghe từ mô tả chiều ngược lại.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong giờ sinh hoạt lớp, một bạn nam thắc mắc: \\\"Thế tụi mình sinh ra là nam, thấy mình là nam thì gọi là gì?\\\" Cả lớp ngơ ngác nhìn nhau vì trước giờ chỉ nghe từ \\\"Chuyển giới\\\" chứ chưa nghe từ mô tả chiều ngược lại.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1178,7 +1178,7 @@
         "id": "2058",
         "micro_lesson_id": "310",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Theo bạn, từ nào dùng để mô tả một người có bản dạng giới TRÙNG KHỚP với giới tính sinh học lúc sinh ra?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Theo bạn, từ nào dùng để mô tả một người có bản dạng giới TRÙNG KHỚP với giới tính sinh học lúc sinh ra?\", \"choices\": [{\"text\": \"Transgender\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Cisgender\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1232,7 +1232,7 @@
         "id": "2064",
         "micro_lesson_id": "311",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn hình ảnh so sánh đúng nhất về bản dạng giới:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn hình ảnh so sánh đúng nhất về bản dạng giới:\", \"choices\": [{\"text\": \"A. Hai chiếc công tắc chỉ có Bật\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"B. Một bảng pha màu với vô số sắc độ khác nhau.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1286,7 +1286,7 @@
         "id": "2070",
         "micro_lesson_id": "312",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu Kỳ tâm sự với bạn nỗi lòng này, phản ứng nào của bạn sẽ giúp ích cho Kỳ nhất?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu Kỳ tâm sự với bạn nỗi lòng này, phản ứng nào của bạn sẽ giúp ích cho Kỳ nhất?\", \"choices\": [{\"text\": \"\\\"Con gái ai dậy thì chả thế, điệu đà lên tí đi Kỳ!\\\"\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"\\\"Tớ hiểu cảm giác của bạn lúc này chắc chắn rất khó khăn. Tớ luôn ở đây lắng nghe bạn.\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1340,7 +1340,7 @@
         "id": "2076",
         "micro_lesson_id": "313",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Cách hỏi tế nhị nhất về đại từ xưng hô của một người bạn mới gặp là gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Cách hỏi tế nhị nhất về đại từ xưng hô của một người bạn mới gặp là gì?\", \"choices\": [{\"text\": \"\\\"Này, cậu là nam hay nữ thế để tớ biết đường xưng hô?\\\"\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"\\\"Tớ xưng hô là 'cậu - tớ' hoặc gọi tên bạn nhé, hay bạn thích cách xưng hô nào khác không?\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1394,7 +1394,7 @@
         "id": "2082",
         "micro_lesson_id": "314",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Kéo thanh trượt để biểu thị cảm xúc của bạn khi tự đối thoại với bản thân về giới tính:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Kéo thanh trượt để biểu thị cảm xúc của bạn khi tự đối thoại với bản thân về giới tính:\", \"choices\": [{\"text\": \"😐\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"🙁\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"😊\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1439,7 +1439,7 @@
         "id": "2087",
         "micro_lesson_id": "315",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Bảo (phi nhị nguyên giới) quyết định chia sẻ bản dạng của mình với nhóm bạn thân. Mặc dù rất run, nhưng khi thấy các bạn gật đầu bảo *\\\"Bọn tớ chơi với Bảo vì Bảo là Bảo thôi, không quan trọng nhãn dán đâu\\\"*, Bảo cảm thấy như trút bỏ được tảng đá đè nặng trong lòng bấy lâu nay.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Bảo (phi nhị nguyên giới) quyết định chia sẻ bản dạng của mình với nhóm bạn thân. Mặc dù rất run, nhưng khi thấy các bạn gật đầu bảo \\\"Bọn tớ chơi với Bảo vì Bảo là Bảo thôi, không quan trọng nhãn dán đâu\\\", Bảo cảm thấy như trút bỏ được tảng đá đè nặng trong lòng bấy lâu nay.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1448,7 +1448,7 @@
         "id": "2088",
         "micro_lesson_id": "315",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hành động nào thể hiện sự ủng hộ tốt nhất dành cho một người bạn vừa công khai bản dạng giới?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hành động nào thể hiện sự ủng hộ tốt nhất dành cho một người bạn vừa công khai bản dạng giới?\", \"choices\": [{\"text\": \"Hỏi dồn dập các câu hỏi tò mò về cơ thể và chuyện phẫu thuật.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Lắng nghe chân thành, cảm ơn bạn đã tin tưởng chia sẻ và tiếp tục đối xử bình thường như trước.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1547,7 +1547,7 @@
         "id": "2099",
         "micro_lesson_id": "317",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Khoa (14 tuổi) thích để tóc dài ngang vai và thường xuyên buộc chỏm tỏi rất cute. Một vài bác hàng xóm nói *\\\"Con trai gì mà tóc tai bù xù như con gái thế kia\\\"*, làm Khoa thấy bực bội và tự hỏi sao mọi người lại quan trọng chuyện tóc tai đến vậy.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Khoa (14 tuổi) thích để tóc dài ngang vai và thường xuyên buộc chỏm tỏi rất cute. Một vài bác hàng xóm nói \\\"Con trai gì mà tóc tai bù xù như con gái thế kia\\\", làm Khoa thấy bực bội và tự hỏi sao mọi người lại quan trọng chuyện tóc tai đến vậy.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1556,7 +1556,7 @@
         "id": "2100",
         "micro_lesson_id": "317",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu gặp Khoa, bạn sẽ nhắn nhủ điều gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu gặp Khoa, bạn sẽ nhắn nhủ điều gì?\", \"choices\": [{\"text\": \"\\\"Cắt tóc đi Khoa ơi, đỡ bị nói.\\\"\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"\\\"Tóc buộc chỏm tỏi trông rất cool và hợp với Khoa luôn á!\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1601,7 +1601,7 @@
         "id": "2105",
         "micro_lesson_id": "318",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Hân rất thích tháo lắp, sửa chữa xe đạp và đồ điện tử trong nhà. Mỗi lần Hân cầm tô vít, mẹ Hân lại cản: *\\\"Tránh ra cho anh làm, con gái con lứa suốt ngày nghịch đồ kim khí rỉ sét\\\"*. Hân thấy rất ức chế vì Hân làm tốt hơn cả anh trai mình.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Hân rất thích tháo lắp, sửa chữa xe đạp và đồ điện tử trong nhà. Mỗi lần Hân cầm tô vít, mẹ Hân lại cản: \\\"Tránh ra cho anh làm, con gái con lứa suốt ngày nghịch đồ kim khí rỉ sét\\\". Hân thấy rất ức chế vì Hân làm tốt hơn cả anh trai mình.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1610,7 +1610,7 @@
         "id": "2106",
         "micro_lesson_id": "318",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn ý kiến đúng nhất về khuôn mẫu giới:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn ý kiến đúng nhất về khuôn mẫu giới:\", \"choices\": [{\"text\": \"A. Khuôn mẫu giới giúp xã hội ổn định, nam ra nam, nữ ra nữ.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"B. Khuôn mẫu giới là do con người tự tạo ra và hoàn toàn có thể thay đổi.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1655,7 +1655,7 @@
         "id": "2111",
         "micro_lesson_id": "319",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Hải (15 tuổi) rất thích thêu thùa và may vá. Cậu tự thêu những hình rất xinh lên ba lô của mình. Khi bạn bè phát hiện, một nhóm bạn nam đã cười cợt và gọi cậu là *\\\"ẻo lả\\\"*, làm Hải rất xấu hổ và vứt luôn chiếc ba lô thêu.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Hải (15 tuổi) rất thích thêu thùa và may vá. Cậu tự thêu những hình rất xinh lên ba lô của mình. Khi bạn bè phát hiện, một nhóm bạn nam đã cười cợt và gọi cậu là \\\"ẻo lả\\\", làm Hải rất xấu hổ và vứt luôn chiếc ba lô thêu.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1664,7 +1664,7 @@
         "id": "2112",
         "micro_lesson_id": "319",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Bạn sẽ phản ứng thế nào nếu chứng kiến Hải bị các bạn trêu chọc?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Bạn sẽ phản ứng thế nào nếu chứng kiến Hải bị các bạn trêu chọc?\", \"choices\": [{\"text\": \"Hùa theo cười đùa để không bị coi là lạc loài.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Lại gần khen nét thêu của Hải và bảo \\\"Thêu đẹp thế này khối đứa muốn học theo đấy!\\\".\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1709,7 +1709,7 @@
         "id": "2117",
         "micro_lesson_id": "320",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"My thích mặc đồ da, đi boot hầm hố, cắt tóc undercut. Các bạn trong lớp xì xào *\\\"Nhìn My men thế chắc chắn là tomboy/les rồi\\\"*. Thực tế, My chỉ đơn giản là thích phong cách thời trang cá tính này, và bạn ấy thích con trai.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"My thích mặc đồ da, đi boot hầm hố, cắt tóc undercut. Các bạn trong lớp xì xào \\\"Nhìn My men thế chắc chắn là tomboy/les rồi\\\". Thực tế, My chỉ đơn giản là thích phong cách thời trang cá tính này, và bạn ấy thích con trai.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1718,7 +1718,7 @@
         "id": "2118",
         "micro_lesson_id": "320",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Phát biểu nào sau đây là đúng khoa học?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Phát biểu nào sau đây là đúng khoa học?\", \"choices\": [{\"text\": \"Nhìn cách ăn mặc là biết ngay một người thuộc xu hướng tính dục nào.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Thể hiện giới bên ngoài không phản ánh xu hướng tính dục bên trong.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1772,7 +1772,7 @@
         "id": "2124",
         "micro_lesson_id": "321",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy giúp Dương đưa ra quyết định tự tin nhất:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy giúp Dương đưa ra quyết định tự tin nhất:\", \"choices\": [{\"text\": \"Cất áo hồng đi, mặc áo đen cho an toàn.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Mặc áo hồng phối với chiếc quần jeans năng động và tự tin bước ra đường.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1817,7 +1817,7 @@
         "id": "2129",
         "micro_lesson_id": "322",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"An thích trang điểm nhẹ nhàng, kẻ mắt mèo nhẹ khi đi chơi. Nhưng An luôn sợ bố mẹ mắng là *\\\"học đòi làm đỏm\\\"*. An thường phải lén lút trang điểm ở nhà vệ sinh công cộng trước khi gặp bạn bè.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"An thích trang điểm nhẹ nhàng, kẻ mắt mèo nhẹ khi đi chơi. Nhưng An luôn sợ bố mẹ mắng là \\\"học đòi làm đỏm\\\". An thường phải lén lút trang điểm ở nhà vệ sinh công cộng trước khi gặp bạn bè.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1826,7 +1826,7 @@
         "id": "2130",
         "micro_lesson_id": "322",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Theo bạn, việc thử nghiệm trang điểm hay thay đổi phong cách ở tuổi dậy thì là:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Theo bạn, việc thử nghiệm trang điểm hay thay đổi phong cách ở tuổi dậy thì là:\", \"choices\": [{\"text\": \"Sự nổi loạn, ăn chơi đua đòi.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Nhu cầu làm đẹp và thể hiện cái tôi bình thường của mỗi người.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1880,7 +1880,7 @@
         "id": "2136",
         "micro_lesson_id": "323",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn thông điệp ý nghĩa nhất mà khóa học muốn gửi gắm qua bài học này:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn thông điệp ý nghĩa nhất mà khóa học muốn gửi gắm qua bài học này:\", \"choices\": [{\"text\": \"\\\"Hãy mặc những gì xã hội muốn bạn mặc.\\\"\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"\\\"Sự tự tin và tôn trọng sự khác biệt chính là bộ trang phục đẹp nhất của bạn.\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -1988,7 +1988,7 @@
         "id": "2148",
         "micro_lesson_id": "325",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Bạn nghĩ gì về trường hợp của Hòa?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Bạn nghĩ gì về trường hợp của Hòa?\", \"choices\": [{\"text\": \"Hòa chỉ đang ngộ nhận, tình yêu thì bắt buộc phải đi kèm ham muốn thể xác.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Trải nghiệm của Hòa rất bình thường, tình cảm\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2033,7 +2033,7 @@
         "id": "2153",
         "micro_lesson_id": "326",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Lâm thấy mình vừa có cảm tình với một bạn nữ cùng lớp, nhưng dạo gần đây cũng thấy tim đập thình thịch khi một bạn nam khóa trên mỉm cười với mình. Lâm hoang mang: *\\\"Ủa mình là gay hay thẳng đây? Sao kỳ cục vậy?\\\"*\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Lâm thấy mình vừa có cảm tình với một bạn nữ cùng lớp, nhưng dạo gần đây cũng thấy tim đập thình thịch khi một bạn nam khóa trên mỉm cười với mình. Lâm hoang mang: \\\"Ủa mình là gay hay thẳng đây? Sao kỳ cục vậy?\\\"\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2042,7 +2042,7 @@
         "id": "2154",
         "micro_lesson_id": "326",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Thuật ngữ nào mô tả đúng nhất cảm xúc của Lâm (rung động với cả nam và nữ)?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Thuật ngữ nào mô tả đúng nhất cảm xúc của Lâm (rung động với cả nam và nữ)?\", \"choices\": [{\"text\": \"Heterosexual\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Bisexual\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2096,7 +2096,7 @@
         "id": "2160",
         "micro_lesson_id": "327",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Đâu là nhận thức đúng về người Vô tính (Asexual)?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Đâu là nhận thức đúng về người Vô tính (Asexual)?\", \"choices\": [{\"text\": \"Họ là những người bị bệnh sinh lý hoặc ghét con người.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Họ hoàn toàn có thể yêu và có những mối quan hệ lãng mạn hạnh phúc.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2141,7 +2141,7 @@
         "id": "2165",
         "micro_lesson_id": "328",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Phương (14 tuổi) nhận ra mình luôn tìm kiếm ánh mắt của Vy mỗi khi đến lớp. Khi Vy nói chuyện với bạn khác, Phương thấy lồng ngực thắt lại vì ghen. Phương chưa từng cảm thấy thế với bất kỳ bạn nam nào. Phương sợ hãi nghĩ: *\\\"Mình bị lệch lạc rồi sao?\\\"*\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Phương (14 tuổi) nhận ra mình luôn tìm kiếm ánh mắt của Vy mỗi khi đến lớp. Khi Vy nói chuyện với bạn khác, Phương thấy lồng ngực thắt lại vì ghen. Phương chưa từng cảm thấy thế với bất kỳ bạn nam nào. Phương sợ hãi nghĩ: \\\"Mình bị lệch lạc rồi sao?\\\"\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2150,7 +2150,7 @@
         "id": "2166",
         "micro_lesson_id": "328",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu Phương tâm sự với bạn, bạn sẽ nói gì để xoa dịu nỗi sợ của bạn ấy?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu Phương tâm sự với bạn, bạn sẽ nói gì để xoa dịu nỗi sợ của bạn ấy?\", \"choices\": [{\"text\": \"\\\"Kinh thế, coi chừng người ta xa lánh đấy!\\\"\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"\\\"Rung động trước cái đẹp và sự đáng yêu là bình thường mà Phương. Tình cảm của cậu rất đẹp, đừng sợ nha.\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2204,7 +2204,7 @@
         "id": "2172",
         "micro_lesson_id": "329",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Cách tốt nhất để Kỳ xác định tình cảm của mình là gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Cách tốt nhất để Kỳ xác định tình cảm của mình là gì?\", \"choices\": [{\"text\": \"Tỏ tình ngay lập tức để thử phản ứng.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Cho bản thân thêm thời gian, viết nhật ký cảm xúc hàng ngày để tự thấu hiểu lòng mình.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2258,7 +2258,7 @@
         "id": "2178",
         "micro_lesson_id": "330",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Cảm xúc của Hân trong tình huống trên là gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Cảm xúc của Hân trong tình huống trên là gì?\", \"choices\": [{\"text\": \"Sự xao nhãng học hành đáng trách.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Rung động ngây thơ, đáng yêu tuổi học trò.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2312,7 +2312,7 @@
         "id": "2184",
         "micro_lesson_id": "331",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Điều gì tạo nên một tình yêu lành mạnh?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Điều gì tạo nên một tình yêu lành mạnh?\", \"choices\": [{\"text\": \"A. Phải là tình yêu giữa nam và nữ theo đúng truyền thống.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"B. Sự tôn trọng, thấu hiểu, chân thành và tin tưởng lẫn nhau giữa hai người.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2411,7 +2411,7 @@
         "id": "2195",
         "micro_lesson_id": "333",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Tâm (13 tuổi) cảm thấy mình không có sự thu hút rõ ràng nào với bạn nam hay bạn nữ nào. Đôi khi Tâm thấy mình giống con gái, đôi khi lại muốn ăn mặc giống con trai. Tâm cảm thấy cực kỳ mơ hồ và tự đặt câu hỏi: *\\\"Rốt cuộc mình là cái gì thế nhỉ?\\\"*\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Tâm (13 tuổi) cảm thấy mình không có sự thu hút rõ ràng nào với bạn nam hay bạn nữ nào. Đôi khi Tâm thấy mình giống con gái, đôi khi lại muốn ăn mặc giống con trai. Tâm cảm thấy cực kỳ mơ hồ và tự đặt câu hỏi: \\\"Rốt cuộc mình là cái gì thế nhỉ?\\\"\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2420,7 +2420,7 @@
         "id": "2196",
         "micro_lesson_id": "333",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn thái độ phù hợp nhất với giai đoạn Questioning:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn thái độ phù hợp nhất với giai đoạn Questioning:\", \"choices\": [{\"text\": \"Cảm thấy lo lắng, tội lỗi và bắt buộc phải tìm ra câu trả lời ngay.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Đón nhận sự mơ hồ này như một hành trình khám phá thú vị và không tự tạo áp lực.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2456,7 +2456,7 @@
         "id": "2200",
         "micro_lesson_id": "334",
         "block_type": "explanation",
-        "content_json": "{\"bullets\": [\"Xã hội thường thích dán nhãn mọi thứ để dễ phân loại.\", \"Nhưng con người là một thực thể phức tạp và linh hoạt.\", \"Việc vội vã chọn một nhãn dán (như gay, les, trans) khi chưa thực sự hiểu rõ có thể khiến bạn thấy gò bó sau này.\", \"Bạn hoàn toàn có quyền nói: *\\\"Tớ chưa biết, tớ vẫn đang tìm hiểu\\\"*.\"]}",
+        "content_json": "{\"bullets\": [\"Xã hội thường thích dán nhãn mọi thứ để dễ phân loại.\", \"Nhưng con người là một thực thể phức tạp và linh hoạt.\", \"Việc vội vã chọn một nhãn dán (như gay, les, trans) khi chưa thực sự hiểu rõ có thể khiến bạn thấy gò bó sau này.\", \"Bạn hoàn toàn có quyền nói: \\\"Tớ chưa biết, tớ vẫn đang tìm hiểu\\\".\"]}",
         "order_index": "2",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2465,7 +2465,7 @@
         "id": "2201",
         "micro_lesson_id": "334",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Vy (14 tuổi) kể với bạn thân rằng mình thích một bạn nữ khóa trên. Bạn thân liền hỏi ngay: *\\\"Thế Vy là lesbian à?\\\"*. Vy thấy giật mình và ngập ngừng vì thực tế Vy vẫn thấy con trai thu hút, Vy chưa biết chắc mình là song tính hay đồng tính.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Vy (14 tuổi) kể với bạn thân rằng mình thích một bạn nữ khóa trên. Bạn thân liền hỏi ngay: \\\"Thế Vy là lesbian à?\\\". Vy thấy giật mình và ngập ngừng vì thực tế Vy vẫn thấy con trai thu hút, Vy chưa biết chắc mình là song tính hay đồng tính.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2474,7 +2474,7 @@
         "id": "2202",
         "micro_lesson_id": "334",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Lời khuyên nào tốt nhất cho Vy lúc này?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Lời khuyên nào tốt nhất cho Vy lúc này?\", \"choices\": [{\"text\": \"Vy nên thừa nhận đại một nhãn để các bạn không thắc mắc nữa.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Vy cứ bảo các bạn là 'Vy chỉ đang cảm nắng bạn ấy thôi, chưa cần dán nhãn gì đâu'.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2528,7 +2528,7 @@
         "id": "2208",
         "micro_lesson_id": "335",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Khi thấy lo lắng vì chưa rõ bản thân, hành động nào sẽ giúp bạn bình tĩnh lại?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Khi thấy lo lắng vì chưa rõ bản thân, hành động nào sẽ giúp bạn bình tĩnh lại?\", \"choices\": [{\"text\": \"Tiếp tục lướt mạng xã hội và so sánh mình với người khác.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Tập trung vào những sở thích hiện tại\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2573,7 +2573,7 @@
         "id": "2213",
         "micro_lesson_id": "336",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Dũng (15 tuổi) từng công khai với nhóm bạn mình là Gay vào năm ngoái. Nhưng gần đây Dũng lại nhận ra mình có cảm tình đặc biệt với một bạn nữ cùng lớp vẽ. Dũng vô cùng hoảng sợ vì nghĩ các bạn sẽ bảo mình là *\\\"kẻ nói dối, làm màu\\\"*.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Dũng (15 tuổi) từng công khai với nhóm bạn mình là Gay vào năm ngoái. Nhưng gần đây Dũng lại nhận ra mình có cảm tình đặc biệt với một bạn nữ cùng lớp vẽ. Dũng vô cùng hoảng sợ vì nghĩ các bạn sẽ bảo mình là \\\"kẻ nói dối, làm màu\\\".\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2582,7 +2582,7 @@
         "id": "2214",
         "micro_lesson_id": "336",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu Dũng chia sẻ điều này với bạn, bạn sẽ phản hồi thế nào?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu Dũng chia sẻ điều này với bạn, bạn sẽ phản hồi thế nào?\", \"choices\": [{\"text\": \"\\\"Ủa sao đổi xoành xoạch thế, làm vậy mất uy tín nha Dũng!\\\"\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"\\\"Không sao cả Dũng ơi, cảm xúc có quyền thay đổi mà. Bọn tớ luôn ủng hộ cậu!\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2627,7 +2627,7 @@
         "id": "2219",
         "micro_lesson_id": "337",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Phương cảm thấy đau đầu vì các hội nhóm trên mạng tranh cãi nảy lửa về việc thế nào mới là *\\\"chuyển giới chuẩn\\\"* hay *\\\"vô tính thực sự\\\"*. Phương thấy mình không khớp hoàn toàn vào định nghĩa nào và bắt đầu tự trách móc bản thân.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Phương cảm thấy đau đầu vì các hội nhóm trên mạng tranh cãi nảy lửa về việc thế nào mới là \\\"chuyển giới chuẩn\\\" hay \\\"vô tính thực sự\\\". Phương thấy mình không khớp hoàn toàn vào định nghĩa nào và bắt đầu tự trách móc bản thân.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2636,7 +2636,7 @@
         "id": "2220",
         "micro_lesson_id": "337",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Bước đi nào thông minh nhất giúp Phương thoát khỏi sự độc hại tinh thần này?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Bước đi nào thông minh nhất giúp Phương thoát khỏi sự độc hại tinh thần này?\", \"choices\": [{\"text\": \"Tham gia tranh luận để chứng minh mình đúng.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Tắt điện thoại, đi dạo hoặc trò chuyện với một người bạn thân hiểu mình ngoài đời thực.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2690,7 +2690,7 @@
         "id": "2226",
         "micro_lesson_id": "338",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Bạn đánh giá thế nào về quyết định của Bảo?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Bạn đánh giá thế nào về quyết định của Bảo?\", \"choices\": [{\"text\": \"Trốn tránh thực tế, không dũng cảm đối diện.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Lựa chọn khôn ngoan để bảo vệ năng lượng tích cực của bản thân.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2735,7 +2735,7 @@
         "id": "2231",
         "micro_lesson_id": "339",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong buổi lễ tốt nghiệp cấp 2, cô giáo chủ nhiệm nhắn nhủ cả lớp: *\\\"Các em hãy cứ tự tin bước ra thế giới, thử những điều mới, sai và sửa sai. Đừng vội đóng khung bản thân vào bất cứ định kiến nào.\\\"* Cả lớp vỗ tay rầm rộ, trong đó có những bạn đang vô cùng nhẹ nhõm.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong buổi lễ tốt nghiệp cấp 2, cô giáo chủ nhiệm nhắn nhủ cả lớp: \\\"Các em hãy cứ tự tin bước ra thế giới, thử những điều mới, sai và sửa sai. Đừng vội đóng khung bản thân vào bất cứ định kiến nào.\\\" Cả lớp vỗ tay rầm rộ, trong đó có những bạn đang vô cùng nhẹ nhõm.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2744,7 +2744,7 @@
         "id": "2232",
         "micro_lesson_id": "339",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn cam kết mà bạn muốn tự hứa với bản thân sau bài học này:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn cam kết mà bạn muốn tự hứa với bản thân sau bài học này:\", \"choices\": [{\"text\": \"\\\"Tôi sẽ luôn dịu dàng và kiên nhẫn với hành trình lớn lên của mình.\\\"\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"\\\"Tôi sẽ ép mình phải hoàn hảo như mong đợi của người khác.\\\"\", \"correct\": false, \"emoji\": \"🛑\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2843,7 +2843,7 @@
         "id": "2243",
         "micro_lesson_id": "341",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Một nhóm bạn học sinh thấy lá cờ lục sắc treo ở quán cà phê gần trường. Một bạn hỏi: *\\\"Sao cờ có nhiều màu thế nhỉ?\\\"*. Bạn khác trả lời: *\\\"Mỗi màu sắc tượng trưng cho một nhóm người trong cộng đồng, thể hiện sự hòa hợp và đa dạng của nhân loại đó.\\\"*\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Một nhóm bạn học sinh thấy lá cờ lục sắc treo ở quán cà phê gần trường. Một bạn hỏi: \\\"Sao cờ có nhiều màu thế nhỉ?\\\". Bạn khác trả lời: \\\"Mỗi màu sắc tượng trưng cho một nhóm người trong cộng đồng, thể hiện sự hòa hợp và đa dạng của nhân loại đó.\\\"\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2852,7 +2852,7 @@
         "id": "2244",
         "micro_lesson_id": "341",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Dấu cộng (+) trong cụm từ LGBTQ+ có ý nghĩa gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Dấu cộng (+) trong cụm từ LGBTQ+ có ý nghĩa gì?\", \"choices\": [{\"text\": \"Chỉ là ký tự viết cho đẹp mắt, không có ý nghĩa gì.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Đại diện cho sự cởi mở, sẵn sàng chào đón các bản dạng và xu hướng đa dạng khác.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2897,7 +2897,7 @@
         "id": "2249",
         "micro_lesson_id": "342",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong giờ ra chơi, một nhóm bạn nam chọc ghẹo bạn Nam: *\\\"Mày đi đứng nhẹ nhàng thế, hay là bị bê đê rồi?\\\"*. Nam cúi mặt đi nhanh ra chỗ khác, lồng ngực thắt lại vì xấu hổ và tức giận mặc dù cậu chỉ đang đi đứng bình thường.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong giờ ra chơi, một nhóm bạn nam chọc ghẹo bạn Nam: \\\"Mày đi đứng nhẹ nhàng thế, hay là bị bê đê rồi?\\\". Nam cúi mặt đi nhanh ra chỗ khác, lồng ngực thắt lại vì xấu hổ và tức giận mặc dù cậu chỉ đang đi đứng bình thường.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2906,7 +2906,7 @@
         "id": "2250",
         "micro_lesson_id": "342",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu là bạn học cùng lớp chứng kiến cảnh đó, bạn sẽ làm gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu là bạn học cùng lớp chứng kiến cảnh đó, bạn sẽ làm gì?\", \"choices\": [{\"text\": \"Hùa theo cười đùa để nhóm bạn nam thấy mình cũng 'cool'.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Lên tiếng ngăn cản: 'Đùa thế không vui đâu các bạn ơi' và rủ Nam ra chỗ khác chơi.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -2960,7 +2960,7 @@
         "id": "2256",
         "micro_lesson_id": "343",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Theo bạn, An nên làm gì lúc này để giải tỏa áp lực tinh thần một cách an toàn?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Theo bạn, An nên làm gì lúc này để giải tỏa áp lực tinh thần một cách an toàn?\", \"choices\": [{\"text\": \"Công khai ngay lập tức để thách thức bố mẹ.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Tìm đến chuyên gia tâm lý học đường hoặc các đường dây nóng hỗ trợ trẻ em để được tư vấn tâm lý trước.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3005,7 +3005,7 @@
         "id": "2261",
         "micro_lesson_id": "344",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Tại buổi tiệc sinh nhật lớp, một bạn nam giả giọng điệu đà, ẻo lả để bắt chước một ca sĩ nổi tiếng đồng tính, khiến cả lớp cười ồ lên. Vy thấy trò đùa này vô duyên và làm tổn thương các bạn LGBT+ trong lớp, nhưng mọi người lại bảo *\\\"Vui thôi mà, nhạy cảm quá thế\\\"*.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Tại buổi tiệc sinh nhật lớp, một bạn nam giả giọng điệu đà, ẻo lả để bắt chước một ca sĩ nổi tiếng đồng tính, khiến cả lớp cười ồ lên. Vy thấy trò đùa này vô duyên và làm tổn thương các bạn LGBT+ trong lớp, nhưng mọi người lại bảo \\\"Vui thôi mà, nhạy cảm quá thế\\\".\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3014,7 +3014,7 @@
         "id": "2262",
         "micro_lesson_id": "344",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Vy nên phản ứng thế nào để thể hiện quan điểm một cách lịch sự nhưng cứng rắn?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Vy nên phản ứng thế nào để thể hiện quan điểm một cách lịch sự nhưng cứng rắn?\", \"choices\": [{\"text\": \"Hùa theo cười gượng gạo để không làm mất bầu không khí vui vẻ.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Không cười, nhẹ nhàng nói: 'Tớ thấy trò đùa này hơi kém duyên và không hài hước chút nào'.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3068,7 +3068,7 @@
         "id": "2268",
         "micro_lesson_id": "345",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hành động nào giúp Hải thoát khỏi nguy hiểm khẩn cấp này?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hành động nào giúp Hải thoát khỏi nguy hiểm khẩn cấp này?\", \"choices\": [{\"text\": \"Chụp lại các tin nhắn đe dọa làm bằng chứng, chia sẻ ngay với thầy cô tin cậy hoặc gọi tổng đài 111 để được can thiệp bảo vệ.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Im lặng chịu đựng và hy vọng kẻ bắt nạt sẽ tự chán rồi bỏ qua.\", \"correct\": false, \"emoji\": \"😐\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3122,7 +3122,7 @@
         "id": "2274",
         "micro_lesson_id": "346",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Bạn nghĩ sao về sáng kiến của nhóm bạn của An?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Bạn nghĩ sao về sáng kiến của nhóm bạn của An?\", \"choices\": [{\"text\": \"Làm màu, không có tác dụng thực tế.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Rất ý nghĩa! Nó tạo ra một làn sóng cam kết văn minh và lan tỏa năng lượng tích cực đến cả lớp.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3176,7 +3176,7 @@
         "id": "2280",
         "micro_lesson_id": "347",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn thông điệp tiếp thêm sức mạnh cho bạn ngày hôm nay:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn thông điệp tiếp thêm sức mạnh cho bạn ngày hôm nay:\", \"choices\": [{\"text\": \"\\\"Tôi tự hào vì tôi là chính tôi, độc bản và xứng đáng được yêu thương.\\\"\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"\\\"Tôi sẽ cố gắng thay đổi để vừa lòng tất cả mọi người.\\\"\", \"correct\": false, \"emoji\": \"🛑\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3284,7 +3284,7 @@
         "id": "2292",
         "micro_lesson_id": "349",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hành động của Tuấn thể hiện điều gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hành động của Tuấn thể hiện điều gì?\", \"choices\": [{\"text\": \"Sự xen vào chuyện người khác không cần thiết.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Vai trò của một người đồng minh dũng cảm và tinh tế.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3320,7 +3320,7 @@
         "id": "2296",
         "micro_lesson_id": "350",
         "block_type": "explanation",
-        "content_json": "{\"bullets\": [\"**Tổn thương vô ý (Microaggressions):** Là những lời nhận xét, câu hỏi ngắn hàng ngày vô tình chứa đựng định kiến giới hoặc kỳ thị (ví dụ: *\\\"Nhìn em xinh thế này mà lại là chuyển giới á?\\\"*, hoặc *\\\"Trong hai đứa thì đứa nào là chồng, đứa nào là vợ?\\\"*).\", \"Dù người hỏi không có ý xấu, nhưng những câu hỏi này vô tình biến người nghe thành *\\\"kẻ khác biệt, bất thường\\\"*.\", \"Học cách giao tiếp tinh tế giúp bạn tránh được những lỗi vô ý gây tổn thương này.\"]}",
+        "content_json": "{\"bullets\": [\"**Tổn thương vô ý (Microaggressions):** Là những lời nhận xét, câu hỏi ngắn hàng ngày vô tình chứa đựng định kiến giới hoặc kỳ thị (ví dụ: \\\"Nhìn em xinh thế này mà lại là chuyển giới á?\\\", hoặc \\\"Trong hai đứa thì đứa nào là chồng, đứa nào là vợ?\\\").\", \"Dù người hỏi không có ý xấu, nhưng những câu hỏi này vô tình biến người nghe thành \\\"kẻ khác biệt, bất thường\\\".\", \"Học cách giao tiếp tinh tế giúp bạn tránh được những lỗi vô ý gây tổn thương này.\"]}",
         "order_index": "2",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3329,7 +3329,7 @@
         "id": "2297",
         "micro_lesson_id": "350",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Tại bàn ăn lớp, một bạn hỏi Lâm (người song tính): *\\\"Cậu thích cả nam lẫn nữ thế thì chắc là dễ thay lòng đổi dạ lắm nhỉ?\\\"*. Lâm cười gượng gạo nhưng trong lòng thấy rất khó chịu vì bị quy chụp là không chung thủy chỉ vì xu hướng tính dục của mình.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Tại bàn ăn lớp, một bạn hỏi Lâm (người song tính): \\\"Cậu thích cả nam lẫn nữ thế thì chắc là dễ thay lòng đổi dạ lắm nhỉ?\\\". Lâm cười gượng gạo nhưng trong lòng thấy rất khó chịu vì bị quy chụp là không chung thủy chỉ vì xu hướng tính dục của mình.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3338,7 +3338,7 @@
         "id": "2298",
         "micro_lesson_id": "350",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Tại sao câu hỏi trên lại là một tổn thương vô ý (microaggression)?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Tại sao câu hỏi trên lại là một tổn thương vô ý (microaggression)?\", \"choices\": [{\"text\": \"Vì nó quy chụp xu hướng tính dục với nhân cách, tạo ra định kiến sai lệch.\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"Vì bạn Lâm quá nhạy cảm với câu đùa của bạn bè.\", \"correct\": false, \"emoji\": \"🛑\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3392,7 +3392,7 @@
         "id": "2304",
         "micro_lesson_id": "351",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Nếu một người bạn nhờ bạn gọi họ bằng một cái tên mới phù hợp với giới tính của họ, bạn sẽ làm gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Nếu một người bạn nhờ bạn gọi họ bằng một cái tên mới phù hợp với giới tính của họ, bạn sẽ làm gì?\", \"choices\": [{\"text\": \"Cố tình gọi bằng tên cũ vì quen miệng và thấy tên cũ hay hơn.\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"Vui vẻ đồng ý, tập gọi tên mới và nhắc nhở bản thân để không bị nhầm lẫn.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3437,7 +3437,7 @@
         "id": "2309",
         "micro_lesson_id": "352",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Hải hẹn Nam ra quán nước sau giờ học. Hải ngập ngừng mãi mới dám nói: *\\\"Nam ơi, thực ra tớ thích con trai\\\"*. Nam giật mình mất 3 giây, nhưng rồi cậu mỉm cười, vỗ vai Hải: *\\\"Cảm ơn cậu đã tin tưởng kể với tớ. Cậu vẫn là bạn thân của tớ, không có gì thay đổi cả!\\\"*. Hải thở phào nhẹ nhõm, mắt rơm rớm nước mắt vì hạnh phúc.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Hải hẹn Nam ra quán nước sau giờ học. Hải ngập ngừng mãi mới dám nói: \\\"Nam ơi, thực ra tớ thích con trai\\\". Nam giật mình mất 3 giây, nhưng rồi cậu mỉm cười, vỗ vai Hải: \\\"Cảm ơn cậu đã tin tưởng kể với tớ. Cậu vẫn là bạn thân của tớ, không có gì thay đổi cả!\\\". Hải thở phào nhẹ nhõm, mắt rơm rớm nước mắt vì hạnh phúc.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3446,7 +3446,7 @@
         "id": "2310",
         "micro_lesson_id": "352",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Phản ứng nào dưới đây là văn minh và ấm áp nhất khi bạn của bạn come out?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Phản ứng nào dưới đây là văn minh và ấm áp nhất khi bạn của bạn come out?\", \"choices\": [{\"text\": \"\\\"Đùa à? Trông cậu bình thường thế mà!\\\"\", \"correct\": false, \"emoji\": \"🛑\"}, {\"text\": \"\\\"Cảm ơn cậu đã chia sẻ với tớ. Tớ rất trân trọng tình bạn của tụi mình.\\\"\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3491,7 +3491,7 @@
         "id": "2315",
         "micro_lesson_id": "353",
         "block_type": "scenario",
-        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong buổi thảo luận nhóm, Lan lỡ lời gọi Lâm (đã chuyển giới nam) là *\\\"bạn ấy\\\"* (bằng từ chỉ nữ). Phát hiện ra mình sai, Lan lập tức nói: *\\\"À xin lỗi cậu, Lâm, cậu có thể trình bày tiếp phần này...\\\"*. Lâm mỉm cười gật đầu và tiếp tục nói mà không thấy bị sượng sùng.\"}",
+        "content_json": "{\"title\": \"Tình huống thực tế\", \"body\": \"Trong buổi thảo luận nhóm, Lan lỡ lời gọi Lâm (đã chuyển giới nam) là \\\"bạn ấy\\\" (bằng từ chỉ nữ). Phát hiện ra mình sai, Lan lập tức nói: \\\"À xin lỗi cậu, Lâm, cậu có thể trình bày tiếp phần này...\\\". Lâm mỉm cười gật đầu và tiếp tục nói mà không thấy bị sượng sùng.\"}",
         "order_index": "3",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3500,7 +3500,7 @@
         "id": "2316",
         "micro_lesson_id": "353",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Cách xin lỗi và sửa sai tốt nhất khi lỡ xưng hô sai là gì?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Cách xin lỗi và sửa sai tốt nhất khi lỡ xưng hô sai là gì?\", \"choices\": [{\"text\": \"\\\"Ôi tớ xin lỗi nhiều lắm, tớ ngốc quá, tại trước đây cậu là con gái nên tớ quen...\\\"\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"\\\"Xin lỗi cậu, [từ xưng hô đúng]...\\\" rồi tiếp tục câu chuyện một cách bình thường.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3554,7 +3554,7 @@
         "id": "2322",
         "micro_lesson_id": "354",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hành động nào giúp củng cố vùng an toàn trong nhóm của bạn?\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hành động nào giúp củng cố vùng an toàn trong nhóm của bạn?\", \"choices\": [{\"text\": \"Im lặng khi thấy bạn khác bị trêu chọc để giữ hòa khí nhóm.\", \"correct\": false, \"emoji\": \"😐\"}, {\"text\": \"Chủ động bắt chuyện, tôn trọng ý kiến và cởi mở với những nét tính cách khác biệt của các thành viên.\", \"correct\": true, \"emoji\": \"💚\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"
@@ -3608,7 +3608,7 @@
         "id": "2328",
         "micro_lesson_id": "355",
         "block_type": "interaction",
-        "content_json": "{\"question\": \"Hãy chọn cam kết cuối cùng của bạn khi hoàn thành khóa học này:\", \"choices\": []}",
+        "content_json": "{\"question\": \"Hãy chọn cam kết cuối cùng của bạn khi hoàn thành khóa học này:\", \"choices\": [{\"text\": \"\\\"Tôi cam kết luôn lắng nghe, tôn trọng và đồng hành cùng sự đa dạng xung quanh mình.\\\"\", \"correct\": true, \"emoji\": \"💚\"}, {\"text\": \"\\\"Tôi học xong chỉ để biết thế thôi, không thay đổi thái độ gì cả.\\\"\", \"correct\": false, \"emoji\": \"😐\"}]}",
         "order_index": "4",
         "created_at": "2026-07-04 18:00:00",
         "updated_at": "2026-07-04 18:00:00"

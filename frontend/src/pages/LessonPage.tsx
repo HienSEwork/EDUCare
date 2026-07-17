@@ -103,7 +103,15 @@ function SortingBlock({
   isCompleted?: boolean;
   onIncorrect?: () => void;
 }) {
-  const [items] = useState<any[]>(() => data?.items ?? []);
+  const [items] = useState<any[]>(() => {
+    const orig = data?.items ?? [];
+    const arr = [...orig];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [greenList, setGreenList] = useState<string[]>([]);
   const [redList, setRedList] = useState<string[]>([]);
@@ -467,6 +475,15 @@ function InteractionBlock({
   const question = data?.question ?? "";
   const choices = data?.choices ?? [];
 
+  const shuffledChoices = useMemo(() => {
+    const arr = [...choices];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [choices]);
+
   const [isDone, setIsDone] = useState(isCompleted ?? false);
   const [wrongAttempt, setWrongAttempt] = useState(false);
 
@@ -505,7 +522,7 @@ function InteractionBlock({
         transition={{ duration: 0.4 }}
         className="grid gap-3 md:grid-cols-2"
       >
-        {choices.map((c: any, idx: number) => {
+        {shuffledChoices.map((c: any, idx: number) => {
           const isCorrect = !!c?.correct;
           const tone = isDone
             ? isCorrect
@@ -522,7 +539,7 @@ function InteractionBlock({
             >
               <div className="flex items-center justify-between gap-3">
                 <span className="min-w-0 flex-1">{c?.text ?? ""}</span>
-                <span className="text-lg">{c?.emoji ?? (isCorrect ? "🙂" : "☹️")}</span>
+                <span className="text-lg">{isDone ? (c?.emoji ?? (isCorrect ? "🙂" : "☹️")) : null}</span>
               </div>
             </button>
           );
@@ -557,6 +574,16 @@ function ScenarioChoiceBlock({
   const isDone = isCompleted || localDone;
 
   const currentNode = nodes[currentNodeKey];
+
+  const shuffledChoices = useMemo(() => {
+    const raw = currentNode?.choices ?? [];
+    const arr = [...raw];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [currentNode?.choices]);
 
   const handleChoice = (nextNodeKey: string) => {
     if (isDone) return;
@@ -613,7 +640,7 @@ function ScenarioChoiceBlock({
         </div>
       ) : (
         <div className="grid gap-3 pt-2">
-          {(currentNode?.choices ?? []).map((choice: any, idx: number) => (
+          {shuffledChoices.map((choice: any, idx: number) => (
             <button
               key={idx}
               disabled={isDone}
@@ -919,7 +946,7 @@ function FillBlankBlock({
             key={index}
             disabled={isSuccess}
             onClick={() => handleBlankClick(key)}
-            className={`inline-flex items-center justify-center min-w-[70px] h-[34px] px-3.5 mx-1.5 rounded-xl border-2 transition-all font-bold text-[14px] ${isSuccess
+            className={`inline-flex items-center justify-center min-w-[70px] h-[34px] px-3.5 mx-1.5 rounded-xl border-2 transition-all font-bold text-[14px] align-middle ${isSuccess
               ? "border-mint bg-mint/10 text-mint-foreground"
               : wrongAttempt
                 ? "border-peach bg-peach/10 text-peach-foreground"
@@ -932,7 +959,7 @@ function FillBlankBlock({
           </button>
         );
       }
-      return <span key={index} className="text-[15px] font-semibold text-foreground/80 leading-7">{part}</span>;
+      return <span key={index} className="align-middle">{part}</span>;
     });
   };
 
@@ -947,7 +974,7 @@ function FillBlankBlock({
         transition={{ duration: 0.4 }}
         className="p-5 rounded-2xl bg-background/58 border border-white/70 shadow-sm leading-relaxed"
       >
-        <div className="flex flex-wrap items-center leading-loose">
+        <div className="leading-8 text-[15px] font-semibold text-foreground/80">
           {parseSentence()}
         </div>
       </motion.div>
@@ -1317,16 +1344,21 @@ export default function LessonPage() {
       isAssessment &&
       allInteractiveBlocksCompleted &&
       visibleBlocksCount === activeBlocks.length &&
-      (!activeMicro.completed || !completed) &&
-      !replayMode &&
-      !testGameOver &&
-      !isCompletingRef.current
+      !testGameOver
     ) {
-      isCompletingRef.current = true;
-      handleCompleteMicro(activeMicro.id)
-        .finally(() => {
-          isCompletingRef.current = false;
-        });
+      if (replayMode) {
+        toast.success("Thử thách đã hoàn thành (Chế độ chơi lại)!");
+        setReplayMode(false);
+      } else if (
+        (!activeMicro.completed || !completed) &&
+        !isCompletingRef.current
+      ) {
+        isCompletingRef.current = true;
+        handleCompleteMicro(activeMicro.id)
+          .finally(() => {
+            isCompletingRef.current = false;
+          });
+      }
     }
   }, [
     user,
@@ -1552,9 +1584,9 @@ export default function LessonPage() {
                       )}
                     </Button>
                   </div>
-                  
+
                   {isVideoExpanded ? (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       className="aspect-video w-full overflow-hidden rounded-2xl border border-muted-foreground/10 bg-black shadow-md"
@@ -1567,7 +1599,7 @@ export default function LessonPage() {
                       />
                     </motion.div>
                   ) : (
-                    <div 
+                    <div
                       onClick={() => setIsVideoExpanded(true)}
                       className="cursor-pointer group flex items-center justify-between p-4 rounded-xl border border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all"
                     >

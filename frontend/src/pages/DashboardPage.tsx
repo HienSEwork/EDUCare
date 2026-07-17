@@ -125,6 +125,40 @@ export default function DashboardPage() {
             <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">{DASHBOARD_COPY.description}</p>
           </div>
 
+          {/* Active Trial Info Banner */}
+          {user?.subscriptionPlanId === "VIP_TRIAL" && (
+            <div className="mb-8 rounded-2xl bg-gradient-to-r from-emerald-50 to-emerald-100/50 border border-emerald-200/80 p-5 shadow-soft relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-emerald-700 font-bold text-lg animate-pulse">🎁</span>
+                  <div className="text-left">
+                    <h3 className="font-bold text-emerald-900 text-sm sm:text-base">Món quà dùng thử VIP miễn phí đang hoạt động!</h3>
+                    <p className="text-xs sm:text-sm text-emerald-700 font-medium mt-0.5">
+                      Tài khoản của bạn được tự động kích hoạt trải nghiệm toàn bộ bài học VIP. Hạn dùng thử:{" "}
+                      <strong className="font-extrabold text-emerald-800">
+                        {(() => {
+                          try {
+                            const d = new Date(user.subscriptionEndDate || "");
+                            if (isNaN(d.getTime())) return "";
+                            return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+                          } catch (e) {
+                            return "";
+                          }
+                        })()}
+                      </strong>
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  to="/pricing"
+                  className="shrink-0 inline-flex h-9 items-center justify-center rounded-xl bg-emerald-600 px-4 text-xs font-black text-white hover:bg-emerald-700 shadow-soft transition-all active:scale-[0.98]"
+                >
+                  Nâng cấp VIP chính thức
+                </Link>
+              </div>
+            </div>
+          )}
+
           <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
             {[
               { icon: Star, label: "XP", value: data.summary.xp, color: "bg-pink/20 text-pink-foreground" },

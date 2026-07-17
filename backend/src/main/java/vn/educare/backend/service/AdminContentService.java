@@ -286,7 +286,11 @@ public class AdminContentService {
     }
     block.setBlockType(request.blockType());
     block.setContentJson(request.contentJson());
-    block.setOrderIndex(request.orderIndex() == null ? nextBlockOrderIndex(block.getMicroLessonId()) : request.orderIndex());
+    if (request.orderIndex() != null) {
+      block.setOrderIndex(request.orderIndex());
+    } else if (block.getOrderIndex() == null) {
+      block.setOrderIndex(nextBlockOrderIndex(block.getMicroLessonId()));
+    }
     
     return toMicroLessonBlockResponse(microLessonBlockRepository.save(block));
   }
@@ -296,6 +300,29 @@ public class AdminContentService {
     MicroLessonBlockEntity block = microLessonBlockRepository.findById(id)
         .orElseThrow(() -> new ApiException(404, "Micro lesson block not found"));
     microLessonBlockRepository.delete(block);
+  }
+
+  @Transactional
+  public void reorderMicroLessonBlocks(Long microLessonId, ReorderRequest request) {
+    if (!microLessonRepository.existsById(microLessonId)) {
+      throw new ApiException(404, "Micro lesson not found");
+    }
+    List<Long> blockIds = request.blockIds();
+    if (blockIds == null || blockIds.isEmpty()) {
+      return;
+    }
+    List<MicroLessonBlockEntity> blocks = microLessonBlockRepository.findAllByMicroLessonIdOrderByOrderIndexAsc(microLessonId);
+    for (int i = 0; i < blockIds.size(); i++) {
+      Long blockId = blockIds.get(i);
+      int orderIndex = i + 1;
+      blocks.stream()
+          .filter(b -> b.getId().equals(blockId))
+          .findFirst()
+          .ifPresent(b -> {
+            b.setOrderIndex(orderIndex);
+            microLessonBlockRepository.save(b);
+          });
+    }
   }
 
   private int nextCourseOrder() {

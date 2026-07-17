@@ -169,13 +169,26 @@ export default function PricingPage() {
   const [displayPlans, setDisplayPlans] = useState<PlanItem[]>(plans);
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [trialDuration, setTrialDuration] = useState<number>(7); // Mặc định là 7 ngày nếu tải lỗi
 
   useEffect(() => {
     const fetchPlans = async () => {
       try {
         const apiPlans = await apiRequest<SubscriptionPlan[]>("/payments/plans");
-        if (apiPlans && apiPlans.length > 0) {
-          const sorted = [...apiPlans].sort((a, b) => a.price - b.price);
+        if (Array.isArray(apiPlans) && apiPlans.length > 0) {
+          // Lấy thông tin số ngày dùng thử của gói VIP_TRIAL
+          const trial = apiPlans.find(p => p.id === "VIP_TRIAL");
+          if (trial) {
+            setTrialDuration(trial.durationDays);
+          }
+          
+          // Lọc bỏ gói VIP_TRIAL để không vẽ thẻ cước cho gói ẩn này
+          const displayable = apiPlans.filter(p => p.id !== "VIP_TRIAL");
+          const sorted = [...displayable].sort((a, b) => {
+            const priceA = a.price ? Number(a.price) : 0;
+            const priceB = b.price ? Number(b.price) : 0;
+            return priceA - priceB;
+          });
           setDisplayPlans(sorted.map(mapPlanToItem));
         }
       } catch (err) {
@@ -260,6 +273,45 @@ export default function PricingPage() {
           </motion.p>
         </div>
 
+        {/* Trial Promotion Banner - Chỉ hiện nếu chưa đăng nhập hoặc chưa được kích hoạt dùng thử / gói VIP */}
+        {(!user || (user.subscriptionPlanId !== "VIP_TRIAL" && user.plan !== "popular" && user.plan !== "premium")) && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.15 }}
+            className="mx-auto max-w-2xl mb-10 rounded-[2rem] bg-gradient-to-r from-pink-500/10 via-primary/10 to-pink-500/10 border border-primary/20 p-5 text-center shadow-soft"
+          >
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-lg animate-pulse">🎁</span>
+              <div className="text-center sm:text-left">
+                <h3 className="font-bold text-slate-800 text-sm sm:text-base">Món quà chào mừng từ EDUcare!</h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                  Tất cả tài khoản mới đăng ký đều được tự động kích hoạt dùng thử VIP <strong className="text-pink-650 font-black">{trialDuration} ngày</strong> miễn phí.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Active Trial Info Banner */}
+        {user?.subscriptionPlanId === "VIP_TRIAL" && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-auto max-w-2xl mb-10 rounded-[2rem] bg-emerald-50 border border-emerald-200 p-5 text-center shadow-soft"
+          >
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold text-lg">⚡</span>
+              <div className="text-center sm:text-left">
+                <h3 className="font-bold text-emerald-850 text-sm sm:text-base">Bạn đang sử dụng quyền dùng thử VIP miễn phí!</h3>
+                <p className="text-xs sm:text-sm text-emerald-700 font-medium">
+                  Hạn dùng thử đến ngày: <strong className="font-black">{formatExpiryDate(user.subscriptionEndDate || "")}</strong>. Hãy trải nghiệm trọn vẹn trước khi nâng cấp gói cước chính thức nhé!
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {error && (
           <div className="mx-auto max-w-md mb-8 rounded-2xl bg-destructive/10 border border-destructive/20 p-4 text-center text-sm font-semibold text-destructive">
             {error}
@@ -278,13 +330,17 @@ export default function PricingPage() {
             const isLowerTier =
               plan.id !== "FREE" && getTierLevel(plan.id) < getUserTierLevel(user?.plan);
 
-            const isVip = plan.id.toUpperCase().includes("VIP");
+            const isVip1Y = plan.id === "VIP_1Y";
+            const isVip1M = plan.id === "VIP_1M";
             const isPremium = plan.id.toUpperCase().includes("PREMIUM");
+            const isVip = plan.id.toUpperCase().includes("VIP");
 
             // Dynamic card styles
             let cardStyle = "border-slate-200/80 bg-white/70 shadow-md hover:scale-[1.02] hover:shadow-lg";
-            if (isVip) {
-              cardStyle = "border-primary bg-gradient-to-b from-primary/[0.06] to-primary/[0.01] shadow-[0_15px_40px_rgba(147,51,234,0.12)] md:scale-[1.03] md:-translate-y-1 z-10 hover:scale-[1.05] hover:shadow-[0_15px_40px_rgba(147,51,234,0.18)]";
+            if (isVip1Y) {
+              cardStyle = "border-pink-400 bg-gradient-to-b from-pink-500/[0.08] via-pink-500/[0.02] to-pink-500/[0.01] shadow-[0_15px_40px_rgba(244,63,94,0.15)] md:scale-[1.03] md:-translate-y-1 z-10 hover:scale-[1.05] hover:shadow-[0_15px_40px_rgba(244,63,94,0.22)]";
+            } else if (isVip1M) {
+              cardStyle = "border-primary/50 bg-gradient-to-b from-primary/[0.04] to-primary/[0.005] shadow-md hover:scale-[1.02] hover:shadow-lg";
             } else if (isPremium) {
               cardStyle = "border-pink-300 bg-gradient-to-b from-pink-500/[0.04] to-pink-500/[0.01] shadow-[0_15px_40px_rgba(244,63,94,0.1)] hover:scale-[1.02] hover:shadow-[0_15px_40px_rgba(244,63,94,0.16)]";
             } else {
@@ -301,8 +357,13 @@ export default function PricingPage() {
               >
                 <div>
                   {plan.badge && (
-                    <span className={`absolute -top-3 left-6 rounded-full px-3.5 py-1 text-[11px] font-black shadow-soft uppercase tracking-wider ${isVip ? "bg-primary text-white" : "bg-pink-500 text-white"
-                      }`}>
+                    <span className={`absolute -top-3 left-6 rounded-full px-3.5 py-1 text-[11px] font-black shadow-soft uppercase tracking-wider ${
+                      isVip1Y
+                        ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white"
+                        : isVip
+                          ? "bg-primary text-white"
+                          : "bg-pink-500 text-white"
+                    }`}>
                       {plan.badge}
                     </span>
                   )}
@@ -321,8 +382,13 @@ export default function PricingPage() {
                   <ul className="space-y-3.5">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2.5 text-[14px] md:text-[15px] font-semibold text-slate-600 leading-relaxed">
-                        <Check className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${isPremium ? "text-pink-500 animate-pulse" : "text-primary"
-                          }`} />
+                        <Check className={`h-4.5 w-4.5 shrink-0 mt-0.5 ${
+                          isVip1Y
+                            ? "text-pink-500 font-bold"
+                            : isPremium
+                              ? "text-pink-500 animate-pulse"
+                              : "text-primary"
+                        }`} />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -363,13 +429,16 @@ export default function PricingPage() {
                     <Button
                       onClick={() => handleSelectPlan(plan)}
                       disabled={loadingPlanId !== null}
-                      className={`w-full rounded-2xl h-12 font-black text-sm transition-all active:scale-[0.98] ${isVip
-                        ? "bg-primary text-primary-foreground hover:bg-primary/95 shadow-soft hover:shadow-lg hover:shadow-primary/20"
-                        : isPremium
-                          ? "bg-pink-500 text-white hover:bg-pink-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20"
-                          : "border-2 border-slate-200 bg-white/80 hover:bg-slate-50 text-slate-800"
-                        }`}
-                      variant={isVip || isPremium ? "default" : "outline"}
+                      className={`w-full rounded-2xl h-12 font-black text-sm transition-all active:scale-[0.98] ${
+                        isVip1Y
+                          ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20 border-0"
+                          : isVip1M || isVip
+                            ? "bg-primary text-primary-foreground hover:bg-primary/95 shadow-soft hover:shadow-lg hover:shadow-primary/20 border-0"
+                            : isPremium
+                              ? "bg-pink-500 text-white hover:bg-pink-600 shadow-soft hover:shadow-lg hover:shadow-pink-500/20 border-0"
+                              : "border-2 border-slate-200 bg-white/80 hover:bg-slate-50 text-slate-800"
+                      }`}
+                      variant={isVip1Y || isVip1M || isVip || isPremium ? "default" : "outline"}
                     >
                       {loadingPlanId === plan.id ? (
                         <span className="flex items-center gap-2">

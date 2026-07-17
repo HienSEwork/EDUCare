@@ -1547,3171 +1547,6136 @@ INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `conte
 ('1192', '201', 'reflection', '{"question": "Một thói quen nhỏ, tích cực nào bạn muốn bắt đầu thiết lập ngay từ ngày mai?"}', '5', '2026-06-05 22:00:15', '2026-06-05 22:00:15'),
 ('1193', '201', 'takeaway', '{"items": ["Những bước đi nhỏ mỗi ngày sẽ đưa bạn đi được một hành trình rất xa. Hãy kiên trì nhé!"]}', '6', '2026-06-05 22:00:15', '2026-06-05 22:00:15'),
 ('1204', '204', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Luật đi đường - Đồng thuận là gì?''! Bạn có 3 mạng để vượt qua 5 thử thách cam go. Hãy sẵn sàng nhé."}', '1', '2026-06-12 00:03:47', '2026-06-12 00:03:47'),
-('1205', '204', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Hỏi xin sự đồng thuận",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn đang xem phim tại rạp cùng bạn gái mới quen. Phim đến đoạn cao trào, bạn muốn đan tay vào tay bạn ấy. Bạn ấy đang tập trung cao độ vào màn hình, hai tay ôm hộp bắp rang bơ đặt trên đùi.",
-      "choices": [
-        { "text": "Cứ luồn tay vào hộp bắp để chạm tay bạn ấy rồi nắm lấy, vừa tự nhiên vừa lãng mạn.", "nextNode": "fail_surprise" },
-        { "text": "Nói khẽ bên tai: ''Tớ nắm tay cậu được không?''", "nextNode": "step2" },
-        { "text": "Chờ phim hết rồi đột ngột nắm tay khi đang đi ra.", "nextNode": "fail_passive" }
-      ]
-    },
-    "step2": {
-      "text": "Bạn ấy đỏ mặt, mỉm cười nhẹ rồi nói: ''Nắm tay thì được nè, nhưng đừng đan ngón tay chặt quá nha, tay tớ đang bị ra mồ hôi và hơi nóng''.",
-      "choices": [
-        { "text": "Nghe vậy thấy cụt hứng, buông tay ra và quay đi chỗ khác: ''Thôi thế thì thôi vậy''.", "nextNode": "fail_anger" },
-        { "text": "Cười nhẹ: ''Ok cậu nè!'', nắm tay nhẹ nhàng, tôn trọng yêu cầu cụ thể của bạn ấy.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Một lát sau, bạn ấy thấy mỏi tay và khẽ rút tay ra để cầm ly nước ngọt.",
-      "choices": [
-        { "text": "Nắm giữ chặt lại: ''Ơ đang nắm tay vui mà, sao lại rút ra?''", "nextNode": "fail_reversible" },
-        { "text": "Nới lỏng tay để bạn ấy rút ra thoải mái: ''Cậu uống nước đi nè!''.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã áp dụng quy tắc F.R.I.E.S cực tốt: tôn trọng sự linh hoạt (Reversible) và tính cụ thể (Specific) của sự đồng thuận.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_surprise": {
-      "text": "❌ Chưa đúng rồi! Việc đụng chạm bất ngờ mà không hỏi trước có thể làm đối phương giật mình hoặc khó chịu, vi phạm ranh giới cá nhân.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_passive": {
-      "text": "❌ Chưa đúng. Trong mối quan hệ lành mạnh, tụi mình nên chủ động hỏi ý kiến trước khi đụng chạm cơ thể thay vì im lặng làm càn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_anger": {
-      "text": "❌ Sai rồi! Giận dỗi khi đối phương thiết lập ranh giới cụ thể là hành vi thao túng cảm xúc, thiếu tôn trọng quyền tự quyết của họ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_reversible": {
-      "text": "❌ Chưa chính xác. Sự đồng thuận có tính linh hoạt (Reversible) - bất cứ ai cũng có quyền rút lại lời đồng ý bất kỳ lúc nào và bạn phải tôn trọng điều đó.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1205', '204', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Hỏi xin sự đồng thuận",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn đang xem phim tại rạp cùng bạn gái mới quen. Phim đến đoạn cao trào, bạn muốn đan tay vào tay bạn ấy. Bạn ấy đang tập trung cao độ vào màn hình, hai tay ôm hộp bắp rang bơ đặt trên đùi.",
+
+      "choices": [
+
+        { "text": "Cứ luồn tay vào hộp bắp để chạm tay bạn ấy rồi nắm lấy, vừa tự nhiên vừa lãng mạn.", "nextNode": "fail_surprise" },
+
+        { "text": "Nói khẽ bên tai: ''Tớ nắm tay cậu được không?''", "nextNode": "step2" },
+
+        { "text": "Chờ phim hết rồi đột ngột nắm tay khi đang đi ra.", "nextNode": "fail_passive" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Bạn ấy đỏ mặt, mỉm cười nhẹ rồi nói: ''Nắm tay thì được nè, nhưng đừng đan ngón tay chặt quá nha, tay tớ đang bị ra mồ hôi và hơi nóng''.",
+
+      "choices": [
+
+        { "text": "Nghe vậy thấy cụt hứng, buông tay ra và quay đi chỗ khác: ''Thôi thế thì thôi vậy''.", "nextNode": "fail_anger" },
+
+        { "text": "Cười nhẹ: ''Ok cậu nè!'', nắm tay nhẹ nhàng, tôn trọng yêu cầu cụ thể của bạn ấy.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Một lát sau, bạn ấy thấy mỏi tay và khẽ rút tay ra để cầm ly nước ngọt.",
+
+      "choices": [
+
+        { "text": "Nắm giữ chặt lại: ''Ơ đang nắm tay vui mà, sao lại rút ra?''", "nextNode": "fail_reversible" },
+
+        { "text": "Nới lỏng tay để bạn ấy rút ra thoải mái: ''Cậu uống nước đi nè!''.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã áp dụng quy tắc F.R.I.E.S cực tốt: tôn trọng sự linh hoạt (Reversible) và tính cụ thể (Specific) của sự đồng thuận.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_surprise": {
+
+      "text": "❌ Chưa đúng rồi! Việc đụng chạm bất ngờ mà không hỏi trước có thể làm đối phương giật mình hoặc khó chịu, vi phạm ranh giới cá nhân.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_passive": {
+
+      "text": "❌ Chưa đúng. Trong mối quan hệ lành mạnh, tụi mình nên chủ động hỏi ý kiến trước khi đụng chạm cơ thể thay vì im lặng làm càn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_anger": {
+
+      "text": "❌ Sai rồi! Giận dỗi khi đối phương thiết lập ranh giới cụ thể là hành vi thao túng cảm xúc, thiếu tôn trọng quyền tự quyết của họ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_reversible": {
+
+      "text": "❌ Chưa chính xác. Sự đồng thuận có tính linh hoạt (Reversible) - bất cứ ai cũng có quyền rút lại lời đồng ý bất kỳ lúc nào và bạn phải tôn trọng điều đó.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:03:47', '2026-06-12 00:03:47'),
-('1206', '204', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau:",
-  "leftBox": { "title": "Lành mạnh (Green Flag)" },
-  "rightBox": { "title": "Độc hại (Red Flag)" },
-  "items": [
-    { "text": "Đồng ý vì nể sợ người yêu giận dỗi", "correctBox": "right" },
-    { "text": "Tự nguyện đồng ý nắm tay nhưng từ chối ôm má", "correctBox": "left" },
-    { "text": "Gật đầu làm theo lời dụ dỗ ngọt ngào khi đang say sưa", "correctBox": "right" },
-    { "text": "Hào hứng đồng ý đi chơi xa và chuẩn bị kỹ lưỡng", "correctBox": "left" },
-    { "text": "Im lặng cúi đầu chịu đựng khi đối phương bá vai", "correctBox": "right" }
-  ]
+('1206', '204', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau:",
+
+  "leftBox": { "title": "Lành mạnh (Green Flag)" },
+
+  "rightBox": { "title": "Độc hại (Red Flag)" },
+
+  "items": [
+
+    { "text": "Đồng ý vì nể sợ người yêu giận dỗi", "correctBox": "right" },
+
+    { "text": "Tự nguyện đồng ý nắm tay nhưng từ chối ôm má", "correctBox": "left" },
+
+    { "text": "Gật đầu làm theo lời dụ dỗ ngọt ngào khi đang say sưa", "correctBox": "right" },
+
+    { "text": "Hào hứng đồng ý đi chơi xa và chuẩn bị kỹ lưỡng", "correctBox": "left" },
+
+    { "text": "Im lặng cúi đầu chịu đựng khi đối phương bá vai", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 00:03:47', '2026-06-12 00:03:47'),
-('1207', '204', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa quy tắc F.R.I.E.S sau:",
-  "pairs": [
-    { "left": "Tự nguyện (Freely given)", "right": "Đồng ý không có sự ép buộc, nài nỉ hay lo sợ bị giận dỗi." },
-    { "left": "Linh hoạt (Reversible)", "right": "Có quyền đổi ý và rút lại quyết định bất cứ lúc nào." },
-    { "left": "Đầy đủ thông tin (Informed)", "right": "Biết rõ bản chất hành động, không bị lừa dối hay giấu giếm." },
-    { "left": "Cụ thể (Specific)", "right": "Đồng ý cho việc này không đồng nghĩa với việc khác." }
-  ]
+('1207', '204', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa quy tắc F.R.I.E.S sau:",
+
+  "pairs": [
+
+    { "left": "Tự nguyện (Freely given)", "right": "Đồng ý không có sự ép buộc, nài nỉ hay lo sợ bị giận dỗi." },
+
+    { "left": "Linh hoạt (Reversible)", "right": "Có quyền đổi ý và rút lại quyết định bất cứ lúc nào." },
+
+    { "left": "Đầy đủ thông tin (Informed)", "right": "Biết rõ bản chất hành động, không bị lừa dối hay giấu giếm." },
+
+    { "left": "Cụ thể (Specific)", "right": "Đồng ý cho việc này không đồng nghĩa với việc khác." }
+
+  ]
+
 }', '4', '2026-06-12 00:03:47', '2026-06-12 00:03:47'),
-('1208', '204', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới:",
-  "sentence": "Một lời [blank1] thực sự phải dựa trên sự [blank2] của bản thân, không bị áp lực [blank3] hay dụ dỗ, và có thể thay đổi bất cứ [blank4] nào.",
-  "blanks": {
-    "blank1": { "correct": "đồng ý", "placeholder": "..." },
-    "blank2": { "correct": "tự nguyện", "placeholder": "..." },
-    "blank3": { "correct": "ép buộc", "placeholder": "..." },
-    "blank4": { "correct": "lúc", "placeholder": "..." }
-  },
-  "words": ["đồng ý", "tự nguyện", "ép buộc", "lúc", "im lặng", "nể nang", "ngượng ngùng", "đèn đỏ"]
+('1208', '204', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới:",
+
+  "sentence": "Một lời [blank1] thực sự phải dựa trên sự [blank2] của bản thân, không bị áp lực [blank3] hay dụ dỗ, và có thể thay đổi bất cứ [blank4] nào.",
+
+  "blanks": {
+
+    "blank1": { "correct": "đồng ý", "placeholder": "..." },
+
+    "blank2": { "correct": "tự nguyện", "placeholder": "..." },
+
+    "blank3": { "correct": "ép buộc", "placeholder": "..." },
+
+    "blank4": { "correct": "lúc", "placeholder": "..." }
+
+  },
+
+  "words": ["đồng ý", "tự nguyện", "ép buộc", "lúc", "im lặng", "nể nang", "ngượng ngùng", "đèn đỏ"]
+
 }', '5', '2026-06-12 00:03:47', '2026-06-12 00:03:47'),
-('1209', '204', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi đối phương đã đồng ý ôm bạn lúc trước, nhưng sau đó đẩy nhẹ bạn ra và nói ''Tớ thấy hơi nhanh'', phản ứng nào sau đây thể hiện sự tôn trọng ranh giới tốt nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Hờn dỗi: ''Nãy cậu đồng ý rồi mà giờ lại thay đổi à?''", "correct": false, "emoji": "🙁" },
-    { "text": "Nói đùa: ''Làm gì mà căng thế, ôm tí thôi mà!''", "correct": false, "emoji": "😐" },
-    { "text": "Dừng lại ngay, nới lỏng tay và nhẹ nhàng hỏi han cảm nhận của đối phương.", "correct": true, "emoji": "💚" },
-    { "text": "Cứ ôm chặt thêm vài giây rồi mới buông ra.", "correct": false, "emoji": "🛑" }
-  ]
+('1209', '204', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi đối phương đã đồng ý ôm bạn lúc trước, nhưng sau đó đẩy nhẹ bạn ra và nói ''Tớ thấy hơi nhanh'', phản ứng nào sau đây thể hiện sự tôn trọng ranh giới tốt nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Hờn dỗi: ''Nãy cậu đồng ý rồi mà giờ lại thay đổi à?''", "correct": false, "emoji": "🙁" },
+
+    { "text": "Nói đùa: ''Làm gì mà căng thế, ôm tí thôi mà!''", "correct": false, "emoji": "😐" },
+
+    { "text": "Dừng lại ngay, nới lỏng tay và nhẹ nhàng hỏi han cảm nhận của đối phương.", "correct": true, "emoji": "💚" },
+
+    { "text": "Cứ ôm chặt thêm vài giây rồi mới buông ra.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 00:03:47', '2026-06-12 00:03:47'),
 ('1210', '205', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Lắc đầu không sao cả''! Bạn có 3 mạng để vượt qua 5 thử thách thử lòng kiên cường. Sẵn sàng chưa?"}', '1', '2026-06-12 00:12:12', '2026-06-12 00:12:12'),
-('1211', '205', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Đối thoại ranh giới và ứng phó từ chối",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn rủ bạn cùng lớp đi hiệu sách mua tài liệu học tập cuối tuần này. Bạn ấy ngập ngừng từ chối: ''Xin lỗi cậu nha, cuối tuần này tớ bận học thêm và dọn dẹp nhà cửa mất rồi''. Cảm giác ngượng ngùng dâng lên trong lòng bạn.",
-      "choices": [
-        { "text": "Tự suy diễn: ''Chắc bạn ấy ghét mình nên mới lấy cớ từ chối''. Quyết định không bao giờ nói chuyện nữa.", "nextNode": "fail_low_self_esteem" },
-        { "text": "Nài nỉ thêm: ''Học thêm tí thôi mà, đi hiệu sách nhanh lắm, đi với tớ đi!''", "nextNode": "fail_pester" },
-        { "text": "Phản hồi lịch sự: ''Ok cậu nè, học tập và dọn dẹp vui vẻ nha! Hôm khác tụi mình đi cũng được''.", "nextNode": "step2" }
-      ]
-    },
-    "step2": {
-      "text": "Thứ Hai đi học, bạn thấy bạn ấy đang cười nói vui vẻ với một nhóm bạn khác. Cơn ghen tị và hụt hẫng nhen nhóm.",
-      "choices": [
-        { "text": "Đến chen vào và nói mỉa mai: ''Bận dọn nhà mà nay rảnh rỗi buôn chuyện thế nhờ?''", "nextNode": "fail_sarcasm" },
-        { "text": "Cư xử bình thường, chủ động chào hỏi vui vẻ và tập trung vào việc học của mình.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Cuối tuần sau, bạn ấy chủ động nhắn tin rủ bạn đi thư viện tự học chung.",
-      "choices": [
-        { "text": "Từ chối thẳng thừng để trả đũa: ''Hôm trước bận thì hôm nay tớ cũng bận nhé!''", "nextNode": "fail_revenge" },
-        { "text": "Vui vẻ nhận lời: ''Ý tưởng hay đó, hẹn cậu thứ Bảy ở thư viện nha!''", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã đặt ranh giới cá nhân một cách dứt khoát nhưng vẫn lịch sự, mềm mỏng và giữ vững lập trường của mình.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_low_self_esteem": {
-      "text": "❌ Chưa đúng rồi! Tự suy diễn tiêu cực chỉ làm bản thân tổn thương và xa lánh mối quan hệ, trong khi lý do từ chối thường nằm ở hoàn cảnh của họ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_pester": {
-      "text": "❌ Sai rồi! Nài nỉ, ép buộc đối phương nhượng bộ khi họ đã từ chối là hành vi thiếu tôn trọng ranh giới của họ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_sarcasm": {
-      "text": "❌ Chưa đúng. Lời nói mỉa mai thể hiện sự thiếu chín chắn và làm rạn nứt tình cảm bạn bè một cách không đáng có.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_revenge": {
-      "text": "❌ Sai rồi! Hành vi trả đũa trẻ con không giúp xây dựng tình bạn lành mạnh mà chỉ làm tăng thêm khoảng cách.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1211', '205', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Đối thoại ranh giới và ứng phó từ chối",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn rủ bạn cùng lớp đi hiệu sách mua tài liệu học tập cuối tuần này. Bạn ấy ngập ngừng từ chối: ''Xin lỗi cậu nha, cuối tuần này tớ bận học thêm và dọn dẹp nhà cửa mất rồi''. Cảm giác ngượng ngùng dâng lên trong lòng bạn.",
+
+      "choices": [
+
+        { "text": "Tự suy diễn: ''Chắc bạn ấy ghét mình nên mới lấy cớ từ chối''. Quyết định không bao giờ nói chuyện nữa.", "nextNode": "fail_low_self_esteem" },
+
+        { "text": "Nài nỉ thêm: ''Học thêm tí thôi mà, đi hiệu sách nhanh lắm, đi với tớ đi!''", "nextNode": "fail_pester" },
+
+        { "text": "Phản hồi lịch sự: ''Ok cậu nè, học tập và dọn dẹp vui vẻ nha! Hôm khác tụi mình đi cũng được''.", "nextNode": "step2" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Thứ Hai đi học, bạn thấy bạn ấy đang cười nói vui vẻ với một nhóm bạn khác. Cơn ghen tị và hụt hẫng nhen nhóm.",
+
+      "choices": [
+
+        { "text": "Đến chen vào và nói mỉa mai: ''Bận dọn nhà mà nay rảnh rỗi buôn chuyện thế nhờ?''", "nextNode": "fail_sarcasm" },
+
+        { "text": "Cư xử bình thường, chủ động chào hỏi vui vẻ và tập trung vào việc học của mình.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Cuối tuần sau, bạn ấy chủ động nhắn tin rủ bạn đi thư viện tự học chung.",
+
+      "choices": [
+
+        { "text": "Từ chối thẳng thừng để trả đũa: ''Hôm trước bận thì hôm nay tớ cũng bận nhé!''", "nextNode": "fail_revenge" },
+
+        { "text": "Vui vẻ nhận lời: ''Ý tưởng hay đó, hẹn cậu thứ Bảy ở thư viện nha!''", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã đặt ranh giới cá nhân một cách dứt khoát nhưng vẫn lịch sự, mềm mỏng và giữ vững lập trường của mình.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_low_self_esteem": {
+
+      "text": "❌ Chưa đúng rồi! Tự suy diễn tiêu cực chỉ làm bản thân tổn thương và xa lánh mối quan hệ, trong khi lý do từ chối thường nằm ở hoàn cảnh của họ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_pester": {
+
+      "text": "❌ Sai rồi! Nài nỉ, ép buộc đối phương nhượng bộ khi họ đã từ chối là hành vi thiếu tôn trọng ranh giới của họ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_sarcasm": {
+
+      "text": "❌ Chưa đúng. Lời nói mỉa mai thể hiện sự thiếu chín chắn và làm rạn nứt tình cảm bạn bè một cách không đáng có.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_revenge": {
+
+      "text": "❌ Sai rồi! Hành vi trả đũa trẻ con không giúp xây dựng tình bạn lành mạnh mà chỉ làm tăng thêm khoảng cách.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:12:12', '2026-06-12 00:12:12'),
-('1212', '205', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại suy nghĩ sau khi bị từ chối:",
-  "leftBox": { "title": "Thực tế & Lành mạnh" },
-  "rightBox": { "title": "Tự ti & Suy diễn" },
-  "items": [
-    { "text": "Bạn ấy từ chối vì không muốn đi chơi với mình hôm nay", "correctBox": "left" },
-    { "text": "Chắc chắn mình là kẻ thất bại, xấu xí và không ai thích", "correctBox": "right" },
-    { "text": "Có thể bạn ấy thực sự bận hoặc mệt mỏi vào lúc đó", "correctBox": "left" },
-    { "text": "Mình không bao giờ nên mở lời mời bất kỳ ai nữa", "correctBox": "right" },
-    { "text": "Ranh giới của người khác cần được tôn trọng tuyệt đối", "correctBox": "left" }
-  ]
+('1212', '205', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại suy nghĩ sau khi bị từ chối:",
+
+  "leftBox": { "title": "Thực tế & Lành mạnh" },
+
+  "rightBox": { "title": "Tự ti & Suy diễn" },
+
+  "items": [
+
+    { "text": "Bạn ấy từ chối vì không muốn đi chơi với mình hôm nay", "correctBox": "left" },
+
+    { "text": "Chắc chắn mình là kẻ thất bại, xấu xí và không ai thích", "correctBox": "right" },
+
+    { "text": "Có thể bạn ấy thực sự bận hoặc mệt mỏi vào lúc đó", "correctBox": "left" },
+
+    { "text": "Mình không bao giờ nên mở lời mời bất kỳ ai nữa", "correctBox": "right" },
+
+    { "text": "Ranh giới của người khác cần được tôn trọng tuyệt đối", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:12:12', '2026-06-12 00:12:12'),
-('1213', '205', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và cách ứng xử sau:",
-  "pairs": [
-    { "left": "Sự bền bỉ (Resilience)", "right": "Khả năng tự hồi phục sau hụt hẫng và thất vọng." },
-    { "left": "Tự chủ cảm xúc", "right": "Không đổ lỗi cho bản thân hay giận dỗi đối phương." },
-    { "left": "Ranh giới cá nhân", "right": "Giới hạn giúp bảo vệ không gian riêng tư của mỗi người." },
-    { "left": "Từ chối lịch sự", "right": "Đưa ra lời từ chối rõ ràng kèm thái độ nhẹ nhàng, tôn trọng." }
-  ]
+('1213', '205', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và cách ứng xử sau:",
+
+  "pairs": [
+
+    { "left": "Sự bền bỉ (Resilience)", "right": "Khả năng tự hồi phục sau hụt hẫng và thất vọng." },
+
+    { "left": "Tự chủ cảm xúc", "right": "Không đổ lỗi cho bản thân hay giận dỗi đối phương." },
+
+    { "left": "Ranh giới cá nhân", "right": "Giới hạn giúp bảo vệ không gian riêng tư của mỗi người." },
+
+    { "left": "Từ chối lịch sự", "right": "Đưa ra lời từ chối rõ ràng kèm thái độ nhẹ nhàng, tôn trọng." }
+
+  ]
+
 }', '4', '2026-06-12 00:12:12', '2026-06-12 00:12:12'),
-('1214', '205', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành triết lý kiên cường:",
-  "sentence": "Khi bị từ chối, việc [blank1] ranh giới của người khác và giữ thái độ [blank2] giúp bạn bảo vệ [blank3] của bản thân cũng như duy trì [blank4] tốt đẹp.",
-  "blanks": {
-    "blank1": { "correct": "tôn trọng", "placeholder": "..." },
-    "blank2": { "correct": "lịch sự", "placeholder": "..." },
-    "blank3": { "correct": "giá trị", "placeholder": "..." },
-    "blank4": { "correct": "mối quan hệ", "placeholder": "..." }
-  },
-  "words": ["tôn trọng", "lịch sự", "giá trị", "mối quan hệ", "tự ti", "giận dỗi", "nài nỉ", "trả đũa"]
+('1214', '205', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành triết lý kiên cường:",
+
+  "sentence": "Khi bị từ chối, việc [blank1] ranh giới của người khác và giữ thái độ [blank2] giúp bạn bảo vệ [blank3] của bản thân cũng như duy trì [blank4] tốt đẹp.",
+
+  "blanks": {
+
+    "blank1": { "correct": "tôn trọng", "placeholder": "..." },
+
+    "blank2": { "correct": "lịch sự", "placeholder": "..." },
+
+    "blank3": { "correct": "giá trị", "placeholder": "..." },
+
+    "blank4": { "correct": "mối quan hệ", "placeholder": "..." }
+
+  },
+
+  "words": ["tôn trọng", "lịch sự", "giá trị", "mối quan hệ", "tự ti", "giận dỗi", "nài nỉ", "trả đũa"]
+
 }', '5', '2026-06-12 00:12:12', '2026-06-12 00:12:12'),
-('1215', '205', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Nếu bạn cảm thấy mệt mỏi và không muốn đi chơi cùng bạn bè, cách từ chối nào sau đây là văn minh và rõ ràng nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Lờ tin nhắn đi, giả vờ như không đọc được.", "correct": false, "emoji": "🥺" },
-    { "text": "Nói dối là nhà có việc bận đột xuất để khỏi phải giải thích.", "correct": false, "emoji": "😐" },
-    { "text": "Nói rõ rằng mình đang mệt cần nghỉ ngơi, cảm ơn lời rủ và hẹn dịp khác.", "correct": true, "emoji": "💚" },
-    { "text": "Nhắn tin cộc lốc: ''Không đi đâu, mệt lắm!''", "correct": false, "emoji": "😠" }
-  ]
+('1215', '205', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Nếu bạn cảm thấy mệt mỏi và không muốn đi chơi cùng bạn bè, cách từ chối nào sau đây là văn minh và rõ ràng nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Lờ tin nhắn đi, giả vờ như không đọc được.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Nói dối là nhà có việc bận đột xuất để khỏi phải giải thích.", "correct": false, "emoji": "😐" },
+
+    { "text": "Nói rõ rằng mình đang mệt cần nghỉ ngơi, cảm ơn lời rủ và hẹn dịp khác.", "correct": true, "emoji": "💚" },
+
+    { "text": "Nhắn tin cộc lốc: ''Không đi đâu, mệt lắm!''", "correct": false, "emoji": "😠" }
+
+  ]
+
 }', '6', '2026-06-12 00:12:12', '2026-06-12 00:12:12'),
 ('1216', '206', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Ranh giới số & Mạng xã hội''! Bạn có 3 mạng để giải quyết các rắc rối trên không gian ảo. Tiến lên!"}', '1', '2026-06-12 00:13:10', '2026-06-12 00:13:10'),
-('1217', '206', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Ranh giới trên không gian mạng",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn chụp được ảnh dìm của bạn thân ngủ gật trong lớp với dáng vẻ rất ngộ nghĩnh. Nhóm chat của lớp đang bàn tán xôn xao, bạn định đăng tấm ảnh này lên Story Instagram cá nhân.",
-      "choices": [
-        { "text": "Đăng lên ngay lập tức kèm caption hài hước để mọi người cùng thả tim.", "nextNode": "fail_leak" },
-        { "text": "Gửi riêng bức ảnh cho bạn ấy xem trước và hỏi ý kiến: ''Tớ đăng tấm này lên Story trêu tí được không?''", "nextNode": "step2" },
-        { "text": "Chỉ chia sẻ trong nhóm chat kín 3 người bạn thân mà không cần hỏi bạn ấy.", "nextNode": "fail_leak_private" }
-      ]
-    },
-    "step2": {
-      "text": "Bạn ấy nhắn lại: ''Trông mặt tớ phệ quá, cậu đừng đăng lên mạng nha, tớ ngại lắm!''",
-      "choices": [
-        { "text": "Nài nỉ tiếp: ''Ui dào bạn bè cả mà, story 24h tự xóa thôi, có ai để ý đâu, cho tớ đăng đi!''", "nextNode": "fail_pester" },
-        { "text": "Tôn trọng bạn: ''Ok cậu nè, tớ sẽ giữ làm kỷ niệm riêng thôi, không đăng đâu!''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Tối hôm đó, một thành viên khác trong nhóm lớp lại tự ý đăng bức ảnh dìm đó lên nhóm Facebook chung của trường.",
-      "choices": [
-        { "text": "Hùa vào bình luận trêu chọc chung cho vui: ''Haha nhìn tấu hài thực sự!''", "nextNode": "fail_cyberbullying" },
-        { "text": "Nhắn tin nhắc nhở bạn kia gỡ ảnh và động viên bạn thân của mình.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn hảo! Tôn trọng ranh giới số của bạn bè giúp giữ gìn tình bạn đẹp trực tuyến và thực tế.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_leak": {
-      "text": "❌ Sai rồi! Tự ý đăng ảnh dìm của bạn bè lên mạng xã hội khi chưa được sự đồng ý là vi phạm ranh giới số của họ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_leak_private": {
-      "text": "❌ Chưa đúng. Dù là nhóm chat kín, chia sẻ ảnh dìm không có sự đồng thuận vẫn có nguy cơ rò rỉ và gây tổn thương cho bạn mình.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_pester": {
-      "text": "❌ Sai rồi! Nài nỉ, ép buộc đối phương nhượng bộ trên mạng xã hội vẫn là hành vi thiếu tôn trọng ranh giới của họ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_cyberbullying": {
-      "text": "❌ Sai rồi! Hùa theo trêu chọc khi biết bạn không thoải mái là hành vi tiếp tay cho bắt nạt trực tuyến.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1217', '206', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Ranh giới trên không gian mạng",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn chụp được ảnh dìm của bạn thân ngủ gật trong lớp với dáng vẻ rất ngộ nghĩnh. Nhóm chat của lớp đang bàn tán xôn xao, bạn định đăng tấm ảnh này lên Story Instagram cá nhân.",
+
+      "choices": [
+
+        { "text": "Đăng lên ngay lập tức kèm caption hài hước để mọi người cùng thả tim.", "nextNode": "fail_leak" },
+
+        { "text": "Gửi riêng bức ảnh cho bạn ấy xem trước và hỏi ý kiến: ''Tớ đăng tấm này lên Story trêu tí được không?''", "nextNode": "step2" },
+
+        { "text": "Chỉ chia sẻ trong nhóm chat kín 3 người bạn thân mà không cần hỏi bạn ấy.", "nextNode": "fail_leak_private" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Bạn ấy nhắn lại: ''Trông mặt tớ phệ quá, cậu đừng đăng lên mạng nha, tớ ngại lắm!''",
+
+      "choices": [
+
+        { "text": "Nài nỉ tiếp: ''Ui dào bạn bè cả mà, story 24h tự xóa thôi, có ai để ý đâu, cho tớ đăng đi!''", "nextNode": "fail_pester" },
+
+        { "text": "Tôn trọng bạn: ''Ok cậu nè, tớ sẽ giữ làm kỷ niệm riêng thôi, không đăng đâu!''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Tối hôm đó, một thành viên khác trong nhóm lớp lại tự ý đăng bức ảnh dìm đó lên nhóm Facebook chung của trường.",
+
+      "choices": [
+
+        { "text": "Hùa vào bình luận trêu chọc chung cho vui: ''Haha nhìn tấu hài thực sự!''", "nextNode": "fail_cyberbullying" },
+
+        { "text": "Nhắn tin nhắc nhở bạn kia gỡ ảnh và động viên bạn thân của mình.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn hảo! Tôn trọng ranh giới số của bạn bè giúp giữ gìn tình bạn đẹp trực tuyến và thực tế.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_leak": {
+
+      "text": "❌ Sai rồi! Tự ý đăng ảnh dìm của bạn bè lên mạng xã hội khi chưa được sự đồng ý là vi phạm ranh giới số của họ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_leak_private": {
+
+      "text": "❌ Chưa đúng. Dù là nhóm chat kín, chia sẻ ảnh dìm không có sự đồng thuận vẫn có nguy cơ rò rỉ và gây tổn thương cho bạn mình.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_pester": {
+
+      "text": "❌ Sai rồi! Nài nỉ, ép buộc đối phương nhượng bộ trên mạng xã hội vẫn là hành vi thiếu tôn trọng ranh giới của họ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_cyberbullying": {
+
+      "text": "❌ Sai rồi! Hùa theo trêu chọc khi biết bạn không thoải mái là hành vi tiếp tay cho bắt nạt trực tuyến.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:13:10', '2026-06-12 00:13:10'),
-('1218', '206', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi trên mạng xã hội:",
-  "leftBox": { "title": "Green Flag số" },
-  "rightBox": { "title": "Red Flag số" },
-  "items": [
-    { "text": "Hỏi ý kiến bạn bè trước khi đăng ảnh chung lên mạng", "correctBox": "left" },
-    { "text": "Đòi người yêu cung cấp mật khẩu tài khoản để kiểm soát", "correctBox": "right" },
-    { "text": "Tôn trọng yêu cầu gỡ tag hoặc xóa ảnh từ người khác", "correctBox": "left" },
-    { "text": "Gửi ảnh nhạy cảm cá nhân dưới áp lực đe dọa chia tay", "correctBox": "right" },
-    { "text": "Cài đặt chế độ riêng tư để bảo vệ thông tin cá nhân", "correctBox": "left" }
-  ]
+('1218', '206', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi trên mạng xã hội:",
+
+  "leftBox": { "title": "Green Flag số" },
+
+  "rightBox": { "title": "Red Flag số" },
+
+  "items": [
+
+    { "text": "Hỏi ý kiến bạn bè trước khi đăng ảnh chung lên mạng", "correctBox": "left" },
+
+    { "text": "Đòi người yêu cung cấp mật khẩu tài khoản để kiểm soát", "correctBox": "right" },
+
+    { "text": "Tôn trọng yêu cầu gỡ tag hoặc xóa ảnh từ người khác", "correctBox": "left" },
+
+    { "text": "Gửi ảnh nhạy cảm cá nhân dưới áp lực đe dọa chia tay", "correctBox": "right" },
+
+    { "text": "Cài đặt chế độ riêng tư để bảo vệ thông tin cá nhân", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:13:10', '2026-06-12 00:13:10'),
-('1219', '206', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn số sau:",
-  "pairs": [
-    { "left": "Đồng thuận số (Digital consent)", "right": "Hỏi ý kiến trước khi chia sẻ hình ảnh hoặc thông tin người khác lên mạng." },
-    { "left": "Ranh giới mật khẩu", "right": "Quyền giữ bảo mật tài khoản cá nhân, không chia sẻ để chứng minh lòng tin." },
-    { "left": "Bộ lọc truyền thông", "right": "Khả năng phân biệt ảo tưởng trên phim ảnh với các mối quan hệ đời thực." },
-    { "left": "Bắt nạt trực tuyến", "right": "Hành vi sử dụng mạng xã hội để trêu chọc, cô lập hoặc làm nhục người khác." }
-  ]
+('1219', '206', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn số sau:",
+
+  "pairs": [
+
+    { "left": "Đồng thuận số (Digital consent)", "right": "Hỏi ý kiến trước khi chia sẻ hình ảnh hoặc thông tin người khác lên mạng." },
+
+    { "left": "Ranh giới mật khẩu", "right": "Quyền giữ bảo mật tài khoản cá nhân, không chia sẻ để chứng minh lòng tin." },
+
+    { "left": "Bộ lọc truyền thông", "right": "Khả năng phân biệt ảo tưởng trên phim ảnh với các mối quan hệ đời thực." },
+
+    { "left": "Bắt nạt trực tuyến", "right": "Hành vi sử dụng mạng xã hội để trêu chọc, cô lập hoặc làm nhục người khác." }
+
+  ]
+
 }', '4', '2026-06-12 00:13:10', '2026-06-12 00:13:10'),
-('1220', '206', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa an toàn mạng:",
-  "sentence": "Mạng xã hội không bao giờ [blank1] hoàn toàn thông tin, vì vậy hãy luôn tôn trọng [blank2] số của bạn bè và tuyệt đối nói không với áp lực gửi ảnh [blank3] dù đối phương có [blank4] thế nào.",
-  "blanks": {
-    "blank1": { "correct": "xóa", "placeholder": "..." },
-    "blank2": { "correct": "ranh giới", "placeholder": "..." },
-    "blank3": { "correct": "nhạy cảm", "placeholder": "..." },
-    "blank4": { "correct": "nài nỉ", "placeholder": "..." }
-  },
-  "words": ["xóa", "ranh giới", "nhạy cảm", "nài nỉ", "công khai", "chia sẻ", "lừa dối", "tin tưởng"]
+('1220', '206', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa an toàn mạng:",
+
+  "sentence": "Mạng xã hội không bao giờ [blank1] hoàn toàn thông tin, vì vậy hãy luôn tôn trọng [blank2] số của bạn bè và tuyệt đối nói không với áp lực gửi ảnh [blank3] dù đối phương có [blank4] thế nào.",
+
+  "blanks": {
+
+    "blank1": { "correct": "xóa", "placeholder": "..." },
+
+    "blank2": { "correct": "ranh giới", "placeholder": "..." },
+
+    "blank3": { "correct": "nhạy cảm", "placeholder": "..." },
+
+    "blank4": { "correct": "nài nỉ", "placeholder": "..." }
+
+  },
+
+  "words": ["xóa", "ranh giới", "nhạy cảm", "nài nỉ", "công khai", "chia sẻ", "lừa dối", "tin tưởng"]
+
 }', '5', '2026-06-12 00:13:10', '2026-06-12 00:13:10'),
-('1221', '206', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi một người bạn online liên tục nhắn tin yêu cầu bạn gửi ảnh chụp riêng tư nhạy cảm của bạn, phản ứng nào sau đây bảo vệ bạn tốt nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Gửi một bức ảnh chụp từ xa, che mặt để tự bảo vệ.", "correct": false, "emoji": "🥺" },
-    { "text": "Từ chối dứt khoát, chặn tài khoản đó và báo ngay với người lớn đáng tin cậy.", "correct": true, "emoji": "💚" },
-    { "text": "Thương lượng: ''Cậu gửi ảnh của cậu trước đi rồi tớ gửi sau''.", "correct": false, "emoji": "😐" },
-    { "text": "Im lặng gửi ảnh vì sợ bị tung thông tin cá nhân lên mạng.", "correct": false, "emoji": "🛑" }
-  ]
+('1221', '206', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi một người bạn online liên tục nhắn tin yêu cầu bạn gửi ảnh chụp riêng tư nhạy cảm của bạn, phản ứng nào sau đây bảo vệ bạn tốt nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Gửi một bức ảnh chụp từ xa, che mặt để tự bảo vệ.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Từ chối dứt khoát, chặn tài khoản đó và báo ngay với người lớn đáng tin cậy.", "correct": true, "emoji": "💚" },
+
+    { "text": "Thương lượng: ''Cậu gửi ảnh của cậu trước đi rồi tớ gửi sau''.", "correct": false, "emoji": "😐" },
+
+    { "text": "Im lặng gửi ảnh vì sợ bị tung thông tin cá nhân lên mạng.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 00:13:10', '2026-06-12 00:13:10'),
 ('1222', '207', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Làm chủ cơ thể & Sức khỏe''! Bạn có 3 mạng để thử thách kiến thức y học và pháp lý. Bắt đầu!"}', '1', '2026-06-12 00:14:06', '2026-06-12 00:14:06'),
-('1223', '207', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Quyền tự quyết cơ thể và pháp luật",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn đang quen một người yêu 15 tuổi. Người yêu nói rất yêu bạn và muốn hai đứa tiến xa hơn (quan hệ tình dục) để chứng minh tình cảm sâu sắc. Bạn biết rõ quy định pháp luật Việt Nam nhưng người yêu cứ khóc lóc.",
-      "choices": [
-        { "text": "Đồng ý vì nghĩ cả hai tự nguyện thì pháp luật không can thiệp.", "nextNode": "fail_legal_issue" },
-        { "text": "Kiên quyết từ chối lịch sự, giải thích rõ ranh giới pháp lý cột mốc 16 tuổi để bảo vệ cả hai.", "nextNode": "step2" },
-        { "text": "Nổi giận đùng đùng, mắng mỏ người yêu là thiếu hiểu biết rồi đòi chia tay ngay.", "nextNode": "fail_anger_legal" }
-      ]
-    },
-    "step2": {
-      "text": "Người yêu giận dỗi nói: ''Cậu lấy lý do pháp luật để thoái thác đúng không? Yêu nhau mà sợ sệt đủ thứ!''",
-      "choices": [
-        { "text": "Nhượng bộ vì không muốn bị nghi ngờ tình cảm chân thành.", "nextNode": "fail_legal_concede" },
-        { "text": "Vỗ về người yêu, khẳng định tình cảm chân thành nhưng kiên định ranh giới: ''Tớ muốn bảo vệ tương lai của cả hai đứa''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau đó, người yêu nghe theo lời khuyên của bạn và muốn cùng bạn tìm hiểu về các biện pháp tránh thai khoa học để chuẩn bị kiến thức cho tương lai.",
-      "choices": [
-        { "text": "Khuyên người yêu dùng phương pháp xuất tinh ngoài vì nghe bạn bè bảo rất an toàn và tự nhiên.", "nextNode": "fail_medical_myth" },
-        { "text": "Đề xuất cùng tìm hiểu về bao cao su và các biện pháp tránh thai an toàn, khoa học.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã vừa kiên định bảo vệ bản thân và đối phương, vừa tuân thủ pháp luật Việt Nam.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_legal_issue": {
-      "text": "❌ Sai luật hình sự! Tại Việt Nam, mọi hành vi quan hệ tình dục với người dưới 16 tuổi là phạm pháp hình sự, kể cả có sự tự nguyện từ hai phía.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_anger_legal": {
-      "text": "❌ Phản ứng quá đà! Lên giọng mắng mỏ không giúp đối phương hiểu rõ bản chất vấn đề pháp lý mà chỉ làm xung đột gia tăng.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_legal_concede": {
-      "text": "❌ Sai rồi! Nhượng bộ áp lực tình cảm để vi phạm pháp luật hình sự là hành vi cực kỳ nguy hiểm cho cả hai.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_medical_myth": {
-      "text": "❌ Sai kiến thức y khoa! Xuất tinh ngoài có tỷ lệ thất bại rất cao và hoàn toàn không phòng tránh được các bệnh lây qua đường tình dục (STIs).",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1223', '207', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Quyền tự quyết cơ thể và pháp luật",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn đang quen một người yêu 15 tuổi. Người yêu nói rất yêu bạn và muốn hai đứa tiến xa hơn (quan hệ tình dục) để chứng minh tình cảm sâu sắc. Bạn biết rõ quy định pháp luật Việt Nam nhưng người yêu cứ khóc lóc.",
+
+      "choices": [
+
+        { "text": "Đồng ý vì nghĩ cả hai tự nguyện thì pháp luật không can thiệp.", "nextNode": "fail_legal_issue" },
+
+        { "text": "Kiên quyết từ chối lịch sự, giải thích rõ ranh giới pháp lý cột mốc 16 tuổi để bảo vệ cả hai.", "nextNode": "step2" },
+
+        { "text": "Nổi giận đùng đùng, mắng mỏ người yêu là thiếu hiểu biết rồi đòi chia tay ngay.", "nextNode": "fail_anger_legal" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Người yêu giận dỗi nói: ''Cậu lấy lý do pháp luật để thoái thác đúng không? Yêu nhau mà sợ sệt đủ thứ!''",
+
+      "choices": [
+
+        { "text": "Nhượng bộ vì không muốn bị nghi ngờ tình cảm chân thành.", "nextNode": "fail_legal_concede" },
+
+        { "text": "Vỗ về người yêu, khẳng định tình cảm chân thành nhưng kiên định ranh giới: ''Tớ muốn bảo vệ tương lai của cả hai đứa''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau đó, người yêu nghe theo lời khuyên của bạn và muốn cùng bạn tìm hiểu về các biện pháp tránh thai khoa học để chuẩn bị kiến thức cho tương lai.",
+
+      "choices": [
+
+        { "text": "Khuyên người yêu dùng phương pháp xuất tinh ngoài vì nghe bạn bè bảo rất an toàn và tự nhiên.", "nextNode": "fail_medical_myth" },
+
+        { "text": "Đề xuất cùng tìm hiểu về bao cao su và các biện pháp tránh thai an toàn, khoa học.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã vừa kiên định bảo vệ bản thân và đối phương, vừa tuân thủ pháp luật Việt Nam.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_legal_issue": {
+
+      "text": "❌ Sai luật hình sự! Tại Việt Nam, mọi hành vi quan hệ tình dục với người dưới 16 tuổi là phạm pháp hình sự, kể cả có sự tự nguyện từ hai phía.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_anger_legal": {
+
+      "text": "❌ Phản ứng quá đà! Lên giọng mắng mỏ không giúp đối phương hiểu rõ bản chất vấn đề pháp lý mà chỉ làm xung đột gia tăng.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_legal_concede": {
+
+      "text": "❌ Sai rồi! Nhượng bộ áp lực tình cảm để vi phạm pháp luật hình sự là hành vi cực kỳ nguy hiểm cho cả hai.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_medical_myth": {
+
+      "text": "❌ Sai kiến thức y khoa! Xuất tinh ngoài có tỷ lệ thất bại rất cao và hoàn toàn không phòng tránh được các bệnh lây qua đường tình dục (STIs).",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:14:06', '2026-06-12 00:14:06'),
-('1224', '207', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại kiến thức giới tính:",
-  "leftBox": { "title": "Khoa học chính xác" },
-  "rightBox": { "title": "Lời đồn nguy hại" },
-  "items": [
-    { "text": "Bao cao su giúp ngăn ngừa thai và hầu hết bệnh STIs", "correctBox": "left" },
-    { "text": "Xuất tinh ngoài là biện pháp tránh thai tuyệt đối an toàn", "correctBox": "right" },
-    { "text": "Gọi đúng tên dương vật, âm hộ để giao tiếp sức khỏe", "correctBox": "left" },
-    { "text": "Quan hệ lần đầu tiên thì chắc chắn không thể mang thai", "correctBox": "right" },
-    { "text": "Cơ thể dậy thì phát triển theo tốc độ riêng của mỗi người", "correctBox": "left" }
-  ]
+('1224', '207', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại kiến thức giới tính:",
+
+  "leftBox": { "title": "Khoa học chính xác" },
+
+  "rightBox": { "title": "Lời đồn nguy hại" },
+
+  "items": [
+
+    { "text": "Bao cao su giúp ngăn ngừa thai và hầu hết bệnh STIs", "correctBox": "left" },
+
+    { "text": "Xuất tinh ngoài là biện pháp tránh thai tuyệt đối an toàn", "correctBox": "right" },
+
+    { "text": "Gọi đúng tên dương vật, âm hộ để giao tiếp sức khỏe", "correctBox": "left" },
+
+    { "text": "Quan hệ lần đầu tiên thì chắc chắn không thể mang thai", "correctBox": "right" },
+
+    { "text": "Cơ thể dậy thì phát triển theo tốc độ riêng của mỗi người", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:14:06', '2026-06-12 00:14:06'),
-('1225', '207', 'matching', '{
-  "instruction": "Ghép cặp từ khóa cơ thể và định nghĩa sau:",
-  "pairs": [
-    { "left": "Quyền tự quyết (Agency)", "right": "Quyền sở hữu tối cao và đưa ra quyết định đối với cơ thể của chính bạn." },
-    { "left": "Độ tuổi đồng thuận", "right": "Cột mốc đủ 16 tuổi trở lên theo quy định của Luật hình sự Việt Nam." },
-    { "left": "Bệnh lây qua đường tình dục", "right": "Các bệnh STIs như HIV, lậu, giang mai cần phòng tránh bằng bao cao su." },
-    { "left": "Âm hộ (Vulva)", "right": "Cấu tạo sinh học bên ngoài của cơ quan sinh dục nữ cần gọi tên khoa học." }
-  ]
+('1225', '207', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa cơ thể và định nghĩa sau:",
+
+  "pairs": [
+
+    { "left": "Quyền tự quyết (Agency)", "right": "Quyền sở hữu tối cao và đưa ra quyết định đối với cơ thể của chính bạn." },
+
+    { "left": "Độ tuổi đồng thuận", "right": "Cột mốc đủ 16 tuổi trở lên theo quy định của Luật hình sự Việt Nam." },
+
+    { "left": "Bệnh lây qua đường tình dục", "right": "Các bệnh STIs như HIV, lậu, giang mai cần phòng tránh bằng bao cao su." },
+
+    { "left": "Âm hộ (Vulva)", "right": "Cấu tạo sinh học bên ngoài của cơ quan sinh dục nữ cần gọi tên khoa học." }
+
+  ]
+
 }', '4', '2026-06-12 00:14:06', '2026-06-12 00:14:06'),
-('1226', '207', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa pháp luật:",
-  "sentence": "Tại Việt Nam, mọi hành vi quan hệ tình dục với người dưới [blank1] tuổi đều vi phạm [blank2] hình sự, kể cả khi có sự [blank3] tự nguyện, nhằm bảo vệ sự phát triển [blank4] của vị thành niên.",
-  "blanks": {
-    "blank1": { "correct": "16", "placeholder": "..." },
-    "blank2": { "correct": "pháp luật", "placeholder": "..." },
-    "blank3": { "correct": "đồng thuận", "placeholder": "..." },
-    "blank4": { "correct": "lành mạnh", "placeholder": "..." }
-  },
-  "words": ["16", "pháp luật", "đồng thuận", "lành mạnh", "18", "dân sự", "im lặng", "ép buộc"]
+('1226', '207', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa pháp luật:",
+
+  "sentence": "Tại Việt Nam, mọi hành vi quan hệ tình dục với người dưới [blank1] tuổi đều vi phạm [blank2] hình sự, kể cả khi có sự [blank3] tự nguyện, nhằm bảo vệ sự phát triển [blank4] của vị thành niên.",
+
+  "blanks": {
+
+    "blank1": { "correct": "16", "placeholder": "..." },
+
+    "blank2": { "correct": "pháp luật", "placeholder": "..." },
+
+    "blank3": { "correct": "đồng thuận", "placeholder": "..." },
+
+    "blank4": { "correct": "lành mạnh", "placeholder": "..." }
+
+  },
+
+  "words": ["16", "pháp luật", "đồng thuận", "lành mạnh", "18", "dân sự", "im lặng", "ép buộc"]
+
 }', '5', '2026-06-12 00:14:06', '2026-06-12 00:14:06'),
-('1227', '207', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Phương pháp nào sau đây là duy nhất vừa giúp tránh thai hiệu quả vừa bảo vệ bạn khỏi các bệnh lây truyền qua đường tình dục (STIs)?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Sử dụng thuốc tránh thai khẩn cấp.", "correct": false, "emoji": "🥺" },
-    { "text": "Sử dụng bao cao su đúng cách trong suốt quá trình đụng chạm tình dục.", "correct": true, "emoji": "💚" },
-    { "text": "Thực hiện xuất tinh ngoài âm đạo.", "correct": false, "emoji": "😐" },
-    { "text": "Tính ngày rụng trứng theo chu kỳ kinh nguyệt.", "correct": false, "emoji": "🛑" }
-  ]
+('1227', '207', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Phương pháp nào sau đây là duy nhất vừa giúp tránh thai hiệu quả vừa bảo vệ bạn khỏi các bệnh lây truyền qua đường tình dục (STIs)?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Sử dụng thuốc tránh thai khẩn cấp.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Sử dụng bao cao su đúng cách trong suốt quá trình đụng chạm tình dục.", "correct": true, "emoji": "💚" },
+
+    { "text": "Thực hiện xuất tinh ngoài âm đạo.", "correct": false, "emoji": "😐" },
+
+    { "text": "Tính ngày rụng trứng theo chu kỳ kinh nguyệt.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 00:14:06', '2026-06-12 00:14:06'),
 ('1228', '208', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Áp lực bạn bè & Điểm tựa hỗ trợ''! Bạn có 3 mạng để vượt qua 5 thử thách áp lực tâm lý nhóm. Khởi đầu!"}', '1', '2026-06-12 00:14:46', '2026-06-12 00:14:46'),
-('1229', '208', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Đối phó với áp lực đồng trang lứa",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Nhóm bạn thân đang tụ tập ở nhà một bạn học, lôi ra một thiết bị thuốc lá điện tử (vape) rực rỡ và rủ bạn hút thử một hơi lớn. Cả nhóm hùa vào khích tướng: ''Không hút là nhát gan, không nể mặt anh em chơi chung gì cả!''",
-      "choices": [
-        { "text": "Hút thử một hơi thật sâu để chứng tỏ bản thân cool ngầu và giữ hòa khí nhóm.", "nextNode": "fail_vape_try" },
-        { "text": "Lớn tiếng giáo huấn cả nhóm về tác hại của vape đối với phổi.", "nextNode": "fail_lecture_group" },
-        { "text": "Từ chối khéo léo nhưng dứt khoát: ''Tớ xin kiếu, phổi tớ nhạy cảm lắm, ngửi khói là ho sặc sụa rồi''.", "nextNode": "step2" }
-      ]
-    },
-    "step2": {
-      "text": "Một bạn trong nhóm bĩu môi cười cợt: ''Yếu đuối thế, thử một tí có chết ai đâu mà sợ!''",
-      "choices": [
-        { "text": "Cảm thấy tự ái, giật lấy vape để hút chứng minh mình không yếu.", "nextNode": "fail_pride" },
-        { "text": "Kiên định cười vui: ''Tớ yếu thật mà, tớ chỉ mạnh môn bóng rổ thôi! Các cậu cứ chơi đi, tớ ra phòng khách xem tivi nha''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau đó, một bạn trong nhóm đột ngột khóa cửa phòng lại và đe dọa không cho bạn ra ngoài nếu bạn không chịu uống cạn cốc nước ngọt đã pha cồn.",
-      "choices": [
-        { "text": "Sợ hãi nhắm mắt uống hết cốc nước để được thả ra.", "nextNode": "fail_alcohol" },
-        { "text": "Chụp lại hình ảnh phòng khóa, kiên quyết yêu cầu mở cửa, đồng thời nhắn tin báo cho bố mẹ hoặc gọi tổng đài 111 hỗ trợ nếu tình hình căng thẳng.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Xuất sắc! Bạn đã từ chối áp lực nhóm thành công bằng thái độ kiên định, vui vẻ và bảo vệ sức khỏe của mình.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_vape_try": {
-      "text": "❌ Sai rồi! Làm việc gây hại cho sức khỏe chỉ vì sợ đám đông tẩy chay là tự đánh mất ranh giới cá nhân.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_lecture_group": {
-      "text": "❌ Chưa khéo. Lên giọng dạy đời bạn bè khi họ đang hưng phấn chỉ khiến họ phản kháng, cô lập bạn nhanh hơn thay vì có tính xây dựng.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_pride": {
-      "text": "❌ Sai rồi! Nhượng bộ ranh giới sức khỏe chỉ vì lời thách thức hay khích tướng trẻ con là thiếu tự chủ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_alcohol": {
-      "text": "❌ Sai rồi! Uống đồ uống chứa chất kích thích/cồn dưới sự đe dọa cưỡng bức là vi phạm ranh giới an toàn của bạn. Hãy tìm kiếm sự hỗ trợ ngay lập tức.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1229', '208', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Đối phó với áp lực đồng trang lứa",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Nhóm bạn thân đang tụ tập ở nhà một bạn học, lôi ra một thiết bị thuốc lá điện tử (vape) rực rỡ và rủ bạn hút thử một hơi lớn. Cả nhóm hùa vào khích tướng: ''Không hút là nhát gan, không nể mặt anh em chơi chung gì cả!''",
+
+      "choices": [
+
+        { "text": "Hút thử một hơi thật sâu để chứng tỏ bản thân cool ngầu và giữ hòa khí nhóm.", "nextNode": "fail_vape_try" },
+
+        { "text": "Lớn tiếng giáo huấn cả nhóm về tác hại của vape đối với phổi.", "nextNode": "fail_lecture_group" },
+
+        { "text": "Từ chối khéo léo nhưng dứt khoát: ''Tớ xin kiếu, phổi tớ nhạy cảm lắm, ngửi khói là ho sặc sụa rồi''.", "nextNode": "step2" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Một bạn trong nhóm bĩu môi cười cợt: ''Yếu đuối thế, thử một tí có chết ai đâu mà sợ!''",
+
+      "choices": [
+
+        { "text": "Cảm thấy tự ái, giật lấy vape để hút chứng minh mình không yếu.", "nextNode": "fail_pride" },
+
+        { "text": "Kiên định cười vui: ''Tớ yếu thật mà, tớ chỉ mạnh môn bóng rổ thôi! Các cậu cứ chơi đi, tớ ra phòng khách xem tivi nha''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau đó, một bạn trong nhóm đột ngột khóa cửa phòng lại và đe dọa không cho bạn ra ngoài nếu bạn không chịu uống cạn cốc nước ngọt đã pha cồn.",
+
+      "choices": [
+
+        { "text": "Sợ hãi nhắm mắt uống hết cốc nước để được thả ra.", "nextNode": "fail_alcohol" },
+
+        { "text": "Chụp lại hình ảnh phòng khóa, kiên quyết yêu cầu mở cửa, đồng thời nhắn tin báo cho bố mẹ hoặc gọi tổng đài 111 hỗ trợ nếu tình hình căng thẳng.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Xuất sắc! Bạn đã từ chối áp lực nhóm thành công bằng thái độ kiên định, vui vẻ và bảo vệ sức khỏe của mình.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_vape_try": {
+
+      "text": "❌ Sai rồi! Làm việc gây hại cho sức khỏe chỉ vì sợ đám đông tẩy chay là tự đánh mất ranh giới cá nhân.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_lecture_group": {
+
+      "text": "❌ Chưa khéo. Lên giọng dạy đời bạn bè khi họ đang hưng phấn chỉ khiến họ phản kháng, cô lập bạn nhanh hơn thay vì có tính xây dựng.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_pride": {
+
+      "text": "❌ Sai rồi! Nhượng bộ ranh giới sức khỏe chỉ vì lời thách thức hay khích tướng trẻ con là thiếu tự chủ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_alcohol": {
+
+      "text": "❌ Sai rồi! Uống đồ uống chứa chất kích thích/cồn dưới sự đe dọa cưỡng bức là vi phạm ranh giới an toàn của bạn. Hãy tìm kiếm sự hỗ trợ ngay lập tức.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:14:46', '2026-06-12 00:14:46'),
-('1230', '208', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi sau:",
-  "leftBox": { "title": "Áp lực nhóm độc hại" },
-  "rightBox": { "title": "Điểm tựa an toàn" },
-  "items": [
-    { "text": "Rủ rê thử vape hoặc chất kích thích để chứng tỏ bản thân", "correctBox": "left" },
-    { "text": "Chia sẻ khó khăn với bố mẹ hoặc thầy cô giáo đáng tin", "correctBox": "right" },
-    { "text": "Ép buộc bạn bè cô lập, nói xấu một học sinh mới", "correctBox": "left" },
-    { "text": "Gọi điện đến Tổng đài Quốc gia 111 để tìm sự giúp đỡ", "correctBox": "right" },
-    { "text": "Đe dọa phát tán thông tin riêng tư nếu không làm theo lời thách", "correctBox": "left" }
-  ]
+('1230', '208', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi sau:",
+
+  "leftBox": { "title": "Áp lực nhóm độc hại" },
+
+  "rightBox": { "title": "Điểm tựa an toàn" },
+
+  "items": [
+
+    { "text": "Rủ rê thử vape hoặc chất kích thích để chứng tỏ bản thân", "correctBox": "left" },
+
+    { "text": "Chia sẻ khó khăn với bố mẹ hoặc thầy cô giáo đáng tin", "correctBox": "right" },
+
+    { "text": "Ép buộc bạn bè cô lập, nói xấu một học sinh mới", "correctBox": "left" },
+
+    { "text": "Gọi điện đến Tổng đài Quốc gia 111 để tìm sự giúp đỡ", "correctBox": "right" },
+
+    { "text": "Đe dọa phát tán thông tin riêng tư nếu không làm theo lời thách", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:14:46', '2026-06-12 00:14:46'),
-('1231', '208', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn sau:",
-  "pairs": [
-    { "left": "Áp lực đồng trang lứa", "right": "Sự thúc ép từ nhóm bạn khiến bạn làm điều nguy hiểm hoặc không muốn." },
-    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia hỗ trợ, tư vấn bảo vệ trẻ em miễn phí 24/7." },
-    { "left": "Dũng khí đi ngược", "right": "Khả năng nói không và giữ vững lập trường trước đám đông thúc ép." },
-    { "left": "Điểm tựa hỗ trợ", "right": "Những người lớn đáng tin cậy giúp bạn giải quyết các tình huống nguy hiểm." }
-  ]
+('1231', '208', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn sau:",
+
+  "pairs": [
+
+    { "left": "Áp lực đồng trang lứa", "right": "Sự thúc ép từ nhóm bạn khiến bạn làm điều nguy hiểm hoặc không muốn." },
+
+    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia hỗ trợ, tư vấn bảo vệ trẻ em miễn phí 24/7." },
+
+    { "left": "Dũng khí đi ngược", "right": "Khả năng nói không và giữ vững lập trường trước đám đông thúc ép." },
+
+    { "left": "Điểm tựa hỗ trợ", "right": "Những người lớn đáng tin cậy giúp bạn giải quyết các tình huống nguy hiểm." }
+
+  ]
+
 }', '4', '2026-06-12 00:14:46', '2026-06-12 00:14:46'),
-('1232', '208', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới điểm tựa:",
-  "sentence": "Khi đối mặt với sự [blank1] từ bạn bè để làm điều sai trái, hãy kiên định [blank2], và nếu cảm thấy an toàn bị [blank3], hãy liên hệ ngay với người lớn đáng tin cậy hoặc gọi tổng đài [blank4].",
-  "blanks": {
-    "blank1": { "correct": "thúc ép", "placeholder": "..." },
-    "blank2": { "correct": "từ chối", "placeholder": "..." },
-    "blank3": { "correct": "đe dọa", "placeholder": "..." },
-    "blank4": { "correct": "111", "placeholder": "..." }
-  },
-  "words": ["thúc ép", "từ chối", "đe dọa", "111", "đồng ý", "im lặng", "hùa theo", "bạn bè"]
+('1232', '208', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới điểm tựa:",
+
+  "sentence": "Khi đối mặt với sự [blank1] từ bạn bè để làm điều sai trái, hãy kiên định [blank2], và nếu cảm thấy an toàn bị [blank3], hãy liên hệ ngay với người lớn đáng tin cậy hoặc gọi tổng đài [blank4].",
+
+  "blanks": {
+
+    "blank1": { "correct": "thúc ép", "placeholder": "..." },
+
+    "blank2": { "correct": "từ chối", "placeholder": "..." },
+
+    "blank3": { "correct": "đe dọa", "placeholder": "..." },
+
+    "blank4": { "correct": "111", "placeholder": "..." }
+
+  },
+
+  "words": ["thúc ép", "từ chối", "đe dọa", "111", "đồng ý", "im lặng", "hùa theo", "bạn bè"]
+
 }', '5', '2026-06-12 00:14:46', '2026-06-12 00:14:46'),
-('1233', '208', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi ranh giới cơ thể của bạn bị xâm hại hoặc bạn bị đe dọa cưỡng ép trực tuyến, hành động nào sau đây là dũng cảm và chính xác nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Im lặng chịu đựng, tự giải quyết một mình vì sợ bố mẹ mắng.", "correct": false, "emoji": "🥺" },
-    { "text": "Nhượng bộ và làm theo yêu cầu của đối phương để họ không đe dọa nữa.", "correct": false, "emoji": "😐" },
-    { "text": "Thu thập bằng chứng, chia sẻ ngay với người lớn đáng tin cậy và liên hệ tổng đài 111 để được hỗ trợ kịp thời.", "correct": true, "emoji": "💚" },
-    { "text": "Đe dọa hoặc dùng bạo lực trả đũa lại đối phương.", "correct": false, "emoji": "🛑" }
-  ]
+('1233', '208', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi ranh giới cơ thể của bạn bị xâm hại hoặc bạn bị đe dọa cưỡng ép trực tuyến, hành động nào sau đây là dũng cảm và chính xác nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Im lặng chịu đựng, tự giải quyết một mình vì sợ bố mẹ mắng.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Nhượng bộ và làm theo yêu cầu của đối phương để họ không đe dọa nữa.", "correct": false, "emoji": "😐" },
+
+    { "text": "Thu thập bằng chứng, chia sẻ ngay với người lớn đáng tin cậy và liên hệ tổng đài 111 để được hỗ trợ kịp thời.", "correct": true, "emoji": "💚" },
+
+    { "text": "Đe dọa hoặc dùng bạo lực trả đũa lại đối phương.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 00:14:46', '2026-06-12 00:14:46'),
 ('1234', '209', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Dấu Chân Số: Đừng Để Lộ Sơ Hở''! Bạn có 3 mạng để vượt qua 5 thử thách cam go nhằm bảo vệ thông tin cá nhân. Sẵn sàng chưa?"}', '1', '2026-06-12 00:41:37', '2026-06-12 00:41:37');
 
-INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1235', '209', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Bảo vệ thông tin cá nhân",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn vừa đỗ thủ khoa kỳ thi học sinh giỏi cấp thành phố và nhận được giấy khen kèm thẻ học sinh mới cứng. Bạn rất muốn khoe tin vui này lên Story Instagram để nhận lời chúc từ bạn bè.",
-      "choices": [
-        { "text": "Chụp ảnh rõ nét toàn bộ giấy khen và thẻ học sinh có hiện họ tên, mã số, trường học và ngày sinh rồi đăng lên.", "nextNode": "fail_leak" },
-        { "text": "Dùng nhãn dán (sticker) che mờ các thông tin nhạy cảm như mã số học sinh, số điện thoại, địa chỉ nhà rồi mới đăng.", "nextNode": "step2" },
-        { "text": "Chỉ chụp ảnh chiếc cúp học sinh giỏi kèm caption thông báo tin vui mà không đăng hình ảnh thẻ hay giấy tờ gì.", "nextNode": "step2" }
-      ]
-    },
-    "step2": {
-      "text": "Một tài khoản lạ nhắn tin chúc mừng bạn rất nhiệt tình, tự xưng là cựu học sinh trường bạn và hỏi xin số điện thoại để ''tặng tài liệu ôn thi đặc biệt''.",
-      "choices": [
-        { "text": "Đưa số điện thoại ngay vì nghĩ cựu học sinh trường mình thì chắc chắn đáng tin.", "nextNode": "fail_stranger" },
-        { "text": "Cảm ơn lịch sự và nói: ''Tớ chỉ nhận tài liệu qua email học tập thôi nhé!'' hoặc từ chối cung cấp thông tin cá nhân.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau đó, bạn thấy một tài khoản Facebook lấy ảnh cá nhân của bạn và lập tài khoản clone giả danh bạn để đi vay tiền bạn bè trong danh sách.",
-      "choices": [
-        { "text": "Lờ đi vì nghĩ bạn bè mình sẽ tự biết cảnh giác.", "nextNode": "fail_ignore" },
-        { "text": "Đăng status cảnh báo bạn bè trên trang cá nhân chính thức, đồng thời báo cáo (report) tài khoản giả mạo đó.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã xử lý sự cố rò rỉ thông tin một cách dũng cảm, thông minh và có trách nhiệm bảo vệ bạn bè xung quanh.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_leak": {
-      "text": "❌ Sai rồi! Đăng ảnh thẻ học sinh hoặc giấy khen lộ rõ thông tin cá nhân là rủi ro lớn, kẻ xấu có thể dùng để định vị hoặc lừa đảo mạo danh bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_stranger": {
-      "text": "❌ Chưa đúng! Kẻ xấu trên mạng thường giả dạng cựu học sinh, người quen để lấy số điện thoại hoặc thông tin cá nhân của bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_ignore": {
-      "text": "❌ Sai rồi! Im lặng khi bị mạo danh có thể khiến bạn bè bạn bị lừa gạt tiền bạc và làm mất uy tín cá nhân của bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1235', '209', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Bảo vệ thông tin cá nhân",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn vừa đỗ thủ khoa kỳ thi học sinh giỏi cấp thành phố và nhận được giấy khen kèm thẻ học sinh mới cứng. Bạn rất muốn khoe tin vui này lên Story Instagram để nhận lời chúc từ bạn bè.",
+
+      "choices": [
+
+        { "text": "Chụp ảnh rõ nét toàn bộ giấy khen và thẻ học sinh có hiện họ tên, mã số, trường học và ngày sinh rồi đăng lên.", "nextNode": "fail_leak" },
+
+        { "text": "Dùng nhãn dán (sticker) che mờ các thông tin nhạy cảm như mã số học sinh, số điện thoại, địa chỉ nhà rồi mới đăng.", "nextNode": "step2" },
+
+        { "text": "Chỉ chụp ảnh chiếc cúp học sinh giỏi kèm caption thông báo tin vui mà không đăng hình ảnh thẻ hay giấy tờ gì.", "nextNode": "step2" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Một tài khoản lạ nhắn tin chúc mừng bạn rất nhiệt tình, tự xưng là cựu học sinh trường bạn và hỏi xin số điện thoại để ''tặng tài liệu ôn thi đặc biệt''.",
+
+      "choices": [
+
+        { "text": "Đưa số điện thoại ngay vì nghĩ cựu học sinh trường mình thì chắc chắn đáng tin.", "nextNode": "fail_stranger" },
+
+        { "text": "Cảm ơn lịch sự và nói: ''Tớ chỉ nhận tài liệu qua email học tập thôi nhé!'' hoặc từ chối cung cấp thông tin cá nhân.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau đó, bạn thấy một tài khoản Facebook lấy ảnh cá nhân của bạn và lập tài khoản clone giả danh bạn để đi vay tiền bạn bè trong danh sách.",
+
+      "choices": [
+
+        { "text": "Lờ đi vì nghĩ bạn bè mình sẽ tự biết cảnh giác.", "nextNode": "fail_ignore" },
+
+        { "text": "Đăng status cảnh báo bạn bè trên trang cá nhân chính thức, đồng thời báo cáo (report) tài khoản giả mạo đó.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã xử lý sự cố rò rỉ thông tin một cách dũng cảm, thông minh và có trách nhiệm bảo vệ bạn bè xung quanh.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_leak": {
+
+      "text": "❌ Sai rồi! Đăng ảnh thẻ học sinh hoặc giấy khen lộ rõ thông tin cá nhân là rủi ro lớn, kẻ xấu có thể dùng để định vị hoặc lừa đảo mạo danh bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_stranger": {
+
+      "text": "❌ Chưa đúng! Kẻ xấu trên mạng thường giả dạng cựu học sinh, người quen để lấy số điện thoại hoặc thông tin cá nhân của bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_ignore": {
+
+      "text": "❌ Sai rồi! Im lặng khi bị mạo danh có thể khiến bạn bè bạn bị lừa gạt tiền bạc và làm mất uy tín cá nhân của bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1236', '209', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau:",
-  "leftBox": { "title": "Chia sẻ an toàn" },
-  "rightBox": { "title": "Chia sẻ quá đà" },
-  "items": [
-    { "text": "Đăng ảnh chú mèo đáng yêu mới nuôi", "correctBox": "left" },
-    { "text": "Đăng ảnh chụp căn cước công dân hoặc thẻ học sinh", "correctBox": "right" },
-    { "text": "Khoe ảnh chụp cổng nhà có ghi rõ số nhà, tên đường", "correctBox": "right" },
-    { "text": "Đăng review cảm nghĩ sau khi xem một cuốn sách hay", "correctBox": "left" },
-    { "text": "Đăng thời khóa biểu lớp học chi tiết hàng tuần", "correctBox": "right" }
-  ]
+('1236', '209', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau:",
+
+  "leftBox": { "title": "Chia sẻ an toàn" },
+
+  "rightBox": { "title": "Chia sẻ quá đà" },
+
+  "items": [
+
+    { "text": "Đăng ảnh chú mèo đáng yêu mới nuôi", "correctBox": "left" },
+
+    { "text": "Đăng ảnh chụp căn cước công dân hoặc thẻ học sinh", "correctBox": "right" },
+
+    { "text": "Khoe ảnh chụp cổng nhà có ghi rõ số nhà, tên đường", "correctBox": "right" },
+
+    { "text": "Đăng review cảm nghĩ sau khi xem một cuốn sách hay", "correctBox": "left" },
+
+    { "text": "Đăng thời khóa biểu lớp học chi tiết hàng tuần", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1237', '209', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa dấu chân số sau:",
-  "pairs": [
-    { "left": "Dấu chân số chủ động", "right": "Những thông tin bạn tự ý đăng lên mạng xã hội (status, ảnh)." },
-    { "left": "Dấu chân số bị động", "right": "Dữ liệu được thu thập tự động khi bạn lướt web (cookies, lịch sử)." },
-    { "left": "Thông tin nhạy cảm", "right": "Địa chỉ nhà, số điện thoại, thẻ học sinh, thời khóa biểu." },
-    { "left": "Quyền kiểm soát số", "right": "Quyền quyết định những ai được xem và tương tác với bài đăng của bạn." }
-  ]
+('1237', '209', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa dấu chân số sau:",
+
+  "pairs": [
+
+    { "left": "Dấu chân số chủ động", "right": "Những thông tin bạn tự ý đăng lên mạng xã hội (status, ảnh)." },
+
+    { "left": "Dấu chân số bị động", "right": "Dữ liệu được thu thập tự động khi bạn lướt web (cookies, lịch sử)." },
+
+    { "left": "Thông tin nhạy cảm", "right": "Địa chỉ nhà, số điện thoại, thẻ học sinh, thời khóa biểu." },
+
+    { "left": "Quyền kiểm soát số", "right": "Quyền quyết định những ai được xem và tương tác với bài đăng của bạn." }
+
+  ]
+
 }', '4', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1238', '209', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa dấu chân số:",
-  "sentence": "Những gì đã đăng lên internet sẽ rất khó [blank1] hoàn toàn và tạo nên [blank2] số của bạn. Vì vậy, hãy bảo mật [blank3] cá nhân và hạn chế chia sẻ thông tin [blank4] lên mạng.",
-  "blanks": {
-    "blank1": { "correct": "xóa", "placeholder": "..." },
-    "blank2": { "correct": "dấu chân", "placeholder": "..." },
-    "blank3": { "correct": "tài khoản", "placeholder": "..." },
-    "blank4": { "correct": "nhạy cảm", "placeholder": "..." }
-  },
-  "words": ["xóa", "dấu chân", "tài khoản", "nhạy cảm", "lưu trữ", "công khai", "hình ảnh", "riêng tư"]
+('1238', '209', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa dấu chân số:",
+
+  "sentence": "Những gì đã đăng lên internet sẽ rất khó [blank1] hoàn toàn và tạo nên [blank2] số của bạn. Vì vậy, hãy bảo mật [blank3] cá nhân và hạn chế chia sẻ thông tin [blank4] lên mạng.",
+
+  "blanks": {
+
+    "blank1": { "correct": "xóa", "placeholder": "..." },
+
+    "blank2": { "correct": "dấu chân", "placeholder": "..." },
+
+    "blank3": { "correct": "tài khoản", "placeholder": "..." },
+
+    "blank4": { "correct": "nhạy cảm", "placeholder": "..." }
+
+  },
+
+  "words": ["xóa", "dấu chân", "tài khoản", "nhạy cảm", "lưu trữ", "công khai", "hình ảnh", "riêng tư"]
+
 }', '5', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1239', '209', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bạn xóa một bức ảnh dìm bạn bè trên Story sau 5 phút đăng tải, điều gì có thể xảy ra với bức ảnh đó?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Bức ảnh đã biến mất hoàn toàn trên mạng và không ai có thể xem lại.", "correct": false, "emoji": "🙁" },
-    { "text": "Kẻ xấu hoặc bạn bè có thể đã chụp màn hình hoặc tải về trước khi bạn xóa, và nó vẫn tiếp tục tồn tại.", "correct": true, "emoji": "💚" },
-    { "text": "Bức ảnh chỉ bị lưu trong bộ nhớ tạm của điện thoại bạn.", "correct": false, "emoji": "😐" },
-    { "text": "Chỉ những người đã thả tim mới lưu lại được bức ảnh.", "correct": false, "emoji": "🛑" }
-  ]
+('1239', '209', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bạn xóa một bức ảnh dìm bạn bè trên Story sau 5 phút đăng tải, điều gì có thể xảy ra với bức ảnh đó?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Bức ảnh đã biến mất hoàn toàn trên mạng và không ai có thể xem lại.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Kẻ xấu hoặc bạn bè có thể đã chụp màn hình hoặc tải về trước khi bạn xóa, và nó vẫn tiếp tục tồn tại.", "correct": true, "emoji": "💚" },
+
+    { "text": "Bức ảnh chỉ bị lưu trong bộ nhớ tạm của điện thoại bạn.", "correct": false, "emoji": "😐" },
+
+    { "text": "Chỉ những người đã thả tim mới lưu lại được bức ảnh.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
 ('1240', '210', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Chat Sao Cho Mượt, Bớt Bất Ổn''! Bạn có 3 mạng để ứng xử văn minh trong các cuộc trò chuyện trực tuyến."}', '1', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1241', '210', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Giải quyết hiểu lầm tin nhắn",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn nhắn tin rủ bạn thân đi đá bóng cuối tuần. Bạn thân chỉ rep lại đúng một chữ ngắn ngủn: ''Ừ''. Cảm giác hụt hẫng và lo lắng dâng lên, bạn nghĩ bạn ấy đang giận mình.",
-      "choices": [
-        { "text": "Nhắn lại mỉa mai: ''Ừ cái gì mà ừ, bận làm tổng thống hay sao mà rep cộc lốc thế?''", "nextNode": "fail_sarcasm" },
-        { "text": "Tạm dừng, suy nghĩ thấu cảm rằng bạn ấy có thể đang bận học hoặc mệt mỏi, rồi nhắn hỏi han nhẹ nhàng sau.", "nextNode": "step2" },
-        { "text": "Lờ đi luôn, tự ái quyết định không bao giờ rủ bạn ấy đi đá bóng nữa.", "nextNode": "fail_passive_aggressive" }
-      ]
-    },
-    "step2": {
-      "text": "Buổi tối, bạn thân nhắn lại giải thích: ''Xin lỗi cậu nha, lúc chiều tớ đang đạp xe vội nên chỉ bấm rep nhanh được vậy thôi''. Bạn thấy nhẹ nhõm. Hai đứa tiếp tục làm slide thuyết trình nhóm. Bạn thấy slide bạn ấy làm bị lòe loẹt và chưa đẹp mắt.",
-      "choices": [
-        { "text": "Chê thẳng thừng trong nhóm chat chung: ''Slide xấu thế cậu, màu sắc lòe loẹt nhìn đau mắt quá!''", "nextNode": "fail_harsh" },
-        { "text": "Góp ý riêng bằng tin nhắn Green Flag: ''Slide cậu làm bố cục rất rõ ràng nè! Tớ nghĩ nếu tụi mình đổi sang tông màu xanh mint thì nhìn sẽ dịu và hiện đại hơn đó''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Khi thảo luận bài nhóm trong group chat lớp, hai bạn khác bất đồng ý kiến dữ dội và bắt đầu dùng lời lẽ nặng nề công kích cá nhân nhau, khiến bầu không khí bốc hỏa.",
-      "choices": [
-        { "text": "Hùa vào bình luận thêm dầu vào lửa để xem drama cho vui.", "nextNode": "fail_drama" },
-        { "text": "Lên tiếng xoa dịu: ''Tụi mình bình tĩnh lại đi nè, mai lên lớp thảo luận trực tiếp sẽ dễ hiểu nhau hơn nha!''", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã xử lý và góp ý giao tiếp một cách văn minh, tinh tế, giữ năng lượng tích cực cho mối quan hệ.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_sarcasm": {
-      "text": "❌ Chưa đúng! Lập tức dùng lời mỉa mai cộc lốc dễ làm xung đột bùng phát vì những phỏng đoán sai lầm.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_passive_aggressive": {
-      "text": "❌ Chưa đúng! Giận dỗi thầm lặng không giúp giải quyết hiểu lầm mà chỉ làm tăng khoảng cách và phá hỏng tình bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_harsh": {
-      "text": "❌ Sai rồi! Chê bai thẳng thừng trước đám đông làm tổn thương lòng tự trọng của bạn mình, hãy chọn cách góp ý riêng tư tinh tế.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_drama": {
-      "text": "❌ Sai rồi! Tiếp tay cho xung đột làm rạn nứt tập thể và vi phạm văn hóa số văn minh.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1241', '210', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Giải quyết hiểu lầm tin nhắn",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn nhắn tin rủ bạn thân đi đá bóng cuối tuần. Bạn thân chỉ rep lại đúng một chữ ngắn ngủn: ''Ừ''. Cảm giác hụt hẫng và lo lắng dâng lên, bạn nghĩ bạn ấy đang giận mình.",
+
+      "choices": [
+
+        { "text": "Nhắn lại mỉa mai: ''Ừ cái gì mà ừ, bận làm tổng thống hay sao mà rep cộc lốc thế?''", "nextNode": "fail_sarcasm" },
+
+        { "text": "Tạm dừng, suy nghĩ thấu cảm rằng bạn ấy có thể đang bận học hoặc mệt mỏi, rồi nhắn hỏi han nhẹ nhàng sau.", "nextNode": "step2" },
+
+        { "text": "Lờ đi luôn, tự ái quyết định không bao giờ rủ bạn ấy đi đá bóng nữa.", "nextNode": "fail_passive_aggressive" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Buổi tối, bạn thân nhắn lại giải thích: ''Xin lỗi cậu nha, lúc chiều tớ đang đạp xe vội nên chỉ bấm rep nhanh được vậy thôi''. Bạn thấy nhẹ nhõm. Hai đứa tiếp tục làm slide thuyết trình nhóm. Bạn thấy slide bạn ấy làm bị lòe loẹt và chưa đẹp mắt.",
+
+      "choices": [
+
+        { "text": "Chê thẳng thừng trong nhóm chat chung: ''Slide xấu thế cậu, màu sắc lòe loẹt nhìn đau mắt quá!''", "nextNode": "fail_harsh" },
+
+        { "text": "Góp ý riêng bằng tin nhắn Green Flag: ''Slide cậu làm bố cục rất rõ ràng nè! Tớ nghĩ nếu tụi mình đổi sang tông màu xanh mint thì nhìn sẽ dịu và hiện đại hơn đó''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Khi thảo luận bài nhóm trong group chat lớp, hai bạn khác bất đồng ý kiến dữ dội và bắt đầu dùng lời lẽ nặng nề công kích cá nhân nhau, khiến bầu không khí bốc hỏa.",
+
+      "choices": [
+
+        { "text": "Hùa vào bình luận thêm dầu vào lửa để xem drama cho vui.", "nextNode": "fail_drama" },
+
+        { "text": "Lên tiếng xoa dịu: ''Tụi mình bình tĩnh lại đi nè, mai lên lớp thảo luận trực tiếp sẽ dễ hiểu nhau hơn nha!''", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã xử lý và góp ý giao tiếp một cách văn minh, tinh tế, giữ năng lượng tích cực cho mối quan hệ.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_sarcasm": {
+
+      "text": "❌ Chưa đúng! Lập tức dùng lời mỉa mai cộc lốc dễ làm xung đột bùng phát vì những phỏng đoán sai lầm.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_passive_aggressive": {
+
+      "text": "❌ Chưa đúng! Giận dỗi thầm lặng không giúp giải quyết hiểu lầm mà chỉ làm tăng khoảng cách và phá hỏng tình bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_harsh": {
+
+      "text": "❌ Sai rồi! Chê bai thẳng thừng trước đám đông làm tổn thương lòng tự trọng của bạn mình, hãy chọn cách góp ý riêng tư tinh tế.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_drama": {
+
+      "text": "❌ Sai rồi! Tiếp tay cho xung đột làm rạn nứt tập thể và vi phạm văn hóa số văn minh.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1242', '210', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các thói quen nhắn tin:",
-  "leftBox": { "title": "Green Flag giao tiếp" },
-  "rightBox": { "title": "Red Flag giao tiếp" },
-  "items": [
-    { "text": "Góp ý riêng tư một cách nhẹ nhàng, xây dựng", "correctBox": "left" },
-    { "text": "Spam hàng chục dấu chấm hỏi khi đối phương chưa kịp rep", "correctBox": "right" },
-    { "text": "Dùng chữ viết hoa toàn bộ (UPPERCASE) để thể hiện sự giận dữ", "correctBox": "right" },
-    { "text": "Hỏi han nhẹ nhàng khi thấy tin nhắn rep ngắn gọn cộc lốc", "correctBox": "left" },
-    { "text": "Chửi bới, mỉa mai đối phương ngay trong group chat chung", "correctBox": "right" }
-  ]
+('1242', '210', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thói quen nhắn tin:",
+
+  "leftBox": { "title": "Green Flag giao tiếp" },
+
+  "rightBox": { "title": "Red Flag giao tiếp" },
+
+  "items": [
+
+    { "text": "Góp ý riêng tư một cách nhẹ nhàng, xây dựng", "correctBox": "left" },
+
+    { "text": "Spam hàng chục dấu chấm hỏi khi đối phương chưa kịp rep", "correctBox": "right" },
+
+    { "text": "Dùng chữ viết hoa toàn bộ (UPPERCASE) để thể hiện sự giận dữ", "correctBox": "right" },
+
+    { "text": "Hỏi han nhẹ nhàng khi thấy tin nhắn rep ngắn gọn cộc lốc", "correctBox": "left" },
+
+    { "text": "Chửi bới, mỉa mai đối phương ngay trong group chat chung", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1243', '210', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa giao tiếp số sau:",
-  "pairs": [
-    { "left": "Tin nhắn Green Flag", "right": "Lời nhắn góp ý xây dựng bắt đầu bằng lời khen ngợi chân thành." },
-    { "left": "Suy nghĩ thấu cảm", "right": "Hiểu rằng đối phương chưa rep vì họ đang bận học hoặc nghỉ ngơi." },
-    { "left": "Hạ nhiệt group chat", "right": "Đề xuất gặp mặt trực tiếp thay vì cãi vã căng thẳng trên mạng." },
-    { "left": "Năng lượng tích cực", "right": "Chủ động theo dõi các trang chia sẻ kiến thức, kỹ năng sống bổ ích." }
-  ]
+('1243', '210', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa giao tiếp số sau:",
+
+  "pairs": [
+
+    { "left": "Tin nhắn Green Flag", "right": "Lời nhắn góp ý xây dựng bắt đầu bằng lời khen ngợi chân thành." },
+
+    { "left": "Suy nghĩ thấu cảm", "right": "Hiểu rằng đối phương chưa rep vì họ đang bận học hoặc nghỉ ngơi." },
+
+    { "left": "Hạ nhiệt group chat", "right": "Đề xuất gặp mặt trực tiếp thay vì cãi vã căng thẳng trên mạng." },
+
+    { "left": "Năng lượng tích cực", "right": "Chủ động theo dõi các trang chia sẻ kiến thức, kỹ năng sống bổ ích." }
+
+  ]
+
 }', '4', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1244', '210', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa giao tiếp:",
-  "sentence": "Giao tiếp qua màn hình rất dễ gây [blank1] vì thiếu đi tông giọng và nét mặt. Hãy sử dụng tin nhắn [blank2] để góp ý, tránh [blank3] liên tục bắt đối phương trả lời ngay, và luôn giữ thái độ [blank4] trực tuyến.",
-  "blanks": {
-    "blank1": { "correct": "hiểu lầm", "placeholder": "..." },
-    "blank2": { "correct": "xây dựng", "placeholder": "..." },
-    "blank3": { "correct": "spam", "placeholder": "..." },
-    "blank4": { "correct": "tôn trọng", "placeholder": "..." }
-  },
-  "words": ["hiểu lầm", "xây dựng", "spam", "tôn trọng", "đồng ý", "tức giận", "im lặng", "mỉa mai"]
+('1244', '210', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa giao tiếp:",
+
+  "sentence": "Giao tiếp qua màn hình rất dễ gây [blank1] vì thiếu đi tông giọng và nét mặt. Hãy sử dụng tin nhắn [blank2] để góp ý, tránh [blank3] liên tục bắt đối phương trả lời ngay, và luôn giữ thái độ [blank4] trực tuyến.",
+
+  "blanks": {
+
+    "blank1": { "correct": "hiểu lầm", "placeholder": "..." },
+
+    "blank2": { "correct": "xây dựng", "placeholder": "..." },
+
+    "blank3": { "correct": "spam", "placeholder": "..." },
+
+    "blank4": { "correct": "tôn trọng", "placeholder": "..." }
+
+  },
+
+  "words": ["hiểu lầm", "xây dựng", "spam", "tôn trọng", "đồng ý", "tức giận", "im lặng", "mỉa mai"]
+
 }', '5', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1245', '210', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bạn nhìn thấy trạng thái Đã xem (Seen) nhưng đối phương chưa trả lời tin nhắn của bạn suốt 30 phút, phản ứng nào sau đây thể hiện bạn là người có EQ cao?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Liên tục gọi điện và gửi tin nhắn phẫn nộ: ''Sao xem rồi mà không rep?''", "correct": false, "emoji": "😠" },
-    { "text": "Tự suy diễn rằng đối phương ghét mình rồi block họ luôn.", "correct": false, "emoji": "🥺" },
-    { "text": "Đặt điện thoại xuống, làm việc khác và hiểu rằng họ sẽ rep khi rảnh rỗi hoặc sẵn sàng.", "correct": true, "emoji": "💚" },
-    { "text": "Đăng status ám chỉ đối phương sống giả tạo.", "correct": false, "emoji": "🛑" }
-  ]
+('1245', '210', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bạn nhìn thấy trạng thái Đã xem (Seen) nhưng đối phương chưa trả lời tin nhắn của bạn suốt 30 phút, phản ứng nào sau đây thể hiện bạn là người có EQ cao?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Liên tục gọi điện và gửi tin nhắn phẫn nộ: ''Sao xem rồi mà không rep?''", "correct": false, "emoji": "😠" },
+
+    { "text": "Tự suy diễn rằng đối phương ghét mình rồi block họ luôn.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Đặt điện thoại xuống, làm việc khác và hiểu rằng họ sẽ rep khi rảnh rỗi hoặc sẵn sàng.", "correct": true, "emoji": "💚" },
+
+    { "text": "Đăng status ám chỉ đối phương sống giả tạo.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
 ('1246', '211', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Ranh Giới Số: Vẽ Vạch Rõ, Đỡ Phiền Toái''! Bạn có 3 mạng để tự chủ thiết lập ranh giới bảo vệ bản thân."}', '1', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1247', '211', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Thiết lập ranh giới cá nhân số",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn đang học bài căng thẳng để chuẩn bị cho bài thi ngày mai. Một người bạn thân liên tục nhắn tin, gọi video rủ bạn vào game cày rank cùng nhóm. Bạn đã nhắn tin bảo bận nhưng bạn ấy vẫn spam cuộc gọi liên tục.",
-      "choices": [
-        { "text": "Chịu đựng tắt tiếng điện thoại rồi ấm ức học tiếp, không dám từ chối vì sợ mất lòng.", "nextNode": "fail_passive" },
-        { "text": "Bật chế độ ''Không làm phiền'' trên điện thoại, tập trung ôn thi và sẽ nhắn lại giải thích rõ vào ngày mai.", "nextNode": "step2" },
-        { "text": "Nổi khùng lên game chửi bạn thân phiền phức rồi block luôn.", "nextNode": "fail_aggressive" }
-      ]
-    },
-    "step2": {
-      "text": "Hôm sau, bạn thân gặp bạn và giận dỗi: ''Yêu cầu mật khẩu tài khoản game của cậu để tớ vào cày hộ, thân nhau thế mà tối qua gọi chả thèm nghe''. Bạn thấy không thoải mái khi đưa mật khẩu.",
-      "choices": [
-        { "text": "Đưa luôn mật khẩu game cho bạn ấy để chuộc lỗi tối qua.", "nextNode": "fail_pass_leak" },
-        { "text": "Từ chối khéo nhưng kiên quyết: ''Mật khẩu tớ tự quản lý nha. Cuối tuần tụi mình cùng leo rank chung sau nhé!''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Một người bạn khác kéo bạn vào một group chat ẩn danh chuyên bóc phốt, nói xấu thầy cô giáo và các bạn học sinh trong trường.",
-      "choices": [
-        { "text": "Cứ ở lại group để hóng tin tức nhưng không bình luận gì.", "nextNode": "fail_silent_stander" },
-        { "text": "Chủ động rời khỏi nhóm chat ẩn danh và nói với bạn: ''Tớ không thoải mái với việc nói xấu người khác nên tớ out nha''.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Tuyệt vời! Bạn đã kiên định thiết lập ranh giới số rõ ràng, bảo vệ tài khoản cá nhân và né tránh những không gian ảo độc hại.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_passive": {
-      "text": "❌ Chưa đúng! Chịu đựng ngầm tích tụ bực bội không giải quyết được vấn đề, mà còn dễ làm hỏng tình bạn về lâu dài.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_aggressive": {
-      "text": "❌ Chưa đúng! Phản ứng quá khích làm tổn hại mối quan hệ thay vì thiết lập ranh giới một cách chín chắn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_pass_leak": {
-      "text": "❌ Sai rồi! Mật khẩu cá nhân là ranh giới an toàn tối thiểu, không nên chia sẻ cho bất kỳ ai để tránh rủi ro mất tài khoản.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_silent_stander": {
-      "text": "❌ Sai rồi! Ở lại group chat bóc phốt độc hại là gián tiếp tiếp tay cho môi trường mạng thiếu văn minh.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1247', '211', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Thiết lập ranh giới cá nhân số",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn đang học bài căng thẳng để chuẩn bị cho bài thi ngày mai. Một người bạn thân liên tục nhắn tin, gọi video rủ bạn vào game cày rank cùng nhóm. Bạn đã nhắn tin bảo bận nhưng bạn ấy vẫn spam cuộc gọi liên tục.",
+
+      "choices": [
+
+        { "text": "Chịu đựng tắt tiếng điện thoại rồi ấm ức học tiếp, không dám từ chối vì sợ mất lòng.", "nextNode": "fail_passive" },
+
+        { "text": "Bật chế độ ''Không làm phiền'' trên điện thoại, tập trung ôn thi và sẽ nhắn lại giải thích rõ vào ngày mai.", "nextNode": "step2" },
+
+        { "text": "Nổi khùng lên game chửi bạn thân phiền phức rồi block luôn.", "nextNode": "fail_aggressive" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Hôm sau, bạn thân gặp bạn và giận dỗi: ''Yêu cầu mật khẩu tài khoản game của cậu để tớ vào cày hộ, thân nhau thế mà tối qua gọi chả thèm nghe''. Bạn thấy không thoải mái khi đưa mật khẩu.",
+
+      "choices": [
+
+        { "text": "Đưa luôn mật khẩu game cho bạn ấy để chuộc lỗi tối qua.", "nextNode": "fail_pass_leak" },
+
+        { "text": "Từ chối khéo nhưng kiên quyết: ''Mật khẩu tớ tự quản lý nha. Cuối tuần tụi mình cùng leo rank chung sau nhé!''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Một người bạn khác kéo bạn vào một group chat ẩn danh chuyên bóc phốt, nói xấu thầy cô giáo và các bạn học sinh trong trường.",
+
+      "choices": [
+
+        { "text": "Cứ ở lại group để hóng tin tức nhưng không bình luận gì.", "nextNode": "fail_silent_stander" },
+
+        { "text": "Chủ động rời khỏi nhóm chat ẩn danh và nói với bạn: ''Tớ không thoải mái với việc nói xấu người khác nên tớ out nha''.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Tuyệt vời! Bạn đã kiên định thiết lập ranh giới số rõ ràng, bảo vệ tài khoản cá nhân và né tránh những không gian ảo độc hại.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_passive": {
+
+      "text": "❌ Chưa đúng! Chịu đựng ngầm tích tụ bực bội không giải quyết được vấn đề, mà còn dễ làm hỏng tình bạn về lâu dài.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_aggressive": {
+
+      "text": "❌ Chưa đúng! Phản ứng quá khích làm tổn hại mối quan hệ thay vì thiết lập ranh giới một cách chín chắn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_pass_leak": {
+
+      "text": "❌ Sai rồi! Mật khẩu cá nhân là ranh giới an toàn tối thiểu, không nên chia sẻ cho bất kỳ ai để tránh rủi ro mất tài khoản.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_silent_stander": {
+
+      "text": "❌ Sai rồi! Ở lại group chat bóc phốt độc hại là gián tiếp tiếp tay cho môi trường mạng thiếu văn minh.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1248', '211', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi ranh giới số:",
-  "leftBox": { "title": "Tôn trọng ranh giới" },
-  "rightBox": { "title": "Xâm phạm ranh giới" },
-  "items": [
-    { "text": "Từ chối chia sẻ mật khẩu tài khoản cá nhân cho bạn bè", "correctBox": "left" },
-    { "text": "Tự ý xem lịch sử tin nhắn của người khác khi mượn máy", "correctBox": "right" },
-    { "text": "Gọi điện spam liên tục lúc nửa đêm mặc dù bạn đã nói bận", "correctBox": "right" },
-    { "text": "Đặt giới hạn thời gian lướt mạng xã hội mỗi ngày", "correctBox": "left" },
-    { "text": "Ép bạn bè phải online nói chuyện khi họ đang mệt", "correctBox": "right" }
-  ]
+('1248', '211', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi ranh giới số:",
+
+  "leftBox": { "title": "Tôn trọng ranh giới" },
+
+  "rightBox": { "title": "Xâm phạm ranh giới" },
+
+  "items": [
+
+    { "text": "Từ chối chia sẻ mật khẩu tài khoản cá nhân cho bạn bè", "correctBox": "left" },
+
+    { "text": "Tự ý xem lịch sử tin nhắn của người khác khi mượn máy", "correctBox": "right" },
+
+    { "text": "Gọi điện spam liên tục lúc nửa đêm mặc dù bạn đã nói bận", "correctBox": "right" },
+
+    { "text": "Đặt giới hạn thời gian lướt mạng xã hội mỗi ngày", "correctBox": "left" },
+
+    { "text": "Ép bạn bè phải online nói chuyện khi họ đang mệt", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1249', '211', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa ranh giới số sau:",
-  "pairs": [
-    { "left": "Ranh giới thời gian", "right": "Quyết định thời lượng sử dụng thiết bị và thời điểm offline nghỉ ngơi." },
-    { "left": "Ranh giới bảo mật", "right": "Giữ kín mật khẩu tài khoản cá nhân trước mọi người, kể cả bạn thân." },
-    { "left": "Ức chế ngầm (Resentment)", "right": "Sự ấm ức tích tụ bên trong khi liên tục phải chịu đựng việc bị lấn lướt." },
-    { "left": "Từ chối thẳng thắn", "right": "Nói Không lịch sự nhưng rõ ràng, không vòng vo nói dối." }
-  ]
+('1249', '211', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa ranh giới số sau:",
+
+  "pairs": [
+
+    { "left": "Ranh giới thời gian", "right": "Quyết định thời lượng sử dụng thiết bị và thời điểm offline nghỉ ngơi." },
+
+    { "left": "Ranh giới bảo mật", "right": "Giữ kín mật khẩu tài khoản cá nhân trước mọi người, kể cả bạn thân." },
+
+    { "left": "Ức chế ngầm (Resentment)", "right": "Sự ấm ức tích tụ bên trong khi liên tục phải chịu đựng việc bị lấn lướt." },
+
+    { "left": "Từ chối thẳng thắn", "right": "Nói Không lịch sự nhưng rõ ràng, không vòng vo nói dối." }
+
+  ]
+
 }', '4', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1250', '211', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới:",
-  "sentence": "Thiết lập ranh giới số giúp bạn bảo vệ [blank1] riêng tư và tránh những [blank2] ngầm tích tụ. Bạn luôn có quyền từ chối chia sẻ [blank3] cá nhân và nói không với các hội nhóm [blank4].",
-  "blanks": {
-    "blank1": { "correct": "không gian", "placeholder": "..." },
-    "blank2": { "correct": "ức chế", "placeholder": "..." },
-    "blank3": { "correct": "mật khẩu", "placeholder": "..." },
-    "blank4": { "correct": "độc hại", "placeholder": "..." }
-  },
-  "words": ["không gian", "ức chế", "mật khẩu", "độc hại", "đồng ý", "hình ảnh", "bạn bè", "chia sẻ"]
+('1250', '211', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ranh giới:",
+
+  "sentence": "Thiết lập ranh giới số giúp bạn bảo vệ [blank1] riêng tư và tránh những [blank2] ngầm tích tụ. Bạn luôn có quyền từ chối chia sẻ [blank3] cá nhân và nói không với các hội nhóm [blank4].",
+
+  "blanks": {
+
+    "blank1": { "correct": "không gian", "placeholder": "..." },
+
+    "blank2": { "correct": "ức chế", "placeholder": "..." },
+
+    "blank3": { "correct": "mật khẩu", "placeholder": "..." },
+
+    "blank4": { "correct": "độc hại", "placeholder": "..." }
+
+  },
+
+  "words": ["không gian", "ức chế", "mật khẩu", "độc hại", "đồng ý", "hình ảnh", "bạn bè", "chia sẻ"]
+
 }', '5', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1251', '211', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bạn mượn điện thoại của bạn bè để chụp ảnh, hành động nào sau đây là tôn trọng ranh giới số nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Tiện tay mở mục nhắn tin Messenger xem có gì mới.", "correct": false, "emoji": "🥺" },
-    { "text": "Chỉ mở đúng ứng dụng camera để chụp, không tự ý bấm vào bất kỳ ứng dụng nào khác.", "correct": true, "emoji": "💚" },
-    { "text": "Lướt xem thử album ảnh riêng tư của họ.", "correct": false, "emoji": "🛑" },
-    { "text": "Vào phần cài đặt để kiểm tra thông số máy.", "correct": false, "emoji": "😐" }
-  ]
+('1251', '211', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bạn mượn điện thoại của bạn bè để chụp ảnh, hành động nào sau đây là tôn trọng ranh giới số nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Tiện tay mở mục nhắn tin Messenger xem có gì mới.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Chỉ mở đúng ứng dụng camera để chụp, không tự ý bấm vào bất kỳ ứng dụng nào khác.", "correct": true, "emoji": "💚" },
+
+    { "text": "Lướt xem thử album ảnh riêng tư của họ.", "correct": false, "emoji": "🛑" },
+
+    { "text": "Vào phần cài đặt để kiểm tra thông số máy.", "correct": false, "emoji": "😐" }
+
+  ]
+
 }', '6', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
 ('1252', '212', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Đồng Thuận Số: Đừng Tự Ý Mặc Định''! Bạn có 3 mạng để thực hành sự đồng thuận số văn minh trực tuyến."}', '1', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1253', '212', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Tôn trọng sự đồng thuận trực tuyến",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn chụp được ảnh dìm của bạn thân đang ngủ gật trong lớp trông rất ngộ nghĩnh. Bạn thấy rất vui và định đăng lên Story Instagram để trêu bạn bè.",
-      "choices": [
-        { "text": "Cứ đăng lên luôn vì bạn bè thân thiết đùa chút có sao đâu.", "nextNode": "fail_leak" },
-        { "text": "Gửi tin nhắn riêng hỏi bạn ấy: ''Tớ đăng tấm này lên Story trêu tí nha cậu, cậu thấy ok không?''", "nextNode": "step2" },
-        { "text": "Đăng lên nhóm chat kín của lớp mà không cần hỏi bạn thân.", "nextNode": "fail_leak_group" }
-      ]
-    },
-    "step2": {
-      "text": "Bạn ấy nhắn lại: ''Mặt tớ phệ quá nhìn ghê chết, đừng đăng lên mạng nha cậu, tớ ngại lắm!''",
-      "choices": [
-        { "text": "Nài nỉ tiếp: ''Vui thôi mà, story tự xóa sau 24h thôi, cho đăng đi nha!''", "nextNode": "fail_pester" },
-        { "text": "Tôn trọng quyết định của bạn: ''Ok cậu nè, tớ xóa tấm này đi nhé, chọn tấm khác đẹp hơn nha!''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau đó, một bạn nam trong lớp rủ bạn chụp ảnh chung. Bạn đồng ý chụp. Nhưng sau đó bạn nam định đăng bức ảnh lên kèm caption ghép đôi yêu đương. Bạn thấy không thoải mái.",
-      "choices": [
-        { "text": "Im lặng chịu đựng vì nghĩ nãy mình đã đồng ý chụp ảnh thì giờ họ có quyền đăng.", "nextNode": "fail_reversible" },
-        { "text": "Nói rõ ranh giới: ''Tớ đồng ý chụp ảnh chung chứ không đồng ý đăng bài ghép đôi đâu nha, mong cậu tôn trọng''.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn hảo! Bạn đã tôn trọng và thực hành quy tắc đồng thuận trực tuyến, hiểu rõ rằng đồng ý việc này không có nghĩa là đồng ý việc khác.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_leak": {
-      "text": "❌ Sai rồi! Tự ý đăng tải hình ảnh riêng tư của bạn bè lên mạng xã hội khi chưa được sự đồng ý là vi phạm ranh giới số của họ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_leak_group": {
-      "text": "❌ Chưa đúng! Nhóm chat kín vẫn có nguy cơ bị chụp màn hình hoặc chia sẻ ra ngoài, gây tổn thương lòng tự trọng của bạn mình.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_pester": {
-      "text": "❌ Sai rồi! Nài nỉ, lấn lướt ranh giới số khi đối phương đã từ chối là hành vi thiếu tôn trọng sự đồng thuận trực tuyến.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_reversible": {
-      "text": "❌ Sai rồi! Sự đồng thuận có tính chất linh hoạt và cụ thể - việc bạn đồng ý chụp chung không có nghĩa là bạn cho phép họ đăng bài ghép đôi tùy ý.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1253', '212', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Tôn trọng sự đồng thuận trực tuyến",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn chụp được ảnh dìm của bạn thân đang ngủ gật trong lớp trông rất ngộ nghĩnh. Bạn thấy rất vui và định đăng lên Story Instagram để trêu bạn bè.",
+
+      "choices": [
+
+        { "text": "Cứ đăng lên luôn vì bạn bè thân thiết đùa chút có sao đâu.", "nextNode": "fail_leak" },
+
+        { "text": "Gửi tin nhắn riêng hỏi bạn ấy: ''Tớ đăng tấm này lên Story trêu tí nha cậu, cậu thấy ok không?''", "nextNode": "step2" },
+
+        { "text": "Đăng lên nhóm chat kín của lớp mà không cần hỏi bạn thân.", "nextNode": "fail_leak_group" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Bạn ấy nhắn lại: ''Mặt tớ phệ quá nhìn ghê chết, đừng đăng lên mạng nha cậu, tớ ngại lắm!''",
+
+      "choices": [
+
+        { "text": "Nài nỉ tiếp: ''Vui thôi mà, story tự xóa sau 24h thôi, cho đăng đi nha!''", "nextNode": "fail_pester" },
+
+        { "text": "Tôn trọng quyết định của bạn: ''Ok cậu nè, tớ xóa tấm này đi nhé, chọn tấm khác đẹp hơn nha!''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau đó, một bạn nam trong lớp rủ bạn chụp ảnh chung. Bạn đồng ý chụp. Nhưng sau đó bạn nam định đăng bức ảnh lên kèm caption ghép đôi yêu đương. Bạn thấy không thoải mái.",
+
+      "choices": [
+
+        { "text": "Im lặng chịu đựng vì nghĩ nãy mình đã đồng ý chụp ảnh thì giờ họ có quyền đăng.", "nextNode": "fail_reversible" },
+
+        { "text": "Nói rõ ranh giới: ''Tớ đồng ý chụp ảnh chung chứ không đồng ý đăng bài ghép đôi đâu nha, mong cậu tôn trọng''.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn hảo! Bạn đã tôn trọng và thực hành quy tắc đồng thuận trực tuyến, hiểu rõ rằng đồng ý việc này không có nghĩa là đồng ý việc khác.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_leak": {
+
+      "text": "❌ Sai rồi! Tự ý đăng tải hình ảnh riêng tư của bạn bè lên mạng xã hội khi chưa được sự đồng ý là vi phạm ranh giới số của họ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_leak_group": {
+
+      "text": "❌ Chưa đúng! Nhóm chat kín vẫn có nguy cơ bị chụp màn hình hoặc chia sẻ ra ngoài, gây tổn thương lòng tự trọng của bạn mình.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_pester": {
+
+      "text": "❌ Sai rồi! Nài nỉ, lấn lướt ranh giới số khi đối phương đã từ chối là hành vi thiếu tôn trọng sự đồng thuận trực tuyến.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_reversible": {
+
+      "text": "❌ Sai rồi! Sự đồng thuận có tính chất linh hoạt và cụ thể - việc bạn đồng ý chụp chung không có nghĩa là bạn cho phép họ đăng bài ghép đôi tùy ý.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1254', '212', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi đồng thuận số:",
-  "leftBox": { "title": "Tôn trọng đồng thuận" },
-  "rightBox": { "title": "Tự ý mặc định" },
-  "items": [
-    { "text": "Hỏi ý kiến bạn bè trước khi tag họ vào bài viết công khai", "correctBox": "left" },
-    { "text": "Lần trước cậu cho mượn acc rồi nên lần này tớ tự ý dùng tiếp", "correctBox": "right" },
-    { "text": "Dừng gửi ảnh meme khi bạn nói hôm nay bạn mệt và muốn yên tĩnh", "correctBox": "left" },
-    { "text": "Đăng ảnh chụp dìm bạn bè lên mạng làm trò cười khi họ chưa đồng ý", "correctBox": "right" },
-    { "text": "Kiểm tra sự thoải mái của đối phương trước khi rủ call video", "correctBox": "left" }
-  ]
+('1254', '212', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi đồng thuận số:",
+
+  "leftBox": { "title": "Tôn trọng đồng thuận" },
+
+  "rightBox": { "title": "Tự ý mặc định" },
+
+  "items": [
+
+    { "text": "Hỏi ý kiến bạn bè trước khi tag họ vào bài viết công khai", "correctBox": "left" },
+
+    { "text": "Lần trước cậu cho mượn acc rồi nên lần này tớ tự ý dùng tiếp", "correctBox": "right" },
+
+    { "text": "Dừng gửi ảnh meme khi bạn nói hôm nay bạn mệt và muốn yên tĩnh", "correctBox": "left" },
+
+    { "text": "Đăng ảnh chụp dìm bạn bè lên mạng làm trò cười khi họ chưa đồng ý", "correctBox": "right" },
+
+    { "text": "Kiểm tra sự thoải mái của đối phương trước khi rủ call video", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1255', '212', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa đồng thuận số sau:",
-  "pairs": [
-    { "left": "Đồng thuận trực tuyến", "right": "Sự đồng ý tự nguyện, hào hứng, cụ thể và có thể rút lại trên mạng." },
-    { "left": "Không mặc định", "right": "Việc đối phương đồng ý lần trước không có nghĩa là tự động đồng ý lần này." },
-    { "left": "Tính cụ thể (Specific)", "right": "Đồng ý chụp ảnh chung không đồng nghĩa với đồng ý đăng ảnh ghép đôi." },
-    { "left": "Nài nỉ số", "right": "Hành vi lấn lướt, ép buộc đối phương phải nhượng bộ ranh giới trên mạng." }
-  ]
+('1255', '212', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa đồng thuận số sau:",
+
+  "pairs": [
+
+    { "left": "Đồng thuận trực tuyến", "right": "Sự đồng ý tự nguyện, hào hứng, cụ thể và có thể rút lại trên mạng." },
+
+    { "left": "Không mặc định", "right": "Việc đối phương đồng ý lần trước không có nghĩa là tự động đồng ý lần này." },
+
+    { "left": "Tính cụ thể (Specific)", "right": "Đồng ý chụp ảnh chung không đồng nghĩa với đồng ý đăng ảnh ghép đôi." },
+
+    { "left": "Nài nỉ số", "right": "Hành vi lấn lướt, ép buộc đối phương phải nhượng bộ ranh giới trên mạng." }
+
+  ]
+
 }', '4', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1256', '212', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa đồng thuận số:",
-  "sentence": "Sự đồng thuận số phải được đưa ra một cách [blank1] và hào hứng. Đồng ý lúc trước không có nghĩa là [blank2] cho lần sau, và bạn luôn có quyền [blank3] quyết định của mình bất cứ [blank4] nào.",
-  "blanks": {
-    "blank1": { "correct": "tự nguyện", "placeholder": "..." },
-    "blank2": { "correct": "mặc định", "placeholder": "..." },
-    "blank3": { "correct": "thay đổi", "placeholder": "..." },
-    "blank4": { "correct": "lúc", "placeholder": "..." }
-  },
-  "words": ["tự nguyện", "mặc định", "thay đổi", "lúc", "im lặng", "ép buộc", "nài nỉ", "đồng ý"]
+('1256', '212', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa đồng thuận số:",
+
+  "sentence": "Sự đồng thuận số phải được đưa ra một cách [blank1] và hào hứng. Đồng ý lúc trước không có nghĩa là [blank2] cho lần sau, và bạn luôn có quyền [blank3] quyết định của mình bất cứ [blank4] nào.",
+
+  "blanks": {
+
+    "blank1": { "correct": "tự nguyện", "placeholder": "..." },
+
+    "blank2": { "correct": "mặc định", "placeholder": "..." },
+
+    "blank3": { "correct": "thay đổi", "placeholder": "..." },
+
+    "blank4": { "correct": "lúc", "placeholder": "..." }
+
+  },
+
+  "words": ["tự nguyện", "mặc định", "thay đổi", "lúc", "im lặng", "ép buộc", "nài nỉ", "đồng ý"]
+
 }', '5', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1257', '212', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Nếu bạn của bạn đã đồng ý cho bạn mượn tài khoản Netflix tuần trước để xem phim, hành động nào sau đây là tôn trọng sự đồng thuận số nhất vào tuần này?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Tự ý đăng nhập xem tiếp mà không cần hỏi vì tài khoản đã lưu trên máy.", "correct": false, "emoji": "🥺" },
-    { "text": "Nhắn tin hỏi lại bạn trước khi đăng nhập: ''Tớ vào Netflix xem nốt tập phim hôm trước nhé cậu?''", "correct": true, "emoji": "💚" },
-    { "text": "Đưa tài khoản đó cho một người bạn khác mượn dùng chung.", "correct": false, "emoji": "🛑" },
-    { "text": "Đổi mật khẩu tài khoản đó để xem một mình.", "correct": false, "emoji": "😐" }
-  ]
+('1257', '212', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Nếu bạn của bạn đã đồng ý cho bạn mượn tài khoản Netflix tuần trước để xem phim, hành động nào sau đây là tôn trọng sự đồng thuận số nhất vào tuần này?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Tự ý đăng nhập xem tiếp mà không cần hỏi vì tài khoản đã lưu trên máy.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Nhắn tin hỏi lại bạn trước khi đăng nhập: ''Tớ vào Netflix xem nốt tập phim hôm trước nhé cậu?''", "correct": true, "emoji": "💚" },
+
+    { "text": "Đưa tài khoản đó cho một người bạn khác mượn dùng chung.", "correct": false, "emoji": "🛑" },
+
+    { "text": "Đổi mật khẩu tài khoản đó để xem một mình.", "correct": false, "emoji": "😐" }
+
+  ]
+
 }', '6', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
 ('1258', '213', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Sexting & Gửi Ảnh: Giữ Mình An Toàn Trên Sóng''! Bạn có 3 mạng để bảo vệ ranh giới hình ảnh cơ thể."}', '1', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1259', '213', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Đối phó với áp lực gửi ảnh nhạy cảm",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Người yêu qua mạng nhắn tin năn nỉ bạn gửi ảnh mặc áo trễ vai hở ngực hoặc ảnh nhạy cảm cá nhân, nói rằng ''Yêu nhau thì phải tin tưởng và chia sẻ hình ảnh cơ thể cho nhau''. Bạn thấy lo sợ và không thoải mái.",
-      "choices": [
-        { "text": "Gửi đại một bức ảnh mờ mờ hoặc che mặt để xoa dịu đối phương.", "nextNode": "fail_leak_risk" },
-        { "text": "Từ chối dứt khoát: ''Tớ không thoải mái với việc này. Mong cậu tôn trọng quyết định của tớ''.", "nextNode": "step2" },
-        { "text": "Nói dối là điện thoại hỏng camera để né tránh tạm thời.", "nextNode": "fail_avoid" }
-      ]
-    },
-    "step2": {
-      "text": "Người đó giận dỗi, đe dọa: ''Nếu không gửi thì chứng tỏ không yêu thật lòng, tụi mình chia tay đi!''",
-      "choices": [
-        { "text": "Nhượng bộ gửi ảnh vì quá sợ chia tay.", "nextNode": "fail_concede" },
-        { "text": "Kiên định ranh giới: ''Nếu cậu muốn chia tay chỉ vì tớ bảo vệ ranh giới cơ thể mình, thì tớ chấp nhận chia tay''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau đó, người đó chụp ảnh màn hình các cuộc trò chuyện riêng tư của hai đứa và đe dọa sẽ tung lên nhóm lớp nếu bạn không chịu làm theo yêu cầu của họ.",
-      "choices": [
-        { "text": "Im lặng làm theo mọi yêu cầu của họ để giữ bình yên.", "nextNode": "fail_blackmail" },
-        { "text": "Chụp lại bằng chứng đe dọa, báo ngay cho bố mẹ hoặc thầy cô giáo đáng tin cậy và gọi tổng đài 111.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã vừa kiên định bảo vệ bản thân, vừa tìm kiếm sự hỗ trợ kịp thời để dập tắt hành vi tống tiền số.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_leak_risk": {
-      "text": "❌ Sai rồi! Ảnh nhạy cảm khi đã gửi đi sẽ nằm ngoài kiểm soát và hoàn toàn có nguy cơ bị phát tán hoặc dùng để tống tiền.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_avoid": {
-      "text": "❌ Chưa đúng! Viện lý do giả vờ hỏng camera không giải quyết được gốc rễ áp lực, đối phương sẽ tiếp tục đòi hỏi khi có cơ hội.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_concede": {
-      "text": "❌ Sai rồi! Nhượng bộ đe dọa gửi ảnh nhạy cảm chỉ khiến kẻ xấu nắm thóp và khống chế bạn nhiều hơn trong tương lai.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_blackmail": {
-      "text": "❌ Sai rồi! Chịu đựng kẻ tống tiền không bao giờ mang lại an toàn. Bạn cần chụp bằng chứng và báo ngay người lớn.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1259', '213', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Đối phó với áp lực gửi ảnh nhạy cảm",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Người yêu qua mạng nhắn tin năn nỉ bạn gửi ảnh mặc áo trễ vai hở ngực hoặc ảnh nhạy cảm cá nhân, nói rằng ''Yêu nhau thì phải tin tưởng và chia sẻ hình ảnh cơ thể cho nhau''. Bạn thấy lo sợ và không thoải mái.",
+
+      "choices": [
+
+        { "text": "Gửi đại một bức ảnh mờ mờ hoặc che mặt để xoa dịu đối phương.", "nextNode": "fail_leak_risk" },
+
+        { "text": "Từ chối dứt khoát: ''Tớ không thoải mái với việc này. Mong cậu tôn trọng quyết định của tớ''.", "nextNode": "step2" },
+
+        { "text": "Nói dối là điện thoại hỏng camera để né tránh tạm thời.", "nextNode": "fail_avoid" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Người đó giận dỗi, đe dọa: ''Nếu không gửi thì chứng tỏ không yêu thật lòng, tụi mình chia tay đi!''",
+
+      "choices": [
+
+        { "text": "Nhượng bộ gửi ảnh vì quá sợ chia tay.", "nextNode": "fail_concede" },
+
+        { "text": "Kiên định ranh giới: ''Nếu cậu muốn chia tay chỉ vì tớ bảo vệ ranh giới cơ thể mình, thì tớ chấp nhận chia tay''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau đó, người đó chụp ảnh màn hình các cuộc trò chuyện riêng tư của hai đứa và đe dọa sẽ tung lên nhóm lớp nếu bạn không chịu làm theo yêu cầu của họ.",
+
+      "choices": [
+
+        { "text": "Im lặng làm theo mọi yêu cầu của họ để giữ bình yên.", "nextNode": "fail_blackmail" },
+
+        { "text": "Chụp lại bằng chứng đe dọa, báo ngay cho bố mẹ hoặc thầy cô giáo đáng tin cậy và gọi tổng đài 111.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã vừa kiên định bảo vệ bản thân, vừa tìm kiếm sự hỗ trợ kịp thời để dập tắt hành vi tống tiền số.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_leak_risk": {
+
+      "text": "❌ Sai rồi! Ảnh nhạy cảm khi đã gửi đi sẽ nằm ngoài kiểm soát và hoàn toàn có nguy cơ bị phát tán hoặc dùng để tống tiền.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_avoid": {
+
+      "text": "❌ Chưa đúng! Viện lý do giả vờ hỏng camera không giải quyết được gốc rễ áp lực, đối phương sẽ tiếp tục đòi hỏi khi có cơ hội.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_concede": {
+
+      "text": "❌ Sai rồi! Nhượng bộ đe dọa gửi ảnh nhạy cảm chỉ khiến kẻ xấu nắm thóp và khống chế bạn nhiều hơn trong tương lai.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_blackmail": {
+
+      "text": "❌ Sai rồi! Chịu đựng kẻ tống tiền không bao giờ mang lại an toàn. Bạn cần chụp bằng chứng và báo ngay người lớn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1260', '213', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi quyền cơ thể số:",
-  "leftBox": { "title": "Bảo vệ quyền cơ thể" },
-  "rightBox": { "title": "Xâm phạm quyền cơ thể" },
-  "items": [
-    { "text": "Kiên quyết từ chối gửi ảnh nhạy cảm dù bị ép buộc", "correctBox": "left" },
-    { "text": "Lên chụp ảnh bạn bè trong nhà vệ sinh để làm trò đùa", "correctBox": "right" },
-    { "text": "Báo cáo tài khoản đăng ảnh bôi nhọ ngoại hình của bạn học", "correctBox": "left" },
-    { "text": "Yêu cầu đối phương bật camera phơi bày cơ thể khi chat video", "correctBox": "right" },
-    { "text": "Xóa tag và yêu cầu gỡ ảnh dìm khi bản thân thấy ngại", "correctBox": "left" }
-  ]
+('1260', '213', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi quyền cơ thể số:",
+
+  "leftBox": { "title": "Bảo vệ quyền cơ thể" },
+
+  "rightBox": { "title": "Xâm phạm quyền cơ thể" },
+
+  "items": [
+
+    { "text": "Kiên quyết từ chối gửi ảnh nhạy cảm dù bị ép buộc", "correctBox": "left" },
+
+    { "text": "Lên chụp ảnh bạn bè trong nhà vệ sinh để làm trò đùa", "correctBox": "right" },
+
+    { "text": "Báo cáo tài khoản đăng ảnh bôi nhọ ngoại hình của bạn học", "correctBox": "left" },
+
+    { "text": "Yêu cầu đối phương bật camera phơi bày cơ thể khi chat video", "correctBox": "right" },
+
+    { "text": "Xóa tag và yêu cầu gỡ ảnh dìm khi bản thân thấy ngại", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1261', '213', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn hình ảnh sau:",
-  "pairs": [
-    { "left": "Sexting", "right": "Hành vi nhắn tin hoặc chia sẻ hình ảnh nhạy cảm, cơ thể trực tuyến." },
-    { "left": "Quyền kiểm soát cơ thể", "right": "Quyền quyết định tối cao của bạn đối với hình ảnh thân thể của chính mình." },
-    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia tiếp nhận hỗ trợ, tư vấn bảo vệ trẻ em 24/7." },
-    { "left": "Thao túng tình cảm", "right": "Dùng lời đe dọa chia tay để ép buộc đối phương gửi ảnh nhạy cảm." }
-  ]
+('1261', '213', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa an toàn hình ảnh sau:",
+
+  "pairs": [
+
+    { "left": "Sexting", "right": "Hành vi nhắn tin hoặc chia sẻ hình ảnh nhạy cảm, cơ thể trực tuyến." },
+
+    { "left": "Quyền kiểm soát cơ thể", "right": "Quyền quyết định tối cao của bạn đối với hình ảnh thân thể của chính mình." },
+
+    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia tiếp nhận hỗ trợ, tư vấn bảo vệ trẻ em 24/7." },
+
+    { "left": "Thao túng tình cảm", "right": "Dùng lời đe dọa chia tay để ép buộc đối phương gửi ảnh nhạy cảm." }
+
+  ]
+
 }', '4', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1262', '213', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa an toàn hình ảnh:",
-  "sentence": "Hình ảnh nhạy cảm đã gửi lên internet sẽ không thể [blank1] hoàn toàn. Việc ép buộc đối phương gửi ảnh cơ thể là vi phạm [blank2] cá nhân. Khi gặp sự cố đe dọa phát tán ảnh, hãy tìm điểm tựa [blank3] và gọi tổng đài [blank4].",
-  "blanks": {
-    "blank1": { "correct": "thu hồi", "placeholder": "..." },
-    "blank2": { "correct": "ranh giới", "placeholder": "..." },
-    "blank3": { "correct": "an toàn", "placeholder": "..." },
-    "blank4": { "correct": "111", "placeholder": "..." }
-  },
-  "words": ["thu hồi", "ranh giới", "an toàn", "111", "đồng ý", "công khai", "chia sẻ", "nài nỉ"]
+('1262', '213', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa an toàn hình ảnh:",
+
+  "sentence": "Hình ảnh nhạy cảm đã gửi lên internet sẽ không thể [blank1] hoàn toàn. Việc ép buộc đối phương gửi ảnh cơ thể là vi phạm [blank2] cá nhân. Khi gặp sự cố đe dọa phát tán ảnh, hãy tìm điểm tựa [blank3] và gọi tổng đài [blank4].",
+
+  "blanks": {
+
+    "blank1": { "correct": "thu hồi", "placeholder": "..." },
+
+    "blank2": { "correct": "ranh giới", "placeholder": "..." },
+
+    "blank3": { "correct": "an toàn", "placeholder": "..." },
+
+    "blank4": { "correct": "111", "placeholder": "..." }
+
+  },
+
+  "words": ["thu hồi", "ranh giới", "an toàn", "111", "đồng ý", "công khai", "chia sẻ", "nài nỉ"]
+
 }', '5', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1263', '213', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi một người bạn online đe dọa sẽ đăng bức ảnh riêng tư của bạn lên mạng nếu bạn không chịu đi chơi riêng, hành động nào sau đây giúp bạn bảo vệ mình hiệu quả nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Im lặng làm theo để họ không đăng ảnh.", "correct": false, "emoji": "🥺" },
-    { "text": "Chụp màn hình bằng chứng, báo ngay cho người lớn đáng tin cậy và gọi tổng đài 111.", "correct": true, "emoji": "💚" },
-    { "text": "Nhờ bạn bè đến đe dọa, đánh trả đũa đối phương.", "correct": false, "emoji": "🛑" },
-    { "text": "Thương lượng đưa tiền cho đối phương để họ xóa ảnh.", "correct": false, "emoji": "😐" }
-  ]
+('1263', '213', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi một người bạn online đe dọa sẽ đăng bức ảnh riêng tư của bạn lên mạng nếu bạn không chịu đi chơi riêng, hành động nào sau đây giúp bạn bảo vệ mình hiệu quả nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Im lặng làm theo để họ không đăng ảnh.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Chụp màn hình bằng chứng, báo ngay cho người lớn đáng tin cậy và gọi tổng đài 111.", "correct": true, "emoji": "💚" },
+
+    { "text": "Nhờ bạn bè đến đe dọa, đánh trả đũa đối phương.", "correct": false, "emoji": "🛑" },
+
+    { "text": "Thương lượng đưa tiền cho đối phương để họ xóa ảnh.", "correct": false, "emoji": "😐" }
+
+  ]
+
 }', '6', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
 ('1264', '214', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Né Cờ Đỏ & Kẻ Thao Túng Trên Mạng''! Bạn có 3 mạng để nhận diện và phòng tránh cờ đỏ độc hại trực tuyến."}', '1', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1265', '214', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Đối phó với kẻ thao túng",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn nói chuyện với một người bạn rất hợp gu trên mạng. Người này tự nhận là học sinh trường bên cạnh nhưng tuyệt đối không chịu gọi video call hay gặp mặt trực tiếp, và bắt đầu hỏi xin địa chỉ nhà chi tiết cùng lịch sinh hoạt của bố mẹ bạn. Trực giác bạn thấy có điều gì đó sai sai và bất ổn.",
-      "choices": [
-        { "text": "Bỏ qua cảm giác lo lắng, cung cấp thông tin vì nghĩ bạn bè trò chuyện thân thiết bấy lâu nay đáng tin.", "nextNode": "fail_leak" },
-        { "text": "Tin vào trực giác bồn chồn của mình, từ chối chia sẻ thông tin nhạy cảm và tạm dừng trò chuyện để xác minh.", "nextNode": "step2" },
-        { "text": "Chửi bới đối phương là kẻ lừa đảo rồi đi bêu rếu họ trên trang cá nhân.", "nextNode": "fail_aggressive" }
-      ]
-    },
-    "step2": {
-      "text": "Người đó nhắn tin trách móc, khóc lóc nói bạn nghi ngờ tình bạn chân thành và đe dọa sẽ tự làm đau bản thân nếu bạn không chịu chia sẻ thông tin để chứng minh lòng tin.",
-      "choices": [
-        { "text": "Nhượng bộ và đưa thông tin vì quá lo lắng đối phương sẽ tự làm hại mình.", "nextNode": "fail_guilt_concede" },
-        { "text": "Nhận diện đây là hành vi thao túng cảm xúc độc hại (Red Flag), từ chối kiên quyết và báo với bố mẹ hoặc người lớn đáng tin.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau đó, người này đe dọa sẽ tung các tin nhắn tâm sự riêng tư trước đây của bạn lên mạng xã hội để bôi nhọ danh dự của bạn.",
-      "choices": [
-        { "text": "Im lặng chịu đựng và chấp nhận bị khống chế.", "nextNode": "fail_blackmail" },
-        { "text": "Chụp bằng chứng đe dọa, chặn tài khoản đó, chia sẻ thật với bố mẹ và thầy cô để cùng tìm phương án giải quyết.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã bình tĩnh, tin dưỡng trực giác và chủ động tìm kiếm trợ giúp từ gia đình để vô hiệu hóa bẫy thao túng số.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_leak": {
-      "text": "❌ Sai rồi! Cung cấp địa chỉ nhà chi tiết và lịch đi làm của bố mẹ cho người lạ trên mạng là cực kỳ nguy hiểm, mở đường cho trộm cắp hoặc bắt cóc.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_aggressive": {
-      "text": "❌ Chưa đúng! Phản ứng nóng giận chửi bới công khai không bảo vệ an toàn cho bạn mà còn có nguy cơ tạo ra xung đột lớn hơn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_guilt_concede": {
-      "text": "❌ Sai rồi! Việc đe dọa tự làm đau để ép buộc đối phương là chiêu trò thao túng tâm lý độc hại. Nhượng bộ chỉ khiến bạn lún sâu hơn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_blackmail": {
-      "text": "❌ Sai rồi! Im lặng thỏa hiệp với kẻ đe dọa bôi nhọ không giải quyết được vấn đề. Bạn cần báo ngay với người lớn để nhận sự bảo vệ.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1265', '214', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Đối phó với kẻ thao túng",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn nói chuyện với một người bạn rất hợp gu trên mạng. Người này tự nhận là học sinh trường bên cạnh nhưng tuyệt đối không chịu gọi video call hay gặp mặt trực tiếp, và bắt đầu hỏi xin địa chỉ nhà chi tiết cùng lịch sinh hoạt của bố mẹ bạn. Trực giác bạn thấy có điều gì đó sai sai và bất ổn.",
+
+      "choices": [
+
+        { "text": "Bỏ qua cảm giác lo lắng, cung cấp thông tin vì nghĩ bạn bè trò chuyện thân thiết bấy lâu nay đáng tin.", "nextNode": "fail_leak" },
+
+        { "text": "Tin vào trực giác bồn chồn của mình, từ chối chia sẻ thông tin nhạy cảm và tạm dừng trò chuyện để xác minh.", "nextNode": "step2" },
+
+        { "text": "Chửi bới đối phương là kẻ lừa đảo rồi đi bêu rếu họ trên trang cá nhân.", "nextNode": "fail_aggressive" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Người đó nhắn tin trách móc, khóc lóc nói bạn nghi ngờ tình bạn chân thành và đe dọa sẽ tự làm đau bản thân nếu bạn không chịu chia sẻ thông tin để chứng minh lòng tin.",
+
+      "choices": [
+
+        { "text": "Nhượng bộ và đưa thông tin vì quá lo lắng đối phương sẽ tự làm hại mình.", "nextNode": "fail_guilt_concede" },
+
+        { "text": "Nhận diện đây là hành vi thao túng cảm xúc độc hại (Red Flag), từ chối kiên quyết và báo với bố mẹ hoặc người lớn đáng tin.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau đó, người này đe dọa sẽ tung các tin nhắn tâm sự riêng tư trước đây của bạn lên mạng xã hội để bôi nhọ danh dự của bạn.",
+
+      "choices": [
+
+        { "text": "Im lặng chịu đựng và chấp nhận bị khống chế.", "nextNode": "fail_blackmail" },
+
+        { "text": "Chụp bằng chứng đe dọa, chặn tài khoản đó, chia sẻ thật với bố mẹ và thầy cô để cùng tìm phương án giải quyết.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã bình tĩnh, tin dưỡng trực giác và chủ động tìm kiếm trợ giúp từ gia đình để vô hiệu hóa bẫy thao túng số.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_leak": {
+
+      "text": "❌ Sai rồi! Cung cấp địa chỉ nhà chi tiết và lịch đi làm của bố mẹ cho người lạ trên mạng là cực kỳ nguy hiểm, mở đường cho trộm cắp hoặc bắt cóc.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_aggressive": {
+
+      "text": "❌ Chưa đúng! Phản ứng nóng giận chửi bới công khai không bảo vệ an toàn cho bạn mà còn có nguy cơ tạo ra xung đột lớn hơn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_guilt_concede": {
+
+      "text": "❌ Sai rồi! Việc đe dọa tự làm đau để ép buộc đối phương là chiêu trò thao túng tâm lý độc hại. Nhượng bộ chỉ khiến bạn lún sâu hơn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_blackmail": {
+
+      "text": "❌ Sai rồi! Im lặng thỏa hiệp với kẻ đe dọa bôi nhọ không giải quyết được vấn đề. Bạn cần báo ngay với người lớn để nhận sự bảo vệ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1266', '214', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử theo trực giác mách bảo sau:",
-  "leftBox": { "title": "Lắng nghe trực giác" },
-  "rightBox": { "title": "Phớt lờ cảnh báo" },
-  "items": [
-    { "text": "Ngừng trò chuyện khi thấy đối phương liên tục hỏi về địa chỉ phòng ngủ", "correctBox": "left" },
-    { "text": "Cố nhắn tin tiếp dù thấy lo sợ trước câu hỏi riêng tư của họ", "correctBox": "right" },
-    { "text": "Hỏi ý kiến chị gái khi thấy bạn online đòi gọi video call lúc nửa đêm", "correctBox": "left" },
-    { "text": "Đồng ý gặp mặt riêng tư người lạ ở công viên vắng dù thấy bồn chồn", "correctBox": "right" },
-    { "text": "Từ chối cung cấp lịch đi làm của bố mẹ cho tài khoản lạ trên mạng", "correctBox": "left" }
-  ]
+('1266', '214', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử theo trực giác mách bảo sau:",
+
+  "leftBox": { "title": "Lắng nghe trực giác" },
+
+  "rightBox": { "title": "Phớt lờ cảnh báo" },
+
+  "items": [
+
+    { "text": "Ngừng trò chuyện khi thấy đối phương liên tục hỏi về địa chỉ phòng ngủ", "correctBox": "left" },
+
+    { "text": "Cố nhắn tin tiếp dù thấy lo sợ trước câu hỏi riêng tư của họ", "correctBox": "right" },
+
+    { "text": "Hỏi ý kiến chị gái khi thấy bạn online đòi gọi video call lúc nửa đêm", "correctBox": "left" },
+
+    { "text": "Đồng ý gặp mặt riêng tư người lạ ở công viên vắng dù thấy bồn chồn", "correctBox": "right" },
+
+    { "text": "Từ chối cung cấp lịch đi làm của bố mẹ cho tài khoản lạ trên mạng", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1267', '214', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa dấu hiệu cờ đỏ trực tuyến sau:",
-  "pairs": [
-    { "left": "Giả mạo danh tính (Catfishing)", "right": "Lập tài khoản ảo, dùng ảnh người khác để tiếp cận và lừa đảo tình cảm." },
-    { "left": "Thao túng cảm xúc", "right": "Đe dọa tự tử hoặc tự làm đau để bắt đối phương nhượng bộ ranh giới." },
-    { "left": "Kiểm soát số", "right": "Đòi đọc tin nhắn riêng tư, kiểm tra định vị 24/7 để quản lý." },
-    { "left": "Trực giác (Gut feeling)", "right": "Hệ thống cảnh báo sớm của cơ thể khi cảm thấy bất an, sai sai." }
-  ]
+('1267', '214', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa dấu hiệu cờ đỏ trực tuyến sau:",
+
+  "pairs": [
+
+    { "left": "Giả mạo danh tính (Catfishing)", "right": "Lập tài khoản ảo, dùng ảnh người khác để tiếp cận và lừa đảo tình cảm." },
+
+    { "left": "Thao túng cảm xúc", "right": "Đe dọa tự tử hoặc tự làm đau để bắt đối phương nhượng bộ ranh giới." },
+
+    { "left": "Kiểm soát số", "right": "Đòi đọc tin nhắn riêng tư, kiểm tra định vị 24/7 để quản lý." },
+
+    { "left": "Trực giác (Gut feeling)", "right": "Hệ thống cảnh báo sớm của cơ thể khi cảm thấy bất an, sai sai." }
+
+  ]
+
 }', '4', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1268', '214', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa cờ đỏ:",
-  "sentence": "Kẻ thao túng trực tuyến thường dùng bẫy [blank1] để bắt bạn nhượng bộ. Hãy luôn tin tưởng vào [blank2] của bản thân. Khi phát hiện các dấu hiệu [blank3], hãy dứt khoát chặn liên lạc và tìm sự [blank4] từ người thân.",
-  "blanks": {
-    "blank1": { "correct": "cảm xúc", "placeholder": "..." },
-    "blank2": { "correct": "trực giác", "placeholder": "..." },
-    "blank3": { "correct": "cờ đỏ", "placeholder": "..." },
-    "blank4": { "correct": "hỗ trợ", "placeholder": "..." }
-  },
-  "words": ["cảm xúc", "trực giác", "cờ đỏ", "hỗ trợ", "đồng ý", "nài nỉ", "giúp đỡ", "tin tưởng"]
+('1268', '214', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa cờ đỏ:",
+
+  "sentence": "Kẻ thao túng trực tuyến thường dùng bẫy [blank1] để bắt bạn nhượng bộ. Hãy luôn tin tưởng vào [blank2] của bản thân. Khi phát hiện các dấu hiệu [blank3], hãy dứt khoát chặn liên lạc và tìm sự [blank4] từ người thân.",
+
+  "blanks": {
+
+    "blank1": { "correct": "cảm xúc", "placeholder": "..." },
+
+    "blank2": { "correct": "trực giác", "placeholder": "..." },
+
+    "blank3": { "correct": "cờ đỏ", "placeholder": "..." },
+
+    "blank4": { "correct": "hỗ trợ", "placeholder": "..." }
+
+  },
+
+  "words": ["cảm xúc", "trực giác", "cờ đỏ", "hỗ trợ", "đồng ý", "nài nỉ", "giúp đỡ", "tin tưởng"]
+
 }', '5', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1269', '214', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Dấu hiệu nào sau đây là một ''Cờ Đỏ'' rõ ràng nhất của một kẻ muốn lừa đảo hoặc thao túng bạn trên mạng?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Họ trả lời tin nhắn của bạn chậm vì bận học.", "correct": false, "emoji": "😐" },
-    { "text": "Họ vẽ tranh tặng bạn nhân ngày sinh nhật.", "correct": false, "emoji": "💚" },
-    { "text": "Họ liên tục tặng quà ảo giá trị lớn, đòi gửi ảnh cơ thể để chứng minh tình cảm và cấm bạn kể với người khác về họ.", "correct": true, "emoji": "😎" },
-    { "text": "Họ từ chối tham gia các group chat ẩn danh bôi nhọ người khác.", "correct": false, "emoji": "🛑" }
-  ]
+('1269', '214', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Dấu hiệu nào sau đây là một ''Cờ Đỏ'' rõ ràng nhất của một kẻ muốn lừa đảo hoặc thao túng bạn trên mạng?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Họ trả lời tin nhắn của bạn chậm vì bận học.", "correct": false, "emoji": "😐" },
+
+    { "text": "Họ vẽ tranh tặng bạn nhân ngày sinh nhật.", "correct": false, "emoji": "💚" },
+
+    { "text": "Họ liên tục tặng quà ảo giá trị lớn, đòi gửi ảnh cơ thể để chứng minh tình cảm và cấm bạn kể với người khác về họ.", "correct": true, "emoji": "😎" },
+
+    { "text": "Họ từ chối tham gia các group chat ẩn danh bôi nhọ người khác.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
 ('1270', '215', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Công Dân Số Văn Minh: Lan Tỏa Vibes Lành''! Bạn có 3 mạng để trở thành một Upstander dũng cảm và lan tỏa sự tử tế trực tuyến."}', '1', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1271', '215', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Trở thành người bảo vệ Upstander",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Trong group chat chung của lớp học, một nhóm bạn đang đăng ảnh dìm chế giễu cân nặng và ngoại hình của Vy bằng những lời lẽ rất thô lỗ và độc ác. Vy nhắn tin khóc lóc cầu xin mọi người dừng lại nhưng nhóm bạn vẫn tiếp tục chế ảnh cười cợt.",
-      "choices": [
-        { "text": "Im lặng lờ đi vì sợ lên tiếng sẽ bị cả nhóm quay sang bắt nạt lây.", "nextNode": "fail_silent" },
-        { "text": "Chủ động nhắn tin vào group lớp yêu cầu mọi người dừng lại một cách lịch sự nhưng kiên quyết.", "nextNode": "step2" },
-        { "text": "Nhảy vào bình luận chửi bới thậm tệ nhóm bạn kia để bênh vực Vy.", "nextNode": "fail_aggressive" }
-      ]
-    },
-    "step2": {
-      "text": "Nhóm bạn bắt nạt quay sang chế giễu bạn: ''Có mỗi thế cũng căng, đúng là mọt sách thích dạy đời!''. Vy thấy rất tủi thân và tuyệt vọng.",
-      "choices": [
-        { "text": "Thấy ngượng và sợ hãi nên im lặng rút lui khỏi cuộc trò chuyện.", "nextNode": "fail_retreat" },
-        { "text": "Báo cáo bài đăng vi phạm, nhắn tin riêng động viên Vy và báo cáo sự việc cho cô giáo chủ nhiệm.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Hôm sau, cô giáo gặp nhóm bạn kia và xử lý kỷ luật nghiêm túc. Vy gửi lời cảm ơn bạn vì đã dũng cảm bảo vệ Vy. Bạn muốn cùng Vy lan tỏa văn hóa mạng tích cực trong lớp.",
-      "choices": [
-        { "text": "Rủ cả lớp cùng lập chiến dịch đăng status chia sẻ các bài vẽ, lời chúc tử tế, tag tên nhau để đẩy lùi drama.", "nextNode": "success_end" },
-        { "text": "Cùng Vy lập group chat mới loại bỏ nhóm bắt nạt kia ra để nói xấu trả đũa họ.", "nextNode": "fail_revenge" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Xuất sắc! Bạn đã thực hành vai trò của một công dân số văn minh, dũng cảm lên tiếng đẩy lùi bạo lực mạng và gieo hạt mầm tử tế.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_silent": {
-      "text": "❌ Sai rồi! Im lặng đứng nhìn chính là hành vi gián tiếp dung túng cho bắt nạt trực tuyến và cô lập nạn nhân.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_aggressive": {
-      "text": "❌ Sai rồi! Dùng bạo lực ngôn từ đối đầu với bạo lực mạng chỉ khiến xung đột leo thang và biến chính bạn thành kẻ bắt nạt.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_retreat": {
-      "text": "❌ Sai rồi! Bỏ cuộc giữa chừng dưới áp lực chọc ghẹo của nhóm bắt nạt sẽ làm nạn nhân càng cảm thấy cô đơn, bất lực.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_revenge": {
-      "text": "❌ Sai rồi! Việc lập nhóm nói xấu trả đũa không xây dựng được văn hóa số lành mạnh mà tiếp tục duy trì vòng lặp bắt nạt độc hại.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1271', '215', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Trở thành người bảo vệ Upstander",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Trong group chat chung của lớp học, một nhóm bạn đang đăng ảnh dìm chế giễu cân nặng và ngoại hình của Vy bằng những lời lẽ rất thô lỗ và độc ác. Vy nhắn tin khóc lóc cầu xin mọi người dừng lại nhưng nhóm bạn vẫn tiếp tục chế ảnh cười cợt.",
+
+      "choices": [
+
+        { "text": "Im lặng lờ đi vì sợ lên tiếng sẽ bị cả nhóm quay sang bắt nạt lây.", "nextNode": "fail_silent" },
+
+        { "text": "Chủ động nhắn tin vào group lớp yêu cầu mọi người dừng lại một cách lịch sự nhưng kiên quyết.", "nextNode": "step2" },
+
+        { "text": "Nhảy vào bình luận chửi bới thậm tệ nhóm bạn kia để bênh vực Vy.", "nextNode": "fail_aggressive" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Nhóm bạn bắt nạt quay sang chế giễu bạn: ''Có mỗi thế cũng căng, đúng là mọt sách thích dạy đời!''. Vy thấy rất tủi thân và tuyệt vọng.",
+
+      "choices": [
+
+        { "text": "Thấy ngượng và sợ hãi nên im lặng rút lui khỏi cuộc trò chuyện.", "nextNode": "fail_retreat" },
+
+        { "text": "Báo cáo bài đăng vi phạm, nhắn tin riêng động viên Vy và báo cáo sự việc cho cô giáo chủ nhiệm.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Hôm sau, cô giáo gặp nhóm bạn kia và xử lý kỷ luật nghiêm túc. Vy gửi lời cảm ơn bạn vì đã dũng cảm bảo vệ Vy. Bạn muốn cùng Vy lan tỏa văn hóa mạng tích cực trong lớp.",
+
+      "choices": [
+
+        { "text": "Rủ cả lớp cùng lập chiến dịch đăng status chia sẻ các bài vẽ, lời chúc tử tế, tag tên nhau để đẩy lùi drama.", "nextNode": "success_end" },
+
+        { "text": "Cùng Vy lập group chat mới loại bỏ nhóm bắt nạt kia ra để nói xấu trả đũa họ.", "nextNode": "fail_revenge" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Xuất sắc! Bạn đã thực hành vai trò của một công dân số văn minh, dũng cảm lên tiếng đẩy lùi bạo lực mạng và gieo hạt mầm tử tế.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_silent": {
+
+      "text": "❌ Sai rồi! Im lặng đứng nhìn chính là hành vi gián tiếp dung túng cho bắt nạt trực tuyến và cô lập nạn nhân.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_aggressive": {
+
+      "text": "❌ Sai rồi! Dùng bạo lực ngôn từ đối đầu với bạo lực mạng chỉ khiến xung đột leo thang và biến chính bạn thành kẻ bắt nạt.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_retreat": {
+
+      "text": "❌ Sai rồi! Bỏ cuộc giữa chừng dưới áp lực chọc ghẹo của nhóm bắt nạt sẽ làm nạn nhân càng cảm thấy cô đơn, bất lực.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_revenge": {
+
+      "text": "❌ Sai rồi! Việc lập nhóm nói xấu trả đũa không xây dựng được văn hóa số lành mạnh mà tiếp tục duy trì vòng lặp bắt nạt độc hại.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1272', '215', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi ứng xử số:",
-  "leftBox": { "title": "Gieo hạt mầm tử tế" },
-  "rightBox": { "title": "Gieo mầm độc hại" },
-  "items": [
-    { "text": "Thả tim và bình luận khen ngợi nỗ lực vẽ tranh của bạn cùng lớp", "correctBox": "left" },
-    { "text": "Móc mỉa, bình phẩm thô lỗ về ngoại hình của người khác dưới bài viết", "correctBox": "right" },
-    { "text": "Chia sẻ bài viết kêu gọi quyên góp từ thiện có kiểm chứng rõ ràng", "correctBox": "left" },
-    { "text": "Spam bình luận tục tĩu vào fanpage trường học để câu view", "correctBox": "right" },
-    { "text": "Nhắn tin hỏi han, động viên khi thấy bạn bè đăng status buồn bã", "correctBox": "left" }
-  ]
+('1272', '215', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại hành vi ứng xử số:",
+
+  "leftBox": { "title": "Gieo hạt mầm tử tế" },
+
+  "rightBox": { "title": "Gieo mầm độc hại" },
+
+  "items": [
+
+    { "text": "Thả tim và bình luận khen ngợi nỗ lực vẽ tranh của bạn cùng lớp", "correctBox": "left" },
+
+    { "text": "Móc mỉa, bình phẩm thô lỗ về ngoại hình của người khác dưới bài viết", "correctBox": "right" },
+
+    { "text": "Chia sẻ bài viết kêu gọi quyên góp từ thiện có kiểm chứng rõ ràng", "correctBox": "left" },
+
+    { "text": "Spam bình luận tục tĩu vào fanpage trường học để câu view", "correctBox": "right" },
+
+    { "text": "Nhắn tin hỏi han, động viên khi thấy bạn bè đăng status buồn bã", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1273', '215', 'matching', '{
-  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa công dân số sau:",
-  "pairs": [
-    { "left": "Bắt nạt trực tuyến", "right": "Hành vi lặp đi lặp lại nhằm trêu chọc, đe dọa hoặc làm nhục người khác trên mạng." },
-    { "left": "Người đứng xem (Bystander)", "right": "Người chứng kiến bạo lực mạng nhưng chọn cách im lặng hoặc hùa theo." },
-    { "left": "Người bảo vệ (Upstander)", "right": "Người dũng cảm lên tiếng bảo vệ nạn nhân và báo cáo hành vi bắt nạt." },
-    { "left": "Văn hóa số lành mạnh", "right": "Lan tỏa những vibes tích cực, lời nhắn tử tế và hỗ trợ lẫn nhau trực tuyến." }
-  ]
+('1273', '215', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa ranh giới và định nghĩa công dân số sau:",
+
+  "pairs": [
+
+    { "left": "Bắt nạt trực tuyến", "right": "Hành vi lặp đi lặp lại nhằm trêu chọc, đe dọa hoặc làm nhục người khác trên mạng." },
+
+    { "left": "Người đứng xem (Bystander)", "right": "Người chứng kiến bạo lực mạng nhưng chọn cách im lặng hoặc hùa theo." },
+
+    { "left": "Người bảo vệ (Upstander)", "right": "Người dũng cảm lên tiếng bảo vệ nạn nhân và báo cáo hành vi bắt nạt." },
+
+    { "left": "Văn hóa số lành mạnh", "right": "Lan tỏa những vibes tích cực, lời nhắn tử tế và hỗ trợ lẫn nhau trực tuyến." }
+
+  ]
+
 }', '4', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1274', '215', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa công dân số:",
-  "sentence": "Một công dân số văn minh sẽ không chọn cách làm [blank1] đứng nhìn khi thấy bạn bè bị [blank2] trên mạng. Hãy chủ động [blank3] bài viết vi phạm và lan tỏa sự [blank4] trực tuyến.",
-  "blanks": {
-    "blank1": { "correct": "người đứng xem", "placeholder": "..." },
-    "blank2": { "correct": "bắt nạt", "placeholder": "..." },
-    "blank3": { "correct": "báo cáo", "placeholder": "..." },
-    "blank4": { "correct": "tử tế", "placeholder": "..." }
-  },
-  "words": ["người đứng xem", "bắt nạt", "báo cáo", "tử tế", "hùa theo", "im lặng", "người bảo vệ", "đồng ý"]
+('1274', '215', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa công dân số:",
+
+  "sentence": "Một công dân số văn minh sẽ không chọn cách làm [blank1] đứng nhìn khi thấy bạn bè bị [blank2] trên mạng. Hãy chủ động [blank3] bài viết vi phạm và lan tỏa sự [blank4] trực tuyến.",
+
+  "blanks": {
+
+    "blank1": { "correct": "người đứng xem", "placeholder": "..." },
+
+    "blank2": { "correct": "bắt nạt", "placeholder": "..." },
+
+    "blank3": { "correct": "báo cáo", "placeholder": "..." },
+
+    "blank4": { "correct": "tử tế", "placeholder": "..." }
+
+  },
+
+  "words": ["người đứng xem", "bắt nạt", "báo cáo", "tử tế", "hùa theo", "im lặng", "người bảo vệ", "đồng ý"]
+
 }', '5', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
-('1275', '215', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bạn chứng kiến một bạn học cùng lớp bị một nhóm học sinh trường khác đăng bài xúc phạm chế giễu danh dự công khai trên Facebook, hành động nào sau đây thể hiện bạn là một Upstander văn minh?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Chia sẻ bài viết đó về trang cá nhân của mình để mọi người cùng xem.", "correct": false, "emoji": "😐" },
-    { "text": "Nhắn tin riêng động viên bạn học, chụp bằng chứng và báo ngay cho giáo viên hoặc tổng đài 111 để can thiệp.", "correct": true, "emoji": "💚" },
-    { "text": "Nhảy vào phần bình luận thách thức, cãi nhau tay đôi với nhóm bắt nạt.", "correct": false, "emoji": "🛑" },
-    { "text": "Lờ đi coi như không biết vì không phải việc của mình.", "correct": false, "emoji": "🥺" }
-  ]
+('1275', '215', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bạn chứng kiến một bạn học cùng lớp bị một nhóm học sinh trường khác đăng bài xúc phạm chế giễu danh dự công khai trên Facebook, hành động nào sau đây thể hiện bạn là một Upstander văn minh?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Chia sẻ bài viết đó về trang cá nhân của mình để mọi người cùng xem.", "correct": false, "emoji": "😐" },
+
+    { "text": "Nhắn tin riêng động viên bạn học, chụp bằng chứng và báo ngay cho giáo viên hoặc tổng đài 111 để can thiệp.", "correct": true, "emoji": "💚" },
+
+    { "text": "Nhảy vào phần bình luận thách thức, cãi nhau tay đôi với nhóm bắt nạt.", "correct": false, "emoji": "🛑" },
+
+    { "text": "Lờ đi coi như không biết vì không phải việc của mình.", "correct": false, "emoji": "🥺" }
+
+  ]
+
 }', '6', '2026-06-12 00:41:37', '2026-06-12 00:41:37'),
 ('1276', '216', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Ủa, Sao Dạo Này Tâm Trạng Bão Bùng Quá?''! Bạn có 3 mạng để đón nhận cảm xúc và làm hòa với ngày low-energy."}', '1', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1277', '216', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Đón nhận cảm xúc và làm hòa với ngày low-energy",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Vy đi học về trong trạng thái mệt mỏi, uể oải rã rời (low-energy day) sau một tuần thi cử căng thẳng. Vừa bước chân vào nhà, mẹ Vy đã cằn nhằn: ''Sao đi học về không dọn ngay phòng đi, bừa bộn như cái ổ gà!''. Vy thấy lồng ngực nghẹn lại, cơn giận dữ và bất bình bỗng dưng dâng lên cuồn cuộn.",
-      "choices": [
-        { "text": "Nổi đóa, hét lên với mẹ: ''Con mệt lắm rồi, mẹ suốt ngày chỉ biết cằn nhằn thôi!'' rồi chạy vào phòng đóng sập cửa.", "nextNode": "fail_explode" },
-        { "text": "Dừng lại thở sâu 3 giây để hạ nhiệt hạch hạnh nhân, nói nhẹ nhàng: ''Mẹ ơi, hôm nay con đi học về mệt quá. Mẹ cho con nằm nghỉ 30 phút rồi con dậy dọn phòng sạch sẽ nha mẹ!''.", "nextNode": "step2" },
-        { "text": "Cố kìm nén cơn giận, lẳng lặng đi dọn phòng ngay lập tức với thái độ ấm ức, vừa dọn vừa khóc vì tủi thân.", "nextNode": "fail_suppress" }
-      ]
-    },
-    "step2": {
-      "text": "Mẹ Vy lắng nghe giọng nói bình tĩnh của bạn, liền dịu giọng xuống và đồng ý: ''Ừ, thế vào nghỉ ngơi đi con''. Vy vào phòng nằm nghỉ, nhưng trong lòng vẫn còn những suy nghĩ ngổn ngang, bứt rứt vì bài kiểm tra tiếng Anh đạt điểm không như ý.",
-      "choices": [
-        { "text": "Mở điện thoại lướt mạng xã hội liên tục để trốn tránh cảm giác khó chịu và xem các bạn khác có đăng bài khoe điểm không.", "nextNode": "fail_avoid" },
-        { "text": "Lấy một cuốn sổ nhỏ, viết tự do tất cả những lo lắng, ấm ức trong đầu ra trang giấy mà không cần câu cú hoàn chỉnh (journaling).", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau khi viết nhật ký, Vy thấy đầu óc nhẹ nhõm hẳn. Tuy nhiên, Vy tự hỏi liệu ngày hôm nay năng lượng thấp và buồn bã vô cớ như vậy có phải là mình đang trở nên yếu đuối và tệ hại đi không?",
-      "choices": [
-        { "text": "Tự nhủ: ''Một ngày low-energy là tín hiệu cơ thể cần sạc pin. Cảm xúc đi xuống cũng bình thường, mình không cần phải luôn hoàn hảo''.", "nextNode": "success_end" },
-        { "text": "Tự trách: ''Chắc chắn do mình lười biếng và kém cỏi hơn các bạn nên mới tụt mood thế này, phải cố vui lên mới được!''.", "nextNode": "fail_self_blame" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Tuyệt vời! Bạn đã gọi tên cảm xúc thành công, biết cách sạc lại năng lượng cho ngày low-energy và trút bỏ overthinking lành mạnh qua trang viết.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_explode": {
-      "text": "❌ Chưa đúng! Cơn giận bộc phát khiến bạn mất kiểm soát, làm tổn thương mẹ và để lại cảm giác tội lỗi, dằn vặt sau đó.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_suppress": {
-      "text": "❌ Chưa đúng! Đè nén cảm xúc khó chịu và ép bản thân làm việc khi kiệt sức chỉ khiến quả bóng cảm xúc tiêu cực phình to và dễ nổ tung sau đó.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_avoid": {
-      "text": "❌ Sai rồi! Trốn tránh bằng mạng xã hội chỉ mang lại sự xao nhãng tạm thời, nhưng việc so sánh điểm số trên mạng lại dễ kích hoạt overthinking sâu sắc hơn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_self_blame": {
-      "text": "❌ Sai rồi! Gán nhãn toxic cho nỗi buồn và ép mình luôn tích cực chỉ làm gia tăng sự căng thẳng và từ chối nhu cầu tự nhiên của cơ thể.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1277', '216', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Đón nhận cảm xúc và làm hòa với ngày low-energy",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Vy đi học về trong trạng thái mệt mỏi, uể oải rã rời (low-energy day) sau một tuần thi cử căng thẳng. Vừa bước chân vào nhà, mẹ Vy đã cằn nhằn: ''Sao đi học về không dọn ngay phòng đi, bừa bộn như cái ổ gà!''. Vy thấy lồng ngực nghẹn lại, cơn giận dữ và bất bình bỗng dưng dâng lên cuồn cuộn.",
+
+      "choices": [
+
+        { "text": "Nổi đóa, hét lên với mẹ: ''Con mệt lắm rồi, mẹ suốt ngày chỉ biết cằn nhằn thôi!'' rồi chạy vào phòng đóng sập cửa.", "nextNode": "fail_explode" },
+
+        { "text": "Dừng lại thở sâu 3 giây để hạ nhiệt hạch hạnh nhân, nói nhẹ nhàng: ''Mẹ ơi, hôm nay con đi học về mệt quá. Mẹ cho con nằm nghỉ 30 phút rồi con dậy dọn phòng sạch sẽ nha mẹ!''.", "nextNode": "step2" },
+
+        { "text": "Cố kìm nén cơn giận, lẳng lặng đi dọn phòng ngay lập tức với thái độ ấm ức, vừa dọn vừa khóc vì tủi thân.", "nextNode": "fail_suppress" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Mẹ Vy lắng nghe giọng nói bình tĩnh của bạn, liền dịu giọng xuống và đồng ý: ''Ừ, thế vào nghỉ ngơi đi con''. Vy vào phòng nằm nghỉ, nhưng trong lòng vẫn còn những suy nghĩ ngổn ngang, bứt rứt vì bài kiểm tra tiếng Anh đạt điểm không như ý.",
+
+      "choices": [
+
+        { "text": "Mở điện thoại lướt mạng xã hội liên tục để trốn tránh cảm giác khó chịu và xem các bạn khác có đăng bài khoe điểm không.", "nextNode": "fail_avoid" },
+
+        { "text": "Lấy một cuốn sổ nhỏ, viết tự do tất cả những lo lắng, ấm ức trong đầu ra trang giấy mà không cần câu cú hoàn chỉnh (journaling).", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau khi viết nhật ký, Vy thấy đầu óc nhẹ nhõm hẳn. Tuy nhiên, Vy tự hỏi liệu ngày hôm nay năng lượng thấp và buồn bã vô cớ như vậy có phải là mình đang trở nên yếu đuối và tệ hại đi không?",
+
+      "choices": [
+
+        { "text": "Tự nhủ: ''Một ngày low-energy là tín hiệu cơ thể cần sạc pin. Cảm xúc đi xuống cũng bình thường, mình không cần phải luôn hoàn hảo''.", "nextNode": "success_end" },
+
+        { "text": "Tự trách: ''Chắc chắn do mình lười biếng và kém cỏi hơn các bạn nên mới tụt mood thế này, phải cố vui lên mới được!''.", "nextNode": "fail_self_blame" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Tuyệt vời! Bạn đã gọi tên cảm xúc thành công, biết cách sạc lại năng lượng cho ngày low-energy và trút bỏ overthinking lành mạnh qua trang viết.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_explode": {
+
+      "text": "❌ Chưa đúng! Cơn giận bộc phát khiến bạn mất kiểm soát, làm tổn thương mẹ và để lại cảm giác tội lỗi, dằn vặt sau đó.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_suppress": {
+
+      "text": "❌ Chưa đúng! Đè nén cảm xúc khó chịu và ép bản thân làm việc khi kiệt sức chỉ khiến quả bóng cảm xúc tiêu cực phình to và dễ nổ tung sau đó.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_avoid": {
+
+      "text": "❌ Sai rồi! Trốn tránh bằng mạng xã hội chỉ mang lại sự xao nhãng tạm thời, nhưng việc so sánh điểm số trên mạng lại dễ kích hoạt overthinking sâu sắc hơn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_self_blame": {
+
+      "text": "❌ Sai rồi! Gán nhãn toxic cho nỗi buồn và ép mình luôn tích cực chỉ làm gia tăng sự căng thẳng và từ chối nhu cầu tự nhiên của cơ thể.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1278', '216', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các phản ứng với cảm xúc tiêu cực:",
-  "leftBox": { "title": "Đón nhận cảm xúc lành mạnh" },
-  "rightBox": { "title": "Chối bỏ, đè nén hoặc trút giận" },
-  "items": [
-    { "text": "Cho phép bản thân khóc và buồn khi gặp thất bại", "correctBox": "left" },
-    { "text": "Cố tỏ ra vui cười, giả vờ ổn để người khác không thấy mình yếu đuối", "correctBox": "right" },
-    { "text": "Tự viết nhật ký trút hết nỗi tức giận ra giấy rồi xé bỏ", "correctBox": "left" },
-    { "text": "Cáu gắt và quát mắng em nhỏ để trút bỏ sự bực bội trong lòng", "correctBox": "right" },
-    { "text": "Tự nhủ: Cảm xúc này là bình thường và nó sẽ trôi qua sau khi mình nghỉ ngơi", "correctBox": "left" }
-  ]
+('1278', '216', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các phản ứng với cảm xúc tiêu cực:",
+
+  "leftBox": { "title": "Đón nhận cảm xúc lành mạnh" },
+
+  "rightBox": { "title": "Chối bỏ, đè nén hoặc trút giận" },
+
+  "items": [
+
+    { "text": "Cho phép bản thân khóc và buồn khi gặp thất bại", "correctBox": "left" },
+
+    { "text": "Cố tỏ ra vui cười, giả vờ ổn để người khác không thấy mình yếu đuối", "correctBox": "right" },
+
+    { "text": "Tự viết nhật ký trút hết nỗi tức giận ra giấy rồi xé bỏ", "correctBox": "left" },
+
+    { "text": "Cáu gắt và quát mắng em nhỏ để trút bỏ sự bực bội trong lòng", "correctBox": "right" },
+
+    { "text": "Tự nhủ: Cảm xúc này là bình thường và nó sẽ trôi qua sau khi mình nghỉ ngơi", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1279', '216', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm cảm xúc dậy thì và định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Hormone tuổi dậy thì", "right": "Chất hóa học tăng vọt kích hoạt cảm xúc thất thường như biểu đồ hình sin." },
-    { "left": "Hạch hạnh nhân - Amygdala", "right": "Vùng não kiểm soát cảm xúc, hoạt động cực nhạy bén ở tuổi teen." },
-    { "left": "Nhật ký tự do", "right": "Nơi trút bầu tâm sự, viết ra mọi suy nghĩ ngổn ngang để dọn dẹp bộ não." },
-    { "left": "Low-energy days", "right": "Những ngày năng lượng thấp, cơ thể phát tín hiệu cần được nghỉ ngơi sạc pin." }
-  ]
+('1279', '216', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm cảm xúc dậy thì và định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Hormone tuổi dậy thì", "right": "Chất hóa học tăng vọt kích hoạt cảm xúc thất thường như biểu đồ hình sin." },
+
+    { "left": "Hạch hạnh nhân - Amygdala", "right": "Vùng não kiểm soát cảm xúc, hoạt động cực nhạy bén ở tuổi teen." },
+
+    { "left": "Nhật ký tự do", "right": "Nơi trút bầu tâm sự, viết ra mọi suy nghĩ ngổn ngang để dọn dẹp bộ não." },
+
+    { "left": "Low-energy days", "right": "Những ngày năng lượng thấp, cơ thể phát tín hiệu cần được nghỉ ngơi sạc pin." }
+
+  ]
+
 }', '4', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1280', '216', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về cách làm bạn với cảm xúc:",
-  "sentence": "Ở tuổi dậy thì, các [blank1] tăng vọt kích hoạt vùng [blank2] làm bạn nhạy cảm hơn. Khi gặp ngày ít năng lượng, đừng gán nhãn [blank3] cho nỗi buồn, hãy viết [blank4] để giải tỏa overthinking.",
-  "blanks": {
-    "blank1": { "correct": "hormone", "placeholder": "..." },
-    "blank2": { "correct": "hạch hạnh nhân", "placeholder": "..." },
-    "blank3": { "correct": "toxic", "placeholder": "..." },
-    "blank4": { "correct": "nhật ký", "placeholder": "..." }
-  },
-  "words": ["hormone", "hạch hạnh nhân", "toxic", "nhật ký", "lười biếng", "bất trị", "game", "tuyệt vọng"]
+('1280', '216', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về cách làm bạn với cảm xúc:",
+
+  "sentence": "Ở tuổi dậy thì, các [blank1] tăng vọt kích hoạt vùng [blank2] làm bạn nhạy cảm hơn. Khi gặp ngày ít năng lượng, đừng gán nhãn [blank3] cho nỗi buồn, hãy viết [blank4] để giải tỏa overthinking.",
+
+  "blanks": {
+
+    "blank1": { "correct": "hormone", "placeholder": "..." },
+
+    "blank2": { "correct": "hạch hạnh nhân", "placeholder": "..." },
+
+    "blank3": { "correct": "toxic", "placeholder": "..." },
+
+    "blank4": { "correct": "nhật ký", "placeholder": "..." }
+
+  },
+
+  "words": ["hormone", "hạch hạnh nhân", "toxic", "nhật ký", "lười biếng", "bất trị", "game", "tuyệt vọng"]
+
 }', '5', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1281', '216', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao việc gọi tên chính xác cảm xúc (ví dụ: ''tớ đang bất an'', ''tớ đang thất vọng'') lại giúp bạn bình tĩnh hơn?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì gọi tên cảm xúc sẽ giúp bạn chứng tỏ mình là người am hiểu tâm lý học.", "correct": false, "emoji": "😐" },
-    { "text": "Vì nó gửi tín hiệu giúp não bộ (vùng vỏ não trước trán) kích hoạt khả năng kiểm soát và xoa dịu hạch hạnh nhân ngay lập tức.", "correct": true, "emoji": "💚" },
-    { "text": "Vì nó làm cho cảm xúc tiêu cực biến mất vĩnh viễn không bao giờ quay lại.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì khi nói ra, mọi người xung quanh sẽ lập tức làm theo ý bạn.", "correct": false, "emoji": "🛑" }
-  ]
+('1281', '216', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao việc gọi tên chính xác cảm xúc (ví dụ: ''tớ đang bất an'', ''tớ đang thất vọng'') lại giúp bạn bình tĩnh hơn?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì gọi tên cảm xúc sẽ giúp bạn chứng tỏ mình là người am hiểu tâm lý học.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì nó gửi tín hiệu giúp não bộ (vùng vỏ não trước trán) kích hoạt khả năng kiểm soát và xoa dịu hạch hạnh nhân ngay lập tức.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì nó làm cho cảm xúc tiêu cực biến mất vĩnh viễn không bao giờ quay lại.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì khi nói ra, mọi người xung quanh sẽ lập tức làm theo ý bạn.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
 ('1282', '217', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Chữa Lành Tự Ti: Bạn Có Giá Trị Hơn Bạn Tưởng''! Bạn có 3 mạng để vượt qua bẫy so sánh và xây dựng sự tự tin."}', '1', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1283', '217', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Vượt qua bẫy tự ti",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn nhận kết quả kiểm tra Toán giữa kỳ được 3 điểm, trong khi bạn thân ngồi cạnh đạt điểm 9 tuyệt đối. Cảm giác xấu hổ, thất vọng và tự ti dâng tràn. Bạn bắt đầu nghi ngờ năng lực học tập của chính mình.",
-      "choices": [
-        { "text": "Tự dằn vặt mình: ''Mình là kẻ dốt nát bẩm sinh, học mấy cũng vô dụng thôi!'' rồi ném bài kiểm tra vào góc bàn.", "nextNode": "fail_self_blame" },
-        { "text": "Nhìn nhận bài thi như một phản hồi (feedback), chúc mừng bạn thân và tự nhủ: ''Lần này mình làm chưa tốt phần hình học, mình sẽ nhờ bạn chỉ bài giúp''.", "nextNode": "step2" },
-        { "text": "Tỏ vẻ không quan tâm, nói mỉa mai bạn: ''Học giỏi thế sau này đi làm tổng thống à?'' rồi cộc lốc im lặng.", "nextNode": "fail_sarcasm" }
-      ]
-    },
-    "step2": {
-      "text": "Tối về nhà, bố mẹ lướt xem nhóm Zalo lớp thấy danh sách điểm số và lập tức so sánh: ''Con nhà người ta học hành giỏi giang thế, sao con chỉ được 3 điểm?''. Cảm giác nghẹn ngực quay lại.",
-      "choices": [
-        { "text": "Cãi nhau tay đôi với bố mẹ: ''Thế bố mẹ đi mà nhận bạn đó làm con!'' rồi đóng cửa bỏ bữa tối.", "nextNode": "fail_clash" },
-        { "text": "Lắng nghe với lòng tự trắc ẩn, giải thích lịch sự: ''Con xin lỗi bố mẹ. Bài này con ôn tập chưa kỹ, con đã nhận ra lỗi sai và đang nhờ bạn kèm thêm để thi cuối kỳ tốt hơn ạ''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Vy lướt mạng xã hội Instagram và thấy một người bạn khác liên tục đăng ảnh nhận học bổng tiếng Anh và flexing cuộc sống du lịch sang chảnh. Sự so sánh xã hội trỗi dậy làm bạn thấy tự ti.",
-      "choices": [
-        { "text": "Tự ti về ngoại hình và hoàn cảnh của mình, quyết định nhịn ăn hoặc trốn tránh không muốn đi học.", "nextNode": "fail_avoidance" },
-        { "text": "Nhận thức rằng mạng xã hội chỉ là cuốn phim nổi bật của họ, tắt ứng dụng điện thoại và tập trung vào các mục tiêu nhỏ của bản thân.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Xuất sắc! Bạn đã xây dựng được lòng tự trắc ẩn vững vàng, tách biệt điểm số khỏi giá trị bản thân và vượt qua bẫy so sánh xã hội thông minh.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_self_blame": {
-      "text": "❌ Chưa đúng! Tự dằn vặt bản thân làm triệt tiêu động lực học tập, khiến bạn lún sâu vào chiếc bẫy tự ti độc hại.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_sarcasm": {
-      "text": "❌ Chưa đúng! Mỉa mai thành công của bạn bè chỉ thể hiện sự ghen tị ngầm và làm tổn thương mối quan hệ tốt đẹp.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_clash": {
-      "text": "❌ Sai rồi! Cãi cọ gay gắt với bố mẹ chỉ làm tăng khoảng cách gia đình và khiến tâm trạng của bạn tệ hơn rất nhiều.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_avoidance": {
-      "text": "❌ Sai rồi! Nhịn ăn hoặc bỏ học trốn tránh không giải quyết được vấn đề thực tế, mà còn gây hại nghiêm trọng cho sức khỏe của bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1283', '217', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Vượt qua bẫy tự ti",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn nhận kết quả kiểm tra Toán giữa kỳ được 3 điểm, trong khi bạn thân ngồi cạnh đạt điểm 9 tuyệt đối. Cảm giác xấu hổ, thất vọng và tự ti dâng tràn. Bạn bắt đầu nghi ngờ năng lực học tập của chính mình.",
+
+      "choices": [
+
+        { "text": "Tự dằn vặt mình: ''Mình là kẻ dốt nát bẩm sinh, học mấy cũng vô dụng thôi!'' rồi ném bài kiểm tra vào góc bàn.", "nextNode": "fail_self_blame" },
+
+        { "text": "Nhìn nhận bài thi như một phản hồi (feedback), chúc mừng bạn thân và tự nhủ: ''Lần này mình làm chưa tốt phần hình học, mình sẽ nhờ bạn chỉ bài giúp''.", "nextNode": "step2" },
+
+        { "text": "Tỏ vẻ không quan tâm, nói mỉa mai bạn: ''Học giỏi thế sau này đi làm tổng thống à?'' rồi cộc lốc im lặng.", "nextNode": "fail_sarcasm" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Tối về nhà, bố mẹ lướt xem nhóm Zalo lớp thấy danh sách điểm số và lập tức so sánh: ''Con nhà người ta học hành giỏi giang thế, sao con chỉ được 3 điểm?''. Cảm giác nghẹn ngực quay lại.",
+
+      "choices": [
+
+        { "text": "Cãi nhau tay đôi với bố mẹ: ''Thế bố mẹ đi mà nhận bạn đó làm con!'' rồi đóng cửa bỏ bữa tối.", "nextNode": "fail_clash" },
+
+        { "text": "Lắng nghe với lòng tự trắc ẩn, giải thích lịch sự: ''Con xin lỗi bố mẹ. Bài này con ôn tập chưa kỹ, con đã nhận ra lỗi sai và đang nhờ bạn kèm thêm để thi cuối kỳ tốt hơn ạ''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Vy lướt mạng xã hội Instagram và thấy một người bạn khác liên tục đăng ảnh nhận học bổng tiếng Anh và flexing cuộc sống du lịch sang chảnh. Sự so sánh xã hội trỗi dậy làm bạn thấy tự ti.",
+
+      "choices": [
+
+        { "text": "Tự ti về ngoại hình và hoàn cảnh của mình, quyết định nhịn ăn hoặc trốn tránh không muốn đi học.", "nextNode": "fail_avoidance" },
+
+        { "text": "Nhận thức rằng mạng xã hội chỉ là cuốn phim nổi bật của họ, tắt ứng dụng điện thoại và tập trung vào các mục tiêu nhỏ của bản thân.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Xuất sắc! Bạn đã xây dựng được lòng tự trắc ẩn vững vàng, tách biệt điểm số khỏi giá trị bản thân và vượt qua bẫy so sánh xã hội thông minh.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_self_blame": {
+
+      "text": "❌ Chưa đúng! Tự dằn vặt bản thân làm triệt tiêu động lực học tập, khiến bạn lún sâu vào chiếc bẫy tự ti độc hại.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_sarcasm": {
+
+      "text": "❌ Chưa đúng! Mỉa mai thành công của bạn bè chỉ thể hiện sự ghen tị ngầm và làm tổn thương mối quan hệ tốt đẹp.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_clash": {
+
+      "text": "❌ Sai rồi! Cãi cọ gay gắt với bố mẹ chỉ làm tăng khoảng cách gia đình và khiến tâm trạng của bạn tệ hơn rất nhiều.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_avoidance": {
+
+      "text": "❌ Sai rồi! Nhịn ăn hoặc bỏ học trốn tránh không giải quyết được vấn đề thực tế, mà còn gây hại nghiêm trọng cho sức khỏe của bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1284', '217', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ với bản thân:",
-  "leftBox": { "title": "Tự tin lành mạnh" },
-  "rightBox": { "title": "Tự ti / Cầu toàn thái quá" },
-  "items": [
-    { "text": "Chấp nhận bản thân có cả điểm mạnh và điểm yếu", "correctBox": "left" },
-    { "text": "Mất ngủ cả tuần chỉ vì nói vấp một câu trước lớp", "correctBox": "right" },
-    { "text": "Coi lỗi sai là cơ hội để học hỏi và rút kinh nghiệm", "correctBox": "left" },
-    { "text": "Nâng mình lên bằng cách dìm các bạn học kém hơn xuống", "correctBox": "right" },
-    { "text": "Chào mừng thành công của bạn bè mà không ghen tị", "correctBox": "left" }
-  ]
+('1284', '217', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ với bản thân:",
+
+  "leftBox": { "title": "Tự tin lành mạnh" },
+
+  "rightBox": { "title": "Tự ti / Cầu toàn thái quá" },
+
+  "items": [
+
+    { "text": "Chấp nhận bản thân có cả điểm mạnh và điểm yếu", "correctBox": "left" },
+
+    { "text": "Mất ngủ cả tuần chỉ vì nói vấp một câu trước lớp", "correctBox": "right" },
+
+    { "text": "Coi lỗi sai là cơ hội để học hỏi và rút kinh nghiệm", "correctBox": "left" },
+
+    { "text": "Nâng mình lên bằng cách dìm các bạn học kém hơn xuống", "correctBox": "right" },
+
+    { "text": "Chào mừng thành công của bạn bè mà không ghen tị", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:14:46', '2026-06-12 01:14:46');
 
-INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1285', '217', 'matching', '{
-  "instruction": "Ghép cặp từ khóa giá trị bản thân và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Tự tin thực sự", "right": "Chấp nhận bản thân, không cần lấn lướt hay so sánh với ai." },
-    { "left": "Lòng tự trắc ẩn", "right": "Trò chuyện bao dung với chính mình khi gặp thất bại hay sai lầm." },
-    { "left": "Bẫy so sánh", "right": "So sánh điểm yếu nhất của mình với điểm mạnh nhất của người khác." },
-    { "left": "Sự cầu toàn cực đoan", "right": "Ép buộc bản thân phải hoàn mỹ 100% trong mọi lĩnh vực." }
-  ]
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1285', '217', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa giá trị bản thân và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Tự tin thực sự", "right": "Chấp nhận bản thân, không cần lấn lướt hay so sánh với ai." },
+
+    { "left": "Lòng tự trắc ẩn", "right": "Trò chuyện bao dung với chính mình khi gặp thất bại hay sai lầm." },
+
+    { "left": "Bẫy so sánh", "right": "So sánh điểm yếu nhất của mình với điểm mạnh nhất của người khác." },
+
+    { "left": "Sự cầu toàn cực đoan", "right": "Ép buộc bản thân phải hoàn mỹ 100% trong mọi lĩnh vực." }
+
+  ]
+
 }', '4', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1286', '217', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa lòng tự trọng:",
-  "sentence": "Điểm số chỉ phản ánh năng lực ở một [blank1], không định nghĩa [blank2] con người bạn. Hãy dùng lời nói [blank3] để trò chuyện với bản thân và tránh chiếc bẫy [blank4] xã hội độc hại.",
-  "blanks": {
-    "blank1": { "correct": "thời điểm", "placeholder": "..." },
-    "blank2": { "correct": "giá trị", "placeholder": "..." },
-    "blank3": { "correct": "bao dung", "placeholder": "..." },
-    "blank4": { "correct": "so sánh", "placeholder": "..." }
-  },
-  "words": ["thời điểm", "giá trị", "bao dung", "so sánh", "hoàn hảo", "điểm số", "tự ti", "flexing"]
+('1286', '217', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa lòng tự trọng:",
+
+  "sentence": "Điểm số chỉ phản ánh năng lực ở một [blank1], không định nghĩa [blank2] con người bạn. Hãy dùng lời nói [blank3] để trò chuyện với bản thân và tránh chiếc bẫy [blank4] xã hội độc hại.",
+
+  "blanks": {
+
+    "blank1": { "correct": "thời điểm", "placeholder": "..." },
+
+    "blank2": { "correct": "giá trị", "placeholder": "..." },
+
+    "blank3": { "correct": "bao dung", "placeholder": "..." },
+
+    "blank4": { "correct": "so sánh", "placeholder": "..." }
+
+  },
+
+  "words": ["thời điểm", "giá trị", "bao dung", "so sánh", "hoàn hảo", "điểm số", "tự ti", "flexing"]
+
 }', '5', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1287', '217', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Mục đích thực chất đằng sau hành vi ''flexing'' (khoe khoang) quá đà trên mạng xã hội của một người thường là gì?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Họ thực sự quá hoàn hảo và không có bất kỳ nỗi lo lắng nào.", "correct": false, "emoji": "😐" },
-    { "text": "Họ muốn nhận được sự công nhận từ bên ngoài để khỏa lấp sự bất an, tự ti bên trong.", "correct": true, "emoji": "💚" },
-    { "text": "Họ đang muốn giúp đỡ bạn bè học tập tốt hơn.", "correct": false, "emoji": "🙁" },
-    { "text": "Họ thích thể hiện phong cách sống giản dị, khiêm tốn.", "correct": false, "emoji": "🛑" }
-  ]
+('1287', '217', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Mục đích thực chất đằng sau hành vi ''flexing'' (khoe khoang) quá đà trên mạng xã hội của một người thường là gì?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Họ thực sự quá hoàn hảo và không có bất kỳ nỗi lo lắng nào.", "correct": false, "emoji": "😐" },
+
+    { "text": "Họ muốn nhận được sự công nhận từ bên ngoài để khỏa lấp sự bất an, tự ti bên trong.", "correct": true, "emoji": "💚" },
+
+    { "text": "Họ đang muốn giúp đỡ bạn bè học tập tốt hơn.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Họ thích thể hiện phong cách sống giản dị, khiêm tốn.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
 ('1288', '218', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Hòa Giải Với Chiếc Body: Bạn Đẹp Theo Cách Riêng!''! Bạn có 3 mạng để tự tin ứng phó body shaming và trân trọng ngoại hình độc bản."}', '1', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1289', '218', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Tự tin ứng phó body shaming và yêu thương vóc dáng",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Đức đăng một bức ảnh chụp lúc chơi bóng rổ cùng lớp lên Facebook. Phía dưới phần bình luận, một bạn lớp bên cạnh viết: ''Trông như bộ xương di động/nhái bén ấy nhỉ, học bóng rổ làm gì cho tốn thời gian!''. Đức thấy mặt nóng bừng, lồng ngực thắt lại vì xấu hổ và tức giận.",
-      "choices": [
-        { "text": "Bình luận chửi bới lại bạn đó một cách gay gắt để xả giận: ''Nhìn lại gương đi xem mình có ra gì không mà nói người khác!''.", "nextNode": "fail_fight" },
-        { "text": "Chụp lại màn hình làm bằng chứng, sau đó ẩn hoặc xóa bình luận khiếm nhã kia đi để bảo vệ không gian cá nhân, tự nhủ: Mình chơi bóng rổ vì sức khỏe của mình chứ không phải để làm vừa mắt họ.", "nextNode": "step2" },
-        { "text": "U uất xóa luôn bức ảnh bóng rổ, quyết định không đi tập bóng rổ nữa vì sợ bị mọi người chê cười ngoại hình.", "nextNode": "fail_withdraw" }
-      ]
-    },
-    "step2": {
-      "text": "Mọi việc dần trôi qua, nhưng tuần sau đó, khi cả lớp tập trung ở hành lang, bạn đó lại tiếp tục trêu chọc trực tiếp trước mặt đông người: ''Kìa, bộ xương di động kìa!''. Mọi người xung quanh đổ dồn ánh mắt vào Đức.",
-      "choices": [
-        { "text": "Im lặng, cúi gục đầu đi chỗ khác, cố nén nước mắt để không ai thấy mình đang khóc.", "nextNode": "fail_silent" },
-        { "text": "Nhìn thẳng vào bạn đó, trả lời bình tĩnh và kiên định: ''Tớ tự hào vì cơ thể khỏe mạnh của tớ giúp tớ chạy nhanh và chơi bóng rổ tốt. Tớ mong cậu tôn trọng và không nhận xét ngoại hình của tớ nữa nhé!''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau khi Đức thiết lập ranh giới rõ ràng, bạn kia ngượng ngùng im lặng bỏ đi. Cuối ngày, Đức đứng trước gương và nhìn ngắm cơ thể gầy gò của mình, suy nghĩ về việc thay đổi vóc dáng.",
-      "choices": [
-        { "text": "Quyết định nhịn ăn sáng và uống sữa tăng cơ thần tốc không rõ nguồn gốc để đạt mục tiêu tăng cân nhanh nhất.", "nextNode": "fail_unhealthy" },
-        { "text": "Tập trung vào chế độ ăn uống đủ chất, tập luyện thể thao vừa sức theo nhịp độ tự nhiên của cơ thể để tăng sự dẻo dai.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Xuất sắc! Bạn đã bảo vệ bản thân thành công trước body shaming bằng ranh giới kiên định và trân trọng cơ thể theo cách lành mạnh nhất.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_fight": {
-      "text": "❌ Chưa đúng! Cãi vã gay gắt trên mạng chỉ tạo ra một cuộc khẩu chiến toxic, hạ thấp hình ảnh của chính bạn và không giải quyết được vấn đề.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_withdraw": {
-      "text": "❌ Chưa đúng! Bỏ cuộc vì lời chê bai của người khác là bạn đang nhượng bộ kẻ bắt nạt và từ bỏ sở thích lành mạnh giúp cơ thể khỏe mạnh.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_silent": {
-      "text": "❌ Sai rồi! Im lặng cam chịu không giúp thiết lập ranh giới, kẻ trêu chọc sẽ nghĩ bạn dễ bắt nạt và có thể tiếp tục hành vi body shaming này.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_unhealthy": {
-      "text": "❌ Sai rồi! Sử dụng các biện pháp tăng cơ/giảm cân cực đoan gây hại nghiêm trọng cho các cơ quan nội tạng và sự phát triển sinh học của tuổi dậy thì.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1289', '218', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Tự tin ứng phó body shaming và yêu thương vóc dáng",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Đức đăng một bức ảnh chụp lúc chơi bóng rổ cùng lớp lên Facebook. Phía dưới phần bình luận, một bạn lớp bên cạnh viết: ''Trông như bộ xương di động/nhái bén ấy nhỉ, học bóng rổ làm gì cho tốn thời gian!''. Đức thấy mặt nóng bừng, lồng ngực thắt lại vì xấu hổ và tức giận.",
+
+      "choices": [
+
+        { "text": "Bình luận chửi bới lại bạn đó một cách gay gắt để xả giận: ''Nhìn lại gương đi xem mình có ra gì không mà nói người khác!''.", "nextNode": "fail_fight" },
+
+        { "text": "Chụp lại màn hình làm bằng chứng, sau đó ẩn hoặc xóa bình luận khiếm nhã kia đi để bảo vệ không gian cá nhân, tự nhủ: Mình chơi bóng rổ vì sức khỏe của mình chứ không phải để làm vừa mắt họ.", "nextNode": "step2" },
+
+        { "text": "U uất xóa luôn bức ảnh bóng rổ, quyết định không đi tập bóng rổ nữa vì sợ bị mọi người chê cười ngoại hình.", "nextNode": "fail_withdraw" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Mọi việc dần trôi qua, nhưng tuần sau đó, khi cả lớp tập trung ở hành lang, bạn đó lại tiếp tục trêu chọc trực tiếp trước mặt đông người: ''Kìa, bộ xương di động kìa!''. Mọi người xung quanh đổ dồn ánh mắt vào Đức.",
+
+      "choices": [
+
+        { "text": "Im lặng, cúi gục đầu đi chỗ khác, cố nén nước mắt để không ai thấy mình đang khóc.", "nextNode": "fail_silent" },
+
+        { "text": "Nhìn thẳng vào bạn đó, trả lời bình tĩnh và kiên định: ''Tớ tự hào vì cơ thể khỏe mạnh của tớ giúp tớ chạy nhanh và chơi bóng rổ tốt. Tớ mong cậu tôn trọng và không nhận xét ngoại hình của tớ nữa nhé!''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau khi Đức thiết lập ranh giới rõ ràng, bạn kia ngượng ngùng im lặng bỏ đi. Cuối ngày, Đức đứng trước gương và nhìn ngắm cơ thể gầy gò của mình, suy nghĩ về việc thay đổi vóc dáng.",
+
+      "choices": [
+
+        { "text": "Quyết định nhịn ăn sáng và uống sữa tăng cơ thần tốc không rõ nguồn gốc để đạt mục tiêu tăng cân nhanh nhất.", "nextNode": "fail_unhealthy" },
+
+        { "text": "Tập trung vào chế độ ăn uống đủ chất, tập luyện thể thao vừa sức theo nhịp độ tự nhiên của cơ thể để tăng sự dẻo dai.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Xuất sắc! Bạn đã bảo vệ bản thân thành công trước body shaming bằng ranh giới kiên định và trân trọng cơ thể theo cách lành mạnh nhất.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_fight": {
+
+      "text": "❌ Chưa đúng! Cãi vã gay gắt trên mạng chỉ tạo ra một cuộc khẩu chiến toxic, hạ thấp hình ảnh của chính bạn và không giải quyết được vấn đề.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_withdraw": {
+
+      "text": "❌ Chưa đúng! Bỏ cuộc vì lời chê bai của người khác là bạn đang nhượng bộ kẻ bắt nạt và từ bỏ sở thích lành mạnh giúp cơ thể khỏe mạnh.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_silent": {
+
+      "text": "❌ Sai rồi! Im lặng cam chịu không giúp thiết lập ranh giới, kẻ trêu chọc sẽ nghĩ bạn dễ bắt nạt và có thể tiếp tục hành vi body shaming này.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_unhealthy": {
+
+      "text": "❌ Sai rồi! Sử dụng các biện pháp tăng cơ/giảm cân cực đoan gây hại nghiêm trọng cho các cơ quan nội tạng và sự phát triển sinh học của tuổi dậy thì.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1290', '218', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ đối với vóc dáng cơ thể:",
-  "leftBox": { "title": "Yêu thương cơ thể" },
-  "rightBox": { "title": "Ngược đãi hoặc phán xét" },
-  "items": [
-    { "text": "Uống đủ nước và vận động vừa sức giúp cơ thể dẻo dai", "correctBox": "left" },
-    { "text": "Nhịn ăn bỏ bữa để nhanh chóng có vòng eo con kiến", "correctBox": "right" },
-    { "text": "Tự nhủ: Chiếc mũi tẹt thừa hưởng từ bố mẹ là nét độc bản đáng yêu", "correctBox": "left" },
-    { "text": "Soi gương liên tục và dằn vặt bản thân vì không có cơ bắp vạm vỡ", "correctBox": "right" },
-    { "text": "Nhận xét khiếm nhã về cân nặng của bạn học dưới danh nghĩa đùa vui", "correctBox": "right" }
-  ]
+('1290', '218', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ đối với vóc dáng cơ thể:",
+
+  "leftBox": { "title": "Yêu thương cơ thể" },
+
+  "rightBox": { "title": "Ngược đãi hoặc phán xét" },
+
+  "items": [
+
+    { "text": "Uống đủ nước và vận động vừa sức giúp cơ thể dẻo dai", "correctBox": "left" },
+
+    { "text": "Nhịn ăn bỏ bữa để nhanh chóng có vòng eo con kiến", "correctBox": "right" },
+
+    { "text": "Tự nhủ: Chiếc mũi tẹt thừa hưởng từ bố mẹ là nét độc bản đáng yêu", "correctBox": "left" },
+
+    { "text": "Soi gương liên tục và dằn vặt bản thân vì không có cơ bắp vạm vỡ", "correctBox": "right" },
+
+    { "text": "Nhận xét khiếm nhã về cân nặng của bạn học dưới danh nghĩa đùa vui", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1291', '218', 'matching', '{
-  "instruction": "Ghép cặp từ khóa về ngoại hình và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Filter ảo ma", "right": "Hình ảnh chỉnh sửa kỹ thuật số tạo nên tiêu chuẩn sắc đẹp phi thực tế." },
-    { "left": "Body shaming", "right": "Hành vi chê bai, giễu cợt ngoại hình gây tổn thương tinh thần người khác." },
-    { "left": "Đa dạng vóc dáng", "right": "Sự thật sinh học rằng gen quyết định mỗi cơ thể có cấu trúc khác nhau." },
-    { "left": "Lòng biết ơn cơ thể", "right": "Trân trọng chức năng sinh học giữ cho ta sống khỏe mạnh 24/7." }
-  ]
+('1291', '218', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa về ngoại hình và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Filter ảo ma", "right": "Hình ảnh chỉnh sửa kỹ thuật số tạo nên tiêu chuẩn sắc đẹp phi thực tế." },
+
+    { "left": "Body shaming", "right": "Hành vi chê bai, giễu cợt ngoại hình gây tổn thương tinh thần người khác." },
+
+    { "left": "Đa dạng vóc dáng", "right": "Sự thật sinh học rằng gen quyết định mỗi cơ thể có cấu trúc khác nhau." },
+
+    { "left": "Lòng biết ơn cơ thể", "right": "Trân trọng chức năng sinh học giữ cho ta sống khỏe mạnh 24/7." }
+
+  ]
+
 }', '4', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1292', '218', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa yêu thương cơ thể:",
-  "sentence": "Mạng xã hội thường trưng bày những hình ảnh đã qua [blank1], hãy trân trọng cơ thể thực của mình. Khi bị [blank2] ngoại hình, hãy kiên định thiết lập [blank3] và tập trung nuôi dưỡng cơ thể [blank4] thay vì chạy theo khuôn mẫu.",
-  "blanks": {
-    "blank1": { "correct": "chỉnh sửa", "placeholder": "..." },
-    "blank2": { "correct": "chê bai", "placeholder": "..." },
-    "blank3": { "correct": "ranh giới", "placeholder": "..." },
-    "blank4": { "correct": "khỏe mạnh", "placeholder": "..." }
-  },
-  "words": ["chỉnh sửa", "chê bai", "ranh giới", "khỏe mạnh", "filter", "nhịn ăn", "chất lượng", "cụt ngủn"]
+('1292', '218', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa yêu thương cơ thể:",
+
+  "sentence": "Mạng xã hội thường trưng bày những hình ảnh đã qua [blank1], hãy trân trọng cơ thể thực của mình. Khi bị [blank2] ngoại hình, hãy kiên định thiết lập [blank3] và tập trung nuôi dưỡng cơ thể [blank4] thay vì chạy theo khuôn mẫu.",
+
+  "blanks": {
+
+    "blank1": { "correct": "chỉnh sửa", "placeholder": "..." },
+
+    "blank2": { "correct": "chê bai", "placeholder": "..." },
+
+    "blank3": { "correct": "ranh giới", "placeholder": "..." },
+
+    "blank4": { "correct": "khỏe mạnh", "placeholder": "..." }
+
+  },
+
+  "words": ["chỉnh sửa", "chê bai", "ranh giới", "khỏe mạnh", "filter", "nhịn ăn", "chất lượng", "cụt ngủn"]
+
 }', '5', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1293', '218', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao việc so sánh ngoại hình của bạn với các hot teen trên mạng xã hội lại không công bằng?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì họ ở thành phố lớn còn bạn ở nông thôn hoặc tỉnh lẻ.", "correct": false, "emoji": "😐" },
-    { "text": "Vì hình ảnh của họ đã được chọn lọc từ hàng trăm tấm, chỉnh sửa góc sáng, kéo chân và dùng filter ảo ma, khác xa thực tế.", "correct": true, "emoji": "💚" },
-    { "text": "Vì họ được trả tiền để chụp ảnh đẹp còn bạn thì không.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì cơ thể của họ được cấu tạo từ các tế bào sinh học đặc biệt hơn bạn.", "correct": false, "emoji": "🛑" }
-  ]
+('1293', '218', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao việc so sánh ngoại hình của bạn với các hot teen trên mạng xã hội lại không công bằng?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì họ ở thành phố lớn còn bạn ở nông thôn hoặc tỉnh lẻ.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì hình ảnh của họ đã được chọn lọc từ hàng trăm tấm, chỉnh sửa góc sáng, kéo chân và dùng filter ảo ma, khác xa thực tế.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì họ được trả tiền để chụp ảnh đẹp còn bạn thì không.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì cơ thể của họ được cấu tạo từ các tế bào sinh học đặc biệt hơn bạn.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
 ('1294', '219', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Khi Áp Lực Đè Nặng: Giải Cứu Bộ Não Quá Tải''! Bạn có 3 mạng để vượt qua stress thi cử và quản lý lo âu hiệu quả."}', '1', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1295', '219', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Giải cứu bộ não quá tải",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Tuần tới bạn có 3 bài thi học kỳ dồn dập. Bạn bắt đầu thấy đau bụng âm ỉ, mỏi vai gáy và tối nằm trằn trọc mãi không ngủ được. Sự lo lắng khổng lồ đè nặng khiến bạn không muốn chạm tay vào sách vở.",
-      "choices": [
-        { "text": "Mở game cày rank hoặc lướt TikTok suốt 5 tiếng liên tục để tạm quên đi đống bài tập cần học.", "nextNode": "fail_avoid" },
-        { "text": "Chấp nhận đây là stress thi cử, viết danh sách bài vở cần học, chia nhỏ nhiệm vụ và học theo phương pháp Pomodoro.", "nextNode": "step2" },
-        { "text": "Thức xuyên đêm đến 4h sáng nhồi nhét hết kiến thức và uống liên tiếp 2 lon nước tăng lực.", "nextNode": "fail_overwork" }
-      ]
-    },
-    "step2": {
-      "text": "Sáng ngày thi, vừa bước vào phòng thi, bạn thấy tim đập thình thịch, tay run rẩy, mồ hôi vã ra và đầu óc bỗng dưng trống rỗng, đóng băng hoàn toàn trước đề bài.",
-      "choices": [
-        { "text": "Hoảng loạn gục mặt xuống bàn tự trách mình học nhiều mà vẫn vô dụng.", "nextNode": "fail_freeze" },
-        { "text": "Nhắm mắt lại, đặt tay lên bụng, thực hiện 3 chu kỳ thở sâu 4-7-8 để làm chậm nhịp tim và sạc oxy cho não.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau khi thi xong, mặc dù bài thi làm khá tốt nhưng bạn vẫn thấy căng thẳng tích tụ. Bạn cần mở chiếc ''van xả stress'' để phục hồi năng lượng.",
-      "choices": [
-        { "text": "Ăn một lúc 3 gói mì cay và uống nước ngọt có ga cho bõ tức.", "nextNode": "fail_unhealthy_vent" },
-        { "text": "Đi tắm nước ấm, vận động nhẹ nhàng ngoài công viên hoặc nghe một bản nhạc nhẹ yêu thích để xả bớt áp suất.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã đối mặt với stress chủ động, bình tĩnh vượt qua khoảnh khắc đóng băng bằng kỹ thuật thở 4-7-8 và xả stress lành mạnh.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_avoid": {
-      "text": "❌ Chưa đúng! Lảng tránh thụ động bằng game chỉ mang lại cảm giác an tâm tạm thời, nhưng vấn đề vẫn còn nguyên và stress sẽ dội lại mạnh mẽ hơn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_overwork": {
-      "text": "❌ Chưa đúng! Thức trắng đêm nhồi nhét kết hợp lạm dụng nước tăng lực sẽ tàn phá thể chất, khiến bộ não dễ bị ''đóng băng'' khi thi.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_freeze": {
-      "text": "❌ Sai rồi! Hoảng loạn tinh thần chỉ làm gián đoạn hệ tư duy của não bộ. Bạn cần bài tập thở sâu vật lý để lập tức hạ nhiệt.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_unhealthy_vent": {
-      "text": "❌ Sai rồi! Xả stress bằng đồ ăn cay nóng, đồ ăn nhanh chỉ làm quá tải hệ tiêu hóa và không giải quyết được căng thẳng tinh thần.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1295', '219', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Giải cứu bộ não quá tải",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Tuần tới bạn có 3 bài thi học kỳ dồn dập. Bạn bắt đầu thấy đau bụng âm ỉ, mỏi vai gáy và tối nằm trằn trọc mãi không ngủ được. Sự lo lắng khổng lồ đè nặng khiến bạn không muốn chạm tay vào sách vở.",
+
+      "choices": [
+
+        { "text": "Mở game cày rank hoặc lướt TikTok suốt 5 tiếng liên tục để tạm quên đi đống bài tập cần học.", "nextNode": "fail_avoid" },
+
+        { "text": "Chấp nhận đây là stress thi cử, viết danh sách bài vở cần học, chia nhỏ nhiệm vụ và học theo phương pháp Pomodoro.", "nextNode": "step2" },
+
+        { "text": "Thức xuyên đêm đến 4h sáng nhồi nhét hết kiến thức và uống liên tiếp 2 lon nước tăng lực.", "nextNode": "fail_overwork" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Sáng ngày thi, vừa bước vào phòng thi, bạn thấy tim đập thình thịch, tay run rẩy, mồ hôi vã ra và đầu óc bỗng dưng trống rỗng, đóng băng hoàn toàn trước đề bài.",
+
+      "choices": [
+
+        { "text": "Hoảng loạn gục mặt xuống bàn tự trách mình học nhiều mà vẫn vô dụng.", "nextNode": "fail_freeze" },
+
+        { "text": "Nhắm mắt lại, đặt tay lên bụng, thực hiện 3 chu kỳ thở sâu 4-7-8 để làm chậm nhịp tim và sạc oxy cho não.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau khi thi xong, mặc dù bài thi làm khá tốt nhưng bạn vẫn thấy căng thẳng tích tụ. Bạn cần mở chiếc ''van xả stress'' để phục hồi năng lượng.",
+
+      "choices": [
+
+        { "text": "Ăn một lúc 3 gói mì cay và uống nước ngọt có ga cho bõ tức.", "nextNode": "fail_unhealthy_vent" },
+
+        { "text": "Đi tắm nước ấm, vận động nhẹ nhàng ngoài công viên hoặc nghe một bản nhạc nhẹ yêu thích để xả bớt áp suất.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã đối mặt với stress chủ động, bình tĩnh vượt qua khoảnh khắc đóng băng bằng kỹ thuật thở 4-7-8 và xả stress lành mạnh.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_avoid": {
+
+      "text": "❌ Chưa đúng! Lảng tránh thụ động bằng game chỉ mang lại cảm giác an tâm tạm thời, nhưng vấn đề vẫn còn nguyên và stress sẽ dội lại mạnh mẽ hơn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_overwork": {
+
+      "text": "❌ Chưa đúng! Thức trắng đêm nhồi nhét kết hợp lạm dụng nước tăng lực sẽ tàn phá thể chất, khiến bộ não dễ bị ''đóng băng'' khi thi.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_freeze": {
+
+      "text": "❌ Sai rồi! Hoảng loạn tinh thần chỉ làm gián đoạn hệ tư duy của não bộ. Bạn cần bài tập thở sâu vật lý để lập tức hạ nhiệt.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_unhealthy_vent": {
+
+      "text": "❌ Sai rồi! Xả stress bằng đồ ăn cay nóng, đồ ăn nhanh chỉ làm quá tải hệ tiêu hóa và không giải quyết được căng thẳng tinh thần.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1296', '219', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các phản ứng ứng phó áp lực:",
-  "leftBox": { "title": "Đối mặt chủ động" },
-  "rightBox": { "title": "Trốn tránh thụ động" },
-  "items": [
-    { "text": "Viết danh sách các việc cần làm và thực hiện việc nhỏ trước", "correctBox": "left" },
-    { "text": "Nằm lướt TikTok liên tục để không phải nghĩ về bài tập", "correctBox": "right" },
-    { "text": "Nhờ bạn bè hoặc giáo viên chỉ dẫn phần bài tập quá khó", "correctBox": "left" },
-    { "text": "Cố học tiếp dù đầu đang nhức búa bổ vì sợ điểm kém", "correctBox": "right" },
-    { "text": "Dành 10 phút đi bộ thư giãn ngoài vườn sạc pin tâm hồn", "correctBox": "left" }
-  ]
+('1296', '219', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các phản ứng ứng phó áp lực:",
+
+  "leftBox": { "title": "Đối mặt chủ động" },
+
+  "rightBox": { "title": "Trốn tránh thụ động" },
+
+  "items": [
+
+    { "text": "Viết danh sách các việc cần làm và thực hiện việc nhỏ trước", "correctBox": "left" },
+
+    { "text": "Nằm lướt TikTok liên tục để không phải nghĩ về bài tập", "correctBox": "right" },
+
+    { "text": "Nhờ bạn bè hoặc giáo viên chỉ dẫn phần bài tập quá khó", "correctBox": "left" },
+
+    { "text": "Cố học tiếp dù đầu đang nhức búa bổ vì sợ điểm kém", "correctBox": "right" },
+
+    { "text": "Dành 10 phút đi bộ thư giãn ngoài vườn sạc pin tâm hồn", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1297', '219', 'matching', '{
-  "instruction": "Ghép cặp từ khóa stress và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Adrenaline & Cortisol", "right": "Hormone được giải phóng khi cơ thể gặp trạng thái căng thẳng, lo âu." },
-    { "left": "Stress tích cực (Eustress)", "right": "Áp lực vừa phải giúp tập trung hơn để hoàn thành mục tiêu ngắn hạn." },
-    { "left": "Stress độc hại (Distress)", "right": "Sự căng thẳng kéo dài liên tục gây kiệt quệ tinh thần và thể chất." },
-    { "left": "Kỹ thuật thở 4-7-8", "right": "Bài tập điều hòa nhịp thở kích hoạt hệ thần kinh đối giao cảm làm dịu não bộ." }
-  ]
+('1297', '219', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa stress và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Adrenaline & Cortisol", "right": "Hormone được giải phóng khi cơ thể gặp trạng thái căng thẳng, lo âu." },
+
+    { "left": "Stress tích cực (Eustress)", "right": "Áp lực vừa phải giúp tập trung hơn để hoàn thành mục tiêu ngắn hạn." },
+
+    { "left": "Stress độc hại (Distress)", "right": "Sự căng thẳng kéo dài liên tục gây kiệt quệ tinh thần và thể chất." },
+
+    { "left": "Kỹ thuật thở 4-7-8", "right": "Bài tập điều hòa nhịp thở kích hoạt hệ thần kinh đối giao cảm làm dịu não bộ." }
+
+  ]
+
 }', '4', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1298', '219', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ứng phó stress:",
-  "sentence": "Stress không chỉ ở trong đầu mà còn biểu hiện qua các tín hiệu [blank1] của cơ thể. Đừng lảng tránh bằng game, hãy [blank2] chia nhỏ công việc và sử dụng những chiếc [blank3] lành mạnh để [blank4] bớt áp lực.",
-  "blanks": {
-    "blank1": { "correct": "thể chất", "placeholder": "..." },
-    "blank2": { "correct": "chủ động", "placeholder": "..." },
-    "blank3": { "correct": "van xả", "placeholder": "..." },
-    "blank4": { "correct": "giải phóng", "placeholder": "..." }
-  },
-  "words": ["thể chất", "chủ động", "van xả", "giải phóng", "lơ đi", "im lặng", "nước ngọt", "lười biếng"]
+('1298', '219', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa ứng phó stress:",
+
+  "sentence": "Stress không chỉ ở trong đầu mà còn biểu hiện qua các tín hiệu [blank1] của cơ thể. Đừng lảng tránh bằng game, hãy [blank2] chia nhỏ công việc và sử dụng những chiếc [blank3] lành mạnh để [blank4] bớt áp lực.",
+
+  "blanks": {
+
+    "blank1": { "correct": "thể chất", "placeholder": "..." },
+
+    "blank2": { "correct": "chủ động", "placeholder": "..." },
+
+    "blank3": { "correct": "van xả", "placeholder": "..." },
+
+    "blank4": { "correct": "giải phóng", "placeholder": "..." }
+
+  },
+
+  "words": ["thể chất", "chủ động", "van xả", "giải phóng", "lơ đi", "im lặng", "nước ngọt", "lười biếng"]
+
 }', '5', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1299', '219', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao việc sử dụng nước tăng lực và thức xuyên đêm ôn thi là cờ đỏ nguy hiểm cho kết quả thi cử?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì nó làm cho bạn thông minh hơn đột xuất và gây ra kiêu ngạo.", "correct": false, "emoji": "😐" },
-    { "text": "Vì nó gây thiếu ngủ nghiêm trọng và làm tăng nồng độ cortisol, khiến bộ não dễ bị trống rỗng khi vào phòng thi.", "correct": true, "emoji": "💚" },
-    { "text": "Vì nó khiến bạn làm bài thi quá nhanh mà không kịp soát lỗi.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì giáo viên sẽ trừ điểm nếu phát hiện học sinh thức khuya.", "correct": false, "emoji": "🛑" }
-  ]
+('1299', '219', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao việc sử dụng nước tăng lực và thức xuyên đêm ôn thi là cờ đỏ nguy hiểm cho kết quả thi cử?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì nó làm cho bạn thông minh hơn đột xuất và gây ra kiêu ngạo.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì nó gây thiếu ngủ nghiêm trọng và làm tăng nồng độ cortisol, khiến bộ não dễ bị trống rỗng khi vào phòng thi.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì nó khiến bạn làm bài thi quá nhanh mà không kịp soát lỗi.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì giáo viên sẽ trừ điểm nếu phát hiện học sinh thức khuya.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
 ('1300', '220', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Khi Crush Từ Chối: Vượt Qua Bể Sầu Cực Mượt''! Bạn có 3 mạng để tôi luyện sức bật cảm xúc sau thất bại tình cảm."}', '1', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1301', '220', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Vượt qua bể sầu tỏ tình",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn lấy hết dũng khí tỏ tình với crush bằng một món quà nhỏ ở công viên. Đối phương ngập ngừng rồi nói lời từ chối: ''Cảm ơn cậu, nhưng tớ chỉ muốn tụi mình là bạn tốt thôi!''. Mặt bạn nóng bừng, tai lùng bùng và lồng ngực đau nhói thực tế.",
-      "choices": [
-        { "text": "Nài nỉ tiếp: ''Cho tớ cơ hội đi, tớ sẽ làm mọi thứ vì cậu mà!''", "nextNode": "fail_beg" },
-        { "text": "Mỉm cười nhẹ, chấp nhận ranh giới: ''Tớ hiểu rồi, cảm ơn cậu đã chia sẻ thẳng thắn nhé. Tớ hơi buồn chút nhưng tớ tôn trọng quyết định của cậu''.", "nextNode": "step2" },
-        { "text": "Nổi giận đùng đùng, ném món quà đi và mắng: ''Cậu sống lạnh lùng thế, sau này đừng chơi với nhau nữa!''", "nextNode": "fail_furious" }
-      ]
-    },
-    "step2": {
-      "text": "Tối về nhà, cảm giác thất tình làm bạn buồn bã tột cùng. Bạn thấy mình liên tục muốn mở trang cá nhân của họ lên xem họ có đăng bài viết mới nào không, lòng cồn cào bất an.",
-      "choices": [
-        { "text": "Tiếp tục ẩn danh theo dõi từng lượt like, thả tim của họ trên Instagram để tìm kiếm manh mối.", "nextNode": "fail_stalk" },
-        { "text": "Ẩn tạm thời trang cá nhân của họ, cất các món quà gợi nhớ và rủ hội bạn thân đi ăn kem, xem phim để F5 tâm trạng.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Ba tháng sau, bạn nhìn thấy crush cũ đang đi chơi vui vẻ với một người bạn khác. Cảm xúc nhói nhẹ trỗi dậy, bạn tự hỏi trải nghiệm này có ý nghĩa gì với con người bạn.",
-      "choices": [
-        { "text": "Tự dằn vặt: ''Chắc chắn do mình xấu xí và kém cỏi nên mới bị bỏ rơi. Mình sẽ không bao giờ mở lòng nữa!''", "nextNode": "fail_cynical" },
-        { "text": "Nhận ra đây là trải nghiệm dũng cảm giúp mình biết cách bày tỏ cảm xúc, tôn trọng ranh giới và vững vàng đứng lên.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã phục hồi cảm xúc cực kỳ kiên cường, ứng xử văn minh khi bị từ chối và khơi dậy lòng dũng cảm tự hào.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_beg": {
-      "text": "❌ Chưa đúng! Nài nỉ bám đuôi khi đối phương đã từ chối là thiếu tôn trọng ranh giới của họ và hạ thấp lòng tự trọng của chính bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_furious": {
-      "text": "❌ Chưa đúng! Nổi giận chửi bới đối phương khi bị từ chối chỉ thể hiện sự ích kỷ và thiếu chín chắn trong kiểm soát cảm xúc.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_stalk": {
-      "text": "❌ Sai rồi! Việc âm thầm theo dõi (stalk) trang cá nhân liên tục chỉ làm kéo dài nỗi đau thất tình và khiến bạn khó phục hồi.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_cynical": {
-      "text": "❌ Sai rồi! Trải nghiệm từ chối chỉ chứng minh hai người chưa phù hợp, không làm giảm đi giá trị tổng thể của con người bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1301', '220', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Vượt qua bể sầu tỏ tình",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn lấy hết dũng khí tỏ tình với crush bằng một món quà nhỏ ở công viên. Đối phương ngập ngừng rồi nói lời từ chối: ''Cảm ơn cậu, nhưng tớ chỉ muốn tụi mình là bạn tốt thôi!''. Mặt bạn nóng bừng, tai lùng bùng và lồng ngực đau nhói thực tế.",
+
+      "choices": [
+
+        { "text": "Nài nỉ tiếp: ''Cho tớ cơ hội đi, tớ sẽ làm mọi thứ vì cậu mà!''", "nextNode": "fail_beg" },
+
+        { "text": "Mỉm cười nhẹ, chấp nhận ranh giới: ''Tớ hiểu rồi, cảm ơn cậu đã chia sẻ thẳng thắn nhé. Tớ hơi buồn chút nhưng tớ tôn trọng quyết định của cậu''.", "nextNode": "step2" },
+
+        { "text": "Nổi giận đùng đùng, ném món quà đi và mắng: ''Cậu sống lạnh lùng thế, sau này đừng chơi với nhau nữa!''", "nextNode": "fail_furious" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Tối về nhà, cảm giác thất tình làm bạn buồn bã tột cùng. Bạn thấy mình liên tục muốn mở trang cá nhân của họ lên xem họ có đăng bài viết mới nào không, lòng cồn cào bất an.",
+
+      "choices": [
+
+        { "text": "Tiếp tục ẩn danh theo dõi từng lượt like, thả tim của họ trên Instagram để tìm kiếm manh mối.", "nextNode": "fail_stalk" },
+
+        { "text": "Ẩn tạm thời trang cá nhân của họ, cất các món quà gợi nhớ và rủ hội bạn thân đi ăn kem, xem phim để F5 tâm trạng.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Ba tháng sau, bạn nhìn thấy crush cũ đang đi chơi vui vẻ với một người bạn khác. Cảm xúc nhói nhẹ trỗi dậy, bạn tự hỏi trải nghiệm này có ý nghĩa gì với con người bạn.",
+
+      "choices": [
+
+        { "text": "Tự dằn vặt: ''Chắc chắn do mình xấu xí và kém cỏi nên mới bị bỏ rơi. Mình sẽ không bao giờ mở lòng nữa!''", "nextNode": "fail_cynical" },
+
+        { "text": "Nhận ra đây là trải nghiệm dũng cảm giúp mình biết cách bày tỏ cảm xúc, tôn trọng ranh giới và vững vàng đứng lên.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã phục hồi cảm xúc cực kỳ kiên cường, ứng xử văn minh khi bị từ chối và khơi dậy lòng dũng cảm tự hào.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_beg": {
+
+      "text": "❌ Chưa đúng! Nài nỉ bám đuôi khi đối phương đã từ chối là thiếu tôn trọng ranh giới của họ và hạ thấp lòng tự trọng của chính bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_furious": {
+
+      "text": "❌ Chưa đúng! Nổi giận chửi bới đối phương khi bị từ chối chỉ thể hiện sự ích kỷ và thiếu chín chắn trong kiểm soát cảm xúc.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_stalk": {
+
+      "text": "❌ Sai rồi! Việc âm thầm theo dõi (stalk) trang cá nhân liên tục chỉ làm kéo dài nỗi đau thất tình và khiến bạn khó phục hồi.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_cynical": {
+
+      "text": "❌ Sai rồi! Trải nghiệm từ chối chỉ chứng minh hai người chưa phù hợp, không làm giảm đi giá trị tổng thể của con người bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1302', '220', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các suy nghĩ phục hồi sau thất tình:",
-  "leftBox": { "title": "Bài học trưởng thành" },
-  "rightBox": { "title": "Tiêu cực tự ti" },
-  "items": [
-    { "text": "Bị từ chối nghĩa là hai người chưa phù hợp ở thời điểm này", "correctBox": "left" },
-    { "text": "Bị từ chối chứng tỏ mình là kẻ kém cỏi và không ai yêu", "correctBox": "right" },
-    { "text": "Đối phương có quyền tự do lựa chọn tình cảm của họ", "correctBox": "left" },
-    { "text": "Mình sẽ không bao giờ mở lòng yêu thương hay tin tưởng ai nữa", "correctBox": "right" },
-    { "text": "Mình biết cách bày tỏ cảm xúc thật của mình một cách dũng cảm", "correctBox": "left" }
-  ]
+('1302', '220', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các suy nghĩ phục hồi sau thất tình:",
+
+  "leftBox": { "title": "Bài học trưởng thành" },
+
+  "rightBox": { "title": "Tiêu cực tự ti" },
+
+  "items": [
+
+    { "text": "Bị từ chối nghĩa là hai người chưa phù hợp ở thời điểm này", "correctBox": "left" },
+
+    { "text": "Bị từ chối chứng tỏ mình là kẻ kém cỏi và không ai yêu", "correctBox": "right" },
+
+    { "text": "Đối phương có quyền tự do lựa chọn tình cảm của họ", "correctBox": "left" },
+
+    { "text": "Mình sẽ không bao giờ mở lòng yêu thương hay tin tưởng ai nữa", "correctBox": "right" },
+
+    { "text": "Mình biết cách bày tỏ cảm xúc thật của mình một cách dũng cảm", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1303', '220', 'matching', '{
-  "instruction": "Ghép cặp từ khóa phục hồi cảm xúc và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Resilience (Sức bật)", "right": "Khả năng đối mặt với thất bại cảm xúc và tự chữa lành đứng dậy." },
-    { "left": "Dopamine", "right": "Hormone tạo cảm giác phấn khích, cồn cào khi say nắng crush." },
-    { "left": "Tình cảm một chiều", "right": "Tình cảm chỉ xuất phát từ một phía, thiếu sự tương tác hai chiều." },
-    { "left": "Từ chối văn minh", "right": "Chia sẻ thẳng thắn sự từ chối đi kèm sự tôn trọng cảm xúc đối phương." }
-  ]
+('1303', '220', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa phục hồi cảm xúc và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Resilience (Sức bật)", "right": "Khả năng đối mặt với thất bại cảm xúc và tự chữa lành đứng dậy." },
+
+    { "left": "Dopamine", "right": "Hormone tạo cảm giác phấn khích, cồn cào khi say nắng crush." },
+
+    { "left": "Tình cảm một chiều", "right": "Tình cảm chỉ xuất phát từ một phía, thiếu sự tương tác hai chiều." },
+
+    { "left": "Từ chối văn minh", "right": "Chia sẻ thẳng thắn sự từ chối đi kèm sự tôn trọng cảm xúc đối phương." }
+
+  ]
+
 }', '4', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1304', '220', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa phục hồi sau từ chối:",
-  "sentence": "Sự từ chối kích hoạt vùng não xử lý nỗi đau [blank1] thực tế. Hãy tập cách chấp nhận và [blank2] ranh giới của họ. Cất đi những món quà cũ giúp bạn [blank3] tâm trạng và rèn luyện sức bật [blank4] cảm xúc kiên cường.",
-  "blanks": {
-    "blank1": { "correct": "thể xác", "placeholder": "..." },
-    "blank2": { "correct": "tôn trọng", "placeholder": "..." },
-    "blank3": { "correct": "F5", "placeholder": "..." },
-    "blank4": { "correct": "cảm xúc", "placeholder": "..." }
-  },
-  "words": ["thể xác", "tôn trọng", "F5", "cảm xúc", "nài nỉ", "stalk", "lo sợ", "tự ti"]
+('1304', '220', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa phục hồi sau từ chối:",
+
+  "sentence": "Sự từ chối kích hoạt vùng não xử lý nỗi đau [blank1] thực tế. Hãy tập cách chấp nhận và [blank2] ranh giới của họ. Cất đi những món quà cũ giúp bạn [blank3] tâm trạng và rèn luyện sức bật [blank4] cảm xúc kiên cường.",
+
+  "blanks": {
+
+    "blank1": { "correct": "thể xác", "placeholder": "..." },
+
+    "blank2": { "correct": "tôn trọng", "placeholder": "..." },
+
+    "blank3": { "correct": "F5", "placeholder": "..." },
+
+    "blank4": { "correct": "cảm xúc", "placeholder": "..." }
+
+  },
+
+  "words": ["thể xác", "tôn trọng", "F5", "cảm xúc", "nài nỉ", "stalk", "lo sợ", "tự ti"]
+
 }', '5', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1305', '220', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Hành động nào sau đây giúp bạn phục hồi nhanh nhất sau khi bị crush từ chối lời tỏ tình?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Đăng những bài viết buồn bã, oán trách lấp lửng để crush thấy tội lỗi.", "correct": false, "emoji": "😐" },
-    { "text": "Chấp nhận nỗi buồn trong vài ngày, ẩn thông báo từ crush, cất kỷ vật cũ và tập trung vào các thói quen tốt cùng bạn bè thân thiết.", "correct": true, "emoji": "💚" },
-    { "text": "Lập tức tìm một người khác thế chỗ để chứng minh mình vẫn có giá trị.", "correct": false, "emoji": "🙁" },
-    { "text": "Ngồi học liên tục 12 tiếng để không còn thời gian suy nghĩ.", "correct": false, "emoji": "🛑" }
-  ]
+('1305', '220', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Hành động nào sau đây giúp bạn phục hồi nhanh nhất sau khi bị crush từ chối lời tỏ tình?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Đăng những bài viết buồn bã, oán trách lấp lửng để crush thấy tội lỗi.", "correct": false, "emoji": "😐" },
+
+    { "text": "Chấp nhận nỗi buồn trong vài ngày, ẩn thông báo từ crush, cất kỷ vật cũ và tập trung vào các thói quen tốt cùng bạn bè thân thiết.", "correct": true, "emoji": "💚" },
+
+    { "text": "Lập tức tìm một người khác thế chỗ để chứng minh mình vẫn có giá trị.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Ngồi học liên tục 12 tiếng để không còn thời gian suy nghĩ.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
 ('1306', '221', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Mối Quan Hệ Chất Lượng Cao Vs Độc Hại''! Bạn có 3 mạng để nhận diện cờ đỏ thao túng và bảo vệ ranh giới tình bạn."}', '1', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1307', '221', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Nhận diện và thoát khỏi thao túng",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn mượn điện thoại của bạn thân để gọi nhờ. Khi bạn trả lại, bạn thân nổi giận đùng đùng, giật lấy máy và quát: ''Sao cậu lại mở Zalo đọc tin nhắn của tớ? Cậu tò mò quá đáng thế!''. Dù bạn hoàn toàn không đọc gì, đối phương liên tục dùng ''chiến tranh lạnh'' bắt bạn xin lỗi.",
-      "choices": [
-        { "text": "Chấp nhận nhận lỗi và liên tục xin lỗi để xoa dịu cơn giận của bạn: ''Tớ xin lỗi, tớ hứa lần sau sẽ không chạm vào máy cậu nữa''.", "nextNode": "fail_accept_guilt" },
-        { "text": "Bình tĩnh khẳng định ranh giới: ''Tớ chỉ dùng máy gọi điện và không hề mở tin nhắn. Tớ tôn trọng sự riêng tư của cậu và mong cậu cũng tin tưởng tớ''.", "nextNode": "step2" },
-        { "text": "Nổi khùng mắng lại bạn thân là kẻ đa nghi, ích kỷ rồi đi nói xấu họ với các bạn khác trong lớp.", "nextNode": "fail_aggressive" }
-      ]
-    },
-    "step2": {
-      "text": "Hôm sau, bạn thân đòi bạn phải chia sẻ mật khẩu tài khoản Instagram để chứng minh lòng trung thực và bắt bạn xóa bớt danh sách bạn bè khác giới đi vì ''yêu thương và lo lắng cho bạn''.",
-      "choices": [
-        { "text": "Nhượng bộ đưa mật khẩu và xóa bạn bè vì sợ bị cô lập khỏi nhóm bạn chơi chung.", "nextNode": "fail_concede" },
-        { "text": "Nhận diện đây là cờ đỏ kiểm soát số, kiên quyết từ chối: ''Tớ muốn giữ mật khẩu và bạn bè làm không gian riêng tư. Tụi mình tin tưởng nhau bằng hành động nhé!''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau đó, nhóm bạn thân bắt đầu lập nhóm chat riêng để cô lập, đăng ảnh chế giễu bạn và nhắn tin đe dọa tung các bí mật cá nhân của hai đứa trước đây lên diễn đàn trường. Bạn thấy quá tải cảm xúc và lo sợ tột cùng.",
-      "choices": [
-        { "text": "Im lặng chịu đựng, cắn răng làm theo các yêu cầu nhạy cảm của họ để giữ bí mật.", "nextNode": "fail_blackmail" },
-        { "text": "Chụp màn hình bằng chứng, báo ngay cho bố mẹ hoặc thầy cô giáo y tế học đường, và gọi tổng đài 111 để nhận sự che chở pháp lý.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Xuất sắc! Bạn đã dũng cảm nhận diện cờ đỏ thao túng cảm xúc, kiên định bảo vệ ranh giới số và tìm kiếm sự hỗ trợ khẩn cấp từ người lớn kịp thời.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_accept_guilt": {
-      "text": "❌ Chưa đúng! Nhận tội khống để xoa dịu kẻ thao túng (gaslighting) chỉ khiến họ tiếp tục kiểm soát tâm lý và lấn lướt ranh giới của bạn trong tương lai.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_aggressive": {
-      "text": "❌ Chưa đúng! Công kích lại đối phương và đi nói xấu sau lưng không giải quyết được mâu thuẫn mà còn biến bạn thành kẻ bắt nạt cảm xúc.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_concede": {
-      "text": "❌ Sai rồi! Bàn giao mật khẩu cá nhân và xóa bạn bè theo yêu cầu vô lý là tự nguyện chui vào bẫy kiểm soát độc hại.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_blackmail": {
-      "text": "❌ Sai rồi! Thỏa hiệp với kẻ tống tiền bôi nhọ không mang lại sự an toàn. Hãy chụp bằng chứng và báo cáo ngay cho người lớn.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1307', '221', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Nhận diện và thoát khỏi thao túng",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn mượn điện thoại của bạn thân để gọi nhờ. Khi bạn trả lại, bạn thân nổi giận đùng đùng, giật lấy máy và quát: ''Sao cậu lại mở Zalo đọc tin nhắn của tớ? Cậu tò mò quá đáng thế!''. Dù bạn hoàn toàn không đọc gì, đối phương liên tục dùng ''chiến tranh lạnh'' bắt bạn xin lỗi.",
+
+      "choices": [
+
+        { "text": "Chấp nhận nhận lỗi và liên tục xin lỗi để xoa dịu cơn giận của bạn: ''Tớ xin lỗi, tớ hứa lần sau sẽ không chạm vào máy cậu nữa''.", "nextNode": "fail_accept_guilt" },
+
+        { "text": "Bình tĩnh khẳng định ranh giới: ''Tớ chỉ dùng máy gọi điện và không hề mở tin nhắn. Tớ tôn trọng sự riêng tư của cậu và mong cậu cũng tin tưởng tớ''.", "nextNode": "step2" },
+
+        { "text": "Nổi khùng mắng lại bạn thân là kẻ đa nghi, ích kỷ rồi đi nói xấu họ với các bạn khác trong lớp.", "nextNode": "fail_aggressive" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Hôm sau, bạn thân đòi bạn phải chia sẻ mật khẩu tài khoản Instagram để chứng minh lòng trung thực và bắt bạn xóa bớt danh sách bạn bè khác giới đi vì ''yêu thương và lo lắng cho bạn''.",
+
+      "choices": [
+
+        { "text": "Nhượng bộ đưa mật khẩu và xóa bạn bè vì sợ bị cô lập khỏi nhóm bạn chơi chung.", "nextNode": "fail_concede" },
+
+        { "text": "Nhận diện đây là cờ đỏ kiểm soát số, kiên quyết từ chối: ''Tớ muốn giữ mật khẩu và bạn bè làm không gian riêng tư. Tụi mình tin tưởng nhau bằng hành động nhé!''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau đó, nhóm bạn thân bắt đầu lập nhóm chat riêng để cô lập, đăng ảnh chế giễu bạn và nhắn tin đe dọa tung các bí mật cá nhân của hai đứa trước đây lên diễn đàn trường. Bạn thấy quá tải cảm xúc và lo sợ tột cùng.",
+
+      "choices": [
+
+        { "text": "Im lặng chịu đựng, cắn răng làm theo các yêu cầu nhạy cảm của họ để giữ bí mật.", "nextNode": "fail_blackmail" },
+
+        { "text": "Chụp màn hình bằng chứng, báo ngay cho bố mẹ hoặc thầy cô giáo y tế học đường, và gọi tổng đài 111 để nhận sự che chở pháp lý.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Xuất sắc! Bạn đã dũng cảm nhận diện cờ đỏ thao túng cảm xúc, kiên định bảo vệ ranh giới số và tìm kiếm sự hỗ trợ khẩn cấp từ người lớn kịp thời.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_accept_guilt": {
+
+      "text": "❌ Chưa đúng! Nhận tội khống để xoa dịu kẻ thao túng (gaslighting) chỉ khiến họ tiếp tục kiểm soát tâm lý và lấn lướt ranh giới của bạn trong tương lai.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_aggressive": {
+
+      "text": "❌ Chưa đúng! Công kích lại đối phương và đi nói xấu sau lưng không giải quyết được mâu thuẫn mà còn biến bạn thành kẻ bắt nạt cảm xúc.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_concede": {
+
+      "text": "❌ Sai rồi! Bàn giao mật khẩu cá nhân và xóa bạn bè theo yêu cầu vô lý là tự nguyện chui vào bẫy kiểm soát độc hại.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_blackmail": {
+
+      "text": "❌ Sai rồi! Thỏa hiệp với kẻ tống tiền bôi nhọ không mang lại sự an toàn. Hãy chụp bằng chứng và báo cáo ngay cho người lớn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1308', '221', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các cờ hiệu tình bạn:",
-  "leftBox": { "title": "Cờ xanh Green Flag" },
-  "rightBox": { "title": "Cờ đỏ Red Flag" },
-  "items": [
-    { "text": "Lắng nghe không phán xét, tôn trọng ranh giới cá nhân", "correctBox": "left" },
-    { "text": "Dùng sự im lặng, chiến tranh lạnh để trừng phạt khi bạn làm trái ý", "correctBox": "right" },
-    { "text": "Biết nói lời xin lỗi chân thành khi làm tổn thương bạn", "correctBox": "left" },
-    { "text": "Thường xuyên chê bai ngoại hình và nói xấu sau lưng bạn", "correctBox": "right" },
-    { "text": "Vui mừng và ủng hộ ước mơ, thành công của bạn", "correctBox": "left" }
-  ]
+('1308', '221', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các cờ hiệu tình bạn:",
+
+  "leftBox": { "title": "Cờ xanh Green Flag" },
+
+  "rightBox": { "title": "Cờ đỏ Red Flag" },
+
+  "items": [
+
+    { "text": "Lắng nghe không phán xét, tôn trọng ranh giới cá nhân", "correctBox": "left" },
+
+    { "text": "Dùng sự im lặng, chiến tranh lạnh để trừng phạt khi bạn làm trái ý", "correctBox": "right" },
+
+    { "text": "Biết nói lời xin lỗi chân thành khi làm tổn thương bạn", "correctBox": "left" },
+
+    { "text": "Thường xuyên chê bai ngoại hình và nói xấu sau lưng bạn", "correctBox": "right" },
+
+    { "text": "Vui mừng và ủng hộ ước mơ, thành công của bạn", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1309', '221', 'matching', '{
-  "instruction": "Ghép cặp từ khóa mối quan hệ và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Gaslighting (Thao túng)", "right": "Hành vi làm đối phương nghi ngờ suy nghĩ, cảm xúc và trí nhớ của chính mình." },
-    { "left": "Vulnerability (Tổn thương)", "right": "Dũng khí cởi bỏ áo giáp để chia sẻ thật lòng lo âu với người đáng tin." },
-    { "left": "Mạng lưới hỗ trợ", "right": "Tấm đệm an toàn gồm gia đình, thầy cô, chuyên gia giúp giảm chấn thương cuộc sống." },
-    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia hỗ trợ, tư vấn và bảo vệ trẻ em Việt Nam 24/7." }
-  ]
+('1309', '221', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa mối quan hệ và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Gaslighting (Thao túng)", "right": "Hành vi làm đối phương nghi ngờ suy nghĩ, cảm xúc và trí nhớ của chính mình." },
+
+    { "left": "Vulnerability (Tổn thương)", "right": "Dũng khí cởi bỏ áo giáp để chia sẻ thật lòng lo âu với người đáng tin." },
+
+    { "left": "Mạng lưới hỗ trợ", "right": "Tấm đệm an toàn gồm gia đình, thầy cô, chuyên gia giúp giảm chấn thương cuộc sống." },
+
+    { "left": "Tổng đài 111", "right": "Đường dây nóng quốc gia hỗ trợ, tư vấn và bảo vệ trẻ em Việt Nam 24/7." }
+
+  ]
+
 }', '4', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1310', '221', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa mối quan hệ lành mạnh:",
-  "sentence": "Tình bạn lành mạnh tôn trọng ranh giới và không bắt bạn phải [blank1] gánh vác mọi lo âu. Khi gặp kẻ [blank2] cảm xúc, hãy dũng cảm thiết lập khoảng cách và tìm kiếm sự giúp đỡ từ những [blank3] đáng tin cậy hoặc gọi tổng đài [blank4].",
-  "blanks": {
-    "blank1": { "correct": "âm thầm", "placeholder": "..." },
-    "blank2": { "correct": "thao túng", "placeholder": "..." },
-    "blank3": { "correct": "đồng minh", "placeholder": "..." },
-    "blank4": { "correct": "111", "placeholder": "..." }
-  },
-  "words": ["âm thầm", "thao túng", "đồng minh", "111", "xin lỗi", "im lặng", "nể sợ", "bạn thân"]
+('1310', '221', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa mối quan hệ lành mạnh:",
+
+  "sentence": "Tình bạn lành mạnh tôn trọng ranh giới và không bắt bạn phải [blank1] gánh vác mọi lo âu. Khi gặp kẻ [blank2] cảm xúc, hãy dũng cảm thiết lập khoảng cách và tìm kiếm sự giúp đỡ từ những [blank3] đáng tin cậy hoặc gọi tổng đài [blank4].",
+
+  "blanks": {
+
+    "blank1": { "correct": "âm thầm", "placeholder": "..." },
+
+    "blank2": { "correct": "thao túng", "placeholder": "..." },
+
+    "blank3": { "correct": "đồng minh", "placeholder": "..." },
+
+    "blank4": { "correct": "111", "placeholder": "..." }
+
+  },
+
+  "words": ["âm thầm", "thao túng", "đồng minh", "111", "xin lỗi", "im lặng", "nể sợ", "bạn thân"]
+
 }', '5', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1311', '221', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bạn thân của bạn liên tục dùng chiêu trò ''chiến tranh lạnh'' (im lặng không rep tin nhắn) để ép bạn phải đi chơi chung khi bạn đang mệt, phản ứng nào thể hiện sự tự chủ nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Nhắn tin năn nỉ, xin lỗi dồn dập để họ hết giận.", "correct": false, "emoji": "🥺" },
-    { "text": "Giữ vững ranh giới: ''Tớ mệt cần nghỉ ngơi. Khi nào cậu sẵn sàng nói chuyện bình thường thì tụi mình chat nhé'' và không nhắn tin ép họ.", "correct": true, "emoji": "💚" },
-    { "text": "Lập tức chặn liên lạc và unfriend họ vĩnh viễn.", "correct": false, "emoji": "🛑" },
-    { "text": "Nhờ các bạn khác vào group chat để nói móc mỉa họ.", "correct": false, "emoji": "😐" }
-  ]
+('1311', '221', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bạn thân của bạn liên tục dùng chiêu trò ''chiến tranh lạnh'' (im lặng không rep tin nhắn) để ép bạn phải đi chơi chung khi bạn đang mệt, phản ứng nào thể hiện sự tự chủ nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Nhắn tin năn nỉ, xin lỗi dồn dập để họ hết giận.", "correct": false, "emoji": "🥺" },
+
+    { "text": "Giữ vững ranh giới: ''Tớ mệt cần nghỉ ngơi. Khi nào cậu sẵn sàng nói chuyện bình thường thì tụi mình chat nhé'' và không nhắn tin ép họ.", "correct": true, "emoji": "💚" },
+
+    { "text": "Lập tức chặn liên lạc và unfriend họ vĩnh viễn.", "correct": false, "emoji": "🛑" },
+
+    { "text": "Nhờ các bạn khác vào group chat để nói móc mỉa họ.", "correct": false, "emoji": "😐" }
+
+  ]
+
 }', '6', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
 ('1312', '222', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Yêu Bản Thân: Không Chỉ Là Câu Nói Bắt Trend''! Bạn có 3 mạng để thực hành tự chăm sóc lành mạnh và thiết lập ranh giới nói không."}', '1', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1313', '222', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Thực hành self-care và nói Không",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Tối muộn trước ngày thi học kỳ quan trọng, bạn đã rất mệt và muốn đi ngủ sớm lúc 10h30 để giữ sức khỏe. Bỗng nhiên, nhóm bạn thân liên tục gọi điện, nhắn tin trong group chat lớp rủ bạn vào game cày rank cùng để lấy thành tích chung.",
-      "choices": [
-        { "text": "Nể bạn bè, cố online chơi cùng đến 1h sáng dù mắt nhắm mắt mở mệt mỏi.", "nextNode": "fail_pleaser" },
-        { "text": "Nhắn tin từ chối lịch sự, kiên định: ''Tớ thèm chơi cùng quá nhưng tối nay tớ muốn ngủ sớm để mai làm bài tốt. Thi xong tụi mình cày bù nhé!'' rồi off điện thoại đi ngủ.", "nextNode": "step2" },
-        { "text": "Tắt nguồn điện thoại đi ngủ mà không nói một lời nào với nhóm bạn.", "nextNode": "fail_silent_cut" }
-      ]
-    },
-    "step2": {
-      "text": "Sáng hôm sau đi thi, bạn làm bài rất tỉnh táo. Tuy nhiên, buổi trưa lúc ăn cơm, nhóm bạn giận dỗi trách móc: ''Có mỗi thế cũng từ chối, đúng là đồ phá đám mất hết cả hứng của nhóm!''. Bạn thấy trong lòng dâng lên cảm giác có lỗi và áy náy.",
-      "choices": [
-        { "text": "Vội vàng hứa hẹn bù đắp: ''Tối nay tớ hứa sẽ online chơi bù cùng các cậu suốt đêm nhé!'' để họ hết giận.", "nextNode": "fail_compromise" },
-        { "text": "Chấp nhận cảm giác áy náy ngắn hạn, tự giải thích nhẹ nhàng: ''Tớ tôn trọng việc leo rank nhưng sức khỏe ngày thi quan trọng hơn với tớ mà. Mong các cậu thông cảm nha!''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Cuối tuần đến, bạn muốn thực hành tự chăm sóc (self-care) tâm hồn. Bạn muốn lập một kế hoạch thói quen nhỏ khả thi lâu dài để nâng cấp cuộc sống.",
-      "choices": [
-        { "text": "Đặt mục tiêu mỗi tối đọc 2 trang sách và đi ngủ trước 11h đêm đều đặn mỗi ngày.", "nextNode": "success_end" },
-        { "text": "Lập lịch trình học tập hà khắc liên tục 12 tiếng một ngày và nhịn ăn tối để giảm cân ngay lập tức.", "nextNode": "fail_unrealistic" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã thực hành nghệ thuật từ chối kiên định để bảo vệ năng lượng bản thân, vượt qua áp lực làm hài lòng đám đông và thiết lập thói quen nhỏ bền vững.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_pleaser": {
-      "text": "❌ Chưa đúng! Nhượng bộ áp lực nhóm (people-pleasing) làm tổn hại nghiêm trọng đến giấc ngủ và kết quả thi cử của bạn ngày hôm sau.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_silent_cut": {
-      "text": "❌ Chưa đúng! Im lặng cắt đứt liên lạc đột ngột dễ gây hiểu lầm là bạn khinh khỉnh hoặc vô trách nhiệm. Một lời từ chối thẳng thắn, rõ ràng luôn tốt hơn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_compromise": {
-      "text": "❌ Sai rồi! Nhượng bộ thức đêm cày bù chỉ làm kiệt quệ thể chất và chứng tỏ bạn không tôn trọng ranh giới sức khỏe của chính mình.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_unrealistic": {
-      "text": "❌ Sai rồi! Lập kế hoạch quá tải, hà khắc đột ngột chỉ khiến bộ não phản kháng và bỏ cuộc nhanh chóng, không đem lại sự phát triển bền vững.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1313', '222', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Thực hành self-care và nói Không",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Tối muộn trước ngày thi học kỳ quan trọng, bạn đã rất mệt và muốn đi ngủ sớm lúc 10h30 để giữ sức khỏe. Bỗng nhiên, nhóm bạn thân liên tục gọi điện, nhắn tin trong group chat lớp rủ bạn vào game cày rank cùng để lấy thành tích chung.",
+
+      "choices": [
+
+        { "text": "Nể bạn bè, cố online chơi cùng đến 1h sáng dù mắt nhắm mắt mở mệt mỏi.", "nextNode": "fail_pleaser" },
+
+        { "text": "Nhắn tin từ chối lịch sự, kiên định: ''Tớ thèm chơi cùng quá nhưng tối nay tớ muốn ngủ sớm để mai làm bài tốt. Thi xong tụi mình cày bù nhé!'' rồi off điện thoại đi ngủ.", "nextNode": "step2" },
+
+        { "text": "Tắt nguồn điện thoại đi ngủ mà không nói một lời nào với nhóm bạn.", "nextNode": "fail_silent_cut" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Sáng hôm sau đi thi, bạn làm bài rất tỉnh táo. Tuy nhiên, buổi trưa lúc ăn cơm, nhóm bạn giận dỗi trách móc: ''Có mỗi thế cũng từ chối, đúng là đồ phá đám mất hết cả hứng của nhóm!''. Bạn thấy trong lòng dâng lên cảm giác có lỗi và áy náy.",
+
+      "choices": [
+
+        { "text": "Vội vàng hứa hẹn bù đắp: ''Tối nay tớ hứa sẽ online chơi bù cùng các cậu suốt đêm nhé!'' để họ hết giận.", "nextNode": "fail_compromise" },
+
+        { "text": "Chấp nhận cảm giác áy náy ngắn hạn, tự giải thích nhẹ nhàng: ''Tớ tôn trọng việc leo rank nhưng sức khỏe ngày thi quan trọng hơn với tớ mà. Mong các cậu thông cảm nha!''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Cuối tuần đến, bạn muốn thực hành tự chăm sóc (self-care) tâm hồn. Bạn muốn lập một kế hoạch thói quen nhỏ khả thi lâu dài để nâng cấp cuộc sống.",
+
+      "choices": [
+
+        { "text": "Đặt mục tiêu mỗi tối đọc 2 trang sách và đi ngủ trước 11h đêm đều đặn mỗi ngày.", "nextNode": "success_end" },
+
+        { "text": "Lập lịch trình học tập hà khắc liên tục 12 tiếng một ngày và nhịn ăn tối để giảm cân ngay lập tức.", "nextNode": "fail_unrealistic" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã thực hành nghệ thuật từ chối kiên định để bảo vệ năng lượng bản thân, vượt qua áp lực làm hài lòng đám đông và thiết lập thói quen nhỏ bền vững.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_pleaser": {
+
+      "text": "❌ Chưa đúng! Nhượng bộ áp lực nhóm (people-pleasing) làm tổn hại nghiêm trọng đến giấc ngủ và kết quả thi cử của bạn ngày hôm sau.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_silent_cut": {
+
+      "text": "❌ Chưa đúng! Im lặng cắt đứt liên lạc đột ngột dễ gây hiểu lầm là bạn khinh khỉnh hoặc vô trách nhiệm. Một lời từ chối thẳng thắn, rõ ràng luôn tốt hơn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_compromise": {
+
+      "text": "❌ Sai rồi! Nhượng bộ thức đêm cày bù chỉ làm kiệt quệ thể chất và chứng tỏ bạn không tôn trọng ranh giới sức khỏe của chính mình.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_unrealistic": {
+
+      "text": "❌ Sai rồi! Lập kế hoạch quá tải, hà khắc đột ngột chỉ khiến bộ não phản kháng và bỏ cuộc nhanh chóng, không đem lại sự phát triển bền vững.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1314', '222', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hoạt động tự chăm sóc:",
-  "leftBox": { "title": "Self-care đích thực" },
-  "rightBox": { "title": "Shopping / Trốn chạy nhất thời" },
-  "items": [
-    { "text": "Ngủ đúng giờ và uống đủ nước mỗi ngày", "correctBox": "left" },
-    { "text": "Nạp thật nhiều trà sữa và thức ăn nhanh để xoa dịu nỗi buồn", "correctBox": "right" },
-    { "text": "Đọc 2 trang sách hoặc đi bộ 10 phút sạc pin tinh thần", "correctBox": "left" },
-    { "text": "Đi mua sắm vô tội vạ những món đồ đắt tiền để giải tỏa áp lực", "correctBox": "right" },
-    { "text": "Từ chối lời rủ rê đi chơi muộn khi cơ thể đang kiệt sức", "correctBox": "left" }
-  ]
+('1314', '222', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hoạt động tự chăm sóc:",
+
+  "leftBox": { "title": "Self-care đích thực" },
+
+  "rightBox": { "title": "Shopping / Trốn chạy nhất thời" },
+
+  "items": [
+
+    { "text": "Ngủ đúng giờ và uống đủ nước mỗi ngày", "correctBox": "left" },
+
+    { "text": "Nạp thật nhiều trà sữa và thức ăn nhanh để xoa dịu nỗi buồn", "correctBox": "right" },
+
+    { "text": "Đọc 2 trang sách hoặc đi bộ 10 phút sạc pin tinh thần", "correctBox": "left" },
+
+    { "text": "Đi mua sắm vô tội vạ những món đồ đắt tiền để giải tỏa áp lực", "correctBox": "right" },
+
+    { "text": "Từ chối lời rủ rê đi chơi muộn khi cơ thể đang kiệt sức", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1315', '222', 'matching', '{
-  "instruction": "Ghép cặp từ khóa tự chăm sóc và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Self-care (Tự chăm sóc)", "right": "Những thói quen nhỏ giúp bảo vệ sức khỏe sinh học và tinh thần lâu dài." },
-    { "left": "People-pleasing", "right": "Hội chứng luôn cố nói Có để làm hài lòng người khác vì sợ bị ghét." },
-    { "left": "Nghỉ ngơi tích cực", "right": "Nhu cầu sinh học tối thiểu giúp các tế bào thần kinh phục hồi và tái tạo." },
-    { "left": "Thói quen siêu nhỏ", "right": "Cải tiến 1% mỗi ngày giúp vượt qua sự phản kháng của não bộ." }
-  ]
+('1315', '222', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa tự chăm sóc và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Self-care (Tự chăm sóc)", "right": "Những thói quen nhỏ giúp bảo vệ sức khỏe sinh học và tinh thần lâu dài." },
+
+    { "left": "People-pleasing", "right": "Hội chứng luôn cố nói Có để làm hài lòng người khác vì sợ bị ghét." },
+
+    { "left": "Nghỉ ngơi tích cực", "right": "Nhu cầu sinh học tối thiểu giúp các tế bào thần kinh phục hồi và tái tạo." },
+
+    { "left": "Thói quen siêu nhỏ", "right": "Cải tiến 1% mỗi ngày giúp vượt qua sự phản kháng của não bộ." }
+
+  ]
+
 }', '4', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1316', '222', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa tự yêu thương:",
-  "sentence": "Tự chăm sóc bản thân không phải là hành vi [blank1], nó là nhu cầu sinh học tối thiểu. Hãy học cách nói [blank2] với người khác để nói [blank3] với sức khỏe của mình, và kiên trì rèn luyện các thói quen [blank4] mỗi ngày.",
-  "blanks": {
-    "blank1": { "correct": "ích kỷ", "placeholder": "..." },
-    "blank2": { "correct": "Không", "placeholder": "..." },
-    "blank3": { "correct": "Có", "placeholder": "..." },
-    "blank4": { "correct": "siêu nhỏ", "placeholder": "..." }
-  },
-  "words": ["ích kỷ", "Không", "Có", "siêu nhỏ", "lười biếng", "shopping", "ép buộc", "im lặng"]
+('1316', '222', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa tự yêu thương:",
+
+  "sentence": "Tự chăm sóc bản thân không phải là hành vi [blank1], nó là nhu cầu sinh học tối thiểu. Hãy học cách nói [blank2] với người khác để nói [blank3] với sức khỏe của mình, và kiên trì rèn luyện các thói quen [blank4] mỗi ngày.",
+
+  "blanks": {
+
+    "blank1": { "correct": "ích kỷ", "placeholder": "..." },
+
+    "blank2": { "correct": "Không", "placeholder": "..." },
+
+    "blank3": { "correct": "Có", "placeholder": "..." },
+
+    "blank4": { "correct": "siêu nhỏ", "placeholder": "..." }
+
+  },
+
+  "words": ["ích kỷ", "Không", "Có", "siêu nhỏ", "lười biếng", "shopping", "ép buộc", "im lặng"]
+
 }', '5', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
-('1317', '222', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao các mục tiêu thói quen siêu nhỏ (như đọc 2 trang sách, tập thể dục 5 phút) lại đem lại sự phát triển bền vững hơn các kế hoạch thay đổi to lớn?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì mục tiêu nhỏ giúp bạn nhận được nhiều lời khen ngợi từ mọi người.", "correct": false, "emoji": "😐" },
-    { "text": "Vì chúng dễ dàng thực hiện, không kích hoạt hệ thống phản kháng của bộ não và giúp xây dựng đường liên kết thần kinh bền vững.", "correct": true, "emoji": "💚" },
-    { "text": "Vì các thói quen lớn tốn quá ít thời gian của bạn.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì thói quen nhỏ không đòi hỏi bạn phải đầu tư bất kỳ nỗ lực nào.", "correct": false, "emoji": "🛑" }
-  ]
+('1317', '222', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao các mục tiêu thói quen siêu nhỏ (như đọc 2 trang sách, tập thể dục 5 phút) lại đem lại sự phát triển bền vững hơn các kế hoạch thay đổi to lớn?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì mục tiêu nhỏ giúp bạn nhận được nhiều lời khen ngợi từ mọi người.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì chúng dễ dàng thực hiện, không kích hoạt hệ thống phản kháng của bộ não và giúp xây dựng đường liên kết thần kinh bền vững.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì các thói quen lớn tốn quá ít thời gian của bạn.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì thói quen nhỏ không đòi hỏi bạn phải đầu tư bất kỳ nỗ lực nào.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:14:46', '2026-06-12 01:14:46'),
 ('1318', '223', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Dậy Thì Là Gì? Khi Cơ Thể Rục Rịch Thay Đổi!''! Bạn có 3 mạng để tự tin khám phá những thay đổi cơ thể đầu đời."}', '1', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1319', '223', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Tự tin bước qua những bỡ ngỡ dậy thì",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Linh bắt đầu nhận thấy vùng ngực của mình hơi nhức và nhú nhọn lên dưới lớp áo phông đồng phục. Đi học, Linh cảm giác như một vài bạn nam đang nhìn chằm chằm và thì thầm trêu chọc mình, khiến cô bé vô cùng ngại ngùng, bối rối và chỉ muốn khóc.",
-      "choices": [
-        { "text": "Nhượng bộ sự xấu hổ, im lặng chịu đựng cơn đau và mặc các áo rộng thùng thình để che giấu cơ thể.", "nextNode": "fail_suppress" },
-        { "text": "Nhắn tin nhỏ cho mẹ hoặc nói chuyện riêng: ''Mẹ ơi, ngực con dạo này hơi đau và nhú lên rồi. Mẹ mua giúp con chiếc áo lót đầu tiên nha mẹ!''", "nextNode": "step2" },
-        { "text": "Tự ý lấy tiền tiết kiệm mua đại áo ngực chật ních trên mạng không vừa kích cỡ về mặc mà không hỏi ý kiến ai.", "nextNode": "fail_uninformed" }
-      ]
-    },
-    "step2": {
-      "text": "Mẹ Linh mỉm cười xoa đầu dắt Linh đi mua chiếc áo lót phù hợp. Tuần sau đó, trong giờ ra chơi ở lớp, một nhóm bạn nam trêu chọc giọng nói ồm ồm đang vỡ của Tuấn, khiến cậu đỏ bừng mặt và cúi gục xuống bàn.",
-      "choices": [
-        { "text": "Hùa theo nhóm bạn nam trêu Tuấn để chứng tỏ mình hòa đồng và sành sỏi.", "nextNode": "fail_peer" },
-        { "text": "Thể hiện vai trò đồng minh đáng tin cậy, nói với nhóm bạn nam: ''Giọng Tuấn đang vỡ vì dậy thì thôi mà, tụi mình ai rồi cũng thế, trêu thế không vui đâu!''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Linh nhận thấy cơ thể mình cao lớn và đầy đặn hơn trước khá nhiều, nhưng so với cô bạn thân dậy thì sớm, Linh thấy mình vẫn thấp bé và chậm chạp hơn hẳn. Sự sốt ruột và lo âu trỗi dậy trong lòng.",
-      "choices": [
-        { "text": "Tự nhủ: ''Đồng hồ sinh học của mỗi người là độc bản. Mình cứ kiên nhẫn ăn uống đủ chất, tập luyện và yêu thương cơ thể theo nhịp độ riêng của mình''.", "nextNode": "success_end" },
-        { "text": "Lo lắng thái quá, đòi mẹ mua thuốc kích thích tăng trưởng chiều cao cấp tốc trên mạng về uống.", "nextNode": "fail_growth" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Tuyệt vời! Bạn đã vượt qua những bỡ ngỡ đầu dậy thì, biết cách tìm kiếm đồng minh và thấu hiểu lịch trình phát triển độc bản của cơ thể mình.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_suppress": {
-      "text": "❌ Chưa đúng! Việc chịu đựng và cố gắng trốn tránh bằng quần áo rộng không giải quyết được cảm giác khó chịu và sự phát triển sinh học tự nhiên.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_uninformed": {
-      "text": "❌ Chưa đúng! Sử dụng áo lót không đúng kích cỡ ở tuổi phát triển dễ gây cản trở lưu thông máu và ảnh hưởng không tốt đến sự phát triển của bầu ngực.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_peer": {
-      "text": "❌ Sai rồi! Hùa theo trêu chọc bạn bè chỉ làm gia tăng vấn đề bắt nạt học đường và gây tổn thương tinh thần cho bạn học.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_growth": {
-      "text": "❌ Sai rồi! Tự ý dùng các sản phẩm tăng chiều cao cấp tốc không rõ nguồn gốc rất nguy hiểm cho hormone tự nhiên và sức khỏe lâu dài.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1319', '223', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Tự tin bước qua những bỡ ngỡ dậy thì",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Linh bắt đầu nhận thấy vùng ngực của mình hơi nhức và nhú nhọn lên dưới lớp áo phông đồng phục. Đi học, Linh cảm giác như một vài bạn nam đang nhìn chằm chằm và thì thầm trêu chọc mình, khiến cô bé vô cùng ngại ngùng, bối rối và chỉ muốn khóc.",
+
+      "choices": [
+
+        { "text": "Nhượng bộ sự xấu hổ, im lặng chịu đựng cơn đau và mặc các áo rộng thùng thình để che giấu cơ thể.", "nextNode": "fail_suppress" },
+
+        { "text": "Nhắn tin nhỏ cho mẹ hoặc nói chuyện riêng: ''Mẹ ơi, ngực con dạo này hơi đau và nhú lên rồi. Mẹ mua giúp con chiếc áo lót đầu tiên nha mẹ!''", "nextNode": "step2" },
+
+        { "text": "Tự ý lấy tiền tiết kiệm mua đại áo ngực chật ních trên mạng không vừa kích cỡ về mặc mà không hỏi ý kiến ai.", "nextNode": "fail_uninformed" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Mẹ Linh mỉm cười xoa đầu dắt Linh đi mua chiếc áo lót phù hợp. Tuần sau đó, trong giờ ra chơi ở lớp, một nhóm bạn nam trêu chọc giọng nói ồm ồm đang vỡ của Tuấn, khiến cậu đỏ bừng mặt và cúi gục xuống bàn.",
+
+      "choices": [
+
+        { "text": "Hùa theo nhóm bạn nam trêu Tuấn để chứng tỏ mình hòa đồng và sành sỏi.", "nextNode": "fail_peer" },
+
+        { "text": "Thể hiện vai trò đồng minh đáng tin cậy, nói với nhóm bạn nam: ''Giọng Tuấn đang vỡ vì dậy thì thôi mà, tụi mình ai rồi cũng thế, trêu thế không vui đâu!''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Linh nhận thấy cơ thể mình cao lớn và đầy đặn hơn trước khá nhiều, nhưng so với cô bạn thân dậy thì sớm, Linh thấy mình vẫn thấp bé và chậm chạp hơn hẳn. Sự sốt ruột và lo âu trỗi dậy trong lòng.",
+
+      "choices": [
+
+        { "text": "Tự nhủ: ''Đồng hồ sinh học của mỗi người là độc bản. Mình cứ kiên nhẫn ăn uống đủ chất, tập luyện và yêu thương cơ thể theo nhịp độ riêng của mình''.", "nextNode": "success_end" },
+
+        { "text": "Lo lắng thái quá, đòi mẹ mua thuốc kích thích tăng trưởng chiều cao cấp tốc trên mạng về uống.", "nextNode": "fail_growth" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Tuyệt vời! Bạn đã vượt qua những bỡ ngỡ đầu dậy thì, biết cách tìm kiếm đồng minh và thấu hiểu lịch trình phát triển độc bản của cơ thể mình.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_suppress": {
+
+      "text": "❌ Chưa đúng! Việc chịu đựng và cố gắng trốn tránh bằng quần áo rộng không giải quyết được cảm giác khó chịu và sự phát triển sinh học tự nhiên.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_uninformed": {
+
+      "text": "❌ Chưa đúng! Sử dụng áo lót không đúng kích cỡ ở tuổi phát triển dễ gây cản trở lưu thông máu và ảnh hưởng không tốt đến sự phát triển của bầu ngực.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_peer": {
+
+      "text": "❌ Sai rồi! Hùa theo trêu chọc bạn bè chỉ làm gia tăng vấn đề bắt nạt học đường và gây tổn thương tinh thần cho bạn học.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_growth": {
+
+      "text": "❌ Sai rồi! Tự ý dùng các sản phẩm tăng chiều cao cấp tốc không rõ nguồn gốc rất nguy hiểm cho hormone tự nhiên và sức khỏe lâu dài.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1320', '223', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ đối với cơ thể dậy thì:",
-  "leftBox": { "title": "Đón nhận tích cực" },
-  "rightBox": { "title": "Lo âu quá mức / Né tránh" },
-  "items": [
-    { "text": "Tự nhủ: Việc thay đổi giọng nói, vóc dáng là sinh lý hoàn toàn tự nhiên", "correctBox": "left" },
-    { "text": "Trốn tránh không dám đi chơi với bạn bè vì thấy mình cao vọt lên nhanh quá", "correctBox": "right" },
-    { "text": "Lựa chọn trang phục thoải mái, vừa vặn để thích nghi với vóc dáng mới", "correctBox": "left" },
-    { "text": "Liên tục soi gương dằn vặt và tự trách bản thân vì cơ thể không giống ngày xưa", "correctBox": "right" },
-    { "text": "Mở lòng trò chuyện với bố mẹ để xin hỗ trợ mua đồ dùng cá nhân phù hợp", "correctBox": "left" }
-  ]
+('1320', '223', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các thái độ đối với cơ thể dậy thì:",
+
+  "leftBox": { "title": "Đón nhận tích cực" },
+
+  "rightBox": { "title": "Lo âu quá mức / Né tránh" },
+
+  "items": [
+
+    { "text": "Tự nhủ: Việc thay đổi giọng nói, vóc dáng là sinh lý hoàn toàn tự nhiên", "correctBox": "left" },
+
+    { "text": "Trốn tránh không dám đi chơi với bạn bè vì thấy mình cao vọt lên nhanh quá", "correctBox": "right" },
+
+    { "text": "Lựa chọn trang phục thoải mái, vừa vặn để thích nghi với vóc dáng mới", "correctBox": "left" },
+
+    { "text": "Liên tục soi gương dằn vặt và tự trách bản thân vì cơ thể không giống ngày xưa", "correctBox": "right" },
+
+    { "text": "Mở lòng trò chuyện với bố mẹ để xin hỗ trợ mua đồ dùng cá nhân phù hợp", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1321', '223', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm dậy thì cơ bản và định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Dậy thì - Puberty", "right": "Giai đoạn chuyển tiếp tự nhiên từ một đứa trẻ thành người trưởng thành về sinh học." },
-    { "left": "Hormone dậy thì", "right": "Những kẻ kích hoạt âm thầm phát tín hiệu khởi động thay đổi thể chất." },
-    { "left": "Lịch trình riêng", "right": "Sự thật là mỗi người dậy thì ở thời điểm khác nhau từ 8 đến 14 tuổi." },
-    { "left": "Đồng minh đáng tin", "right": "Người lớn như bố mẹ, thầy cô giúp bạn giải đáp khúc mắc thầm kín." }
-  ]
+('1321', '223', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm dậy thì cơ bản và định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Dậy thì - Puberty", "right": "Giai đoạn chuyển tiếp tự nhiên từ một đứa trẻ thành người trưởng thành về sinh học." },
+
+    { "left": "Hormone dậy thì", "right": "Những kẻ kích hoạt âm thầm phát tín hiệu khởi động thay đổi thể chất." },
+
+    { "left": "Lịch trình riêng", "right": "Sự thật là mỗi người dậy thì ở thời điểm khác nhau từ 8 đến 14 tuổi." },
+
+    { "left": "Đồng minh đáng tin", "right": "Người lớn như bố mẹ, thầy cô giúp bạn giải đáp khúc mắc thầm kín." }
+
+  ]
+
 }', '4', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1322', '223', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về khái niệm dậy thì:",
-  "sentence": "Dậy thì là giai đoạn chuyển tiếp tự nhiên do các [blank1] kích hoạt. Mỗi người có một chiếc đồng hồ [blank2] riêng, vì thế đừng sốt ruột. Khi gặp khó khăn, hãy tìm kiếm sự giúp đỡ từ những người lớn [blank3] để nhận [blank4] kịp thời.",
-  "blanks": {
-    "blank1": { "correct": "hormone", "placeholder": "..." },
-    "blank2": { "correct": "sinh học", "placeholder": "..." },
-    "blank3": { "correct": "tin cậy", "placeholder": "..." },
-    "blank4": { "correct": "nâng đỡ", "placeholder": "..." }
-  },
-  "words": ["hormone", "sinh học", "tin cậy", "nâng đỡ", "bệnh lý", "sành sỏi", "thuốc tăng", "trốn tránh"]
+('1322', '223', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về khái niệm dậy thì:",
+
+  "sentence": "Dậy thì là giai đoạn chuyển tiếp tự nhiên do các [blank1] kích hoạt. Mỗi người có một chiếc đồng hồ [blank2] riêng, vì thế đừng sốt ruột. Khi gặp khó khăn, hãy tìm kiếm sự giúp đỡ từ những người lớn [blank3] để nhận [blank4] kịp thời.",
+
+  "blanks": {
+
+    "blank1": { "correct": "hormone", "placeholder": "..." },
+
+    "blank2": { "correct": "sinh học", "placeholder": "..." },
+
+    "blank3": { "correct": "tin cậy", "placeholder": "..." },
+
+    "blank4": { "correct": "nâng đỡ", "placeholder": "..." }
+
+  },
+
+  "words": ["hormone", "sinh học", "tin cậy", "nâng đỡ", "bệnh lý", "sành sỏi", "thuốc tăng", "trốn tránh"]
+
 }', '5', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1323', '223', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao việc so sánh vóc dáng và tốc độ lớn của mình với các bạn cùng lớp lại không cần thiết?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì mỗi cơ thể đều được lập trình một đồng hồ sinh học dậy thì độc lập, ai rồi cũng sẽ lớn lên theo lịch trình riêng phù hợp nhất.", "correct": true, "emoji": "💚" },
-    { "text": "Vì các bạn trong lớp chắc chắn dậy thì nhanh hơn do uống nhiều sữa hơn bạn.", "correct": false, "emoji": "😐" },
-    { "text": "Vì dậy thì trễ là biểu hiện của cơ thể khỏe mạnh hơn nhiều so với dậy thì sớm.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì lớn chậm giúp bạn giữ được sự dễ thương lâu dài hơn.", "correct": false, "emoji": "🛑" }
-  ]
+('1323', '223', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao việc so sánh vóc dáng và tốc độ lớn của mình với các bạn cùng lớp lại không cần thiết?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì mỗi cơ thể đều được lập trình một đồng hồ sinh học dậy thì độc lập, ai rồi cũng sẽ lớn lên theo lịch trình riêng phù hợp nhất.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì các bạn trong lớp chắc chắn dậy thì nhanh hơn do uống nhiều sữa hơn bạn.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì dậy thì trễ là biểu hiện của cơ thể khỏe mạnh hơn nhiều so với dậy thì sớm.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì lớn chậm giúp bạn giữ được sự dễ thương lâu dài hơn.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
 ('1324', '224', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''F5 Diện Mạo: Những Thay Đổi Rõ Mồn Một''! Bạn có 3 mạng để tự tin thiết lập thói quen vệ sinh và ứng phó với thay đổi diện mạo."}', '1', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1325', '224', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Tự tin làm chủ diện mạo mới",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Huy nhận thấy nách áo dạo này hay bị ướt sũng mồ hôi và tỏa mùi khá nồng sau mỗi tiết thể dục ngoài trời, khiến Huy vô cùng tự ti, không dám ngồi gần hay giơ tay phát biểu bài trước lớp.",
-      "choices": [
-        { "text": "Xịt thật nhiều nước hoa đậm đặc đè trực tiếp lên lớp mồ hôi cũ rồi đi học tiếp.", "nextNode": "fail_perfume" },
-        { "text": "Tắm rửa xà phòng sạch sẽ hàng ngày, chú ý làm khô nách và sử dụng lăn hoặc xịt khử mùi dịu nhẹ.", "nextNode": "step2" },
-        { "text": "Nhất quyết nhịn và trốn tránh không tham gia các hoạt động thể thao đá bóng yêu thích nữa.", "nextNode": "fail_avoid" }
-      ]
-    },
-    "step2": {
-      "text": "Huy cảm thấy thơm tho, tự tin trở lại. Một buổi sáng thức dậy, Huy phát hiện trên trán xuất hiện vài nốt mụn bọc sưng đỏ. Cậu thấy rất khó chịu và muốn dùng tay nặn phăng chúng đi trước khi đi học.",
-      "choices": [
-        { "text": "Dùng tay bẩn nặn thật mạnh để nhân mụn trào ra nhanh chóng.", "nextNode": "fail_pop" },
-        { "text": "Không nặn mụn bọc, giữ da sạch bằng sữa rửa mặt dịu nhẹ sáng tối và bôi kem mụn y khoa phù hợp.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Cơ thể Huy tiếp tục phát triển rậm lông ở nách và vùng kín, ria mép cũng mọc đen hơn. Huy nghe các bạn nam rỉ tai nhau rằng cạo lông nách sẽ làm cơ thể mất đi vẻ nam tính, khiến cậu lo lắng phân vân.",
-      "choices": [
-        { "text": "Tự tin quyết định giữ lại hoặc dọn dẹp vệ sinh lông cơ thể an toàn dựa hoàn toàn trên sự thoải mái và sạch sử của chính mình.", "nextNode": "success_end" },
-        { "text": "Bị ảnh hưởng bởi định kiến, chịu đựng sự ngứa ngáy nóng bức và không dám cắt tỉa vệ sinh.", "nextNode": "fail_prejudice" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn hảo! Bạn đã kiểm soát tốt mùi cơ thể, biết cách chăm sóc làn da mụn thông thái và làm chủ các thói quen vệ sinh cá nhân văn minh.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_perfume": {
-      "text": "❌ Chưa đúng! Xịt nước hoa chồng lên mồ hôi chỉ tạo ra hỗn hợp mùi hỗn loạn, gây khó chịu hơn cho những người xung quanh.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_avoid": {
-      "text": "❌ Chưa đúng! Trốn tránh thể thao không giải quyết được vấn đề vệ sinh sinh học, ngược lại còn làm bạn mất đi cơ hội rèn luyện sức khỏe.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_pop": {
-      "text": "❌ Sai rồi! Tự ý dùng tay nặn mụn bọc sưng đỏ dễ gây nhiễm trùng máu, để lại sẹo lõm và vết thâm vĩnh viễn trên da mặt.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_prejudice": {
-      "text": "❌ Sai rồi! Quyết định dọn dẹp hay giữ lông cơ thể hoàn toàn là lựa chọn cá nhân hướng tới sự sạch sẽ, không phản ánh giới tính hay nhân cách của bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1325', '224', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Tự tin làm chủ diện mạo mới",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Huy nhận thấy nách áo dạo này hay bị ướt sũng mồ hôi và tỏa mùi khá nồng sau mỗi tiết thể dục ngoài trời, khiến Huy vô cùng tự ti, không dám ngồi gần hay giơ tay phát biểu bài trước lớp.",
+
+      "choices": [
+
+        { "text": "Xịt thật nhiều nước hoa đậm đặc đè trực tiếp lên lớp mồ hôi cũ rồi đi học tiếp.", "nextNode": "fail_perfume" },
+
+        { "text": "Tắm rửa xà phòng sạch sẽ hàng ngày, chú ý làm khô nách và sử dụng lăn hoặc xịt khử mùi dịu nhẹ.", "nextNode": "step2" },
+
+        { "text": "Nhất quyết nhịn và trốn tránh không tham gia các hoạt động thể thao đá bóng yêu thích nữa.", "nextNode": "fail_avoid" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Huy cảm thấy thơm tho, tự tin trở lại. Một buổi sáng thức dậy, Huy phát hiện trên trán xuất hiện vài nốt mụn bọc sưng đỏ. Cậu thấy rất khó chịu và muốn dùng tay nặn phăng chúng đi trước khi đi học.",
+
+      "choices": [
+
+        { "text": "Dùng tay bẩn nặn thật mạnh để nhân mụn trào ra nhanh chóng.", "nextNode": "fail_pop" },
+
+        { "text": "Không nặn mụn bọc, giữ da sạch bằng sữa rửa mặt dịu nhẹ sáng tối và bôi kem mụn y khoa phù hợp.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Cơ thể Huy tiếp tục phát triển rậm lông ở nách và vùng kín, ria mép cũng mọc đen hơn. Huy nghe các bạn nam rỉ tai nhau rằng cạo lông nách sẽ làm cơ thể mất đi vẻ nam tính, khiến cậu lo lắng phân vân.",
+
+      "choices": [
+
+        { "text": "Tự tin quyết định giữ lại hoặc dọn dẹp vệ sinh lông cơ thể an toàn dựa hoàn toàn trên sự thoải mái và sạch sử của chính mình.", "nextNode": "success_end" },
+
+        { "text": "Bị ảnh hưởng bởi định kiến, chịu đựng sự ngứa ngáy nóng bức và không dám cắt tỉa vệ sinh.", "nextNode": "fail_prejudice" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn hảo! Bạn đã kiểm soát tốt mùi cơ thể, biết cách chăm sóc làn da mụn thông thái và làm chủ các thói quen vệ sinh cá nhân văn minh.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_perfume": {
+
+      "text": "❌ Chưa đúng! Xịt nước hoa chồng lên mồ hôi chỉ tạo ra hỗn hợp mùi hỗn loạn, gây khó chịu hơn cho những người xung quanh.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_avoid": {
+
+      "text": "❌ Chưa đúng! Trốn tránh thể thao không giải quyết được vấn đề vệ sinh sinh học, ngược lại còn làm bạn mất đi cơ hội rèn luyện sức khỏe.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_pop": {
+
+      "text": "❌ Sai rồi! Tự ý dùng tay nặn mụn bọc sưng đỏ dễ gây nhiễm trùng máu, để lại sẹo lõm và vết thâm vĩnh viễn trên da mặt.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_prejudice": {
+
+      "text": "❌ Sai rồi! Quyết định dọn dẹp hay giữ lông cơ thể hoàn toàn là lựa chọn cá nhân hướng tới sự sạch sẽ, không phản ánh giới tính hay nhân cách của bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1326', '224', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các quan niệm về chăm sóc diện mạo dậy thì:",
-  "leftBox": { "title": "Chăm sóc lành mạnh" },
-  "rightBox": { "title": "Ngược đãi da / Gây hại" },
-  "items": [
-    { "text": "Rửa mặt nhẹ nhàng bằng sữa rửa mặt dịu nhẹ 2 lần mỗi ngày", "correctBox": "left" },
-    { "text": "Dùng cồn hoặc xà phòng chà sát thật mạnh lên vết mụn để diệt khuẩn", "correctBox": "right" },
-    { "text": "Mặc đồ lót bằng vải cotton thoáng khí và thay giặt sạch sẽ hàng ngày", "correctBox": "left" },
-    { "text": "Tự ý nặn mụn bọc sưng đỏ khi nhân mụn chưa chín bằng tay chưa rửa", "correctBox": "right" },
-    { "text": "Sử dụng lăn/xịt khử mùi sau khi đã tắm sạch và lau khô cơ thể", "correctBox": "left" }
-  ]
+('1326', '224', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các quan niệm về chăm sóc diện mạo dậy thì:",
+
+  "leftBox": { "title": "Chăm sóc lành mạnh" },
+
+  "rightBox": { "title": "Ngược đãi da / Gây hại" },
+
+  "items": [
+
+    { "text": "Rửa mặt nhẹ nhàng bằng sữa rửa mặt dịu nhẹ 2 lần mỗi ngày", "correctBox": "left" },
+
+    { "text": "Dùng cồn hoặc xà phòng chà sát thật mạnh lên vết mụn để diệt khuẩn", "correctBox": "right" },
+
+    { "text": "Mặc đồ lót bằng vải cotton thoáng khí và thay giặt sạch sẽ hàng ngày", "correctBox": "left" },
+
+    { "text": "Tự ý nặn mụn bọc sưng đỏ khi nhân mụn chưa chín bằng tay chưa rửa", "correctBox": "right" },
+
+    { "text": "Sử dụng lăn/xịt khử mùi sau khi đã tắm sạch và lau khô cơ thể", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1327', '224', 'matching', '{
-  "instruction": "Ghép cặp từ khóa thay đổi thể chất dậy thì và định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Tuyến bã nhờn", "right": "Tuyến hoạt động mạnh giải phóng dầu thừa gây tắc nghẽn lỗ chân lông tuổi dậy thì." },
-    { "left": "Tuyến mồ hôi đặc biệt", "right": "Tuyến tiết dịch ở nách và vùng kín, dễ gây mùi đặc trưng khi bị vi khuẩn phân hủy." },
-    { "left": "Lông cơ thể", "right": "Tấm khiên tự nhiên giúp bảo vệ các vùng da nhạy cảm khỏi ma sát." },
-    { "left": "Mụn bọc", "right": "Nốt mụn sưng đỏ, cần được chăm sóc y khoa thay vì tự ý nặn tay." }
-  ]
+('1327', '224', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa thay đổi thể chất dậy thì và định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Tuyến bã nhờn", "right": "Tuyến hoạt động mạnh giải phóng dầu thừa gây tắc nghẽn lỗ chân lông tuổi dậy thì." },
+
+    { "left": "Tuyến mồ hôi đặc biệt", "right": "Tuyến tiết dịch ở nách và vùng kín, dễ gây mùi đặc trưng khi bị vi khuẩn phân hủy." },
+
+    { "left": "Lông cơ thể", "right": "Tấm khiên tự nhiên giúp bảo vệ các vùng da nhạy cảm khỏi ma sát." },
+
+    { "left": "Mụn bọc", "right": "Nốt mụn sưng đỏ, cần được chăm sóc y khoa thay vì tự ý nặn tay." }
+
+  ]
+
 }', '4', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1328', '224', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về vệ sinh diện mạo dậy thì:",
-  "sentence": "Hormone tăng trưởng kích thích tuyến [blank1] hoạt động mạnh gây ra mụn. Hãy vệ sinh da mặt bằng sữa rửa mặt [blank2] và tuyệt đối không tự ý [blank3] mụn. Bên cạnh đó, hãy tắm rửa hàng ngày để kiểm soát [blank4] cơ thể phát sinh.",
-  "blanks": {
-    "blank1": { "correct": "bã nhờn", "placeholder": "..." },
-    "blank2": { "correct": "dịu nhẹ", "placeholder": "..." },
-    "blank3": { "correct": "nặn", "placeholder": "..." },
-    "blank4": { "correct": "mùi", "placeholder": "..." }
-  },
-  "words": ["bã nhờn", "dịu nhẹ", "nặn", "mùi", "đồ lót", "nước hoa", "cạo sạch", "lo âu"]
+('1328', '224', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về vệ sinh diện mạo dậy thì:",
+
+  "sentence": "Hormone tăng trưởng kích thích tuyến [blank1] hoạt động mạnh gây ra mụn. Hãy vệ sinh da mặt bằng sữa rửa mặt [blank2] và tuyệt đối không tự ý [blank3] mụn. Bên cạnh đó, hãy tắm rửa hàng ngày để kiểm soát [blank4] cơ thể phát sinh.",
+
+  "blanks": {
+
+    "blank1": { "correct": "bã nhờn", "placeholder": "..." },
+
+    "blank2": { "correct": "dịu nhẹ", "placeholder": "..." },
+
+    "blank3": { "correct": "nặn", "placeholder": "..." },
+
+    "blank4": { "correct": "mùi", "placeholder": "..." }
+
+  },
+
+  "words": ["bã nhờn", "dịu nhẹ", "nặn", "mùi", "đồ lót", "nước hoa", "cạo sạch", "lo âu"]
+
 }', '5', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1329', '224', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao mồ hôi lúc đá bóng của bạn dạo này lại có mùi đậm hơn lúc nhỏ rất nhiều?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì mồ hôi của bạn dạo này chứa nhiều vi khuẩn tự nhiên có hại hơn trước.", "correct": false, "emoji": "😐" },
-    { "text": "Vì hormone dậy thì kích hoạt tuyến mồ hôi đặc biệt ở nách và vùng kín hoạt động, chất dịch này khi bị vi khuẩn trên da phân hủy sẽ tạo ra mùi cơ thể đặc trưng.", "correct": true, "emoji": "💚" },
-    { "text": "Vì bạn không chịu tắm rửa bằng các loại xà phòng sát khuẩn liều cao.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì quần áo thể thao của bạn hấp thụ quá nhiều ánh sáng mặt trời.", "correct": false, "emoji": "🛑" }
-  ]
+('1329', '224', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao mồ hôi lúc đá bóng của bạn dạo này lại có mùi đậm hơn lúc nhỏ rất nhiều?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì mồ hôi của bạn dạo này chứa nhiều vi khuẩn tự nhiên có hại hơn trước.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì hormone dậy thì kích hoạt tuyến mồ hôi đặc biệt ở nách và vùng kín hoạt động, chất dịch này khi bị vi khuẩn trên da phân hủy sẽ tạo ra mùi cơ thể đặc trưng.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì bạn không chịu tắm rửa bằng các loại xà phòng sát khuẩn liều cao.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì quần áo thể thao của bạn hấp thụ quá nhiều ánh sáng mặt trời.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
 ('1330', '225', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Đến Tháng & Chuyện Phía Trong: Hiểu Để Đỡ Lo!''! Bạn có 3 mạng để tự tin đối phó với các sự cố sinh học tuổi dậy thì."}', '1', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1331', '225', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Tự tin ứng phó sự cố hành kinh và mộng tinh",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Trong tiết Toán, Trang bỗng cảm thấy đau quặn ở bụng dưới và có dịch ẩm tràn ra quần lót. Khi đứng dậy lên bảng, Trang phát hiện váy đồng phục phía sau đã bị thấm một vệt đỏ nhỏ. Các bạn xung quanh bắt đầu nhận ra và thì thầm.",
-      "choices": [
-        { "text": "Xấu hổ khóc lóc và lập tức bỏ chạy thẳng ra khỏi cổng trường để về nhà.", "nextNode": "fail_escape" },
-        { "text": "Bình tĩnh dùng áo khoác buộc ngang hông che vệt đỏ, mượn bạn một miếng băng vệ sinh dự phòng và xin phép xuống phòng y tế trường.", "nextNode": "step2" },
-        { "text": "Ngồi im chịu trận tại chỗ suốt các tiết học tiếp theo đến tối mịt mới về nhà thay quần áo.", "nextNode": "fail_stay" }
-      ]
-    },
-    "step2": {
-      "text": "Trang được cô giáo y tế hướng dẫn thay băng vệ sinh và cho nghỉ ngơi. Tối hôm đó, cậu bạn Duy thức dậy và phát hiện quần lót của mình bị ướt dính một khoảng lớn. Duy hoang mang nghĩ mình bị bệnh tiết niệu nặng.",
-      "choices": [
-        { "text": "Giấu kỹ chiếc quần lót bẩn vào góc tủ vì xấu hổ và tự mua thuốc kháng sinh tự uống.", "nextNode": "fail_hide" },
-        { "text": "Hiểu rằng đây là hiện tượng mộng tinh sinh lý hoàn toàn bình thường ở bạn trai, đem quần lót đi giặt sạch sẽ.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Duy và Trang đi học trở lại. Trong giờ ra chơi, một nhóm bạn nam nhặt được miếng băng vệ sinh chưa dùng rơi ra từ cặp của bạn khác và cười cợt làm trò đùa giễu cợt trước lớp.",
-      "choices": [
-        { "text": "Thẳng thắn nhắc nhở: ''Băng vệ sinh là dụng cụ y tế cá nhân sạch sẽ giúp bạn gái bảo vệ sức khỏe, có gì để cười cợt đâu các cậu?''", "nextNode": "success_end" },
-        { "text": "Tránh phiền phức, im lặng bỏ qua coi như không thấy gì để không bị ghét.", "nextNode": "fail_bypass" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Chúc mừng! Bạn đã xử lý sự cố hành kinh thông minh, thấu hiểu hiện tượng mộng tinh và có tư duy văn minh xóa bỏ định kiến về sức khỏe sinh sản.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_escape": {
-      "text": "❌ Chưa đúng! Bỏ học chạy trốn không giải quyết được vệt đỏ trên váy mà còn khiến bạn bị mất bài học và vi phạm kỷ luật trường.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_stay": {
-      "text": "❌ Chưa đúng! Ngồi im mặc đồ ẩm ướt dính máu kinh suốt nhiều tiếng liên tục rất mất vệ sinh, gây mùi khó chịu và tăng nguy cơ viêm nhiễm nặng.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_hide": {
-      "text": "❌ Sai rồi! Giấu quần lót bẩn gây mùi hôi mốc, và việc tự ý uống kháng sinh bừa bãi cực kỳ gây hại cho sức khỏe gan thận của bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_bypass": {
-      "text": "❌ Sai rồi! Sự im lặng đồng lõa với trò đùa vô duyên khiến các bạn gái tiếp tục bị tổn thương và duy trì định kiến xấu về chu kỳ sinh học tự nhiên.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1331', '225', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Tự tin ứng phó sự cố hành kinh và mộng tinh",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Trong tiết Toán, Trang bỗng cảm thấy đau quặn ở bụng dưới và có dịch ẩm tràn ra quần lót. Khi đứng dậy lên bảng, Trang phát hiện váy đồng phục phía sau đã bị thấm một vệt đỏ nhỏ. Các bạn xung quanh bắt đầu nhận ra và thì thầm.",
+
+      "choices": [
+
+        { "text": "Xấu hổ khóc lóc và lập tức bỏ chạy thẳng ra khỏi cổng trường để về nhà.", "nextNode": "fail_escape" },
+
+        { "text": "Bình tĩnh dùng áo khoác buộc ngang hông che vệt đỏ, mượn bạn một miếng băng vệ sinh dự phòng và xin phép xuống phòng y tế trường.", "nextNode": "step2" },
+
+        { "text": "Ngồi im chịu trận tại chỗ suốt các tiết học tiếp theo đến tối mịt mới về nhà thay quần áo.", "nextNode": "fail_stay" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Trang được cô giáo y tế hướng dẫn thay băng vệ sinh và cho nghỉ ngơi. Tối hôm đó, cậu bạn Duy thức dậy và phát hiện quần lót của mình bị ướt dính một khoảng lớn. Duy hoang mang nghĩ mình bị bệnh tiết niệu nặng.",
+
+      "choices": [
+
+        { "text": "Giấu kỹ chiếc quần lót bẩn vào góc tủ vì xấu hổ và tự mua thuốc kháng sinh tự uống.", "nextNode": "fail_hide" },
+
+        { "text": "Hiểu rằng đây là hiện tượng mộng tinh sinh lý hoàn toàn bình thường ở bạn trai, đem quần lót đi giặt sạch sẽ.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Duy và Trang đi học trở lại. Trong giờ ra chơi, một nhóm bạn nam nhặt được miếng băng vệ sinh chưa dùng rơi ra từ cặp của bạn khác và cười cợt làm trò đùa giễu cợt trước lớp.",
+
+      "choices": [
+
+        { "text": "Thẳng thắn nhắc nhở: ''Băng vệ sinh là dụng cụ y tế cá nhân sạch sẽ giúp bạn gái bảo vệ sức khỏe, có gì để cười cợt đâu các cậu?''", "nextNode": "success_end" },
+
+        { "text": "Tránh phiền phức, im lặng bỏ qua coi như không thấy gì để không bị ghét.", "nextNode": "fail_bypass" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Chúc mừng! Bạn đã xử lý sự cố hành kinh thông minh, thấu hiểu hiện tượng mộng tinh và có tư duy văn minh xóa bỏ định kiến về sức khỏe sinh sản.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_escape": {
+
+      "text": "❌ Chưa đúng! Bỏ học chạy trốn không giải quyết được vệt đỏ trên váy mà còn khiến bạn bị mất bài học và vi phạm kỷ luật trường.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_stay": {
+
+      "text": "❌ Chưa đúng! Ngồi im mặc đồ ẩm ướt dính máu kinh suốt nhiều tiếng liên tục rất mất vệ sinh, gây mùi khó chịu và tăng nguy cơ viêm nhiễm nặng.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_hide": {
+
+      "text": "❌ Sai rồi! Giấu quần lót bẩn gây mùi hôi mốc, và việc tự ý uống kháng sinh bừa bãi cực kỳ gây hại cho sức khỏe gan thận của bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_bypass": {
+
+      "text": "❌ Sai rồi! Sự im lặng đồng lõa với trò đùa vô duyên khiến các bạn gái tiếp tục bị tổn thương và duy trì định kiến xấu về chu kỳ sinh học tự nhiên.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1332', '225', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi chăm sóc sức khỏe sinh sản:",
-  "leftBox": { "title": "Chăm sóc thông thái" },
-  "rightBox": { "title": "Gây hại hoặc kỳ thị" },
-  "items": [
-    { "text": "Chườm ấm bụng dưới và uống nước ấm khi bị đau bụng kinh nhẹ", "correctBox": "left" },
-    { "text": "Thụt rửa sâu vào bên trong âm đạo bằng nước xà phòng sát khuẩn", "correctBox": "right" },
-    { "text": "Thay băng vệ sinh đúng giờ sau mỗi 3 đến 4 tiếng hành kinh", "correctBox": "left" },
-    { "text": "Để nguyên một miếng băng vệ sinh suốt cả ngày để tiết kiệm", "correctBox": "right" },
-    { "text": "Ghi chú ngày bắt đầu kinh nguyệt vào lịch để theo dõi chu kỳ sinh học", "correctBox": "left" }
-  ]
+('1332', '225', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi chăm sóc sức khỏe sinh sản:",
+
+  "leftBox": { "title": "Chăm sóc thông thái" },
+
+  "rightBox": { "title": "Gây hại hoặc kỳ thị" },
+
+  "items": [
+
+    { "text": "Chườm ấm bụng dưới và uống nước ấm khi bị đau bụng kinh nhẹ", "correctBox": "left" },
+
+    { "text": "Thụt rửa sâu vào bên trong âm đạo bằng nước xà phòng sát khuẩn", "correctBox": "right" },
+
+    { "text": "Thay băng vệ sinh đúng giờ sau mỗi 3 đến 4 tiếng hành kinh", "correctBox": "left" },
+
+    { "text": "Để nguyên một miếng băng vệ sinh suốt cả ngày để tiết kiệm", "correctBox": "right" },
+
+    { "text": "Ghi chú ngày bắt đầu kinh nguyệt vào lịch để theo dõi chu kỳ sinh học", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1333', '225', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm sức khỏe sinh sản và định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Kinh nguyệt - Period", "right": "Hiện tượng lớp niêm mạc tử cung bong ra và thoát ra ngoài khi trứng không thụ tinh." },
-    { "left": "Mộng tinh - Wet Dream", "right": "Sự xuất tinh tự nhiên không chủ ý khi đang ngủ ở bạn trai dậy thì." },
-    { "left": "Băng vệ sinh", "right": "Dụng cụ thấm hút máu kinh dùng một lần, cần được gói gọn vứt sọt rác." },
-    { "left": "Chu kỳ kinh nguyệt", "right": "Thời gian tính từ ngày đầu hành kinh tháng này đến ngày đầu hành kinh tháng sau." }
-  ]
+('1333', '225', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm sức khỏe sinh sản và định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Kinh nguyệt - Period", "right": "Hiện tượng lớp niêm mạc tử cung bong ra và thoát ra ngoài khi trứng không thụ tinh." },
+
+    { "left": "Mộng tinh - Wet Dream", "right": "Sự xuất tinh tự nhiên không chủ ý khi đang ngủ ở bạn trai dậy thì." },
+
+    { "left": "Băng vệ sinh", "right": "Dụng cụ thấm hút máu kinh dùng một lần, cần được gói gọn vứt sọt rác." },
+
+    { "left": "Chu kỳ kinh nguyệt", "right": "Thời gian tính từ ngày đầu hành kinh tháng này đến ngày đầu hành kinh tháng sau." }
+
+  ]
+
 }', '4', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1334', '225', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về chu kỳ sinh sản:",
-  "sentence": "Kinh nguyệt và mộng tinh là các cột mốc [blank1] tự nhiên chứng tỏ bạn đang lớn. Khi hành kinh, cần thay [blank2] đúng giờ để tránh [blank3]. Hãy cởi mở chia sẻ khoa học và xóa bỏ sự [blank4] vô căn cứ.",
-  "blanks": {
-    "blank1": { "correct": "sinh lý", "placeholder": "..." },
-    "blank2": { "correct": "băng vệ sinh", "placeholder": "..." },
-    "blank3": { "correct": "viêm nhiễm", "placeholder": "..." },
-    "blank4": { "correct": "kỳ thị", "placeholder": "..." }
-  },
-  "words": ["sinh lý", "băng vệ sinh", "viêm nhiễm", "kỳ thị", "xấu hổ", "vô sinh", "dơ bẩn", "thụt rửa"]
+('1334', '225', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về chu kỳ sinh sản:",
+
+  "sentence": "Kinh nguyệt và mộng tinh là các cột mốc [blank1] tự nhiên chứng tỏ bạn đang lớn. Khi hành kinh, cần thay [blank2] đúng giờ để tránh [blank3]. Hãy cởi mở chia sẻ khoa học và xóa bỏ sự [blank4] vô căn cứ.",
+
+  "blanks": {
+
+    "blank1": { "correct": "sinh lý", "placeholder": "..." },
+
+    "blank2": { "correct": "băng vệ sinh", "placeholder": "..." },
+
+    "blank3": { "correct": "viêm nhiễm", "placeholder": "..." },
+
+    "blank4": { "correct": "kỳ thị", "placeholder": "..." }
+
+  },
+
+  "words": ["sinh lý", "băng vệ sinh", "viêm nhiễm", "kỳ thị", "xấu hổ", "vô sinh", "dơ bẩn", "thụt rửa"]
+
 }', '5', '2026-06-12 01:23:49', '2026-06-12 01:23:49');
 
-INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1335', '225', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao bạn gái tuyệt đối không nên tự ý thụt rửa sâu bên trong âm đạo khi tắm rửa vệ sinh ngày đèn đỏ?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì thụt rửa sâu làm mất cân bằng độ pH tự nhiên của âm đạo, tiêu diệt vi khuẩn có lợi và đẩy vi khuẩn bên ngoài vào sâu gây viêm nhiễm đường sinh sản.", "correct": true, "emoji": "💚" },
-    { "text": "Vì âm đạo có thể tự co bóp đẩy hết nước rửa ra ngoài gây lãng phí xà phòng.", "correct": false, "emoji": "😐" },
-    { "text": "Vì việc này làm cản trở quá trình rụng trứng ở buồng trứng của bạn gái.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì nước xà phòng sẽ làm phai màu niêm mạc cơ quan sinh dục.", "correct": false, "emoji": "🛑" }
-  ]
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1335', '225', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao bạn gái tuyệt đối không nên tự ý thụt rửa sâu bên trong âm đạo khi tắm rửa vệ sinh ngày đèn đỏ?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì thụt rửa sâu làm mất cân bằng độ pH tự nhiên của âm đạo, tiêu diệt vi khuẩn có lợi và đẩy vi khuẩn bên ngoài vào sâu gây viêm nhiễm đường sinh sản.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì âm đạo có thể tự co bóp đẩy hết nước rửa ra ngoài gây lãng phí xà phòng.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì việc này làm cản trở quá trình rụng trứng ở buồng trứng của bạn gái.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì nước xà phòng sẽ làm phai màu niêm mạc cơ quan sinh dục.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
 ('1336', '226', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Bão Cảm Xúc: Sáng Nắng Chiều Mưa, Có Sao Đâu?''! Bạn có 3 mạng để tự tin đối phó và làm chủ cơn bão cảm xúc tuổi dậy thì."}', '1', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1337', '226', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Làm chủ cơn bão cảm xúc và giao tiếp lành mạnh",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bình đang rất hào hứng hoàn thành bức tranh vẽ dự thi của mình. Em trai Bình vô tình chạy nô đùa làm đổ cả cốc nước lọc lên bức tranh khiến màu nhòe nhoẹt, hỏng hoàn toàn. Bình cảm thấy máu nóng dồn lên mặt, tim đập thình thịch và muốn lao vào đánh em.",
-      "choices": [
-        { "text": "Lao vào đánh em một trận lôi đình để trút giận: ''Mày làm hỏng hết bài của tao rồi!'' và ném đồ đạc.", "nextNode": "fail_explode" },
-        { "text": "Hít thở sâu 3 nhịp, nói to: ''Em đi ra ngoài đi!'' rồi vào nhà tắm rửa mặt bằng nước lạnh để bình tĩnh lại trước khi dọn dẹp.", "nextNode": "step2" },
-        { "text": "Cố chịu đựng ấm ức, im lặng nhặt bức tranh hỏng lên rồi chạy vào phòng đóng sập cửa, nằm khóc dằn vặt bản thân cả đêm.", "nextNode": "fail_suppress" }
-      ]
-    },
-    "step2": {
-      "text": "Sau khi rửa mặt hạ nhiệt, Bình thấy bình tĩnh hơn. Tối hôm đó, lúc ăn cơm, bố mẹ so sánh: ''Bằng tuổi con, con nhà cô Lan đã biết phụ giúp việc nhà và học giỏi, sao con chỉ biết vẽ vời vô ích!''. Cảm giác ức chế lại dâng lên.",
-      "choices": [
-        { "text": "Gào khóc cãi lại: ''Bố mẹ lúc nào cũng con nhà người ta, con ghét bố mẹ!'' rồi bỏ bữa cơm.", "nextNode": "fail_clash" },
-        { "text": "Hít sâu giữ bình tĩnh, trả lời lịch sự: ''Bố mẹ ơi, con vẽ tranh là sở thích lành mạnh và con vẫn cố gắng hoàn thành việc học mà. Con mong bố mẹ động viên con thay vì so sánh ạ''.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Mặc dù đã đối thoại tốt, Bình vẫn thấy trong lòng còn bứt rứt, lo lắng dồn nén trước kỳ thi học kỳ sắp tới. Cậu muốn tìm cách bình ổn lại tâm lý của mình.",
-      "choices": [
-        { "text": "Tạm dừng học 15 phút, tắt điện thoại, thực hiện kỹ thuật thở 4-7-8 điều hòa nhịp tim và nghe một bản nhạc nhẹ.", "nextNode": "success_end" },
-        { "text": "Cố ngồi nhồi nhét tài liệu liên tục 4 tiếng nữa dưới áp lực đau đầu dữ dội.", "nextNode": "fail_overwork" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Xuất sắc! Bạn đã kiểm soát tốt cơn giận bộc phát, giao tiếp văn minh với gia đình và biết cách chăm sóc tinh thần khi quá tải.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_explode": {
-      "text": "❌ Chưa đúng! Hành động bộc phát bạo lực làm tổn thương em trai, gây rạn nứt gia đình và khiến bạn dằn vặt dằn vặt sau đó.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_suppress": {
-      "text": "❌ Chưa đúng! Đè nén uất ức một mình mà không giải tỏa lành mạnh chỉ làm quả bóng cảm xúc thêm phình to và dễ phát nổ sau này.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_clash": {
-      "text": "❌ Sai rồi! La hét phản kháng hỗn hào chỉ làm tăng mâu thuẫn gia đình và khiến bố mẹ có ấn tượng xấu về sự trưởng thành của bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_overwork": {
-      "text": "❌ Sai rồi! Ép bộ não làm việc khi đang kiệt sức dưới áp lực cao độ chỉ gây phản tác dụng, làm giảm trí nhớ và tăng triệu chứng stress thể chất.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1337', '226', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Làm chủ cơn bão cảm xúc và giao tiếp lành mạnh",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bình đang rất hào hứng hoàn thành bức tranh vẽ dự thi của mình. Em trai Bình vô tình chạy nô đùa làm đổ cả cốc nước lọc lên bức tranh khiến màu nhòe nhoẹt, hỏng hoàn toàn. Bình cảm thấy máu nóng dồn lên mặt, tim đập thình thịch và muốn lao vào đánh em.",
+
+      "choices": [
+
+        { "text": "Lao vào đánh em một trận lôi đình để trút giận: ''Mày làm hỏng hết bài của tao rồi!'' và ném đồ đạc.", "nextNode": "fail_explode" },
+
+        { "text": "Hít thở sâu 3 nhịp, nói to: ''Em đi ra ngoài đi!'' rồi vào nhà tắm rửa mặt bằng nước lạnh để bình tĩnh lại trước khi dọn dẹp.", "nextNode": "step2" },
+
+        { "text": "Cố chịu đựng ấm ức, im lặng nhặt bức tranh hỏng lên rồi chạy vào phòng đóng sập cửa, nằm khóc dằn vặt bản thân cả đêm.", "nextNode": "fail_suppress" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Sau khi rửa mặt hạ nhiệt, Bình thấy bình tĩnh hơn. Tối hôm đó, lúc ăn cơm, bố mẹ so sánh: ''Bằng tuổi con, con nhà cô Lan đã biết phụ giúp việc nhà và học giỏi, sao con chỉ biết vẽ vời vô ích!''. Cảm giác ức chế lại dâng lên.",
+
+      "choices": [
+
+        { "text": "Gào khóc cãi lại: ''Bố mẹ lúc nào cũng con nhà người ta, con ghét bố mẹ!'' rồi bỏ bữa cơm.", "nextNode": "fail_clash" },
+
+        { "text": "Hít sâu giữ bình tĩnh, trả lời lịch sự: ''Bố mẹ ơi, con vẽ tranh là sở thích lành mạnh và con vẫn cố gắng hoàn thành việc học mà. Con mong bố mẹ động viên con thay vì so sánh ạ''.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Mặc dù đã đối thoại tốt, Bình vẫn thấy trong lòng còn bứt rứt, lo lắng dồn nén trước kỳ thi học kỳ sắp tới. Cậu muốn tìm cách bình ổn lại tâm lý của mình.",
+
+      "choices": [
+
+        { "text": "Tạm dừng học 15 phút, tắt điện thoại, thực hiện kỹ thuật thở 4-7-8 điều hòa nhịp tim và nghe một bản nhạc nhẹ.", "nextNode": "success_end" },
+
+        { "text": "Cố ngồi nhồi nhét tài liệu liên tục 4 tiếng nữa dưới áp lực đau đầu dữ dội.", "nextNode": "fail_overwork" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Xuất sắc! Bạn đã kiểm soát tốt cơn giận bộc phát, giao tiếp văn minh với gia đình và biết cách chăm sóc tinh thần khi quá tải.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_explode": {
+
+      "text": "❌ Chưa đúng! Hành động bộc phát bạo lực làm tổn thương em trai, gây rạn nứt gia đình và khiến bạn dằn vặt dằn vặt sau đó.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_suppress": {
+
+      "text": "❌ Chưa đúng! Đè nén uất ức một mình mà không giải tỏa lành mạnh chỉ làm quả bóng cảm xúc thêm phình to và dễ phát nổ sau này.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_clash": {
+
+      "text": "❌ Sai rồi! La hét phản kháng hỗn hào chỉ làm tăng mâu thuẫn gia đình và khiến bố mẹ có ấn tượng xấu về sự trưởng thành của bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_overwork": {
+
+      "text": "❌ Sai rồi! Ép bộ não làm việc khi đang kiệt sức dưới áp lực cao độ chỉ gây phản tác dụng, làm giảm trí nhớ và tăng triệu chứng stress thể chất.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1338', '226', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các cách đối xử với bão cảm xúc dậy thì:",
-  "leftBox": { "title": "Kết bạn cảm xúc" },
-  "rightBox": { "title": "Chối bỏ hoặc Trút giận" },
-  "items": [
-    { "text": "Cho phép bản thân khóc khi buồn để giải tỏa bớt năng lượng tiêu cực", "correctBox": "left" },
-    { "text": "Cố tỏ ra vui cười hớn hở bên ngoài khi trong lòng đang tan nát", "correctBox": "right" },
-    { "text": "Tự viết nhật ký trút bỏ mọi suy nghĩ bực bội ra giấy rồi xé bỏ", "correctBox": "left" },
-    { "text": "Quát mắng em nhỏ hoặc đập phá đồ đạc để hạ hỏa cơn cáu giận", "correctBox": "right" },
-    { "text": "Tự nhủ: Cảm xúc lo lắng này là hợp lệ, mình sẽ đối diện và vượt qua", "correctBox": "left" }
-  ]
+('1338', '226', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các cách đối xử với bão cảm xúc dậy thì:",
+
+  "leftBox": { "title": "Kết bạn cảm xúc" },
+
+  "rightBox": { "title": "Chối bỏ hoặc Trút giận" },
+
+  "items": [
+
+    { "text": "Cho phép bản thân khóc khi buồn để giải tỏa bớt năng lượng tiêu cực", "correctBox": "left" },
+
+    { "text": "Cố tỏ ra vui cười hớn hở bên ngoài khi trong lòng đang tan nát", "correctBox": "right" },
+
+    { "text": "Tự viết nhật ký trút bỏ mọi suy nghĩ bực bội ra giấy rồi xé bỏ", "correctBox": "left" },
+
+    { "text": "Quát mắng em nhỏ hoặc đập phá đồ đạc để hạ hỏa cơn cáu giận", "correctBox": "right" },
+
+    { "text": "Tự nhủ: Cảm xúc lo lắng này là hợp lệ, mình sẽ đối diện và vượt qua", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1339', '226', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm xáo trộn cảm xúc và định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Estrogen & Testosterone", "right": "Các hormone sinh học tăng vọt tuổi dậy thì làm biến động tâm trạng." },
-    { "left": "Kính lúp suy diễn", "right": "Bẫy tâm lý phóng đại một lời nhận xét hay ánh mắt thành chỉ trích cá nhân." },
-    { "left": "Bất đồng thế hệ", "right": "Mâu thuẫn nảy sinh khi nhu cầu tự lập của con va chạm với sự bảo bọc của bố mẹ." },
-    { "left": "Kỹ thuật thở 4-7-8", "right": "Bài tập hít thở vật lý giúp kích hoạt hệ thần kinh đối giao cảm làm dịu não bộ." }
-  ]
+('1339', '226', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm xáo trộn cảm xúc và định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Estrogen & Testosterone", "right": "Các hormone sinh học tăng vọt tuổi dậy thì làm biến động tâm trạng." },
+
+    { "left": "Kính lúp suy diễn", "right": "Bẫy tâm lý phóng đại một lời nhận xét hay ánh mắt thành chỉ trích cá nhân." },
+
+    { "left": "Bất đồng thế hệ", "right": "Mâu thuẫn nảy sinh khi nhu cầu tự lập của con va chạm với sự bảo bọc của bố mẹ." },
+
+    { "left": "Kỹ thuật thở 4-7-8", "right": "Bài tập hít thở vật lý giúp kích hoạt hệ thần kinh đối giao cảm làm dịu não bộ." }
+
+  ]
+
 }', '4', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1340', '226', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về điều tiết cảm xúc:",
-  "sentence": "Sự thay đổi tâm trạng tuổi dậy thì là do tác động của [blank1]. Đừng rơi vào bẫy kính lúp [blank2] mọi chuyện. Hãy trò chuyện [blank3] với bố mẹ và sử dụng các công cụ [blank4] cảm xúc để giữ bình tĩnh.",
-  "blanks": {
-    "blank1": { "correct": "hormone", "placeholder": "..." },
-    "blank2": { "correct": "suy diễn", "placeholder": "..." },
-    "blank3": { "correct": "tôn trọng", "placeholder": "..." },
-    "blank4": { "correct": "bình ổn", "placeholder": "..." }
-  },
-  "words": ["hormone", "suy diễn", "tôn trọng", "bình ổn", "hỗn hào", "chối bỏ", "trốn tránh", "game"]
+('1340', '226', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về điều tiết cảm xúc:",
+
+  "sentence": "Sự thay đổi tâm trạng tuổi dậy thì là do tác động của [blank1]. Đừng rơi vào bẫy kính lúp [blank2] mọi chuyện. Hãy trò chuyện [blank3] với bố mẹ và sử dụng các công cụ [blank4] cảm xúc để giữ bình tĩnh.",
+
+  "blanks": {
+
+    "blank1": { "correct": "hormone", "placeholder": "..." },
+
+    "blank2": { "correct": "suy diễn", "placeholder": "..." },
+
+    "blank3": { "correct": "tôn trọng", "placeholder": "..." },
+
+    "blank4": { "correct": "bình ổn", "placeholder": "..." }
+
+  },
+
+  "words": ["hormone", "suy diễn", "tôn trọng", "bình ổn", "hỗn hào", "chối bỏ", "trốn tránh", "game"]
+
 }', '5', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1341', '226', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao việc gọi tên chính xác cảm xúc của mình lúc giận dữ (ví dụ: ''con đang rất uất ức vì bị so sánh'') lại giúp hạ nhiệt cơn giận?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì gọi tên cảm xúc chuyển hướng hoạt động từ hạch hạnh nhân (trung tâm cảm xúc) sang vỏ não trước trán (trung tâm tư duy lô-gíc), giúp não bộ lấy lại quyền kiểm soát hành vi.", "correct": true, "emoji": "💚" },
-    { "text": "Vì nói ra sẽ làm cho đối phương lập tức sợ hãi và nhượng bộ bạn.", "correct": false, "emoji": "😐" },
-    { "text": "Vì nó làm cho hormone testosterone bị biến mất khỏi cơ thể ngay lập tức.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì đó là câu thần chú tự động làm mát nhiệt độ phòng học.", "correct": false, "emoji": "🛑" }
-  ]
+('1341', '226', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao việc gọi tên chính xác cảm xúc của mình lúc giận dữ (ví dụ: ''con đang rất uất ức vì bị so sánh'') lại giúp hạ nhiệt cơn giận?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì gọi tên cảm xúc chuyển hướng hoạt động từ hạch hạnh nhân (trung tâm cảm xúc) sang vỏ não trước trán (trung tâm tư duy lô-gíc), giúp não bộ lấy lại quyền kiểm soát hành vi.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì nói ra sẽ làm cho đối phương lập tức sợ hãi và nhượng bộ bạn.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì nó làm cho hormone testosterone bị biến mất khỏi cơ thể ngay lập tức.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì đó là câu thần chú tự động làm mát nhiệt độ phòng học.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
 ('1342', '227', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Yêu Lấy Chiếc Body: Đừng Để Ai Body Shame''! Bạn có 3 mạng để tự tin bảo vệ ranh giới hình ảnh cơ thể."}', '1', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1343', '227', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Tự tin bảo vệ vóc dáng trước phán xét ngoại hình",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Trong nhóm chat chung của lớp, một bạn nam đăng ảnh chụp lén Vân đang ăn bánh mì ở góc sân trường kèm chú thích trêu cợt: ''Ăn thế này bảo sao đùi to như cột đình!''. Cả nhóm hùa vào thả icon cười cợt, làm Vân vô cùng xấu hổ và tổn thương.",
-      "choices": [
-        { "text": "Nhắn tin chửi bới dữ dội và dọa gặp bạn nam đó ở cổng trường để giải quyết bằng bạo lực.", "nextNode": "fail_violence" },
-        { "text": "Chụp màn hình làm bằng chứng, rời khỏi nhóm chat toxic, tự trấn an bản thân và chia sẻ sự việc với thầy cô hoặc bố mẹ.", "nextNode": "step2" },
-        { "text": "U uất buồn bã, quyết định nhịn ăn bỏ bữa trưa và bữa tối để nhanh chóng giảm cân.", "nextNode": "fail_starve" }
-      ]
-    },
-    "step2": {
-      "text": "Được thầy cô can thiệp, nhóm bạn đã xin lỗi Vân. Cuối tuần đó, tại bữa cơm gia đình có họ hàng xa đến chơi, một người lớn nhận xét oang oang trước mọi người: ''Ơ hay dạo này Vy ăn gì béo thế con? Con gái phải biết giữ dáng chứ!''. Vy thấy ngực nghẹn lại.",
-      "choices": [
-        { "text": "Cúi đầu khóc thút thít, bỏ đũa chạy thẳng lên phòng khóa cửa lại uất ức.", "nextNode": "fail_cry" },
-        { "text": "Mỉm cười nhẹ, trả lời kiên định và lịch sự: ''Dạ dạo này con đang dậy thì nên cơ thể phát triển khỏe mạnh là tốt rồi ạ bác!'' rồi chuyển chủ đề ôn hòa.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Mọi người gật gù đồng ý và nể phục sự tự tin của Vy. Tối đến, Vy lướt Instagram thấy các hot teen đăng ảnh có vòng eo con kiến mịn màng ảo diệu, sự so sánh xã hội trỗi dậy làm Vy thấy tự ti.",
-      "choices": [
-        { "text": "Nhận thức rõ mạng xã hội chỉ là sản phẩm của filter và góc chụp, tắt điện thoại đi ngủ và tập trung vào sức khỏe thực tế của mình.", "nextNode": "success_end" },
-        { "text": "Tiếp tục lướt suốt đêm để tìm các bài viết hướng dẫn ăn kiêng cực đoan.", "nextNode": "fail_diet" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Tuyệt vời! Bạn đã bảo vệ bản thân thành công trước body shaming mạng xã hội và gia đình, đồng thời có tư duy lành mạnh về vẻ đẹp cơ thể.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_violence": {
-      "text": "❌ Chưa đúng! Sử dụng bạo lực hoặc chửi bới chỉ làm mâu thuẫn leo thang và biến bạn thành người sai trước pháp luật học đường.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_starve": {
-      "text": "❌ Chưa đúng! Nhịn ăn cực đoan gây hại nghiêm trọng cho hệ tiêu hóa và làm suy nhược cơ thể đang tuổi lớn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_cry": {
-      "text": "❌ Sai rồi! Khóc lóc bỏ chạy chỉ làm cho không khí gia đình căng thẳng và chứng tỏ bạn đang hoàn toàn bị lời chê bai đó đánh gục.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_diet": {
-      "text": "❌ Sai rồi! Tìm kiếm chế độ ăn kiêng cực đoan thâu đêm làm bạn kiệt sức, lún sâu vào bẫy tự ti ảo trên mạng.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1343', '227', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Tự tin bảo vệ vóc dáng trước phán xét ngoại hình",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Trong nhóm chat chung của lớp, một bạn nam đăng ảnh chụp lén Vân đang ăn bánh mì ở góc sân trường kèm chú thích trêu cợt: ''Ăn thế này bảo sao đùi to như cột đình!''. Cả nhóm hùa vào thả icon cười cợt, làm Vân vô cùng xấu hổ và tổn thương.",
+
+      "choices": [
+
+        { "text": "Nhắn tin chửi bới dữ dội và dọa gặp bạn nam đó ở cổng trường để giải quyết bằng bạo lực.", "nextNode": "fail_violence" },
+
+        { "text": "Chụp màn hình làm bằng chứng, rời khỏi nhóm chat toxic, tự trấn an bản thân và chia sẻ sự việc với thầy cô hoặc bố mẹ.", "nextNode": "step2" },
+
+        { "text": "U uất buồn bã, quyết định nhịn ăn bỏ bữa trưa và bữa tối để nhanh chóng giảm cân.", "nextNode": "fail_starve" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Được thầy cô can thiệp, nhóm bạn đã xin lỗi Vân. Cuối tuần đó, tại bữa cơm gia đình có họ hàng xa đến chơi, một người lớn nhận xét oang oang trước mọi người: ''Ơ hay dạo này Vy ăn gì béo thế con? Con gái phải biết giữ dáng chứ!''. Vy thấy ngực nghẹn lại.",
+
+      "choices": [
+
+        { "text": "Cúi đầu khóc thút thít, bỏ đũa chạy thẳng lên phòng khóa cửa lại uất ức.", "nextNode": "fail_cry" },
+
+        { "text": "Mỉm cười nhẹ, trả lời kiên định và lịch sự: ''Dạ dạo này con đang dậy thì nên cơ thể phát triển khỏe mạnh là tốt rồi ạ bác!'' rồi chuyển chủ đề ôn hòa.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Mọi người gật gù đồng ý và nể phục sự tự tin của Vy. Tối đến, Vy lướt Instagram thấy các hot teen đăng ảnh có vòng eo con kiến mịn màng ảo diệu, sự so sánh xã hội trỗi dậy làm Vy thấy tự ti.",
+
+      "choices": [
+
+        { "text": "Nhận thức rõ mạng xã hội chỉ là sản phẩm của filter và góc chụp, tắt điện thoại đi ngủ và tập trung vào sức khỏe thực tế của mình.", "nextNode": "success_end" },
+
+        { "text": "Tiếp tục lướt suốt đêm để tìm các bài viết hướng dẫn ăn kiêng cực đoan.", "nextNode": "fail_diet" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Tuyệt vời! Bạn đã bảo vệ bản thân thành công trước body shaming mạng xã hội và gia đình, đồng thời có tư duy lành mạnh về vẻ đẹp cơ thể.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_violence": {
+
+      "text": "❌ Chưa đúng! Sử dụng bạo lực hoặc chửi bới chỉ làm mâu thuẫn leo thang và biến bạn thành người sai trước pháp luật học đường.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_starve": {
+
+      "text": "❌ Chưa đúng! Nhịn ăn cực đoan gây hại nghiêm trọng cho hệ tiêu hóa và làm suy nhược cơ thể đang tuổi lớn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_cry": {
+
+      "text": "❌ Sai rồi! Khóc lóc bỏ chạy chỉ làm cho không khí gia đình căng thẳng và chứng tỏ bạn đang hoàn toàn bị lời chê bai đó đánh gục.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_diet": {
+
+      "text": "❌ Sai rồi! Tìm kiếm chế độ ăn kiêng cực đoan thâu đêm làm bạn kiệt sức, lún sâu vào bẫy tự ti ảo trên mạng.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1344', '227', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử đối với vóc dáng cơ thể:",
-  "leftBox": { "title": "Tôn trọng cơ thể" },
-  "rightBox": { "title": "Body Shaming / Phán xét" },
-  "items": [
-    { "text": "Khen ngợi nụ cười rạng rỡ hoặc tính cách dễ mến của bạn học", "correctBox": "left" },
-    { "text": "Trêu chọc chiều cao khiêm tốn của bạn cùng lớp để mua vui", "correctBox": "right" },
-    { "text": "Tự nhủ: Cơ bắp khỏe khoắn giúp mình vận động dẻo dai tốt", "correctBox": "left" },
-    { "text": "Nhận xét bạn gái trông thô kệch chỉ vì bạn ấy có bắp tay săn chắc", "correctBox": "right" },
-    { "text": "Bỏ theo dõi những trang MXH chuyên đăng ảnh tiêu chuẩn vóc dáng phi thực tế", "correctBox": "left" }
-  ]
+('1344', '227', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử đối với vóc dáng cơ thể:",
+
+  "leftBox": { "title": "Tôn trọng cơ thể" },
+
+  "rightBox": { "title": "Body Shaming / Phán xét" },
+
+  "items": [
+
+    { "text": "Khen ngợi nụ cười rạng rỡ hoặc tính cách dễ mến của bạn học", "correctBox": "left" },
+
+    { "text": "Trêu chọc chiều cao khiêm tốn của bạn cùng lớp để mua vui", "correctBox": "right" },
+
+    { "text": "Tự nhủ: Cơ bắp khỏe khoắn giúp mình vận động dẻo dai tốt", "correctBox": "left" },
+
+    { "text": "Nhận xét bạn gái trông thô kệch chỉ vì bạn ấy có bắp tay săn chắc", "correctBox": "right" },
+
+    { "text": "Bỏ theo dõi những trang MXH chuyên đăng ảnh tiêu chuẩn vóc dáng phi thực tế", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1345', '227', 'matching', '{
-  "instruction": "Ghép cặp từ khóa về hình ảnh cơ thể dậy thì và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Hình ảnh cơ thể", "right": "Cách bạn suy nghĩ, cảm nhận và hình dung về ngoại hình của chính mình." },
-    { "left": "Body Shaming", "right": "Hành vi bình luận tiêu cực, giễu cợt hoặc chê bai vóc dáng người khác." },
-    { "left": "Cạm bẫy filter", "right": "Hình ảnh ảo đã qua chỉnh sửa bóp eo, mịn da tạo tiêu chuẩn phi thực tế." },
-    { "left": "Đa dạng cơ thể", "right": "Sự thật sinh học rằng mỗi gen quy định chiều cao và khung xương khác nhau." }
-  ]
+('1345', '227', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa về hình ảnh cơ thể dậy thì và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Hình ảnh cơ thể", "right": "Cách bạn suy nghĩ, cảm nhận và hình dung về ngoại hình của chính mình." },
+
+    { "left": "Body Shaming", "right": "Hành vi bình luận tiêu cực, giễu cợt hoặc chê bai vóc dáng người khác." },
+
+    { "left": "Cạm bẫy filter", "right": "Hình ảnh ảo đã qua chỉnh sửa bóp eo, mịn da tạo tiêu chuẩn phi thực tế." },
+
+    { "left": "Đa dạng cơ thể", "right": "Sự thật sinh học rằng mỗi gen quy định chiều cao và khung xương khác nhau." }
+
+  ]
+
 }', '4', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1346', '227', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa yêu thương cơ thể:",
-  "sentence": "Hình ảnh cơ thể lành mạnh bắt nguồn từ sự [blank1]. Khi bị phán xét ngoại hình, hãy kiên định thiết lập [blank2] bảo vệ mình. Tránh xa chiếc bẫy so sánh [blank3] và trân trọng vẻ đẹp [blank4] của bản thân.",
-  "blanks": {
-    "blank1": { "correct": "tự chấp nhận", "placeholder": "..." },
-    "blank2": { "correct": "ranh giới", "placeholder": "..." },
-    "blank3": { "correct": "mạng xã hội", "placeholder": "..." },
-    "blank4": { "correct": "độc bản", "placeholder": "..." }
-  },
-  "words": ["tự chấp nhận", "ranh giới", "mạng xã hội", "độc bản", "ăn kiêng", "chê bai", "hoàn hảo", "sống ảo"]
+('1346', '227', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành định nghĩa yêu thương cơ thể:",
+
+  "sentence": "Hình ảnh cơ thể lành mạnh bắt nguồn từ sự [blank1]. Khi bị phán xét ngoại hình, hãy kiên định thiết lập [blank2] bảo vệ mình. Tránh xa chiếc bẫy so sánh [blank3] và trân trọng vẻ đẹp [blank4] của bản thân.",
+
+  "blanks": {
+
+    "blank1": { "correct": "tự chấp nhận", "placeholder": "..." },
+
+    "blank2": { "correct": "ranh giới", "placeholder": "..." },
+
+    "blank3": { "correct": "mạng xã hội", "placeholder": "..." },
+
+    "blank4": { "correct": "độc bản", "placeholder": "..." }
+
+  },
+
+  "words": ["tự chấp nhận", "ranh giới", "mạng xã hội", "độc bản", "ăn kiêng", "chê bai", "hoàn hảo", "sống ảo"]
+
 }', '5', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1347', '227', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Ý kiến hoặc lời phán xét tiêu cực của người khác về cơ thể bạn phản ánh điều gì?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Nó chỉ phản ánh thế giới quan và mức độ lịch sự/thiếu tế nhị của chính họ, chứ không định nghĩa được giá trị thật sự hay vẻ đẹp của con người bạn.", "correct": true, "emoji": "💚" },
-    { "text": "Nó phản ánh chính xác 100% những khiếm khuyết mà bạn bắt buộc phải sửa đổi ngay lập tức.", "correct": false, "emoji": "😐" },
-    { "text": "Nó phản ánh việc bạn đang không biết cách ăn mặc hợp thời trang.", "correct": false, "emoji": "🙁" },
-    { "text": "Nó phản ánh việc bố mẹ đã nuôi dạy bạn không đúng cách.", "correct": false, "emoji": "🛑" }
-  ]
+('1347', '227', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Ý kiến hoặc lời phán xét tiêu cực của người khác về cơ thể bạn phản ánh điều gì?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Nó chỉ phản ánh thế giới quan và mức độ lịch sự/thiếu tế nhị của chính họ, chứ không định nghĩa được giá trị thật sự hay vẻ đẹp của con người bạn.", "correct": true, "emoji": "💚" },
+
+    { "text": "Nó phản ánh chính xác 100% những khiếm khuyết mà bạn bắt buộc phải sửa đổi ngay lập tức.", "correct": false, "emoji": "😐" },
+
+    { "text": "Nó phản ánh việc bạn đang không biết cách ăn mặc hợp thời trang.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Nó phản ánh việc bố mẹ đã nuôi dạy bạn không đúng cách.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
 ('1348', '228', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Tự Chăm Sóc Bản Thân: Học Cách Yêu Mình Đúng Điệu!''! Bạn có 3 mạng để xây dựng lối sống lành mạnh."}', '1', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1349', '228', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Xây dựng thói quen tự chăm sóc khoa học",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Linh định chỉ lướt điện thoại 15 phút trước khi đi ngủ lúc 10h tối để F5 tinh thần. Tuy nhiên, các video ngắn lôi cuốn trên Tiktok liên tục kéo Linh đi hết clip này sang clip khác khiến cô bé thức đến 1h sáng. Ngày hôm sau, Linh thức dậy mỏi mệt, uể oải và đi học muộn.",
-      "choices": [
-        { "text": "Tiếp tục mang điện thoại lên giường ngủ hàng đêm và lướt đến khi nào ngủ quên thì thôi.", "nextNode": "fail_phone" },
-        { "text": "Bật chế độ không làm phiền sau 10h30 tối, để điện thoại ngoài tầm với của giường ngủ và ngủ đủ 8-9 tiếng mỗi ngày.", "nextNode": "step2" },
-        { "text": "Thức khuya học bù và cày game tiếp, uống 2 lon nước tăng lực để lấy lại tỉnh táo ban ngày.", "nextNode": "fail_energy" }
-      ]
-    },
-    "step2": {
-      "text": "Nhờ ngủ sớm, Linh cảm thấy cơ thể khỏe mạnh, da dẻ bớt mụn hẳn. Một buổi trưa, Linh cảm thấy mắt mỏi rã rời, vai gáy căng nhức sau 5 tiết học căng thẳng trên lớp, nhưng chiều lại có buổi tập thể dục chạy bền.",
-      "choices": [
-        { "text": "Bất chấp mệt mỏi, cố gắng chạy hết công suất 5km để đạt chỉ tiêu thành tích cao nhất.", "nextNode": "fail_overwork" },
-        { "text": "Lắng nghe tín hiệu cơ thể, xin phép thầy giáo thể dục cho chạy vừa sức và dành thời gian kéo giãn cơ nhẹ nhàng.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Sau tiết thể dục, Linh thấy thoải mái. Cô bé muốn thiết lập kế hoạch ăn uống và lối sống tự chăm sóc bản thân lành mạnh lâu dài.",
-      "choices": [
-        { "text": "Nhịn bữa trưa và ăn kiêng hà khắc để ép cân nặng giảm thật nhanh giống như các người mẫu trên mạng.", "nextNode": "fail_diet" },
-        { "text": "Ăn uống đủ chất đạm, canxi, vitamin và tự thưởng cho mình một khoảng thời gian nghỉ ngơi thư giãn 30 phút mỗi ngày.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn hảo! Bạn đã xây dựng được thói quen ngủ sớm bảo vệ sức khỏe, biết lắng nghe tín hiệu mệt mỏi của cơ thể và thiết lập chế độ sinh hoạt tự chăm sóc bản thân thông thái.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_phone": {
-      "text": "❌ Chưa đúng! Thức khuya cày điện thoại ngăn cản cơ thể tiết melatonin, làm gián đoạn nhịp sinh học tự nhiên và gây kiệt quệ thể chất.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_energy": {
-      "text": "❌ Chưa đúng! Lạm dụng nước tăng lực ép cơ thể làm việc quá sức sẽ tàn phá hệ tim mạch và làm suy nhược thần kinh nghiêm trọng.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_overwork": {
-      "text": "❌ Sai rồi! Phớt lờ tín hiệu mệt mỏi thể chất để cố quá sức dễ gây chấn thương xương khớp và khiến cơ thể bị suy nhược sâu sắc.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_diet": {
-      "text": "❌ Sai rồi! Nhịn ăn ép cân cực đoan ở tuổi dậy thì sẽ cản trở nghiêm trọng quá trình phát triển chiều cao, gây hạ đường huyết nguy hiểm.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1349', '228', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Xây dựng thói quen tự chăm sóc khoa học",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Linh định chỉ lướt điện thoại 15 phút trước khi đi ngủ lúc 10h tối để F5 tinh thần. Tuy nhiên, các video ngắn lôi cuốn trên Tiktok liên tục kéo Linh đi hết clip này sang clip khác khiến cô bé thức đến 1h sáng. Ngày hôm sau, Linh thức dậy mỏi mệt, uể oải và đi học muộn.",
+
+      "choices": [
+
+        { "text": "Tiếp tục mang điện thoại lên giường ngủ hàng đêm và lướt đến khi nào ngủ quên thì thôi.", "nextNode": "fail_phone" },
+
+        { "text": "Bật chế độ không làm phiền sau 10h30 tối, để điện thoại ngoài tầm với của giường ngủ và ngủ đủ 8-9 tiếng mỗi ngày.", "nextNode": "step2" },
+
+        { "text": "Thức khuya học bù và cày game tiếp, uống 2 lon nước tăng lực để lấy lại tỉnh táo ban ngày.", "nextNode": "fail_energy" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Nhờ ngủ sớm, Linh cảm thấy cơ thể khỏe mạnh, da dẻ bớt mụn hẳn. Một buổi trưa, Linh cảm thấy mắt mỏi rã rời, vai gáy căng nhức sau 5 tiết học căng thẳng trên lớp, nhưng chiều lại có buổi tập thể dục chạy bền.",
+
+      "choices": [
+
+        { "text": "Bất chấp mệt mỏi, cố gắng chạy hết công suất 5km để đạt chỉ tiêu thành tích cao nhất.", "nextNode": "fail_overwork" },
+
+        { "text": "Lắng nghe tín hiệu cơ thể, xin phép thầy giáo thể dục cho chạy vừa sức và dành thời gian kéo giãn cơ nhẹ nhàng.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Sau tiết thể dục, Linh thấy thoải mái. Cô bé muốn thiết lập kế hoạch ăn uống và lối sống tự chăm sóc bản thân lành mạnh lâu dài.",
+
+      "choices": [
+
+        { "text": "Nhịn bữa trưa và ăn kiêng hà khắc để ép cân nặng giảm thật nhanh giống như các người mẫu trên mạng.", "nextNode": "fail_diet" },
+
+        { "text": "Ăn uống đủ chất đạm, canxi, vitamin và tự thưởng cho mình một khoảng thời gian nghỉ ngơi thư giãn 30 phút mỗi ngày.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn hảo! Bạn đã xây dựng được thói quen ngủ sớm bảo vệ sức khỏe, biết lắng nghe tín hiệu mệt mỏi của cơ thể và thiết lập chế độ sinh hoạt tự chăm sóc bản thân thông thái.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_phone": {
+
+      "text": "❌ Chưa đúng! Thức khuya cày điện thoại ngăn cản cơ thể tiết melatonin, làm gián đoạn nhịp sinh học tự nhiên và gây kiệt quệ thể chất.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_energy": {
+
+      "text": "❌ Chưa đúng! Lạm dụng nước tăng lực ép cơ thể làm việc quá sức sẽ tàn phá hệ tim mạch và làm suy nhược thần kinh nghiêm trọng.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_overwork": {
+
+      "text": "❌ Sai rồi! Phớt lờ tín hiệu mệt mỏi thể chất để cố quá sức dễ gây chấn thương xương khớp và khiến cơ thể bị suy nhược sâu sắc.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_diet": {
+
+      "text": "❌ Sai rồi! Nhịn ăn ép cân cực đoan ở tuổi dậy thì sẽ cản trở nghiêm trọng quá trình phát triển chiều cao, gây hạ đường huyết nguy hiểm.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1350', '228', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi lắng nghe cơ thể:",
-  "leftBox": { "title": "Lắng nghe thông thái" },
-  "rightBox": { "title": "Phớt lờ gượng ép" },
-  "items": [
-    { "text": "Tạm dừng học bài, đi bộ thư giãn ngoài sân 10 phút khi thấy mỏi mắt", "correctBox": "left" },
-    { "text": "Uống ly cafe đậm đặc để thức thâu đêm ôn thi dù đầu đang nhức búa bổ", "correctBox": "right" },
-    { "text": "Nằm nghỉ ngơi thư giãn khi cảm thấy bụng dưới đau âm ỉ ngày hành kinh", "correctBox": "left" },
-    { "text": "Tiếp tục chạy bộ gắng sức dù chân đang bị căng cơ sưng đỏ", "correctBox": "right" },
-    { "text": "Dành ra 30 phút vẽ tranh hoặc chơi nhạc cụ giải tỏa lo âu mỗi tối", "correctBox": "left" }
-  ]
+('1350', '228', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi lắng nghe cơ thể:",
+
+  "leftBox": { "title": "Lắng nghe thông thái" },
+
+  "rightBox": { "title": "Phớt lờ gượng ép" },
+
+  "items": [
+
+    { "text": "Tạm dừng học bài, đi bộ thư giãn ngoài sân 10 phút khi thấy mỏi mắt", "correctBox": "left" },
+
+    { "text": "Uống ly cafe đậm đặc để thức thâu đêm ôn thi dù đầu đang nhức búa bổ", "correctBox": "right" },
+
+    { "text": "Nằm nghỉ ngơi thư giãn khi cảm thấy bụng dưới đau âm ỉ ngày hành kinh", "correctBox": "left" },
+
+    { "text": "Tiếp tục chạy bộ gắng sức dù chân đang bị căng cơ sưng đỏ", "correctBox": "right" },
+
+    { "text": "Dành ra 30 phút vẽ tranh hoặc chơi nhạc cụ giải tỏa lo âu mỗi tối", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1351', '228', 'matching', '{
-  "instruction": "Ghép cặp từ khóa tự chăm sóc và định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Hormone GH", "right": "Hormone tăng trưởng được giải phóng nhiều nhất khi cơ thể ngủ sâu trước 11h đêm." },
-    { "left": "Melatonin", "right": "Hormone kích thích giấc ngủ ngon, bị ngăn cản bởi ánh sáng xanh điện thoại." },
-    { "left": "Self-care", "right": "Phong cách sống lắng nghe nhu cầu sinh học và tinh thần để tự sạc pin bản thân." },
-    { "left": "Thói quen nhỏ", "right": "Những bước đi dễ dàng như uống thêm nước giúp bộ não không bị quá tải phản kháng." }
-  ]
+('1351', '228', 'matching', '{
+
+  "instruction": "Ghép cặp từ khóa tự chăm sóc và định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Hormone GH", "right": "Hormone tăng trưởng được giải phóng nhiều nhất khi cơ thể ngủ sâu trước 11h đêm." },
+
+    { "left": "Melatonin", "right": "Hormone kích thích giấc ngủ ngon, bị ngăn cản bởi ánh sáng xanh điện thoại." },
+
+    { "left": "Self-care", "right": "Phong cách sống lắng nghe nhu cầu sinh học và tinh thần để tự sạc pin bản thân." },
+
+    { "left": "Thói quen nhỏ", "right": "Những bước đi dễ dàng như uống thêm nước giúp bộ não không bị quá tải phản kháng." }
+
+  ]
+
 }', '4', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1352', '228', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về tự chăm sóc bản thân:",
-  "sentence": "Tự chăm sóc bản thân là một hành trình [blank1] đòi hỏi sự kiên nhẫn. Hãy ngủ sâu trước 11h đêm để giải phóng [blank2] tăng trưởng và ăn uống đủ [blank3] thay vì nhịn ăn. Đừng quên [blank4] cơ thể khi mệt mỏi.",
-  "blanks": {
-    "blank1": { "correct": "lâu dài", "placeholder": "..." },
-    "blank2": { "correct": "hormone", "placeholder": "..." },
-    "blank3": { "correct": "dinh dưỡng", "placeholder": "..." },
-    "blank4": { "correct": "lắng nghe", "placeholder": "..." }
-  },
-  "words": ["lâu dài", "hormone", "dinh dưỡng", "lắng nghe", "nhất thời", "thuốc bổ", "nhịn ăn", "phớt lờ"]
+('1352', '228', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về tự chăm sóc bản thân:",
+
+  "sentence": "Tự chăm sóc bản thân là một hành trình [blank1] đòi hỏi sự kiên nhẫn. Hãy ngủ sâu trước 11h đêm để giải phóng [blank2] tăng trưởng và ăn uống đủ [blank3] thay vì nhịn ăn. Đừng quên [blank4] cơ thể khi mệt mỏi.",
+
+  "blanks": {
+
+    "blank1": { "correct": "lâu dài", "placeholder": "..." },
+
+    "blank2": { "correct": "hormone", "placeholder": "..." },
+
+    "blank3": { "correct": "dinh dưỡng", "placeholder": "..." },
+
+    "blank4": { "correct": "lắng nghe", "placeholder": "..." }
+
+  },
+
+  "words": ["lâu dài", "hormone", "dinh dưỡng", "lắng nghe", "nhất thời", "thuốc bổ", "nhịn ăn", "phớt lờ"]
+
 }', '5', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1353', '228', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao giấc ngủ từ 10h tối đến 6h sáng lại được coi là thời gian vàng để phát triển chiều cao?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì trong khoảng từ 11h đêm đến 1h sáng, tuyến yên giải phóng hormone tăng trưởng (GH) nhiều gấp 4 lần bình thường nếu cơ thể đã ngủ sâu giấc.", "correct": true, "emoji": "💚" },
-    { "text": "Vì ngủ ban đêm giúp kéo giãn các khớp xương một cách vật lý khi nằm ngang.", "correct": false, "emoji": "😐" },
-    { "text": "Vì ban đêm cơ thể không phải nạp thêm thức ăn và tiêu hóa năng lượng.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì ngủ ban đêm giúp bạn tránh được ánh nắng mặt trời có hại cho chiều cao.", "correct": false, "emoji": "🛑" }
-  ]
+('1353', '228', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao giấc ngủ từ 10h tối đến 6h sáng lại được coi là thời gian vàng để phát triển chiều cao?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì trong khoảng từ 11h đêm đến 1h sáng, tuyến yên giải phóng hormone tăng trưởng (GH) nhiều gấp 4 lần bình thường nếu cơ thể đã ngủ sâu giấc.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì ngủ ban đêm giúp kéo giãn các khớp xương một cách vật lý khi nằm ngang.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì ban đêm cơ thể không phải nạp thêm thức ăn và tiêu hóa năng lượng.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì ngủ ban đêm giúp bạn tránh được ánh nắng mặt trời có hại cho chiều cao.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
 ('1354', '229', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Tin Chuẩn Vs Tin Đồn: Giải Mã Thắc Mắc Khó Nói!''! Bạn có 3 mạng để phân biệt kiến thức khoa học dậy thì."}', '1', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1355', '229', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Trở thành bộ lọc thông tin thông thái",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Vy đọc được một bài viết trên TikTok được chia sẻ rầm rộ bảo rằng ăn thật nhiều dứa thay cơm trong ngày hành kinh giúp cơ thể thơm tho và giảm hoàn toàn 100% cơn đau bụng kinh. Vy thấy mẹo này rất thú vị và định chia sẻ ngay về trang cá nhân của mình.",
-      "choices": [
-        { "text": "Nhấn nút chia sẻ ngay lập tức về trang cá nhân để bạn bè cùng biết.", "nextNode": "fail_share" },
-        { "text": "Tìm kiếm lại từ khóa đó trên các trang y khoa hoặc hỏi mẹ để xác nhận tính chính xác của mẹo dân gian này trước khi share.", "nextNode": "step2" },
-        { "text": "Tự thực hành thí nghiệm ăn 3 quả dứa thay cơm cả ngày để tự kiểm chứng.", "nextNode": "fail_experiment" }
-      ]
-    },
-    "step2": {
-      "text": "Mẹ Vy giải thích rằng dứa có enzyme bromelain giúp giãn cơ tử cung nhẹ nhưng ăn quá nhiều thay cơm gây loét dạ dày. Hôm sau ở lớp, bạn Duy lo sợ tột cùng kể với Khánh rằng hôm qua Duy vô tình ôm một bạn nữ, và Duy nghe đồn là ôm nhau có thể làm bạn gái mang thai.",
-      "choices": [
-        { "text": "Rỉ tai đồn tiếp với các bạn nam khác để cùng cười cợt chọc ghẹo Duy.", "nextNode": "fail_spread" },
-        { "text": "Trấn an Duy: ''Ôm nhau không thể mang thai được đâu cậu ơi. Cần có sự gặp gỡ trực tiếp của tinh trùng và trứng cơ, cậu yên tâm nhé!''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Duy thở phào nhẹ nhõm. Cuối ngày, bạn Bách băn khoăn khi nghe các bạn rỉ tai nhau rằng hành vi tự khám phá cơ thể (thủ dâm) sẽ làm suy giảm trí nhớ, vô sinh và hỏng thận.",
-      "choices": [
-        { "text": "Bách hoang mang tin sái cổ và đi mua thuốc bổ thận tráng dương tự uống.", "nextNode": "fail_myth" },
-        { "text": "Bách hiểu đúng khoa học: Đây là hành vi sinh lý bình thường nếu thực hiện điều độ, kín đáo và giữ vệ sinh sạch sẽ.", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Xuất sắc! Bạn đã có tư duy phản biện xuất sắc, biết chọn lọc nguồn tin y khoa chuẩn xác và dũng cảm xóa bỏ các tin đồn nhảm học đường.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_share": {
-      "text": "❌ Chưa đúng! Chia sẻ thông tin giật gân, chưa kiểm chứng góp phần lan truyền tin đồn nhảm và làm giảm uy tín cá nhân của bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_experiment": {
-      "text": "❌ Chưa đúng! Ăn dứa thay cơm cả ngày tàn phá niêm mạc dạ dày do lượng axit cao, gây hại lớn cho hệ tiêu hóa.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_spread": {
-      "text": "❌ Sai rồi! Lan truyền tin đồn sai lệch về mang thai gây hoang mang dư luận học đường và thể hiện sự thiếu hiểu biết giáo dục giới tính.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_myth": {
-      "text": "❌ Sai rồi! Tin vào tin đồn thiếu khoa học làm bạn sống trong cảm giác tội lỗi, sợ hãi vô lý và việc tự uống thuốc bừa bãi có hại cho gan thận.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1355', '229', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Trở thành bộ lọc thông tin thông thái",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Vy đọc được một bài viết trên TikTok được chia sẻ rầm rộ bảo rằng ăn thật nhiều dứa thay cơm trong ngày hành kinh giúp cơ thể thơm tho và giảm hoàn toàn 100% cơn đau bụng kinh. Vy thấy mẹo này rất thú vị và định chia sẻ ngay về trang cá nhân của mình.",
+
+      "choices": [
+
+        { "text": "Nhấn nút chia sẻ ngay lập tức về trang cá nhân để bạn bè cùng biết.", "nextNode": "fail_share" },
+
+        { "text": "Tìm kiếm lại từ khóa đó trên các trang y khoa hoặc hỏi mẹ để xác nhận tính chính xác của mẹo dân gian này trước khi share.", "nextNode": "step2" },
+
+        { "text": "Tự thực hành thí nghiệm ăn 3 quả dứa thay cơm cả ngày để tự kiểm chứng.", "nextNode": "fail_experiment" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Mẹ Vy giải thích rằng dứa có enzyme bromelain giúp giãn cơ tử cung nhẹ nhưng ăn quá nhiều thay cơm gây loét dạ dày. Hôm sau ở lớp, bạn Duy lo sợ tột cùng kể với Khánh rằng hôm qua Duy vô tình ôm một bạn nữ, và Duy nghe đồn là ôm nhau có thể làm bạn gái mang thai.",
+
+      "choices": [
+
+        { "text": "Rỉ tai đồn tiếp với các bạn nam khác để cùng cười cợt chọc ghẹo Duy.", "nextNode": "fail_spread" },
+
+        { "text": "Trấn an Duy: ''Ôm nhau không thể mang thai được đâu cậu ơi. Cần có sự gặp gỡ trực tiếp của tinh trùng và trứng cơ, cậu yên tâm nhé!''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Duy thở phào nhẹ nhõm. Cuối ngày, bạn Bách băn khoăn khi nghe các bạn rỉ tai nhau rằng hành vi tự khám phá cơ thể (thủ dâm) sẽ làm suy giảm trí nhớ, vô sinh và hỏng thận.",
+
+      "choices": [
+
+        { "text": "Bách hoang mang tin sái cổ và đi mua thuốc bổ thận tráng dương tự uống.", "nextNode": "fail_myth" },
+
+        { "text": "Bách hiểu đúng khoa học: Đây là hành vi sinh lý bình thường nếu thực hiện điều độ, kín đáo và giữ vệ sinh sạch sẽ.", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Xuất sắc! Bạn đã có tư duy phản biện xuất sắc, biết chọn lọc nguồn tin y khoa chuẩn xác và dũng cảm xóa bỏ các tin đồn nhảm học đường.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_share": {
+
+      "text": "❌ Chưa đúng! Chia sẻ thông tin giật gân, chưa kiểm chứng góp phần lan truyền tin đồn nhảm và làm giảm uy tín cá nhân của bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_experiment": {
+
+      "text": "❌ Chưa đúng! Ăn dứa thay cơm cả ngày tàn phá niêm mạc dạ dày do lượng axit cao, gây hại lớn cho hệ tiêu hóa.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_spread": {
+
+      "text": "❌ Sai rồi! Lan truyền tin đồn sai lệch về mang thai gây hoang mang dư luận học đường và thể hiện sự thiếu hiểu biết giáo dục giới tính.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_myth": {
+
+      "text": "❌ Sai rồi! Tin vào tin đồn thiếu khoa học làm bạn sống trong cảm giác tội lỗi, sợ hãi vô lý và việc tự uống thuốc bừa bãi có hại cho gan thận.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1356', '229', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các nguồn tìm kiếm kiến thức sức khỏe dậy thì:",
-  "leftBox": { "title": "Nguồn tin cậy khoa học" },
-  "rightBox": { "title": "Nguồn tin rác / Tin đồn" },
-  "items": [
-    { "text": "Website của Tổ chức Y tế Thế giới WHO, UNICEF hoặc Bộ Y tế Việt Nam", "correctBox": "left" },
-    { "text": "Các video ngắn giật tít câu view của các tiktoker không có chuyên môn y khoa", "correctBox": "right" },
-    { "text": "Sách giáo khoa Sinh học hoặc phòng tư vấn tâm lý học đường của trường", "correctBox": "left" },
-    { "text": "Các lời rỉ tai truyền miệng của hội bạn thân trong phòng vệ sinh học đường", "correctBox": "right" },
-    { "text": "Bác sĩ chuyên khoa tại các bệnh viện nhi hoặc trung tâm y tế uy tín", "correctBox": "left" }
-  ]
+('1356', '229', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các nguồn tìm kiếm kiến thức sức khỏe dậy thì:",
+
+  "leftBox": { "title": "Nguồn tin cậy khoa học" },
+
+  "rightBox": { "title": "Nguồn tin rác / Tin đồn" },
+
+  "items": [
+
+    { "text": "Website của Tổ chức Y tế Thế giới WHO, UNICEF hoặc Bộ Y tế Việt Nam", "correctBox": "left" },
+
+    { "text": "Các video ngắn giật tít câu view của các tiktoker không có chuyên môn y khoa", "correctBox": "right" },
+
+    { "text": "Sách giáo khoa Sinh học hoặc phòng tư vấn tâm lý học đường của trường", "correctBox": "left" },
+
+    { "text": "Các lời rỉ tai truyền miệng của hội bạn thân trong phòng vệ sinh học đường", "correctBox": "right" },
+
+    { "text": "Bác sĩ chuyên khoa tại các bệnh viện nhi hoặc trung tâm y tế uy tín", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1357', '229', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm giải mã thắc mắc dậy thì và định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Thủ dâm - Masturbation", "right": "Hành vi tự kích thích cơ quan sinh dục tìm cảm giác thư giãn, bình thường về sinh lý." },
-    { "left": "Tư duy phản biện", "right": "Kỹ năng đặt câu hỏi kiểm chứng nguồn tin trước khi tin hoặc chia sẻ." },
-    { "left": "Sụn tăng trưởng đóng khớp", "right": "Hiện tượng đầu xương hóa cốt hoàn toàn vào khoảng tuổi 20-22 làm ngừng tăng chiều cao." },
-    { "left": "Giáo dục giới tính", "right": "Kiến thức khoa học giúp thấu hiểu cơ thể, cảm xúc và các mối quan hệ an toàn." }
-  ]
+('1357', '229', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm giải mã thắc mắc dậy thì và định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Thủ dâm - Masturbation", "right": "Hành vi tự kích thích cơ quan sinh dục tìm cảm giác thư giãn, bình thường về sinh lý." },
+
+    { "left": "Tư duy phản biện", "right": "Kỹ năng đặt câu hỏi kiểm chứng nguồn tin trước khi tin hoặc chia sẻ." },
+
+    { "left": "Sụn tăng trưởng đóng khớp", "right": "Hiện tượng đầu xương hóa cốt hoàn toàn vào khoảng tuổi 20-22 làm ngừng tăng chiều cao." },
+
+    { "left": "Giáo dục giới tính", "right": "Kiến thức khoa học giúp thấu hiểu cơ thể, cảm xúc và các mối quan hệ an toàn." }
+
+  ]
+
 }', '4', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1358', '229', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về giải mã tin đồn dậy thì:",
-  "sentence": "Đừng vội tin vào các tin đồn học đường, hãy rèn luyện tư duy [blank1]. Tự khám phá cơ thể là hành vi [blank2] bình thường nếu điều độ. Chiều cao chỉ dừng lại khi [blank3] đóng khớp hoàn toàn. Hãy hỏi [blank4] khi gặp băn khoăn.",
-  "blanks": {
-    "blank1": { "correct": "phản biện", "placeholder": "..." },
-    "blank2": { "correct": "sinh lý", "placeholder": "..." },
-    "blank3": { "correct": "xương", "placeholder": "..." },
-    "blank4": { "correct": "chuyên gia", "placeholder": "..." }
-  },
-  "words": ["phản biện", "sinh lý", "xương", "chuyên gia", "bệnh hoạn", "vô sinh", "Google", "nhịn ăn"]
+('1358', '229', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về giải mã tin đồn dậy thì:",
+
+  "sentence": "Đừng vội tin vào các tin đồn học đường, hãy rèn luyện tư duy [blank1]. Tự khám phá cơ thể là hành vi [blank2] bình thường nếu điều độ. Chiều cao chỉ dừng lại khi [blank3] đóng khớp hoàn toàn. Hãy hỏi [blank4] khi gặp băn khoăn.",
+
+  "blanks": {
+
+    "blank1": { "correct": "phản biện", "placeholder": "..." },
+
+    "blank2": { "correct": "sinh lý", "placeholder": "..." },
+
+    "blank3": { "correct": "xương", "placeholder": "..." },
+
+    "blank4": { "correct": "chuyên gia", "placeholder": "..." }
+
+  },
+
+  "words": ["phản biện", "sinh lý", "xương", "chuyên gia", "bệnh hoạn", "vô sinh", "Google", "nhịn ăn"]
+
 }', '5', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
-('1359', '229', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Làm thế nào để cải thiện chiều cao tối ưu ở giai đoạn cuối tuổi dậy thì một cách khoa học?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Duy trì chế độ dinh dưỡng giàu canxi/protein, đi ngủ sớm trước 11h đêm để giải phóng hormone tăng trưởng và tích cực chơi thể thao kéo giãn xương.", "correct": true, "emoji": "💚" },
-    { "text": "Uống các loại thuốc tăng chiều cao siêu tốc và ăn thật nhiều đồ ngọt.", "correct": false, "emoji": "😐" },
-    { "text": "Nằm im một chỗ cả ngày trên giường để xương không bị đè nén.", "correct": false, "emoji": "🙁" },
-    { "text": "Nhịn ăn giảm cân và chỉ uống sữa thay cơm hàng ngày.", "correct": false, "emoji": "🛑" }
-  ]
+('1359', '229', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Làm thế nào để cải thiện chiều cao tối ưu ở giai đoạn cuối tuổi dậy thì một cách khoa học?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Duy trì chế độ dinh dưỡng giàu canxi/protein, đi ngủ sớm trước 11h đêm để giải phóng hormone tăng trưởng và tích cực chơi thể thao kéo giãn xương.", "correct": true, "emoji": "💚" },
+
+    { "text": "Uống các loại thuốc tăng chiều cao siêu tốc và ăn thật nhiều đồ ngọt.", "correct": false, "emoji": "😐" },
+
+    { "text": "Nằm im một chỗ cả ngày trên giường để xương không bị đè nén.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Nhịn ăn giảm cân và chỉ uống sữa thay cơm hàng ngày.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 01:23:49', '2026-06-12 01:23:49'),
 ('1360', '230', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Thế nào là mối quan hệ lành mạnh?''! Bạn có 3 mạng để tự tin bảo vệ ranh giới bản thân."}', '1', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1361', '230', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Đặt ranh giới và giữ vững bình đẳng trong nhóm bạn",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn cùng bàn (Huy) thường tự ý quyết định mọi thứ trong nhóm học tập. Hôm nay, Huy tự ý đổi lịch họp nhóm sang ngày chủ nhật mà không hỏi ý kiến ai. Lịch này trùng với ca học thêm tiếng Anh rất quan trọng của bạn.",
-      "choices": [
-        { "text": "Im lặng và chấp nhận lịch họp để giữ hòa khí, chấp nhận trốn học tiếng Anh.", "nextNode": "fail_compromise" },
-        { "text": "Nhẹ nhàng nhưng thẳng thắn nhắn tin: ''Chủ nhật tớ bận học tiếng Anh rồi. Tụi mình bình đẳng đóng góp ý kiến nên tớ đề xuất chuyển lịch sang chiều thứ bảy hoặc tối thứ sáu nhé.''", "nextNode": "step2" },
-        { "text": "Tức giận rời khỏi nhóm chat học tập chung và nhắn tin mắng Huy là kẻ ích kỷ.", "nextNode": "fail_rage" }
-      ]
-    },
-    "step2": {
-      "text": "Huy bất ngờ và cằn nhằn trong nhóm: ''Mọi lần tớ quyết có sao đâu, cậu khó tính thế, làm cả nhóm mất công đổi lịch!''. Cả nhóm đang im lặng chờ phản ứng của bạn.",
-      "choices": [
-        { "text": "Thấy áy náy nên vội vàng nhắn xin lỗi cả nhóm và chấp nhận đi học nhóm ngày chủ nhật.", "nextNode": "fail_guilt" },
-        { "text": "Kiên định lập trường, nhắn rõ ràng: ''Mối quan hệ lành mạnh cần có sự bình đẳng và tôn trọng ý kiến cả hai phía. Tớ muốn tụi mình cùng thảo luận lịch rảnh chung để mọi người đều thấy thoải mái.''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Huy nhận ra mình hơi quá đà nên đồng ý đổi lịch sang chiều thứ bảy. Buổi họp nhóm diễn ra vui vẻ. Tối đó, một bạn trong nhóm rủ bạn mua áo nhóm siêu đắt để thể hiện ''sự gắn kết''. Bạn không đủ tiền tiêu vặt.",
-      "choices": [
-        { "text": "Nói thật về điều kiện kinh tế của mình và đề xuất chọn mẫu áo khác có giá cả phù hợp hơn cho tất cả mọi người.", "nextNode": "success_end" },
-        { "text": "Vay mượn nợ nần hoặc nói dối bố mẹ xin tiền học thêm để mua bằng được để tránh bị coi là ''kém cỏi'' so với các bạn.", "nextNode": "fail_starve" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã đặt ranh giới cá nhân rõ ràng, bảo vệ quyền bình đẳng của mình trong nhóm và biết cách ứng phó lành mạnh trước áp lực bạn bè.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_compromise": {
-      "text": "❌ Sai rồi! Hy sinh việc học tập quan trọng chỉ để nịnh bợ hay chiều lòng người khác là tự xóa bỏ ranh giới và tính bình đẳng trong mối quan hệ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_rage": {
-      "text": "❌ Chưa đúng! Phản ứng nóng nảy và mắng mỏ chỉ làm mâu thuẫn leo thang và phá vỡ sự kết nối lành mạnh. Hãy chọn cách giao tiếp thẳng thắn trước.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_guilt": {
-      "text": "❌ Sai rồi! Cảm giác tội lỗi không có cơ sở và nhượng bộ trước sự ích kỷ của người khác không phải là biểu hiện của một mối quan hệ lành mạnh.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_starve": {
-      "text": "❌ Chưa đúng! Chạy theo những món đồ đắt đỏ vượt quá khả năng chỉ vì áp lực đồng trang lứa là đánh mất sự tự chủ của bản thân.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1361', '230', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Đặt ranh giới và giữ vững bình đẳng trong nhóm bạn",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn cùng bàn (Huy) thường tự ý quyết định mọi thứ trong nhóm học tập. Hôm nay, Huy tự ý đổi lịch họp nhóm sang ngày chủ nhật mà không hỏi ý kiến ai. Lịch này trùng với ca học thêm tiếng Anh rất quan trọng của bạn.",
+
+      "choices": [
+
+        { "text": "Im lặng và chấp nhận lịch họp để giữ hòa khí, chấp nhận trốn học tiếng Anh.", "nextNode": "fail_compromise" },
+
+        { "text": "Nhẹ nhàng nhưng thẳng thắn nhắn tin: ''Chủ nhật tớ bận học tiếng Anh rồi. Tụi mình bình đẳng đóng góp ý kiến nên tớ đề xuất chuyển lịch sang chiều thứ bảy hoặc tối thứ sáu nhé.''", "nextNode": "step2" },
+
+        { "text": "Tức giận rời khỏi nhóm chat học tập chung và nhắn tin mắng Huy là kẻ ích kỷ.", "nextNode": "fail_rage" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Huy bất ngờ và cằn nhằn trong nhóm: ''Mọi lần tớ quyết có sao đâu, cậu khó tính thế, làm cả nhóm mất công đổi lịch!''. Cả nhóm đang im lặng chờ phản ứng của bạn.",
+
+      "choices": [
+
+        { "text": "Thấy áy náy nên vội vàng nhắn xin lỗi cả nhóm và chấp nhận đi học nhóm ngày chủ nhật.", "nextNode": "fail_guilt" },
+
+        { "text": "Kiên định lập trường, nhắn rõ ràng: ''Mối quan hệ lành mạnh cần có sự bình đẳng và tôn trọng ý kiến cả hai phía. Tớ muốn tụi mình cùng thảo luận lịch rảnh chung để mọi người đều thấy thoải mái.''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Huy nhận ra mình hơi quá đà nên đồng ý đổi lịch sang chiều thứ bảy. Buổi họp nhóm diễn ra vui vẻ. Tối đó, một bạn trong nhóm rủ bạn mua áo nhóm siêu đắt để thể hiện ''sự gắn kết''. Bạn không đủ tiền tiêu vặt.",
+
+      "choices": [
+
+        { "text": "Nói thật về điều kiện kinh tế của mình và đề xuất chọn mẫu áo khác có giá cả phù hợp hơn cho tất cả mọi người.", "nextNode": "success_end" },
+
+        { "text": "Vay mượn nợ nần hoặc nói dối bố mẹ xin tiền học thêm để mua bằng được để tránh bị coi là ''kém cỏi'' so với các bạn.", "nextNode": "fail_starve" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã đặt ranh giới cá nhân rõ ràng, bảo vệ quyền bình đẳng của mình trong nhóm và biết cách ứng phó lành mạnh trước áp lực bạn bè.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_compromise": {
+
+      "text": "❌ Sai rồi! Hy sinh việc học tập quan trọng chỉ để nịnh bợ hay chiều lòng người khác là tự xóa bỏ ranh giới và tính bình đẳng trong mối quan hệ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_rage": {
+
+      "text": "❌ Chưa đúng! Phản ứng nóng nảy và mắng mỏ chỉ làm mâu thuẫn leo thang và phá vỡ sự kết nối lành mạnh. Hãy chọn cách giao tiếp thẳng thắn trước.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_guilt": {
+
+      "text": "❌ Sai rồi! Cảm giác tội lỗi không có cơ sở và nhượng bộ trước sự ích kỷ của người khác không phải là biểu hiện của một mối quan hệ lành mạnh.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_starve": {
+
+      "text": "❌ Chưa đúng! Chạy theo những món đồ đắt đỏ vượt quá khả năng chỉ vì áp lực đồng trang lứa là đánh mất sự tự chủ của bản thân.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1362', '230', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi trong mối quan hệ:",
-  "leftBox": { "title": "Lành mạnh (Green Flag)" },
-  "rightBox": { "title": "Bất ổn (Red/Amber Flag)" },
-  "items": [
-    { "text": "Tôn trọng sở thích cá nhân và gu thời trang khác biệt của bạn bè", "correctBox": "left" },
-    { "text": "Ép bạn bè phải thay đổi kiểu tóc, trang phục theo ý thích của mình", "correctBox": "right" },
-    { "text": "Cảm thấy an tâm, vui vẻ và được tự do bày tỏ ý kiến cá nhân", "correctBox": "left" },
-    { "text": "Luôn cảm thấy nơm nớp lo sợ đối phương giận dỗi khi mình không rep tin nhắn ngay", "correctBox": "right" },
-    { "text": "Thẳng thắn trao đổi, chia sẻ chi phí khi cùng đi uống nước ăn uống", "correctBox": "left" }
-  ]
+('1362', '230', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi trong mối quan hệ:",
+
+  "leftBox": { "title": "Lành mạnh (Green Flag)" },
+
+  "rightBox": { "title": "Bất ổn (Red/Amber Flag)" },
+
+  "items": [
+
+    { "text": "Tôn trọng sở thích cá nhân và gu thời trang khác biệt của bạn bè", "correctBox": "left" },
+
+    { "text": "Ép bạn bè phải thay đổi kiểu tóc, trang phục theo ý thích của mình", "correctBox": "right" },
+
+    { "text": "Cảm thấy an tâm, vui vẻ và được tự do bày tỏ ý kiến cá nhân", "correctBox": "left" },
+
+    { "text": "Luôn cảm thấy nơm nớp lo sợ đối phương giận dỗi khi mình không rep tin nhắn ngay", "correctBox": "right" },
+
+    { "text": "Thẳng thắn trao đổi, chia sẻ chi phí khi cùng đi uống nước ăn uống", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1363', '230', 'matching', '{
-  "instruction": "Ghép cặp các viên gạch nền tảng của mối quan hệ lành mạnh với định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Tôn trọng (Respect)", "right": "Coi trọng cảm xúc, ý kiến và ranh giới cá nhân của nhau." },
-    { "left": "Lòng tin (Trust)", "right": "Tin tưởng đối phương mà không cần kiểm soát hay theo dõi." },
-    { "left": "Bình đẳng (Equality)", "right": "Cả hai có quyền đóng góp và quyết định ngang nhau trong mối quan hệ." },
-    { "left": "Sự tự chủ (Autonomy)", "right": "Giữ vững cá tính riêng và sở thích độc lập của bản thân." }
-  ]
+('1363', '230', 'matching', '{
+
+  "instruction": "Ghép cặp các viên gạch nền tảng của mối quan hệ lành mạnh với định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Tôn trọng (Respect)", "right": "Coi trọng cảm xúc, ý kiến và ranh giới cá nhân của nhau." },
+
+    { "left": "Lòng tin (Trust)", "right": "Tin tưởng đối phương mà không cần kiểm soát hay theo dõi." },
+
+    { "left": "Bình đẳng (Equality)", "right": "Cả hai có quyền đóng góp và quyết định ngang nhau trong mối quan hệ." },
+
+    { "left": "Sự tự chủ (Autonomy)", "right": "Giữ vững cá tính riêng và sở thích độc lập của bản thân." }
+
+  ]
+
 }', '4', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1364', '230', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành triết lý về mối quan hệ lành mạnh:",
-  "sentence": "Mối quan hệ lành mạnh bắt nguồn từ sự [blank1] và tôn trọng lẫn nhau. Hãy biết lắng nghe [blank2] khi cảm thấy bất an hay lo âu. Giữ vững [blank3] riêng và tự tin từ chối áp lực [blank4] từ nhóm bạn.",
-  "blanks": {
-    "blank1": { "correct": "bình đẳng", "placeholder": "..." },
-    "blank2": { "correct": "cơ thể", "placeholder": "..." },
-    "blank3": { "correct": "cá tính", "placeholder": "..." },
-    "blank4": { "correct": "bắt chước", "placeholder": "..." }
-  },
-  "words": ["bình đẳng", "cơ thể", "cá tính", "bắt chước", "kiểm soát", "im lặng", "giả vờ", "áp đặt"]
+('1364', '230', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành triết lý về mối quan hệ lành mạnh:",
+
+  "sentence": "Mối quan hệ lành mạnh bắt nguồn từ sự [blank1] và tôn trọng lẫn nhau. Hãy biết lắng nghe [blank2] khi cảm thấy bất an hay lo âu. Giữ vững [blank3] riêng và tự tin từ chối áp lực [blank4] từ nhóm bạn.",
+
+  "blanks": {
+
+    "blank1": { "correct": "bình đẳng", "placeholder": "..." },
+
+    "blank2": { "correct": "cơ thể", "placeholder": "..." },
+
+    "blank3": { "correct": "cá tính", "placeholder": "..." },
+
+    "blank4": { "correct": "bắt chước", "placeholder": "..." }
+
+  },
+
+  "words": ["bình đẳng", "cơ thể", "cá tính", "bắt chước", "kiểm soát", "im lặng", "giả vờ", "áp đặt"]
+
 }', '5', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1365', '230', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bạn liên tục cảm thấy tim đập nhanh, cơ thể co cứng, và lo sợ mỗi khi nhận cuộc gọi hay tin nhắn từ một người bạn bè, điều này có ý nghĩa gì?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Đó là tín hiệu cảnh báo của cơ thể cho thấy mối quan hệ này đang có vấn đề bất ổn và thiếu an toàn.", "correct": true, "emoji": "💚" },
-    { "text": "Bạn đang quá nhạy cảm và yếu đuối, cần tập cách chịu đựng và bỏ qua cảm giác đó.", "correct": false, "emoji": "😐" },
-    { "text": "Người bạn đó rất yêu quý bạn và đang muốn thu hút sự chú ý đặc biệt từ bạn.", "correct": false, "emoji": "🙁" },
-    { "text": "Cơ thể bạn đang bị kiệt sức do học tập quá tải, không liên quan gì đến bạn bè.", "correct": false, "emoji": "🛑" }
-  ]
+('1365', '230', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bạn liên tục cảm thấy tim đập nhanh, cơ thể co cứng, và lo sợ mỗi khi nhận cuộc gọi hay tin nhắn từ một người bạn bè, điều này có ý nghĩa gì?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Đó là tín hiệu cảnh báo của cơ thể cho thấy mối quan hệ này đang có vấn đề bất ổn và thiếu an toàn.", "correct": true, "emoji": "💚" },
+
+    { "text": "Bạn đang quá nhạy cảm và yếu đuối, cần tập cách chịu đựng và bỏ qua cảm giác đó.", "correct": false, "emoji": "😐" },
+
+    { "text": "Người bạn đó rất yêu quý bạn và đang muốn thu hút sự chú ý đặc biệt từ bạn.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Cơ thể bạn đang bị kiệt sức do học tập quá tải, không liên quan gì đến bạn bè.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
 ('1366', '231', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Giao tiếp & Giải quyết Xung đột''! Hãy dùng kỹ năng giao tiếp mượt mà để hạ hỏa các mâu thuẫn."}', '1', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1367', '231', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Giao tiếp thông thái và hòa giải xung đột",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn và bạn cùng nhóm (Duy) đang tranh cãi gay gắt về phân chia công việc trong nhóm. Duy làm sai và chậm tiến độ khiến bạn rất bực mình. Bạn cảm thấy mặt nóng bừng lên và chuẩn bị to tiếng.",
-      "choices": [
-        { "text": "Nhận biết cơn giận, hít sâu 3 nhịp và chủ động đề xuất: ''Tụi mình đang hơi nóng, để chiều bình tĩnh rồi nói tiếp nha.'' để tránh to tiếng.", "nextNode": "step2" },
-        { "text": "Quát lớn vào mặt Duy: ''Lúc nào cậu cũng vô trách nhiệm như vậy, làm hỏng hết bài của cả nhóm!'' rồi đập bàn bỏ đi.", "nextNode": "fail_anger" },
-        { "text": "Im lặng tỏ vẻ khinh bỉ, tự lấy bài về làm một mình và không nói chuyện với Duy nữa.", "nextNode": "fail_silent" }
-      ]
-    },
-    "step2": {
-      "text": "Chiều đến, khi cả hai đã bình tĩnh hơn, Duy cố gắng giải thích lý do làm chậm nhưng giọng điệu có vẻ vẫn tự ái. Bạn muốn bày tỏ sự khó chịu của mình một cách lành mạnh.",
-      "choices": [
-        { "text": "Cắt ngang lời Duy: ''Cậu đừng bao biện nữa. Cậu lúc nào cũng cẩu thả và bắt người khác gánh việc!''", "nextNode": "fail_blame" },
-        { "text": "Dùng câu bắt đầu bằng ''Tớ'': ''Tớ cảm thấy hơi hụt hẫng và lo lắng khi phần bài của cậu bị trễ vì nó ảnh hưởng trực tiếp đến điểm số của cả nhóm.'' và lắng nghe Duy chia sẻ.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Duy nghe xong thấy bớt phòng thủ và chủ động xin lỗi. Tuy nhiên, tối đó Duy nhắn tin giải thích thêm nhưng chỉ rep lại vỏn vẹn chữ ''Ừ'' khiến bạn hoang mang lo sợ Duy vẫn ghét mình.",
-      "choices": [
-        { "text": "Không suy diễn tiêu cực, gọi điện trực tiếp hỏi thăm: ''Duy ơi, lúc nãy thấy nhắn ngắn tớ sợ cậu còn bận hay có chuyện gì. Tụi mình thống nhất cách sửa bài nhé!''", "nextNode": "success_end" },
-        { "text": "Lập tức hủy kết bạn và viết status bóng gió chửi Duy là kẻ hai mặt trên trang cá nhân.", "nextNode": "fail_toxic_status" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Tuyệt vời! Bạn đã nhận diện cơn giận tốt, biết cách dùng câu bắt đầu bằng ''Tớ'' để nói về cảm xúc và không rơi vào cạm bẫy suy diễn tin nhắn chữ.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_anger": {
-      "text": "❌ Chưa đúng! Trút giận bằng cách to tiếng, xúc phạm người khác chỉ làm tổn thương mối quan hệ và không giải quyết được vấn đề công việc.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_silent": {
-      "text": "❌ Sai rồi! ''Chiến tranh lạnh'' và tự gánh việc làm một mình chỉ tích tụ sự ức chế bên trong và phá hỏng tinh thần làm việc nhóm.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_blame": {
-      "text": "❌ Sai rồi! Sử dụng những câu bắt đầu bằng ''Cậu'' kèm theo các từ cực đoan (luôn luôn, lúc nào cũng) sẽ kích hoạt chế độ phòng thủ của đối phương.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_toxic_status": {
-      "text": "❌ Chưa đúng! Suy diễn nội dung tin nhắn rep ngắn và mang mâu thuẫn lên mạng xã hội để trả đũa là hành vi vô cùng độc hại.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1367', '231', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Giao tiếp thông thái và hòa giải xung đột",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn và bạn cùng nhóm (Duy) đang tranh cãi gay gắt về phân chia công việc trong nhóm. Duy làm sai và chậm tiến độ khiến bạn rất bực mình. Bạn cảm thấy mặt nóng bừng lên và chuẩn bị to tiếng.",
+
+      "choices": [
+
+        { "text": "Nhận biết cơn giận, hít sâu 3 nhịp và chủ động đề xuất: ''Tụi mình đang hơi nóng, để chiều bình tĩnh rồi nói tiếp nha.'' để tránh to tiếng.", "nextNode": "step2" },
+
+        { "text": "Quát lớn vào mặt Duy: ''Lúc nào cậu cũng vô trách nhiệm như vậy, làm hỏng hết bài của cả nhóm!'' rồi đập bàn bỏ đi.", "nextNode": "fail_anger" },
+
+        { "text": "Im lặng tỏ vẻ khinh bỉ, tự lấy bài về làm một mình và không nói chuyện với Duy nữa.", "nextNode": "fail_silent" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Chiều đến, khi cả hai đã bình tĩnh hơn, Duy cố gắng giải thích lý do làm chậm nhưng giọng điệu có vẻ vẫn tự ái. Bạn muốn bày tỏ sự khó chịu của mình một cách lành mạnh.",
+
+      "choices": [
+
+        { "text": "Cắt ngang lời Duy: ''Cậu đừng bao biện nữa. Cậu lúc nào cũng cẩu thả và bắt người khác gánh việc!''", "nextNode": "fail_blame" },
+
+        { "text": "Dùng câu bắt đầu bằng ''Tớ'': ''Tớ cảm thấy hơi hụt hẫng và lo lắng khi phần bài của cậu bị trễ vì nó ảnh hưởng trực tiếp đến điểm số của cả nhóm.'' và lắng nghe Duy chia sẻ.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Duy nghe xong thấy bớt phòng thủ và chủ động xin lỗi. Tuy nhiên, tối đó Duy nhắn tin giải thích thêm nhưng chỉ rep lại vỏn vẹn chữ ''Ừ'' khiến bạn hoang mang lo sợ Duy vẫn ghét mình.",
+
+      "choices": [
+
+        { "text": "Không suy diễn tiêu cực, gọi điện trực tiếp hỏi thăm: ''Duy ơi, lúc nãy thấy nhắn ngắn tớ sợ cậu còn bận hay có chuyện gì. Tụi mình thống nhất cách sửa bài nhé!''", "nextNode": "success_end" },
+
+        { "text": "Lập tức hủy kết bạn và viết status bóng gió chửi Duy là kẻ hai mặt trên trang cá nhân.", "nextNode": "fail_toxic_status" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Tuyệt vời! Bạn đã nhận diện cơn giận tốt, biết cách dùng câu bắt đầu bằng ''Tớ'' để nói về cảm xúc và không rơi vào cạm bẫy suy diễn tin nhắn chữ.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_anger": {
+
+      "text": "❌ Chưa đúng! Trút giận bằng cách to tiếng, xúc phạm người khác chỉ làm tổn thương mối quan hệ và không giải quyết được vấn đề công việc.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_silent": {
+
+      "text": "❌ Sai rồi! ''Chiến tranh lạnh'' và tự gánh việc làm một mình chỉ tích tụ sự ức chế bên trong và phá hỏng tinh thần làm việc nhóm.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_blame": {
+
+      "text": "❌ Sai rồi! Sử dụng những câu bắt đầu bằng ''Cậu'' kèm theo các từ cực đoan (luôn luôn, lúc nào cũng) sẽ kích hoạt chế độ phòng thủ của đối phương.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_toxic_status": {
+
+      "text": "❌ Chưa đúng! Suy diễn nội dung tin nhắn rep ngắn và mang mâu thuẫn lên mạng xã hội để trả đũa là hành vi vô cùng độc hại.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1368', '231', 'sorting', '{
-  "instruction": "Hãy phân loại câu nói/hành vi giao tiếp sau đây:",
-  "leftBox": { "title": "Bày tỏ cảm xúc lành mạnh" },
-  "rightBox": { "title": "Đổ lỗi/Trách móc độc hại" },
-  "items": [
-    { "text": "Tớ thấy hơi buồn khi cậu quên cuộc hẹn của tụi mình hôm qua", "correctBox": "left" },
-    { "text": "Cậu lúc nào cũng cao su, không bao giờ tôn trọng giờ giấc của ai cả", "correctBox": "right" },
-    { "text": "Tớ lo lắng khi thấy cậu tắt máy ngang xương mà không báo trước", "correctBox": "left" },
-    { "text": "Cậu cố tình phớt lờ tin nhắn của tớ để chọc tức tớ đúng không", "correctBox": "right" },
-    { "text": "Tớ cảm thấy quá tải khi phải gánh toàn bộ phần thuyết trình của nhóm", "correctBox": "left" }
-  ]
+('1368', '231', 'sorting', '{
+
+  "instruction": "Hãy phân loại câu nói/hành vi giao tiếp sau đây:",
+
+  "leftBox": { "title": "Bày tỏ cảm xúc lành mạnh" },
+
+  "rightBox": { "title": "Đổ lỗi/Trách móc độc hại" },
+
+  "items": [
+
+    { "text": "Tớ thấy hơi buồn khi cậu quên cuộc hẹn của tụi mình hôm qua", "correctBox": "left" },
+
+    { "text": "Cậu lúc nào cũng cao su, không bao giờ tôn trọng giờ giấc của ai cả", "correctBox": "right" },
+
+    { "text": "Tớ lo lắng khi thấy cậu tắt máy ngang xương mà không báo trước", "correctBox": "left" },
+
+    { "text": "Cậu cố tình phớt lờ tin nhắn của tớ để chọc tức tớ đúng không", "correctBox": "right" },
+
+    { "text": "Tớ cảm thấy quá tải khi phải gánh toàn bộ phần thuyết trình của nhóm", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1369', '231', 'matching', '{
-  "instruction": "Ghép cặp các quy tắc giao tiếp và giải quyết xung đột sau:",
-  "pairs": [
-    { "left": "Lắng nghe chủ động", "right": "Tập trung thấu hiểu cảm xúc đối phương, không ngắt lời hay phán xét." },
-    { "left": "Hòa giải bước 1", "right": "Chấp nhận lỗi sai và xin lỗi chân thành, không tìm lý do bao biện." },
-    { "left": "Hòa giải bước 2", "right": "Lắng nghe cảm nhận của đối phương về tổn thương mà mình đã gây ra." },
-    { "left": "Hòa giải bước 3", "right": "Cùng nhau thảo luận đưa ra giải pháp cụ thể để không lặp lại lỗi cũ." }
-  ]
+('1369', '231', 'matching', '{
+
+  "instruction": "Ghép cặp các quy tắc giao tiếp và giải quyết xung đột sau:",
+
+  "pairs": [
+
+    { "left": "Lắng nghe chủ động", "right": "Tập trung thấu hiểu cảm xúc đối phương, không ngắt lời hay phán xét." },
+
+    { "left": "Hòa giải bước 1", "right": "Chấp nhận lỗi sai và xin lỗi chân thành, không tìm lý do bao biện." },
+
+    { "left": "Hòa giải bước 2", "right": "Lắng nghe cảm nhận của đối phương về tổn thương mà mình đã gây ra." },
+
+    { "left": "Hòa giải bước 3", "right": "Cùng nhau thảo luận đưa ra giải pháp cụ thể để không lặp lại lỗi cũ." }
+
+  ]
+
 }', '4', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1370', '231', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về giải quyết xung đột:",
-  "sentence": "Giao tiếp lành mạnh đòi hỏi sự lắng nghe [blank1] thay vì nghe để cãi. Khi bày tỏ sự bất mãn, hãy dùng cấu trúc bắt đầu bằng từ [blank2] để tránh đổ lỗi. Nếu cơn giận bùng phát, hãy chủ động xin [blank3] để hạ nhiệt. Hãy giải quyết xung đột bằng các hành động [blank4] cụ thể.",
-  "blanks": {
-    "blank1": { "correct": "chủ động", "placeholder": "..." },
-    "blank2": { "correct": "Tớ", "placeholder": "..." },
-    "blank3": { "correct": "tạm dừng", "placeholder": "..." },
-    "blank4": { "correct": "khắc phục", "placeholder": "..." }
-  },
-  "words": ["chủ động", "Tớ", "tạm dừng", "khắc phục", "Cậu", "im lặng", "tranh cãi", "đối phó"]
+('1370', '231', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về giải quyết xung đột:",
+
+  "sentence": "Giao tiếp lành mạnh đòi hỏi sự lắng nghe [blank1] thay vì nghe để cãi. Khi bày tỏ sự bất mãn, hãy dùng cấu trúc bắt đầu bằng từ [blank2] để tránh đổ lỗi. Nếu cơn giận bùng phát, hãy chủ động xin [blank3] để hạ nhiệt. Hãy giải quyết xung đột bằng các hành động [blank4] cụ thể.",
+
+  "blanks": {
+
+    "blank1": { "correct": "chủ động", "placeholder": "..." },
+
+    "blank2": { "correct": "Tớ", "placeholder": "..." },
+
+    "blank3": { "correct": "tạm dừng", "placeholder": "..." },
+
+    "blank4": { "correct": "khắc phục", "placeholder": "..." }
+
+  },
+
+  "words": ["chủ động", "Tớ", "tạm dừng", "khắc phục", "Cậu", "im lặng", "tranh cãi", "đối phó"]
+
 }', '5', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1371', '231', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Tại sao chúng ta nên hạn chế tối đa việc giải quyết các mâu thuẫn lớn hoặc nhạy cảm thông qua tin nhắn chữ?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Vì tin nhắn chữ thiếu tông giọng, nét mặt, rất dễ khiến người đọc suy diễn tiêu cực và hiểu lầm nghiêm trọng.", "correct": true, "emoji": "💚" },
-    { "text": "Vì nhắn tin chữ tốn nhiều tiền cước mạng điện thoại và làm tốn thời gian gõ bàn phím.", "correct": false, "emoji": "😐" },
-    { "text": "Vì tin nhắn chữ không thể hiện hết được sự giận dữ mãnh liệt của bạn để dằn mặt đối phương.", "correct": false, "emoji": "🙁" },
-    { "text": "Vì đối phương có thể chụp màn hình tin nhắn của bạn để gửi cho giáo viên hoặc phụ huynh.", "correct": false, "emoji": "🛑" }
-  ]
+('1371', '231', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Tại sao chúng ta nên hạn chế tối đa việc giải quyết các mâu thuẫn lớn hoặc nhạy cảm thông qua tin nhắn chữ?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Vì tin nhắn chữ thiếu tông giọng, nét mặt, rất dễ khiến người đọc suy diễn tiêu cực và hiểu lầm nghiêm trọng.", "correct": true, "emoji": "💚" },
+
+    { "text": "Vì nhắn tin chữ tốn nhiều tiền cước mạng điện thoại và làm tốn thời gian gõ bàn phím.", "correct": false, "emoji": "😐" },
+
+    { "text": "Vì tin nhắn chữ không thể hiện hết được sự giận dữ mãnh liệt của bạn để dằn mặt đối phương.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Vì đối phương có thể chụp màn hình tin nhắn của bạn để gửi cho giáo viên hoặc phụ huynh.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
 ('1372', '232', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Ranh giới, Lòng tin & Sự Tôn trọng''! Bạn có 3 mạng để bảo vệ vương quốc riêng tư của mình."}', '1', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1373', '232', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Tự tin thiết lập ranh giới cá nhân trước sự kiểm soát",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn phát hiện bạn thân hoặc người yêu của mình tự ý cầm điện thoại đọc tin nhắn Zalo lúc bạn đi rửa tay. Khi bị hỏi, đối phương thản nhiên nói: ''Yêu nhau/Chơi thân thì phải cởi mở, không giấu giếm gì nhau mới là tin tưởng, sao phải giữ mật khẩu làm gì?''.",
-      "choices": [
-        { "text": "Đưa mật khẩu và cho phép đối phương đọc thoải mái để chứng minh mình trong sạch.", "nextNode": "fail_submit" },
-        { "text": "Lấy lại điện thoại, đặt mật khẩu mới và nói: ''Tớ yêu quý cậu nhưng tin nhắn là không gian cá nhân của tớ. Tụi mình cần lòng tin thực sự chứ không phải sự kiểm soát điện thoại.''", "nextNode": "step2" },
-        { "text": "Giật phắt điện thoại, mắng mỏ đối phương thậm tệ rồi đập vỡ điện thoại ngay tại chỗ.", "nextNode": "fail_violence" }
-      ]
-    },
-    "step2": {
-      "text": "Đối phương tỏ vẻ giận dỗi, im lặng suốt cả buổi và nhắn tin bảo rằng bạn đã thay đổi, không còn coi họ là quan trọng nữa.",
-      "choices": [
-        { "text": "Mủi lòng và cảm thấy tội lỗi, quyết định gửi mật khẩu điện thoại qua tin nhắn để làm hòa.", "nextNode": "fail_guilt" },
-        { "text": "Kiên định ranh giới, cho đối phương thời gian bình tĩnh và nhắn: ''Tôn trọng quyền riêng tư là nguyên tắc cơ bản giúp mối quan hệ bền vững. Khi nào cậu bình tĩnh, tụi mình nói chuyện tiếp nhé.''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Đối phương nhận ra lỗi sai và xin lỗi bạn. Ngày hôm sau, nhóm bạn thân rủ bạn trốn học thêm để đi net chơi game, dọa rằng: ''Không đi thì từ sau đừng chơi chung với nhóm nữa!''.",
-      "choices": [
-        { "text": "Từ chối dứt khoát: ''Tớ cần ôn bài cho bài kiểm tra ngày mai rồi. Các cậu đi chơi vui nhé!'' mà không giải thích vòng vo.", "nextNode": "success_end" },
-        { "text": "Lo sợ bị cô lập nên chấp nhận trốn học đi theo nhóm bạn để giữ tình bạn.", "nextNode": "fail_peer_pressure" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã bảo vệ xuất sắc ranh giới riêng tư, không nhượng bộ trước sự thao túng cảm xúc và tự tin từ chối áp lực từ nhóm bạn.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_submit": {
-      "text": "❌ Sai rồi! Đồng ý chia sẻ mật khẩu cá nhân chỉ để chiều lòng sự kiểm soát của đối phương là bạn đang tự hủy hoại ranh giới riêng tư cần thiết của mình.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_violence": {
-      "text": "❌ Chưa đúng! Hành vi bạo lực hoặc tức giận thái quá không giải quyết được mâu thuẫn ranh giới mà còn biến bạn thành người sai trước.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_guilt": {
-      "text": "❌ Sai rồi! Nhượng bộ chỉ vì cảm thấy áy náy trước sự giận dỗi vô lý sẽ tạo tiền lệ xấu cho sự lấn lướt ranh giới sau này.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_peer_pressure": {
-      "text": "❌ Chưa đúng! Trốn học chỉ vì sợ nhóm bạn tẩy chay chứng tỏ bạn chưa biết cách đặt ranh giới cứng rắn để bảo vệ tương lai của chính mình.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1373', '232', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Tự tin thiết lập ranh giới cá nhân trước sự kiểm soát",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn phát hiện bạn thân hoặc người yêu của mình tự ý cầm điện thoại đọc tin nhắn Zalo lúc bạn đi rửa tay. Khi bị hỏi, đối phương thản nhiên nói: ''Yêu nhau/Chơi thân thì phải cởi mở, không giấu giếm gì nhau mới là tin tưởng, sao phải giữ mật khẩu làm gì?''.",
+
+      "choices": [
+
+        { "text": "Đưa mật khẩu và cho phép đối phương đọc thoải mái để chứng minh mình trong sạch.", "nextNode": "fail_submit" },
+
+        { "text": "Lấy lại điện thoại, đặt mật khẩu mới và nói: ''Tớ yêu quý cậu nhưng tin nhắn là không gian cá nhân của tớ. Tụi mình cần lòng tin thực sự chứ không phải sự kiểm soát điện thoại.''", "nextNode": "step2" },
+
+        { "text": "Giật phắt điện thoại, mắng mỏ đối phương thậm tệ rồi đập vỡ điện thoại ngay tại chỗ.", "nextNode": "fail_violence" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Đối phương tỏ vẻ giận dỗi, im lặng suốt cả buổi và nhắn tin bảo rằng bạn đã thay đổi, không còn coi họ là quan trọng nữa.",
+
+      "choices": [
+
+        { "text": "Mủi lòng và cảm thấy tội lỗi, quyết định gửi mật khẩu điện thoại qua tin nhắn để làm hòa.", "nextNode": "fail_guilt" },
+
+        { "text": "Kiên định ranh giới, cho đối phương thời gian bình tĩnh và nhắn: ''Tôn trọng quyền riêng tư là nguyên tắc cơ bản giúp mối quan hệ bền vững. Khi nào cậu bình tĩnh, tụi mình nói chuyện tiếp nhé.''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Đối phương nhận ra lỗi sai và xin lỗi bạn. Ngày hôm sau, nhóm bạn thân rủ bạn trốn học thêm để đi net chơi game, dọa rằng: ''Không đi thì từ sau đừng chơi chung với nhóm nữa!''.",
+
+      "choices": [
+
+        { "text": "Từ chối dứt khoát: ''Tớ cần ôn bài cho bài kiểm tra ngày mai rồi. Các cậu đi chơi vui nhé!'' mà không giải thích vòng vo.", "nextNode": "success_end" },
+
+        { "text": "Lo sợ bị cô lập nên chấp nhận trốn học đi theo nhóm bạn để giữ tình bạn.", "nextNode": "fail_peer_pressure" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã bảo vệ xuất sắc ranh giới riêng tư, không nhượng bộ trước sự thao túng cảm xúc và tự tin từ chối áp lực từ nhóm bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_submit": {
+
+      "text": "❌ Sai rồi! Đồng ý chia sẻ mật khẩu cá nhân chỉ để chiều lòng sự kiểm soát của đối phương là bạn đang tự hủy hoại ranh giới riêng tư cần thiết của mình.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_violence": {
+
+      "text": "❌ Chưa đúng! Hành vi bạo lực hoặc tức giận thái quá không giải quyết được mâu thuẫn ranh giới mà còn biến bạn thành người sai trước.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_guilt": {
+
+      "text": "❌ Sai rồi! Nhượng bộ chỉ vì cảm thấy áy náy trước sự giận dỗi vô lý sẽ tạo tiền lệ xấu cho sự lấn lướt ranh giới sau này.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_peer_pressure": {
+
+      "text": "❌ Chưa đúng! Trốn học chỉ vì sợ nhóm bạn tẩy chay chứng tỏ bạn chưa biết cách đặt ranh giới cứng rắn để bảo vệ tương lai của chính mình.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1374', '232', 'sorting', '{
-  "instruction": "Hãy phân loại các hành vi ứng xử sau đây:",
-  "leftBox": { "title": "Tôn trọng ranh giới" },
-  "rightBox": { "title": "Xâm phạm ranh giới" },
-  "items": [
-    { "text": "Gõ cửa trước khi vào phòng riêng của người khác", "correctBox": "left" },
-    { "text": "Đòi mật khẩu mạng xã hội để kiểm tra tin nhắn của người yêu", "correctBox": "right" },
-    { "text": "Luôn hỏi ý kiến bạn bè trước khi đăng ảnh dìm hàng họ lên mạng", "correctBox": "left" },
-    { "text": "Tự ý lục cặp sách hoặc ví tiền của bạn học khi họ ra chơi", "correctBox": "right" },
-    { "text": "Chấp nhận lời từ chối và không nài nỉ khi bạn nói không muốn đi chơi", "correctBox": "left" }
-  ]
+('1374', '232', 'sorting', '{
+
+  "instruction": "Hãy phân loại các hành vi ứng xử sau đây:",
+
+  "leftBox": { "title": "Tôn trọng ranh giới" },
+
+  "rightBox": { "title": "Xâm phạm ranh giới" },
+
+  "items": [
+
+    { "text": "Gõ cửa trước khi vào phòng riêng của người khác", "correctBox": "left" },
+
+    { "text": "Đòi mật khẩu mạng xã hội để kiểm tra tin nhắn của người yêu", "correctBox": "right" },
+
+    { "text": "Luôn hỏi ý kiến bạn bè trước khi đăng ảnh dìm hàng họ lên mạng", "correctBox": "left" },
+
+    { "text": "Tự ý lục cặp sách hoặc ví tiền của bạn học khi họ ra chơi", "correctBox": "right" },
+
+    { "text": "Chấp nhận lời từ chối và không nài nỉ khi bạn nói không muốn đi chơi", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1375', '232', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm ranh giới và định nghĩa phù hợp:",
-  "pairs": [
-    { "left": "Ranh giới vật lý", "right": "Quyền quyết định ai được phép đụng chạm vào cơ thể của bạn." },
-    { "left": "Ranh giới cảm xúc", "right": "Quyền giữ suy nghĩ riêng tư, nói không khi cảm thấy quá tải." },
-    { "left": "Lòng tin (Trust)", "right": "Sự tin cậy được xây dựng từ những hành động nhỏ, nhất quán." },
-    { "left": "Tôn trọng riêng tư", "right": "Không tò mò lục lọi đồ đạc, tin nhắn cá nhân khi chưa được cho phép." }
-  ]
+('1375', '232', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm ranh giới và định nghĩa phù hợp:",
+
+  "pairs": [
+
+    { "left": "Ranh giới vật lý", "right": "Quyền quyết định ai được phép đụng chạm vào cơ thể của bạn." },
+
+    { "left": "Ranh giới cảm xúc", "right": "Quyền giữ suy nghĩ riêng tư, nói không khi cảm thấy quá tải." },
+
+    { "left": "Lòng tin (Trust)", "right": "Sự tin cậy được xây dựng từ những hành động nhỏ, nhất quán." },
+
+    { "left": "Tôn trọng riêng tư", "right": "Không tò mò lục lọi đồ đạc, tin nhắn cá nhân khi chưa được cho phép." }
+
+  ]
+
 }', '4', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1376', '232', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về ranh giới cá nhân:",
-  "sentence": "Ranh giới cá nhân giúp bảo vệ sự [blank1] của bạn. Lòng tin không tự nhiên có mà cần được xây dựng qua [blank2] nhất quán. Tôn trọng ranh giới nghĩa là không xâm phạm quyền [blank3] của nhau. Hãy dứt khoát nói [blank4] trước những lời rủ rê vi phạm nguyên tắc sống của bạn.",
-  "blanks": {
-    "blank1": { "correct": "thoải mái", "placeholder": "..." },
-    "blank2": { "correct": "hành động", "placeholder": "..." },
-    "blank3": { "correct": "riêng tư", "placeholder": "..." },
-    "blank4": { "correct": "không", "placeholder": "..." }
-  },
-  "words": ["thoải mái", "hành động", "riêng tư", "không", "kiểm soát", "mật khẩu", "giữ bí mật", "thỏa hiệp"]
+('1376', '232', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về ranh giới cá nhân:",
+
+  "sentence": "Ranh giới cá nhân giúp bảo vệ sự [blank1] của bạn. Lòng tin không tự nhiên có mà cần được xây dựng qua [blank2] nhất quán. Tôn trọng ranh giới nghĩa là không xâm phạm quyền [blank3] của nhau. Hãy dứt khoát nói [blank4] trước những lời rủ rê vi phạm nguyên tắc sống của bạn.",
+
+  "blanks": {
+
+    "blank1": { "correct": "thoải mái", "placeholder": "..." },
+
+    "blank2": { "correct": "hành động", "placeholder": "..." },
+
+    "blank3": { "correct": "riêng tư", "placeholder": "..." },
+
+    "blank4": { "correct": "không", "placeholder": "..." }
+
+  },
+
+  "words": ["thoải mái", "hành động", "riêng tư", "không", "kiểm soát", "mật khẩu", "giữ bí mật", "thỏa hiệp"]
+
 }', '5', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1377', '232', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi đối phương đòi hỏi mật khẩu các tài khoản mạng xã hội của bạn để ''chứng minh tình cảm chân thành'', hành động này phản ánh điều gì?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Đó là dấu hiệu của sự kiểm soát độc hại và thiếu lòng tin, vi phạm nghiêm trọng ranh giới cá nhân.", "correct": true, "emoji": "💚" },
-    { "text": "Đó là biểu hiện của một tình yêu sâu sắc, sẵn sàng chia sẻ mọi bí mật riêng tư với nhau.", "correct": false, "emoji": "😐" },
-    { "text": "Đó là hành vi bình thường giúp cả hai bảo mật tài khoản tốt hơn trước các hacker.", "correct": false, "emoji": "🙁" },
-    { "text": "Đó là dấu hiệu cho thấy đối phương đang muốn giúp bạn quản lý hộp thư để tránh tin nhắn rác.", "correct": false, "emoji": "🛑" }
-  ]
+('1377', '232', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi đối phương đòi hỏi mật khẩu các tài khoản mạng xã hội của bạn để ''chứng minh tình cảm chân thành'', hành động này phản ánh điều gì?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Đó là dấu hiệu của sự kiểm soát độc hại và thiếu lòng tin, vi phạm nghiêm trọng ranh giới cá nhân.", "correct": true, "emoji": "💚" },
+
+    { "text": "Đó là biểu hiện của một tình yêu sâu sắc, sẵn sàng chia sẻ mọi bí mật riêng tư với nhau.", "correct": false, "emoji": "😐" },
+
+    { "text": "Đó là hành vi bình thường giúp cả hai bảo mật tài khoản tốt hơn trước các hacker.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Đó là dấu hiệu cho thấy đối phương đang muốn giúp bạn quản lý hộp thư để tránh tin nhắn rác.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
 ('1378', '233', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Sự Gắn kết & Gần gũi Cảm xúc''! Bạn có 3 mạng để hiểu đúng về tình cảm tuổi học trò."}', '1', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1379', '233', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Kết nối cảm xúc và tôn trọng tốc độ của đối phương",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn (An) nhận ra dạo gần đây mình hay đỏ mặt khi đi bên cạnh Vy - người bạn thân từ thuở nhỏ. Bạn luôn để ý xem Vy nói chuyện với ai và thấy hơi ghen tuông. Bạn nhận ra mình đã cảm nắng Vy.",
-      "choices": [
-        { "text": "Tránh mặt Vy hoàn toàn để không phải đối mặt với cảm xúc ngượng ngùng này.", "nextNode": "fail_avoidance" },
-        { "text": "Chấp nhận cảm xúc tự nhiên, cho bản thân thời gian suy ngẫm để phân biệt giữa tình bạn thân thiết và cảm lãng mạn thực sự.", "nextNode": "step2" },
-        { "text": "Tỏ tình dồn dập ngay hôm sau, bắt Vy phải trả lời đồng ý làm người yêu ngay lập tức.", "nextNode": "fail_pressure" }
-      ]
-    },
-    "step2": {
-      "text": "Sau một thời gian, hai bạn chính thức hẹn hò. Trong một buổi đi chơi riêng, Vy định nắm tay bạn, nhưng nhận thấy bạn đang khoác chặt hai tay vào chiếc balo trước ngực.",
-      "choices": [
-        { "text": "Vy tinh tế nhận ra tín hiệu phòng thủ, tiếp tục đi bên cạnh trò chuyện tự nhiên và tôn trọng tốc độ sẵn sàng của bạn.", "nextNode": "step3" },
-        { "text": "Vy cố tình giật balo ra và chủ động nắm tay bạn bằng được vì nghĩ yêu nhau là phải nắm tay mới lãng mạn.", "nextNode": "fail_touch" }
-      ]
-    },
-    "step3": {
-      "text": "Bạn vô cùng cảm kích sự tinh tế của Vy. Tuy nhiên, Vy lại nghe đám bạn xung quanh thúc giục: ''Yêu nhau là phải ôm hôn tiến xa hơn, chứ cứ nắm tay thôi thì nhạt nhẽo lắm!''. Vy cảm thấy áp lực lớn.",
-      "choices": [
-        { "text": "Ép bản thân thực hiện các đụng chạm thân mật dù chưa thấy sẵn sàng để chiều lòng nhóm bạn.", "nextNode": "fail_peer" },
-        { "text": "Vy giữ vững ranh giới và cùng bạn tập trung xây dựng sự gắn kết phi thể xác (viết thư tay, cùng đi nhà sách học bài, làm playlist nhạc tặng nhau).", "nextNode": "success_end" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Tuyệt vời! Bạn đã phân biệt đúng cảm xúc bản thân, tôn trọng ranh giới đụng chạm và biết cách xây dựng sự gắn kết cảm xúc phi thể xác lành mạnh.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_avoidance": {
-      "text": "❌ Chưa phù hợp! Đột ngột tránh mặt bạn thân mà không giải thích chỉ làm rạn nứt mối quan hệ tốt đẹp sẵn có một cách vô lý.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_pressure": {
-      "text": "❌ Sai rồi! Tỏ tình dồn dập và ép buộc câu trả lời sẽ khiến đối phương sợ hãi và làm căng thẳng tình bạn.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_touch": {
-      "text": "❌ Sai rồi! Phớt lờ tín hiệu cơ thể phòng thủ của đối phương và ép buộc đụng chạm là hành vi thiếu tôn trọng ranh giới cá nhân.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_peer": {
-      "text": "❌ Chưa đúng! Thực hiện các hành vi thân mật thể xác chỉ vì áp lực đồng trang lứa là vi phạm ranh giới cơ thể và thiếu tự chủ.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1379', '233', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Kết nối cảm xúc và tôn trọng tốc độ của đối phương",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn (An) nhận ra dạo gần đây mình hay đỏ mặt khi đi bên cạnh Vy - người bạn thân từ thuở nhỏ. Bạn luôn để ý xem Vy nói chuyện với ai và thấy hơi ghen tuông. Bạn nhận ra mình đã cảm nắng Vy.",
+
+      "choices": [
+
+        { "text": "Tránh mặt Vy hoàn toàn để không phải đối mặt với cảm xúc ngượng ngùng này.", "nextNode": "fail_avoidance" },
+
+        { "text": "Chấp nhận cảm xúc tự nhiên, cho bản thân thời gian suy ngẫm để phân biệt giữa tình bạn thân thiết và cảm lãng mạn thực sự.", "nextNode": "step2" },
+
+        { "text": "Tỏ tình dồn dập ngay hôm sau, bắt Vy phải trả lời đồng ý làm người yêu ngay lập tức.", "nextNode": "fail_pressure" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Sau một thời gian, hai bạn chính thức hẹn hò. Trong một buổi đi chơi riêng, Vy định nắm tay bạn, nhưng nhận thấy bạn đang khoác chặt hai tay vào chiếc balo trước ngực.",
+
+      "choices": [
+
+        { "text": "Vy tinh tế nhận ra tín hiệu phòng thủ, tiếp tục đi bên cạnh trò chuyện tự nhiên và tôn trọng tốc độ sẵn sàng của bạn.", "nextNode": "step3" },
+
+        { "text": "Vy cố tình giật balo ra và chủ động nắm tay bạn bằng được vì nghĩ yêu nhau là phải nắm tay mới lãng mạn.", "nextNode": "fail_touch" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Bạn vô cùng cảm kích sự tinh tế của Vy. Tuy nhiên, Vy lại nghe đám bạn xung quanh thúc giục: ''Yêu nhau là phải ôm hôn tiến xa hơn, chứ cứ nắm tay thôi thì nhạt nhẽo lắm!''. Vy cảm thấy áp lực lớn.",
+
+      "choices": [
+
+        { "text": "Ép bản thân thực hiện các đụng chạm thân mật dù chưa thấy sẵn sàng để chiều lòng nhóm bạn.", "nextNode": "fail_peer" },
+
+        { "text": "Vy giữ vững ranh giới và cùng bạn tập trung xây dựng sự gắn kết phi thể xác (viết thư tay, cùng đi nhà sách học bài, làm playlist nhạc tặng nhau).", "nextNode": "success_end" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Tuyệt vời! Bạn đã phân biệt đúng cảm xúc bản thân, tôn trọng ranh giới đụng chạm và biết cách xây dựng sự gắn kết cảm xúc phi thể xác lành mạnh.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_avoidance": {
+
+      "text": "❌ Chưa phù hợp! Đột ngột tránh mặt bạn thân mà không giải thích chỉ làm rạn nứt mối quan hệ tốt đẹp sẵn có một cách vô lý.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_pressure": {
+
+      "text": "❌ Sai rồi! Tỏ tình dồn dập và ép buộc câu trả lời sẽ khiến đối phương sợ hãi và làm căng thẳng tình bạn.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_touch": {
+
+      "text": "❌ Sai rồi! Phớt lờ tín hiệu cơ thể phòng thủ của đối phương và ép buộc đụng chạm là hành vi thiếu tôn trọng ranh giới cá nhân.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_peer": {
+
+      "text": "❌ Chưa đúng! Thực hiện các hành vi thân mật thể xác chỉ vì áp lực đồng trang lứa là vi phạm ranh giới cơ thể và thiếu tự chủ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1380', '233', 'sorting', '{
-  "instruction": "Hãy phân loại các cảm xúc/hành vi sau đây vào đúng hộp:",
-  "leftBox": { "title": "Tình bạn thân thiết" },
-  "rightBox": { "title": "Tình cảm say nắng (Crush)" },
-  "items": [
-    { "text": "Muốn đi chơi chung cả nhóm bạn đông vui và thoải mái tếu táo", "correctBox": "left" },
-    { "text": "Tim đập nhanh, đỏ mặt lúng túng khi đứng gần đối phương", "correctBox": "right" },
-    { "text": "Thoải mái chia sẻ chuyện học hành, trường lớp tự nhiên không ngần ngại", "correctBox": "left" },
-    { "text": "Hay nhìn trộm đối phương và để ý xem họ đang nói chuyện với bạn khác giới nào", "correctBox": "right" },
-    { "text": "Mong muốn có những buổi đi chơi riêng chỉ có hai người bên nhau", "correctBox": "right" }
-  ]
+('1380', '233', 'sorting', '{
+
+  "instruction": "Hãy phân loại các cảm xúc/hành vi sau đây vào đúng hộp:",
+
+  "leftBox": { "title": "Tình bạn thân thiết" },
+
+  "rightBox": { "title": "Tình cảm say nắng (Crush)" },
+
+  "items": [
+
+    { "text": "Muốn đi chơi chung cả nhóm bạn đông vui và thoải mái tếu táo", "correctBox": "left" },
+
+    { "text": "Tim đập nhanh, đỏ mặt lúng túng khi đứng gần đối phương", "correctBox": "right" },
+
+    { "text": "Thoải mái chia sẻ chuyện học hành, trường lớp tự nhiên không ngần ngại", "correctBox": "left" },
+
+    { "text": "Hay nhìn trộm đối phương và để ý xem họ đang nói chuyện với bạn khác giới nào", "correctBox": "right" },
+
+    { "text": "Mong muốn có những buổi đi chơi riêng chỉ có hai người bên nhau", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1381', '233', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm về sự gắn kết lãng mạn dậy thì sau:",
-  "pairs": [
-    { "left": "Thân mật cảm xúc", "right": "Cảm giác an toàn tuyệt đối khi chia sẻ ước mơ, nỗi sợ mà không bị phán xét." },
-    { "left": "Tín hiệu đèn xanh", "right": "Thái độ cởi mở (như mỉm cười, hướng người về phía bạn, sẵn lòng tương tác)." },
-    { "left": "Tín hiệu phòng thủ", "right": "Hành vi tránh né đụng chạm (như ôm balo trước ngực, rụt tay lại, lảng tránh ánh mắt)." },
-    { "left": "Gắn kết phi thể xác", "right": "Kết nối cảm xúc qua việc tự làm playlist nhạc tặng nhau, viết thư tay chia sẻ." }
-  ]
+('1381', '233', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm về sự gắn kết lãng mạn dậy thì sau:",
+
+  "pairs": [
+
+    { "left": "Thân mật cảm xúc", "right": "Cảm giác an toàn tuyệt đối khi chia sẻ ước mơ, nỗi sợ mà không bị phán xét." },
+
+    { "left": "Tín hiệu đèn xanh", "right": "Thái độ cởi mở (như mỉm cười, hướng người về phía bạn, sẵn lòng tương tác)." },
+
+    { "left": "Tín hiệu phòng thủ", "right": "Hành vi tránh né đụng chạm (như ôm balo trước ngực, rụt tay lại, lảng tránh ánh mắt)." },
+
+    { "left": "Gắn kết phi thể xác", "right": "Kết nối cảm xúc qua việc tự làm playlist nhạc tặng nhau, viết thư tay chia sẻ." }
+
+  ]
+
 }', '4', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1382', '233', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn sau về sự gắn kết:",
-  "sentence": "Sự thân mật cảm xúc mang lại cảm giác [blank1] để mở lòng. Cần phân biệt rõ tình bạn thân thiết với cảm xúc [blank2] lãng mạn. Hãy tôn trọng [blank3] sẵn sàng đụng chạm của đối phương. Gắn kết tình cảm bằng sự thấu hiểu [blank4] là chất keo bền chặt nhất.",
-  "blanks": {
-    "blank1": { "correct": "an toàn", "placeholder": "..." },
-    "blank2": { "correct": "say nắng", "placeholder": "..." },
-    "blank3": { "correct": "mức độ", "placeholder": "..." },
-    "blank4": { "correct": "tinh thần", "placeholder": "..." }
-  },
-  "words": ["an toàn", "say nắng", "mức độ", "tinh thần", "áp lực", "thể xác", "nghi ngờ", "vật lý"]
+('1382', '233', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn sau về sự gắn kết:",
+
+  "sentence": "Sự thân mật cảm xúc mang lại cảm giác [blank1] để mở lòng. Cần phân biệt rõ tình bạn thân thiết với cảm xúc [blank2] lãng mạn. Hãy tôn trọng [blank3] sẵn sàng đụng chạm của đối phương. Gắn kết tình cảm bằng sự thấu hiểu [blank4] là chất keo bền chặt nhất.",
+
+  "blanks": {
+
+    "blank1": { "correct": "an toàn", "placeholder": "..." },
+
+    "blank2": { "correct": "say nắng", "placeholder": "..." },
+
+    "blank3": { "correct": "mức độ", "placeholder": "..." },
+
+    "blank4": { "correct": "tinh thần", "placeholder": "..." }
+
+  },
+
+  "words": ["an toàn", "say nắng", "mức độ", "tinh thần", "áp lực", "thể xác", "nghi ngờ", "vật lý"]
+
 }', '5', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1383', '233', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi đối phương có phản ứng co người lại, tránh né ánh mắt hoặc ôm chặt balo trước ngực khi bạn tiến lại gần, bạn nên ứng phó như thế nào?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Hãy dừng lại và tôn trọng không gian cá nhân của họ, đó là tín hiệu phòng thủ cảnh báo họ chưa sẵn sàng cho đụng chạm thể xác.", "correct": true, "emoji": "💚" },
-    { "text": "Tiếp tục tiến tới nắm tay hoặc bá vai để giúp họ giải tỏa sự ngượng ngùng nhanh hơn.", "correct": false, "emoji": "😐" },
-    { "text": "Tỏ thái độ giận dỗi và trách móc họ ích kỷ, không thực sự yêu quý hay trân trọng bạn.", "correct": false, "emoji": "🙁" },
-    { "text": "Cắt đứt liên lạc ngay lập tức vì cho rằng họ ghét bỏ hoặc coi thường mình.", "correct": false, "emoji": "🛑" }
-  ]
+('1383', '233', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi đối phương có phản ứng co người lại, tránh né ánh mắt hoặc ôm chặt balo trước ngực khi bạn tiến lại gần, bạn nên ứng phó như thế nào?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Hãy dừng lại và tôn trọng không gian cá nhân của họ, đó là tín hiệu phòng thủ cảnh báo họ chưa sẵn sàng cho đụng chạm thể xác.", "correct": true, "emoji": "💚" },
+
+    { "text": "Tiếp tục tiến tới nắm tay hoặc bá vai để giúp họ giải tỏa sự ngượng ngùng nhanh hơn.", "correct": false, "emoji": "😐" },
+
+    { "text": "Tỏ thái độ giận dỗi và trách móc họ ích kỷ, không thực sự yêu quý hay trân trọng bạn.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Cắt đứt liên lạc ngay lập tức vì cho rằng họ ghét bỏ hoặc coi thường mình.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
 ('1384', '234', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Đồng thuận trong Mối quan hệ''! Bạn có 3 mạng để thực hành sự đồng thuận thông thái."}', '1', '2026-06-12 02:08:08', '2026-06-12 02:08:08');
 
-INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1385', '234', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Làm chủ sự đồng thuận tự nguyện và check-in cảm xúc",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn (Trang) đang ngồi nói chuyện riêng với Nam trong công viên. Nam ghé sát lại định hôn bạn, nhưng bạn cảm thấy ngột ngạt và đẩy nhẹ Nam ra: ''Khoan đã Nam, tớ thấy hơi nhanh''. Nam đứng khựng lại vẻ mặt hụt hẫng.",
-      "choices": [
-        { "text": "Nhắm mắt chịu đựng cho Nam hôn một cái để Nam không bị quê và giận dỗi.", "nextNode": "fail_guilt" },
-        { "text": "Dứt khoát giữ khoảng cách và bày tỏ rõ ràng: ''Tớ quý cậu nhưng tớ chưa sẵn sàng cho việc này. Tụi mình nói chuyện tiếp nhé!''", "nextNode": "step2" },
-        { "text": "Hét lớn tố cáo Nam biến thái rồi tát mạnh vào mặt Nam trước đám đông.", "nextNode": "fail_violence" }
-      ]
-    },
-    "step2": {
-      "text": "Nam im lặng một lúc rồi cằn nhằn: ''Lần trước cậu đồng ý nắm tay rồi, sao giờ ôm hôn lại từ chối? Cậu làm tớ tụt cả cảm hứng!''. Bạn cảm thấy áy náy vô cùng.",
-      "choices": [
-        { "text": "Cảm thấy tội lỗi vì làm người yêu buồn, đành gật đầu chấp nhận quay xe đồng ý hôn Nam.", "nextNode": "fail_revert" },
-        { "text": "Kiên định giải thích quy tắc ranh giới: ''Đồng ý việc này không có nghĩa là đồng ý việc kia, và tớ được quyền đổi ý bất cứ lúc nào tớ thấy không thoải mái. Cậu nên tôn trọng cảm giác của tớ chứ!''", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Nam nhận ra mình sai và xin lỗi Trang. Hôm sau, Duy muốn nắm tay Linh lúc đi dạo phố. Thay vì đột ngột chụp lấy tay Linh, Duy nhìn Linh mỉm cười nhẹ và muốn check-in đồng thuận.",
-      "choices": [
-        { "text": "Duy hỏi nhẹ nhàng: ''Tớ nắm tay cậu được không?'' và chờ đợi phản hồi hào hứng từ Linh.", "nextNode": "success_end" },
-        { "text": "Duy đột ngột giật lấy tay Linh bỏ vào túi áo của mình để chứng tỏ sự chủ động lãng mạn.", "nextNode": "fail_grab" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn toàn chính xác! Bạn đã hiểu sâu sắc quyền đổi ý (Reversible), bảo vệ ranh giới cơ thể và biết cách thực hành check-in đồng thuận mượt mà lịch sự.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_guilt": {
-      "text": "❌ Sai rồi! Chấp nhận đụng chạm thể xác chỉ vì nể nang hoặc sợ đối phương giận dỗi là vi phạm ranh giới cơ thể và không có sự đồng thuận tự nguyện.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_violence": {
-      "text": "❌ Chưa phù hợp! Phản ứng bạo lực khi chưa có hành vi đe dọa nguy hiểm là không cần thiết và làm phức tạp hóa vấn đề giao tiếp ranh giới.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_revert": {
-      "text": "❌ Sai rồi! Nhượng bộ trước sự giận dỗi ép buộc của đối phương sẽ khiến bạn mất quyền kiểm soát ranh giới cơ thể của chính mình.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_grab": {
-      "text": "❌ Chưa đúng! Tự ý chụp lấy tay đối phương khi chưa hỏi ý kiến dễ gây cảm giác khó chịu và vi phạm ranh giới cá nhân đột ngột.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+INSERT INTO `micro_lesson_blocks` (`id`, `micro_lesson_id`, `block_type`, `content_json`, `order_index`, `created_at`, `updated_at`) VALUES ('1385', '234', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Làm chủ sự đồng thuận tự nguyện và check-in cảm xúc",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn (Trang) đang ngồi nói chuyện riêng với Nam trong công viên. Nam ghé sát lại định hôn bạn, nhưng bạn cảm thấy ngột ngạt và đẩy nhẹ Nam ra: ''Khoan đã Nam, tớ thấy hơi nhanh''. Nam đứng khựng lại vẻ mặt hụt hẫng.",
+
+      "choices": [
+
+        { "text": "Nhắm mắt chịu đựng cho Nam hôn một cái để Nam không bị quê và giận dỗi.", "nextNode": "fail_guilt" },
+
+        { "text": "Dứt khoát giữ khoảng cách và bày tỏ rõ ràng: ''Tớ quý cậu nhưng tớ chưa sẵn sàng cho việc này. Tụi mình nói chuyện tiếp nhé!''", "nextNode": "step2" },
+
+        { "text": "Hét lớn tố cáo Nam biến thái rồi tát mạnh vào mặt Nam trước đám đông.", "nextNode": "fail_violence" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Nam im lặng một lúc rồi cằn nhằn: ''Lần trước cậu đồng ý nắm tay rồi, sao giờ ôm hôn lại từ chối? Cậu làm tớ tụt cả cảm hứng!''. Bạn cảm thấy áy náy vô cùng.",
+
+      "choices": [
+
+        { "text": "Cảm thấy tội lỗi vì làm người yêu buồn, đành gật đầu chấp nhận quay xe đồng ý hôn Nam.", "nextNode": "fail_revert" },
+
+        { "text": "Kiên định giải thích quy tắc ranh giới: ''Đồng ý việc này không có nghĩa là đồng ý việc kia, và tớ được quyền đổi ý bất cứ lúc nào tớ thấy không thoải mái. Cậu nên tôn trọng cảm giác của tớ chứ!''", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Nam nhận ra mình sai và xin lỗi Trang. Hôm sau, Duy muốn nắm tay Linh lúc đi dạo phố. Thay vì đột ngột chụp lấy tay Linh, Duy nhìn Linh mỉm cười nhẹ và muốn check-in đồng thuận.",
+
+      "choices": [
+
+        { "text": "Duy hỏi nhẹ nhàng: ''Tớ nắm tay cậu được không?'' và chờ đợi phản hồi hào hứng từ Linh.", "nextNode": "success_end" },
+
+        { "text": "Duy đột ngột giật lấy tay Linh bỏ vào túi áo của mình để chứng tỏ sự chủ động lãng mạn.", "nextNode": "fail_grab" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn toàn chính xác! Bạn đã hiểu sâu sắc quyền đổi ý (Reversible), bảo vệ ranh giới cơ thể và biết cách thực hành check-in đồng thuận mượt mà lịch sự.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_guilt": {
+
+      "text": "❌ Sai rồi! Chấp nhận đụng chạm thể xác chỉ vì nể nang hoặc sợ đối phương giận dỗi là vi phạm ranh giới cơ thể và không có sự đồng thuận tự nguyện.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_violence": {
+
+      "text": "❌ Chưa phù hợp! Phản ứng bạo lực khi chưa có hành vi đe dọa nguy hiểm là không cần thiết và làm phức tạp hóa vấn đề giao tiếp ranh giới.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_revert": {
+
+      "text": "❌ Sai rồi! Nhượng bộ trước sự giận dỗi ép buộc của đối phương sẽ khiến bạn mất quyền kiểm soát ranh giới cơ thể của chính mình.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_grab": {
+
+      "text": "❌ Chưa đúng! Tự ý chụp lấy tay đối phương khi chưa hỏi ý kiến dễ gây cảm giác khó chịu và vi phạm ranh giới cá nhân đột ngột.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1386', '234', 'sorting', '{
-  "instruction": "Hãy phân loại các tín hiệu cảm xúc của đối phương:",
-  "leftBox": { "title": "Đèn Xanh (Đồng thuận xịn)" },
-  "rightBox": { "title": "Đèn Vàng (Cần dừng check-in)" },
-  "items": [
-    { "text": "Nói câu ''Tớ cũng muốn'' kèm nụ cười rạng rỡ và chủ động tiến lại gần", "correctBox": "left" },
-    { "text": "Im lặng tránh né ánh mắt, người hơi co cứng lại", "correctBox": "right" },
-    { "text": "Vui vẻ chủ động đưa tay ra nắm lấy tay bạn trước", "correctBox": "left" },
-    { "text": "Nói câu ''Cũng được...'' nhưng nét mặt lo âu, bứt rứt bấu vạt áo", "correctBox": "right" },
-    { "text": "Trả lời ngập ngừng ''Để tớ nghĩ đã...'' rồi cười trừ tránh né", "correctBox": "right" }
-  ]
+('1386', '234', 'sorting', '{
+
+  "instruction": "Hãy phân loại các tín hiệu cảm xúc của đối phương:",
+
+  "leftBox": { "title": "Đèn Xanh (Đồng thuận xịn)" },
+
+  "rightBox": { "title": "Đèn Vàng (Cần dừng check-in)" },
+
+  "items": [
+
+    { "text": "Nói câu ''Tớ cũng muốn'' kèm nụ cười rạng rỡ và chủ động tiến lại gần", "correctBox": "left" },
+
+    { "text": "Im lặng tránh né ánh mắt, người hơi co cứng lại", "correctBox": "right" },
+
+    { "text": "Vui vẻ chủ động đưa tay ra nắm lấy tay bạn trước", "correctBox": "left" },
+
+    { "text": "Nói câu ''Cũng được...'' nhưng nét mặt lo âu, bứt rứt bấu vạt áo", "correctBox": "right" },
+
+    { "text": "Trả lời ngập ngừng ''Để tớ nghĩ đã...'' rồi cười trừ tránh né", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1387', '234', 'matching', '{
-  "instruction": "Ghép cặp các tiêu chí trong quy tắc đồng thuận F.R.I.E.S sau:",
-  "pairs": [
-    { "left": "Freely given (Tự nguyện)", "right": "Đồng ý không do bị nài nỉ, ép buộc, đe dọa hay nịnh bợ." },
-    { "left": "Reversible (Linh hoạt)", "right": "Quyền được thay đổi quyết định, quay xe bất cứ lúc nào." },
-    { "left": "Informed (Đầy đủ thông tin)", "right": "Biết rõ mình đang đồng ý thực hiện hành vi gì và với ai." },
-    { "left": "Enthusiastic (Hào hứng)", "right": "Chỉ làm những việc mà cả hai thực sự muốn và vui vẻ." }
-  ]
+('1387', '234', 'matching', '{
+
+  "instruction": "Ghép cặp các tiêu chí trong quy tắc đồng thuận F.R.I.E.S sau:",
+
+  "pairs": [
+
+    { "left": "Freely given (Tự nguyện)", "right": "Đồng ý không do bị nài nỉ, ép buộc, đe dọa hay nịnh bợ." },
+
+    { "left": "Reversible (Linh hoạt)", "right": "Quyền được thay đổi quyết định, quay xe bất cứ lúc nào." },
+
+    { "left": "Informed (Đầy đủ thông tin)", "right": "Biết rõ mình đang đồng ý thực hiện hành vi gì và với ai." },
+
+    { "left": "Enthusiastic (Hào hứng)", "right": "Chỉ làm những việc mà cả hai thực sự muốn và vui vẻ." }
+
+  ]
+
 }', '4', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1388', '234', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về sự đồng thuận:",
-  "sentence": "Đồng thuận là sự đồng ý [blank1], hào hứng từ cả hai phía. Bạn luôn có quyền [blank2] đổi ý bất cứ lúc nào mà không cần cảm thấy tội lỗi. Sự im lặng hay cười trừ là tín hiệu [blank3] đòi hỏi bạn phải dừng lại. Hãy thực hành [blank4] mượt mà để thể hiện sự tôn trọng đối phương.",
-  "blanks": {
-    "blank1": { "correct": "tự nguyện", "placeholder": "..." },
-    "blank2": { "correct": "quay xe", "placeholder": "..." },
-    "blank3": { "correct": "đèn vàng", "placeholder": "..." },
-    "blank4": { "correct": "check-in", "placeholder": "..." }
-  },
-  "words": ["tự nguyện", "quay xe", "đèn vàng", "check-in", "bắt buộc", "im lặng", "áp đặt", "nài nỉ"]
+('1388', '234', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về sự đồng thuận:",
+
+  "sentence": "Đồng thuận là sự đồng ý [blank1], hào hứng từ cả hai phía. Bạn luôn có quyền [blank2] đổi ý bất cứ lúc nào mà không cần cảm thấy tội lỗi. Sự im lặng hay cười trừ là tín hiệu [blank3] đòi hỏi bạn phải dừng lại. Hãy thực hành [blank4] mượt mà để thể hiện sự tôn trọng đối phương.",
+
+  "blanks": {
+
+    "blank1": { "correct": "tự nguyện", "placeholder": "..." },
+
+    "blank2": { "correct": "quay xe", "placeholder": "..." },
+
+    "blank3": { "correct": "đèn vàng", "placeholder": "..." },
+
+    "blank4": { "correct": "check-in", "placeholder": "..." }
+
+  },
+
+  "words": ["tự nguyện", "quay xe", "đèn vàng", "check-in", "bắt buộc", "im lặng", "áp đặt", "nài nỉ"]
+
 }', '5', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1389', '234', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Ý nghĩa thực sự của chữ R - Reversible (Linh hoạt/Dễ đổi ý) trong quy tắc đồng thuận F.R.I.E.S là gì?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Bạn có quyền rút lại sự đồng ý và dừng hành động lại bất cứ lúc nào, kể cả khi trước đó bạn đã nói Có.", "correct": true, "emoji": "💚" },
-    { "text": "Bạn chỉ được phép đổi ý trước khi buổi hẹn hò bắt đầu, sau đó thì bắt buộc phải thực hiện.", "correct": false, "emoji": "😐" },
-    { "text": "Đối phương có quyền bắt bạn thực hiện nếu bạn đã lỡ đồng ý một lần trước đó.", "correct": false, "emoji": "🙁" },
-    { "text": "Sự đồng ý có giá trị vĩnh viễn và không thể thay đổi trong suốt mối quan hệ.", "correct": false, "emoji": "🛑" }
-  ]
+('1389', '234', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Ý nghĩa thực sự của chữ R - Reversible (Linh hoạt/Dễ đổi ý) trong quy tắc đồng thuận F.R.I.E.S là gì?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Bạn có quyền rút lại sự đồng ý và dừng hành động lại bất cứ lúc nào, kể cả khi trước đó bạn đã nói Có.", "correct": true, "emoji": "💚" },
+
+    { "text": "Bạn chỉ được phép đổi ý trước khi buổi hẹn hò bắt đầu, sau đó thì bắt buộc phải thực hiện.", "correct": false, "emoji": "😐" },
+
+    { "text": "Đối phương có quyền bắt bạn thực hiện nếu bạn đã lỡ đồng ý một lần trước đó.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Sự đồng ý có giá trị vĩnh viễn và không thể thay đổi trong suốt mối quan hệ.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
 ('1390', '235', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Crush, Hẹn hò & Từ chối''! Bạn có 3 mạng để thể hiện ứng xử văn minh và bảo vệ sự an toàn."}', '1', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1391', '235', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Đối diện với từ chối và hẹn hò an toàn",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn (Minh) lấy hết dũng khí viết thư tỏ tình với bạn cùng lớp (Chi). Chi nhẹ nhàng từ chối vì muốn tập trung học tập. Bạn cảm thấy vô cùng buồn bã, thất vọng và tự ái dồn dập.",
-      "choices": [
-        { "text": "Liên tục nhắn tin nài nỉ làm phiền, đòi Chi giải thích lý do cụ thể và khóc lóc ăn vạ.", "nextNode": "fail_pester" },
-        { "text": "Chấp nhận nỗi buồn, tôn trọng quyết định của Chi và tâm sự với bạn thân hoặc viết nhật ký để giải tỏa cảm xúc.", "nextNode": "step2" },
-        { "text": "Tức giận đi nói xấu Chi kiêu căng, chảnh chọe trên nhóm chat khác để trả đũa.", "nextNode": "fail_revenge" }
-      ]
-    },
-    "step2": {
-      "text": "Sau một tuần, khi đi trên hành lang lớp học, bạn vô tình chạm mặt Chi đi ngược chiều. Cả hai đều có vẻ ngượng ngùng.",
-      "choices": [
-        { "text": "Cúi gằm mặt xuống đất, giả vờ như không nhìn thấy Chi và đi thẳng thật nhanh qua chỗ khác.", "nextNode": "fail_avoid" },
-        { "text": "Chủ động gật đầu mỉm cười nhẹ nhàng chào Chi rồi bước tiếp để giữ sự tự nhiên lịch sự.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Chi mỉm cười chào lại, giúp không khí bớt sượng trân. Tối đó, một bạn nam khác rủ bạn đi chơi lúc 10 giờ đêm tại một bãi đất trống vắng vẻ ngoại ô thành phố.",
-      "choices": [
-        { "text": "Từ chối lịch sự và gợi ý địa điểm an toàn hơn: ''Giờ đó muộn rồi, chiều mai tụi mình đi uống trà sữa ở quán gần trường nha!''", "nextNode": "success_end" },
-        { "text": "Đồng ý đi luôn vì muốn chứng tỏ mình dũng cảm, sành điệu và tin tưởng đối phương tuyệt đối.", "nextNode": "fail_danger" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Hoàn hảo! Bạn đã vượt qua nỗi buồn bị từ chối một cách văn minh, ứng xử tự nhiên lịch sự và biết cách bảo vệ sự an toàn cho bản thân khi hẹn hò.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_pester": {
-      "text": "❌ Sai rồi! Liên tục nài nỉ và làm phiền chỉ làm đối phương khó chịu và vi phạm ranh giới từ chối của họ.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_revenge": {
-      "text": "❌ Sai rồi! Nói xấu trả đũa sau khi bị từ chối là hành vi cờ đỏ độc hại và thiếu tôn trọng đối phương.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_avoid": {
-      "text": "❌ Chưa phù hợp! Trốn né gượng ép chỉ làm tăng thêm sự sượng sùng lâu dài trong mối quan hệ bạn học bè sau này.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_danger": {
-      "text": "❌ Chưa đúng! Hẹn hò lúc khuya muộn tại nơi vắng vẻ là hành vi thiếu an toàn, đẩy bản thân vào nguy cơ gặp nguy hiểm thể xác.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1391', '235', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Đối diện với từ chối và hẹn hò an toàn",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn (Minh) lấy hết dũng khí viết thư tỏ tình với bạn cùng lớp (Chi). Chi nhẹ nhàng từ chối vì muốn tập trung học tập. Bạn cảm thấy vô cùng buồn bã, thất vọng và tự ái dồn dập.",
+
+      "choices": [
+
+        { "text": "Liên tục nhắn tin nài nỉ làm phiền, đòi Chi giải thích lý do cụ thể và khóc lóc ăn vạ.", "nextNode": "fail_pester" },
+
+        { "text": "Chấp nhận nỗi buồn, tôn trọng quyết định của Chi và tâm sự với bạn thân hoặc viết nhật ký để giải tỏa cảm xúc.", "nextNode": "step2" },
+
+        { "text": "Tức giận đi nói xấu Chi kiêu căng, chảnh chọe trên nhóm chat khác để trả đũa.", "nextNode": "fail_revenge" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Sau một tuần, khi đi trên hành lang lớp học, bạn vô tình chạm mặt Chi đi ngược chiều. Cả hai đều có vẻ ngượng ngùng.",
+
+      "choices": [
+
+        { "text": "Cúi gằm mặt xuống đất, giả vờ như không nhìn thấy Chi và đi thẳng thật nhanh qua chỗ khác.", "nextNode": "fail_avoid" },
+
+        { "text": "Chủ động gật đầu mỉm cười nhẹ nhàng chào Chi rồi bước tiếp để giữ sự tự nhiên lịch sự.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Chi mỉm cười chào lại, giúp không khí bớt sượng trân. Tối đó, một bạn nam khác rủ bạn đi chơi lúc 10 giờ đêm tại một bãi đất trống vắng vẻ ngoại ô thành phố.",
+
+      "choices": [
+
+        { "text": "Từ chối lịch sự và gợi ý địa điểm an toàn hơn: ''Giờ đó muộn rồi, chiều mai tụi mình đi uống trà sữa ở quán gần trường nha!''", "nextNode": "success_end" },
+
+        { "text": "Đồng ý đi luôn vì muốn chứng tỏ mình dũng cảm, sành điệu và tin tưởng đối phương tuyệt đối.", "nextNode": "fail_danger" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Hoàn hảo! Bạn đã vượt qua nỗi buồn bị từ chối một cách văn minh, ứng xử tự nhiên lịch sự và biết cách bảo vệ sự an toàn cho bản thân khi hẹn hò.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_pester": {
+
+      "text": "❌ Sai rồi! Liên tục nài nỉ và làm phiền chỉ làm đối phương khó chịu và vi phạm ranh giới từ chối của họ.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_revenge": {
+
+      "text": "❌ Sai rồi! Nói xấu trả đũa sau khi bị từ chối là hành vi cờ đỏ độc hại và thiếu tôn trọng đối phương.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_avoid": {
+
+      "text": "❌ Chưa phù hợp! Trốn né gượng ép chỉ làm tăng thêm sự sượng sùng lâu dài trong mối quan hệ bạn học bè sau này.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_danger": {
+
+      "text": "❌ Chưa đúng! Hẹn hò lúc khuya muộn tại nơi vắng vẻ là hành vi thiếu an toàn, đẩy bản thân vào nguy cơ gặp nguy hiểm thể xác.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1392', '235', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử sau:",
-  "leftBox": { "title": "Green Flag (Văn minh)" },
-  "rightBox": { "title": "Red Flag (Độc hại)" },
-  "items": [
-    { "text": "Chấp nhận, tôn trọng quyết định từ chối và giữ khoảng cách lịch sự", "correctBox": "left" },
-    { "text": "Khóc lóc ăn vạ, liên tục nài nỉ làm phiền bắt họ đổi ý", "correctBox": "right" },
-    { "text": "Tâm sự nỗi buồn với bạn thân hoặc viết nhật ký giải tỏa", "correctBox": "left" },
-    { "text": "Đi nói xấu hoặc tung tin đồn thất thiệt để trả đũa đối phương", "correctBox": "right" },
-    { "text": "Từ chối tình cảm rõ ràng, dứt khoát và khéo léo không mập mờ thả thính", "correctBox": "left" }
-  ]
+('1392', '235', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi ứng xử sau:",
+
+  "leftBox": { "title": "Green Flag (Văn minh)" },
+
+  "rightBox": { "title": "Red Flag (Độc hại)" },
+
+  "items": [
+
+    { "text": "Chấp nhận, tôn trọng quyết định từ chối và giữ khoảng cách lịch sự", "correctBox": "left" },
+
+    { "text": "Khóc lóc ăn vạ, liên tục nài nỉ làm phiền bắt họ đổi ý", "correctBox": "right" },
+
+    { "text": "Tâm sự nỗi buồn với bạn thân hoặc viết nhật ký giải tỏa", "correctBox": "left" },
+
+    { "text": "Đi nói xấu hoặc tung tin đồn thất thiệt để trả đũa đối phương", "correctBox": "right" },
+
+    { "text": "Từ chối tình cảm rõ ràng, dứt khoát và khéo léo không mập mờ thả thính", "correctBox": "left" }
+
+  ]
+
 }', '3', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1393', '235', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm hẹn hò và từ chối với định nghĩa tương ứng:",
-  "pairs": [
-    { "left": "Crush (Say nắng)", "right": "Cảm xúc rung động, ngưỡng mộ tự nhiên tuổi dậy thì." },
-    { "left": "Hẹn hò an toàn", "right": "Chọn địa điểm công cộng, tự chủ đi lại và báo cho người thân." },
-    { "left": "Từ chối rõ ràng", "right": "Sự tử tế cao nhất để tránh làm mất thời gian hy vọng giả của nhau." },
-    { "left": "Bền bỉ cảm xúc", "right": "Khả năng chấp nhận thực tế và tự phục hồi sau khi bị từ chối." }
-  ]
+('1393', '235', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm hẹn hò và từ chối với định nghĩa tương ứng:",
+
+  "pairs": [
+
+    { "left": "Crush (Say nắng)", "right": "Cảm xúc rung động, ngưỡng mộ tự nhiên tuổi dậy thì." },
+
+    { "left": "Hẹn hò an toàn", "right": "Chọn địa điểm công cộng, tự chủ đi lại và báo cho người thân." },
+
+    { "left": "Từ chối rõ ràng", "right": "Sự tử tế cao nhất để tránh làm mất thời gian hy vọng giả của nhau." },
+
+    { "left": "Bền bỉ cảm xúc", "right": "Khả năng chấp nhận thực tế và tự phục hồi sau khi bị từ chối." }
+
+  ]
+
 }', '4', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1394', '235', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành triết lý hẹn hò văn minh:",
-  "sentence": "Cảm giác say nắng một người là trải nghiệm [blank1] tuổi mới lớn. Khi hẹn hò, hãy luôn đặt sự [blank2] lên hàng đầu. Đối diện với lời từ chối bằng thái độ [blank3] và tôn trọng ranh giới của họ. Từ chối tình cảm của người khác một cách dứt khoát và [blank4] để không tạo hy vọng giả.",
-  "blanks": {
-    "blank1": { "correct": "tự nhiên", "placeholder": "..." },
-    "blank2": { "correct": "an toàn", "placeholder": "..." },
-    "blank3": { "correct": "văn minh", "placeholder": "..." },
-    "blank4": { "correct": "khéo léo", "placeholder": "..." }
-  },
-  "words": ["tự nhiên", "an toàn", "văn minh", "khéo léo", "xấu hổ", "bí mật", "độc hại", "mập mờ"]
+('1394', '235', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành triết lý hẹn hò văn minh:",
+
+  "sentence": "Cảm giác say nắng một người là trải nghiệm [blank1] tuổi mới lớn. Khi hẹn hò, hãy luôn đặt sự [blank2] lên hàng đầu. Đối diện với lời từ chối bằng thái độ [blank3] và tôn trọng ranh giới của họ. Từ chối tình cảm của người khác một cách dứt khoát và [blank4] để không tạo hy vọng giả.",
+
+  "blanks": {
+
+    "blank1": { "correct": "tự nhiên", "placeholder": "..." },
+
+    "blank2": { "correct": "an toàn", "placeholder": "..." },
+
+    "blank3": { "correct": "văn minh", "placeholder": "..." },
+
+    "blank4": { "correct": "khéo léo", "placeholder": "..." }
+
+  },
+
+  "words": ["tự nhiên", "an toàn", "văn minh", "khéo léo", "xấu hổ", "bí mật", "độc hại", "mập mờ"]
+
 }', '5', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
-('1395', '235', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bạn muốn từ chối tình cảm của một người bạn một cách khéo léo, cách ứng xử nào dưới đây là tử tế nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Cảm ơn tình cảm của họ, bày tỏ dứt khoát và rõ ràng quyết định của mình để không tạo ra hy vọng giả.", "correct": true, "emoji": "💚" },
-    { "text": "Im lặng hoàn toàn, chặn liên lạc và giả vờ như không biết để họ tự hiểu và chán nản bỏ cuộc.", "correct": false, "emoji": "😐" },
-    { "text": "Nhận lời yêu thử một thời gian xem thế nào để tránh làm tổn thương tình cảm của họ ngay lập tức.", "correct": false, "emoji": "🙁" },
-    { "text": "Tỏ thái độ khinh miệt và trêu chọc họ trước mặt đông bạn bè khác trong lớp để họ bỏ cuộc.", "correct": false, "emoji": "🛑" }
-  ]
+('1395', '235', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bạn muốn từ chối tình cảm của một người bạn một cách khéo léo, cách ứng xử nào dưới đây là tử tế nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Cảm ơn tình cảm của họ, bày tỏ dứt khoát và rõ ràng quyết định của mình để không tạo ra hy vọng giả.", "correct": true, "emoji": "💚" },
+
+    { "text": "Im lặng hoàn toàn, chặn liên lạc và giả vờ như không biết để họ tự hiểu và chán nản bỏ cuộc.", "correct": false, "emoji": "😐" },
+
+    { "text": "Nhận lời yêu thử một thời gian xem thế nào để tránh làm tổn thương tình cảm của họ ngay lập tức.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Tỏ thái độ khinh miệt và trêu chọc họ trước mặt đông bạn bè khác trong lớp để họ bỏ cuộc.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 02:08:08', '2026-06-12 02:08:08'),
 ('1396', '236', 'hook', '{"title": "Chào mừng bạn đến với Thử thách Tổng kết bài học ''Nhận diện Cờ Đỏ & Mối Quan hệ Độc hại''! Hãy dũng cảm bảo vệ sức khỏe tinh thần và sự an toàn của mình."}', '1', '2026-06-12 02:08:09', '2026-06-12 02:08:09'),
-('1397', '236', 'scenario-choice', '{
-  "title": "Cuộc phiêu lưu: Nhận diện vòng lặp độc hại và bước ra an toàn",
-  "startNode": "step1",
-  "nodes": {
-    "step1": {
-      "text": "Bạn (Vy) nhận thấy dạo gần đây người yêu (Lâm) hay quát mắng bạn thậm tệ mỗi khi bạn đi học nhóm muộn. Nhưng ngay hôm sau, Lâm lại mua trà sữa mang đến lớp, khóc lóc hứa hẹn sẽ thay đổi. Bạn cảm thấy kiệt sức và sa sút học tập.",
-      "choices": [
-        { "text": "Tiếp tục tha thứ và cố gắng làm hài lòng Lâm nhiều hơn để tránh cãi vã.", "nextNode": "fail_cycle" },
-        { "text": "Nhận diện vòng lặp bạo lực cảm xúc, chia sẻ câu chuyện với bố mẹ hoặc bạn thân để xin lời khuyên và xem xét chia tay.", "nextNode": "step2" },
-        { "text": "Tự làm đau bản thân để Lâm cảm thấy hối hận và đối xử tốt với mình hơn.", "nextNode": "fail_self_harm" }
-      ]
-    },
-    "step2": {
-      "text": "Được mọi người động viên, bạn nhắn tin chia tay Lâm. Lâm lập tức đe dọa sẽ đăng những hình ảnh chụp chung riêng tư của bạn lên mạng xã hội nếu bạn dám bỏ rơi Lâm.",
-      "choices": [
-        { "text": "Sợ hãi nên đành quay lại và chấp nhận mọi yêu cầu kiểm soát của Lâm để giữ bí mật.", "nextNode": "fail_submit_threat" },
-        { "text": "Chụp màn hình đe dọa làm bằng chứng, cắt đứt liên lạc (chặn tài khoản) và báo ngay cho bố mẹ, thầy cô hoặc gọi Tổng đài 111 để được bảo vệ kịp thời.", "nextNode": "step3" }
-      ]
-    },
-    "step3": {
-      "text": "Nhờ sự can thiệp của gia đình và nhà trường, Lâm đã bị xử lý và dừng hành vi đe dọa. Bạn lấy lại sự tự tin. Ngày hôm sau, bạn thấy cô bạn thân đang bị người yêu cấm chơi với nhóm bạn của mình.",
-      "choices": [
-        { "text": "Khuyên bạn thân mạnh dạn đặt ranh giới và chỉ ra rằng sự cấm đoán, cô lập là một Cờ Đỏ nghiêm trọng.", "nextNode": "success_end" },
-        { "text": "Khuyên bạn nên nghe lời người yêu để giữ gìn hòa khí và hạnh phúc lứa đôi.", "nextNode": "fail_support_isolation" }
-      ]
-    },
-    "success_end": {
-      "text": "🎉 Tuyệt vời! Bạn đã nhận diện cờ đỏ chính xác, dũng cảm bước ra khỏi vòng lặp độc hại an toàn, biết cách xử lý khi bị đe dọa và hỗ trợ bạn bè đúng cách.",
-      "isEnd": true,
-      "isSuccess": true
-    },
-    "fail_cycle": {
-      "text": "❌ Sai rồi! Liên tục chấp nhận và tha thứ chỉ khiến bạn lún sâu vào vòng lặp bạo lực cảm xúc (gây hấn -> xin lỗi mật ngọt -> gây hấn).",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_self_harm": {
-      "text": "❌ Sai rồi! Tự làm hại bản thân là hành vi cực đoan gây hại nghiêm trọng cho sức khỏe tinh thần và thể chất, không giải quyết được gốc rễ vấn đề.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_submit_threat": {
-      "text": "❌ Chưa đúng! Nhượng bộ trước đe dọa sẽ khiến đối phương lấn lướt ranh giới hơn và tiếp tục kiểm soát bạn bằng các chiêu trò bạo lực tinh thần khác.",
-      "isEnd": true,
-      "isSuccess": false
-    },
-    "fail_support_isolation": {
-      "text": "❌ Chưa đúng! Ủng hộ việc cô lập bạn bè khỏi các mối quan hệ xã hội là dung túng cho hành vi kiểm soát độc hại của đối phương.",
-      "isEnd": true,
-      "isSuccess": false
-    }
-  }
+('1397', '236', 'scenario-choice', '{
+
+  "title": "Cuộc phiêu lưu: Nhận diện vòng lặp độc hại và bước ra an toàn",
+
+  "startNode": "step1",
+
+  "nodes": {
+
+    "step1": {
+
+      "text": "Bạn (Vy) nhận thấy dạo gần đây người yêu (Lâm) hay quát mắng bạn thậm tệ mỗi khi bạn đi học nhóm muộn. Nhưng ngay hôm sau, Lâm lại mua trà sữa mang đến lớp, khóc lóc hứa hẹn sẽ thay đổi. Bạn cảm thấy kiệt sức và sa sút học tập.",
+
+      "choices": [
+
+        { "text": "Tiếp tục tha thứ và cố gắng làm hài lòng Lâm nhiều hơn để tránh cãi vã.", "nextNode": "fail_cycle" },
+
+        { "text": "Nhận diện vòng lặp bạo lực cảm xúc, chia sẻ câu chuyện với bố mẹ hoặc bạn thân để xin lời khuyên và xem xét chia tay.", "nextNode": "step2" },
+
+        { "text": "Tự làm đau bản thân để Lâm cảm thấy hối hận và đối xử tốt với mình hơn.", "nextNode": "fail_self_harm" }
+
+      ]
+
+    },
+
+    "step2": {
+
+      "text": "Được mọi người động viên, bạn nhắn tin chia tay Lâm. Lâm lập tức đe dọa sẽ đăng những hình ảnh chụp chung riêng tư của bạn lên mạng xã hội nếu bạn dám bỏ rơi Lâm.",
+
+      "choices": [
+
+        { "text": "Sợ hãi nên đành quay lại và chấp nhận mọi yêu cầu kiểm soát của Lâm để giữ bí mật.", "nextNode": "fail_submit_threat" },
+
+        { "text": "Chụp màn hình đe dọa làm bằng chứng, cắt đứt liên lạc (chặn tài khoản) và báo ngay cho bố mẹ, thầy cô hoặc gọi Tổng đài 111 để được bảo vệ kịp thời.", "nextNode": "step3" }
+
+      ]
+
+    },
+
+    "step3": {
+
+      "text": "Nhờ sự can thiệp của gia đình và nhà trường, Lâm đã bị xử lý và dừng hành vi đe dọa. Bạn lấy lại sự tự tin. Ngày hôm sau, bạn thấy cô bạn thân đang bị người yêu cấm chơi với nhóm bạn của mình.",
+
+      "choices": [
+
+        { "text": "Khuyên bạn thân mạnh dạn đặt ranh giới và chỉ ra rằng sự cấm đoán, cô lập là một Cờ Đỏ nghiêm trọng.", "nextNode": "success_end" },
+
+        { "text": "Khuyên bạn nên nghe lời người yêu để giữ gìn hòa khí và hạnh phúc lứa đôi.", "nextNode": "fail_support_isolation" }
+
+      ]
+
+    },
+
+    "success_end": {
+
+      "text": "🎉 Tuyệt vời! Bạn đã nhận diện cờ đỏ chính xác, dũng cảm bước ra khỏi vòng lặp độc hại an toàn, biết cách xử lý khi bị đe dọa và hỗ trợ bạn bè đúng cách.",
+
+      "isEnd": true,
+
+      "isSuccess": true
+
+    },
+
+    "fail_cycle": {
+
+      "text": "❌ Sai rồi! Liên tục chấp nhận và tha thứ chỉ khiến bạn lún sâu vào vòng lặp bạo lực cảm xúc (gây hấn -> xin lỗi mật ngọt -> gây hấn).",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_self_harm": {
+
+      "text": "❌ Sai rồi! Tự làm hại bản thân là hành vi cực đoan gây hại nghiêm trọng cho sức khỏe tinh thần và thể chất, không giải quyết được gốc rễ vấn đề.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_submit_threat": {
+
+      "text": "❌ Chưa đúng! Nhượng bộ trước đe dọa sẽ khiến đối phương lấn lướt ranh giới hơn và tiếp tục kiểm soát bạn bằng các chiêu trò bạo lực tinh thần khác.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    },
+
+    "fail_support_isolation": {
+
+      "text": "❌ Chưa đúng! Ủng hộ việc cô lập bạn bè khỏi các mối quan hệ xã hội là dung túng cho hành vi kiểm soát độc hại của đối phương.",
+
+      "isEnd": true,
+
+      "isSuccess": false
+
+    }
+
+  }
+
 }', '2', '2026-06-12 02:08:09', '2026-06-12 02:08:09'),
-('1398', '236', 'sorting', '{
-  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau đây:",
-  "leftBox": { "title": "Lành mạnh (Green Flag)" },
-  "rightBox": { "title": "Cờ Đỏ (Red Flag)" },
-  "items": [
-    { "text": "Khuyến khích bạn duy trì các mối quan hệ xã hội lành mạnh với bạn bè, gia đình", "correctBox": "left" },
-    { "text": "Bắt bạn phải chụp hình gửi Zalo báo cáo vị trí liên tục để kiểm tra xem có nói dối không", "correctBox": "right" },
-    { "text": "Chúc bạn làm bài đạt điểm cao và khuyên bạn nên đi học đúng giờ", "correctBox": "left" },
-    { "text": "Cấm đoán bạn nói chuyện hay gặp mặt tất cả những người khác giới", "correctBox": "right" },
-    { "text": "Đe dọa sẽ tự tử hoặc tung ảnh riêng tư của bạn lên mạng nếu bạn đòi chia tay", "correctBox": "right" }
-  ]
+('1398', '236', 'sorting', '{
+
+  "instruction": "Hãy kéo thẻ hoặc click phân loại các hành vi sau đây:",
+
+  "leftBox": { "title": "Lành mạnh (Green Flag)" },
+
+  "rightBox": { "title": "Cờ Đỏ (Red Flag)" },
+
+  "items": [
+
+    { "text": "Khuyến khích bạn duy trì các mối quan hệ xã hội lành mạnh với bạn bè, gia đình", "correctBox": "left" },
+
+    { "text": "Bắt bạn phải chụp hình gửi Zalo báo cáo vị trí liên tục để kiểm tra xem có nói dối không", "correctBox": "right" },
+
+    { "text": "Chúc bạn làm bài đạt điểm cao và khuyên bạn nên đi học đúng giờ", "correctBox": "left" },
+
+    { "text": "Cấm đoán bạn nói chuyện hay gặp mặt tất cả những người khác giới", "correctBox": "right" },
+
+    { "text": "Đe dọa sẽ tự tử hoặc tung ảnh riêng tư của bạn lên mạng nếu bạn đòi chia tay", "correctBox": "right" }
+
+  ]
+
 }', '3', '2026-06-12 02:08:09', '2026-06-12 02:08:09'),
-('1399', '236', 'matching', '{
-  "instruction": "Ghép cặp các khái niệm về mối quan hệ độc hại dậy thì sau:",
-  "pairs": [
-    { "left": "Vòng lặp độc hại", "right": "Chu kỳ: Gây hấn ➡️ Tặng quà mật ngọt ➡️ Bình yên giả tạo ➡️ Gây hấn." },
-    { "left": "Sự cô lập", "right": "Hành vi cấm đoán đối phương chơi với bạn bè hoặc gặp gỡ gia đình." },
-    { "left": "Kiểm soát quá mức", "right": "Đòi kiểm tra mọi tin nhắn, bắt báo cáo lịch trình sinh hoạt hàng ngày." },
-    { "left": "Bước ra an toàn", "right": "Chia tay ở nơi công cộng/tin nhắn, chặn liên lạc và tìm sự trợ giúp." }
-  ]
+('1399', '236', 'matching', '{
+
+  "instruction": "Ghép cặp các khái niệm về mối quan hệ độc hại dậy thì sau:",
+
+  "pairs": [
+
+    { "left": "Vòng lặp độc hại", "right": "Chu kỳ: Gây hấn ➡️ Tặng quà mật ngọt ➡️ Bình yên giả tạo ➡️ Gây hấn." },
+
+    { "left": "Sự cô lập", "right": "Hành vi cấm đoán đối phương chơi với bạn bè hoặc gặp gỡ gia đình." },
+
+    { "left": "Kiểm soát quá mức", "right": "Đòi kiểm tra mọi tin nhắn, bắt báo cáo lịch trình sinh hoạt hàng ngày." },
+
+    { "left": "Bước ra an toàn", "right": "Chia tay ở nơi công cộng/tin nhắn, chặn liên lạc và tìm sự trợ giúp." }
+
+  ]
+
 }', '4', '2026-06-12 02:08:09', '2026-06-12 02:08:09'),
-('1400', '236', 'fill-blank', '{
-  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về nhận diện cờ đỏ:",
-  "sentence": "Cờ đỏ là những dấu hiệu cảnh báo mối quan hệ [blank1]. Vòng lặp bạo lực cảm xúc bắt đầu từ việc gây hấn đến những lời hứa [blank2] giả tạo. Một mối quan hệ mang lại nhiều mệt mỏi hơn [blank3] là lúc cần dừng lại. Hãy mạnh dạn tìm kiếm sự [blank4] từ người lớn đáng tin cậy hoặc Tổng đài 111.",
-  "blanks": {
-    "blank1": { "correct": "độc hại", "placeholder": "..." },
-    "blank2": { "correct": "ngọt ngào", "placeholder": "..." },
-    "blank3": { "correct": "vui vẻ", "placeholder": "..." },
-    "blank4": { "correct": "trợ giúp", "placeholder": "..." }
-  },
-  "words": ["độc hại", "ngọt ngào", "vui vẻ", "trợ giúp", "bền vững", "cay đắng", "khó khăn", "lắng nghe"]
+('1400', '236', 'fill-blank', '{
+
+  "instruction": "Điền các từ thích hợp để hoàn thành đoạn văn về nhận diện cờ đỏ:",
+
+  "sentence": "Cờ đỏ là những dấu hiệu cảnh báo mối quan hệ [blank1]. Vòng lặp bạo lực cảm xúc bắt đầu từ việc gây hấn đến những lời hứa [blank2] giả tạo. Một mối quan hệ mang lại nhiều mệt mỏi hơn [blank3] là lúc cần dừng lại. Hãy mạnh dạn tìm kiếm sự [blank4] từ người lớn đáng tin cậy hoặc Tổng đài 111.",
+
+  "blanks": {
+
+    "blank1": { "correct": "độc hại", "placeholder": "..." },
+
+    "blank2": { "correct": "ngọt ngào", "placeholder": "..." },
+
+    "blank3": { "correct": "vui vẻ", "placeholder": "..." },
+
+    "blank4": { "correct": "trợ giúp", "placeholder": "..." }
+
+  },
+
+  "words": ["độc hại", "ngọt ngào", "vui vẻ", "trợ giúp", "bền vững", "cay đắng", "khó khăn", "lắng nghe"]
+
 }', '5', '2026-06-12 02:08:09', '2026-06-12 02:08:09'),
-('1401', '236', 'interaction', '{
-  "question": "Thử thách trắc nghiệm: Khi bị đối phương đe dọa phát tán hình ảnh riêng tư hoặc tự làm đau bản thân nếu bạn chia tay, cách xử lý nào dưới đây là an toàn nhất?",
-  "enableLives": true,
-  "choices": [
-    { "text": "Lưu giữ bằng chứng đe dọa, cắt đứt liên lạc (chặn tài khoản) và báo ngay cho bố mẹ, thầy cô hoặc gọi Tổng đài 111 để được bảo vệ kịp thời.", "correct": true, "emoji": "💚" },
-    { "text": "Im lặng chịu đựng và chấp nhận tiếp tục mối quan hệ để bảo vệ hình ảnh cá nhân và tính mạng của đối phương.", "correct": false, "emoji": "😐" },
-    { "text": "Thách thức đối phương đăng ảnh lên mạng xã hội để chứng minh mình không sợ bị đe dọa.", "correct": false, "emoji": "🙁" },
-    { "text": "Liên hệ với nhóm bạn thân khác để lập kế hoạch đến gặp đánh dằn mặt đối phương.", "correct": false, "emoji": "🛑" }
-  ]
+('1401', '236', 'interaction', '{
+
+  "question": "Thử thách trắc nghiệm: Khi bị đối phương đe dọa phát tán hình ảnh riêng tư hoặc tự làm đau bản thân nếu bạn chia tay, cách xử lý nào dưới đây là an toàn nhất?",
+
+  "enableLives": true,
+
+  "choices": [
+
+    { "text": "Lưu giữ bằng chứng đe dọa, cắt đứt liên lạc (chặn tài khoản) và báo ngay cho bố mẹ, thầy cô hoặc gọi Tổng đài 111 để được bảo vệ kịp thời.", "correct": true, "emoji": "💚" },
+
+    { "text": "Im lặng chịu đựng và chấp nhận tiếp tục mối quan hệ để bảo vệ hình ảnh cá nhân và tính mạng của đối phương.", "correct": false, "emoji": "😐" },
+
+    { "text": "Thách thức đối phương đăng ảnh lên mạng xã hội để chứng minh mình không sợ bị đe dọa.", "correct": false, "emoji": "🙁" },
+
+    { "text": "Liên hệ với nhóm bạn thân khác để lập kế hoạch đến gặp đánh dằn mặt đối phương.", "correct": false, "emoji": "🛑" }
+
+  ]
+
 }', '6', '2026-06-12 02:08:09', '2026-06-12 02:08:09');
 
 TRUNCATE TABLE `micro_lesson_progress`;
@@ -4893,20 +7858,21 @@ INSERT INTO `recommend_questions` (`id`, `emoji`, `question`, `reason`, `categor
 
 TRUNCATE TABLE `subscription_plans`;
 INSERT INTO `subscription_plans` (`id`, `name`, `price`, `duration_days`, `description`, `created_at`) VALUES ('FREE', 'Học viên Miễn phí', '0.00', '99999', 'Truy cập các nội dung cơ bản của EDUcare.', '2026-06-20 23:34:26'),
-('PREMIUM_4M', 'Học viên Premium 4 Tháng', '99000.00', '120', 'Trải nghiệm học tập không giới hạn cùng trợ lý tư vấn cá nhân hóa EDUcare,
-      Mọi quyền lợi của gói VIP,
-      Tư vấn ưu tiên 24/7 với chuyên gia,
-      Mở khóa sớm các chủ đề nhạy cảm,
-      Tham gia phòng chat kín đặc quyền,
-      Tiết kiệm 15% chi phí', '2026-06-20 23:34:26'),
-('VIP_1M', 'Học viên VIP 1 Tháng', '29000.00', '30', '      
-      Xem 100% bài học chuyên sâu,
-      Hệ thống câu hỏi khuyên học động,
-      Làm tất cả bài tập quiz,
-      Chơi game tình huống đầy đủ,
-      Tích lũy Streak & XP xếp hạng,
+('VIP_TRIAL', 'Học thử VIP 7 Ngày', '0.00', '7', 'Đăng ký tài khoản mới được học thử 7 ngày.', '2026-06-20 23:34:26'),
+('VIP_1M', 'Học viên VIP 1 Tháng', '49000.00', '30', '      
+      Xem 100% bài học chuyên sâu,
+      Hệ thống câu hỏi khuyên học động,
+      Làm tất cả bài tập quiz,
+      Chơi game tình huống đầy đủ,
+      Tích lũy Streak & XP xếp hạng,
+      Hỗ trợ tư vấn trực tuyến', '2026-06-20 23:34:26'),
+('VIP_1Y', 'Học viên VIP 1 Năm', '99000.00', '365', '      
+      Xem 100% bài học chuyên sâu,
+      Hệ thống câu hỏi khuyên học động,
+      Làm tất cả bài tập quiz,
+      Chơi game tình huống đầy đủ,
+      Tích lũy Streak & XP xếp hạng,
       Hỗ trợ tư vấn trực tuyến', '2026-06-20 23:34:26');
-
 TRUNCATE TABLE `users`;
 INSERT INTO `users` (`id`, `full_name`, `email`, `username`, `password_hash`, `age`, `plan`, `xp`, `streak`, `quiz_score_total`, `avatar_url`, `role`, `created_at`, `updated_at`) VALUES ('16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'khoaaa', 'khoa@gmail.com', 'kkk', '$2a$12$cjWTRQWjgxG9t3WG58z4S.DOlZKC875a7tov4IIdoG5/0OjZfqE4C', '12', 'POPULAR', '470', '5', '0', NULL, 'STUDENT', '2026-05-28 12:15:53', '2026-06-20 18:38:57'),
 ('251e9195-13ef-42ad-938f-b0019c1a043e', 'Khoaaaaa', 'khoanda.work@gmail.com', 'haahah', '$2a$10$or6Q3B7qN7CO4GPIkfVIP.cOcuzO5PhSUgdmoyuyuCSMJFLGi/gKC', '10', 'FREE', '710', '9', '0', NULL, 'STUDENT', '2026-06-08 09:44:51', '2026-06-11 19:20:51'),

@@ -13,12 +13,16 @@ import vn.educare.backend.model.UserEntity;
 import vn.educare.backend.model.UserPlan;
 import vn.educare.backend.model.UserRole;
 import vn.educare.backend.repository.UserRepository;
+import vn.educare.backend.repository.UserSubscriptionRepository;
+import vn.educare.backend.repository.PaymentTransactionRepository;
 
 @Service
 @RequiredArgsConstructor
 public class AdminUserService {
 
   private final UserRepository userRepository;
+  private final UserSubscriptionRepository userSubscriptionRepository;
+  private final PaymentTransactionRepository paymentTransactionRepository;
 
   public AdminUserListResponse listUsers(String q, String planStr, String roleStr) {
     UserPlan plan = parseEnum(UserPlan.class, planStr);
@@ -62,6 +66,10 @@ public class AdminUserService {
     if (!userRepository.existsById(id)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy học viên");
     }
+    // Delete dependent subscription and transaction records first to avoid foreign key constraint violations
+    userSubscriptionRepository.deleteAll(userSubscriptionRepository.findByUserId(id));
+    paymentTransactionRepository.deleteAll(paymentTransactionRepository.findByUserId(id));
+
     userRepository.deleteById(id);
   }
 

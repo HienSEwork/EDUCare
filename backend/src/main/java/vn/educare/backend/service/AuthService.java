@@ -21,6 +21,9 @@ import vn.educare.backend.repository.LessonProgressRepository;
 import vn.educare.backend.repository.UserRepository;
 import vn.educare.backend.repository.UserSubscriptionRepository;
 import vn.educare.backend.model.UserSubscriptionEntity;
+import java.time.temporal.ChronoUnit;
+import vn.educare.backend.model.SubscriptionPlanEntity;
+import vn.educare.backend.repository.SubscriptionPlanRepository;
 import vn.educare.backend.security.JwtService;
 
 @Service
@@ -34,6 +37,7 @@ public class AuthService {
   private final JwtService jwtService;
   private final UserMapper userMapper;
   private final UserSubscriptionRepository userSubscriptionRepository;
+  private final SubscriptionPlanRepository subscriptionPlanRepository;
 
   @Transactional
   public AuthResponse register(RegisterRequest request) {
@@ -51,7 +55,7 @@ public class AuthService {
     user.setUsername(request.username());
     user.setPasswordHash(passwordEncoder.encode(request.password()));
     user.setAge(request.age());
-    user.setPlan(UserPlan.FREE);
+    user.setPlan(UserPlan.FREE); // Default to FREE plan
     user.setRole(UserRole.STUDENT);
     user.setXp(0);
     user.setStreak(0);
@@ -59,6 +63,22 @@ public class AuthService {
     user.setCreatedAt(Instant.now());
     user.setUpdatedAt(Instant.now());
     userRepository.save(user);
+
+    // Grant free trial subscription if trial plan exists in DB (meaning promotion is active)
+    java.util.Optional<SubscriptionPlanEntity> trialPlanOpt = subscriptionPlanRepository.findById("VIP_TRIAL");
+    if (trialPlanOpt.isPresent()) {
+        SubscriptionPlanEntity trialPlan = trialPlanOpt.get();
+        user.setPlan(UserPlan.POPULAR);
+        userRepository.save(user);
+
+        UserSubscriptionEntity sub = new UserSubscriptionEntity();
+        sub.setUser(user);
+        sub.setPlan(trialPlan);
+        sub.setStartDate(Instant.now());
+        sub.setEndDate(Instant.now().plus(trialPlan.getDurationDays(), ChronoUnit.DAYS));
+        sub.setStatus("ACTIVE");
+        userSubscriptionRepository.save(sub);
+    }
 
     String token = jwtService.generateToken(user);
     return new AuthResponse(token, mapUser(user));

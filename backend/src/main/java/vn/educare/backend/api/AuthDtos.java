@@ -553,4 +553,8 @@ public record CourseResponse(
       String icon,
       String colorTheme
   ) {}
+
+  public record ReorderRequest(
+      List<Long> blockIds
+  ) {}
 }

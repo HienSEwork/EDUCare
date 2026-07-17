@@ -167,6 +167,11 @@ public class AdminContentController {
     adminContentService.deleteMicroLessonBlock(id);
   }
 
+  @PutMapping("/api/admin/micro-lessons/{microLessonId}/blocks/reorder")
+  public void reorderMicroLessonBlocks(@PathVariable Long microLessonId, @Valid @RequestBody ReorderRequest request) {
+    adminContentService.reorderMicroLessonBlocks(microLessonId, request);
+  }
+
   // Categories Endpoints
   @GetMapping("/api/admin/categories")
   public List<CategoryResponse> getCategories() {
