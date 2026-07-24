@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -13,11 +14,17 @@ import {
   ShieldCheck,
   Compass,
   GraduationCap,
+  Bot,
+  School,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiRequest } from "@/lib/api/client";
+import type { PublicStatsResponse } from "@/types/api";
 
 import avatarBoy1 from "@/assets/home/avatar-boy1.jpg";
 import avatarBoy2 from "@/assets/home/avatar-boy2.jpg";
+import avatarBoy3 from "@/assets/home/avatar-boy3.jpg";
 import avatarGirl1 from "@/assets/home/avatar-girl1.jpg";
 import avatarGirl2 from "@/assets/home/avatar-girl2.jpg";
 
@@ -50,54 +57,80 @@ const coreValues = [
 
 const teamMembers = [
   {
-    name: "ThS. BS. Nguyễn Minh Anh",
-    role: "Cố vấn Y khoa & Nội dung",
-    avatar: avatarGirl1,
-    quote: "Mong muốn mọi bạn trẻ Việt Nam đều tiếp cận thông tin sức khỏe chính xác và tự tin làm chủ tương lai.",
-    badge: "Chuyên gia Y tế",
-  },
-  {
-    name: "Lê Hoàng Nam",
-    role: "Founder & Product Lead",
+    name: "Nguyễn Đỗ Anh Khoa",
+    role: "CEO & Trưởng Dự Án",
     avatar: avatarBoy1,
-    quote: "Tiên phong ứng dụng công nghệ và Gamification giúp việc học kỹ năng sống trở nên thú vị, gần gũi.",
-    badge: "Sáng lập dự án",
+    quote: "Định hướng chiến lược và quản lý tổng thể dự án EDUcare, mang nguồn tri thức chuẩn y khoa tới thế hệ trẻ.",
+    badge: "CEO - Leader",
   },
   {
-    name: "Trần Thu Thảo",
-    role: "Lead UX/UI & Content",
-    avatar: avatarGirl2,
-    quote: "Sáng tạo giao diện hiện đại, tinh tế và trải nghiệm thân thiện nhất với tâm lý học sinh - sinh viên.",
-    badge: "Thiết kế & Nội dung",
-  },
-  {
-    name: "Phạm Quốc Bảo",
-    role: "Full-Stack Tech Lead",
+    name: "Nguyễn Ngọc Hiển",
+    role: "Tech Lead",
     avatar: avatarBoy2,
-    quote: "Xây dựng hệ thống vận hành mượt mà, bảo mật cao và tối ưu trải nghiệm tương tác trực quan.",
-    badge: "Kỹ thuật Công nghệ",
-  },
-] as const;
-
-const milestones = [
-  {
-    year: "2024",
-    title: "Khởi Động Nhu Cầu Dự Án",
-    description: "Khảo sát thực tế nhận thức sức khỏe sinh sản & tâm lý trên 2.000 học sinh THCS/THPT tại Việt Nam.",
+    quote: "Xây dựng kiến trúc hệ thống mượt mà, bảo mật cao và vận hành toàn bộ hạ tầng kỹ thuật của dự án.",
+    badge: "Tech Lead",
   },
   {
-    year: "2025",
-    title: "Số Hóa Giáo Trình & Game 3D",
-    description: "Hợp tác cùng cố vấn y khoa biên soạn 50+ bài học & xây dựng 8 mini game tình huống tương tác.",
+    name: "Mai Văn Chí Khanh",
+    role: "Marketing & Brand Lead",
+    avatar: avatarGirl1,
+    quote: "Phụ trách chiến lược truyền thông, nhận diện thương hiệu và lan tỏa giá trị EDUcare tới cộng đồng tuổi teen.",
+    badge: "Marketing Lead",
   },
   {
-    year: "2026",
-    title: "Ra Mắt Nền Tảng Toàn Quốc",
-    description: "Chính thức vận hành hệ sinh thái EDUcare, phục vụ hơn 10.000 bạn trẻ & phát triển cộng đồng an toàn.",
+    name: "Lê Thế Vinh",
+    role: "Content & Full-Stack Dev",
+    avatar: avatarBoy3,
+    quote: "Thu thập & biên soạn nội dung y tế chuẩn xác, đồng thời tham gia lập trình phát triển các tính năng nền tảng.",
+    badge: "Content & Dev",
+  },
+  {
+    name: "Nguyễn Trường Thịnh",
+    role: "Content & System Dev",
+    avatar: avatarGirl2,
+    quote: "Nghiên cứu thu thập tư liệu giáo dục giới tính và phát triển tích hợp các mô-đun chức năng hệ thống.",
+    badge: "Content & Dev",
   },
 ] as const;
 
 export default function AboutPage() {
+  const [stats, setStats] = useState<PublicStatsResponse | null>(null);
+
+  useEffect(() => {
+    apiRequest<PublicStatsResponse>("/public/stats")
+      .then((data) => setStats(data))
+      .catch(() => null);
+  }, []);
+
+  const totalUsersText = stats ? `${stats.totalUsers}+` : "104+";
+  const totalLessonsText = stats ? `${stats.totalLessons}+` : "50+";
+  const totalPostsText = stats ? `${stats.totalBlogPosts}+` : "6+";
+  const totalCoursesText = stats ? `${stats.totalCourses}+` : "4+";
+
+  const milestones = [
+    {
+      stage: "02/2026",
+      badge: "Khởi Động",
+      title: "Khởi Động & Xây Dựng Dự Án",
+      description: "Chính thức khởi động dự án từ tháng 2/2026, lên kế hoạch chi tiết, dựng thiết kế giao diện web cơ bản và đăng tải các khóa học khởi đầu.",
+      color: "#06b6d4",
+    },
+    {
+      stage: "Hiện Nay",
+      badge: "Vận Hành Thực Tế",
+      title: "Hệ Sinh Thái Vận Hành Hoàn Chỉnh",
+      description: `Website đã đi vào hoạt động với ${totalCoursesText} khóa học chuẩn y khoa, ${totalLessonsText} bài học & micro-lessons, ${totalPostsText} bài viết kiến thức, mini game 3D và tiếp cận ${totalUsersText} người dùng đồng hành thực tế từ Database.`,
+      color: "#10b981",
+    },
+    {
+      stage: "Tương Lai",
+      badge: "Mở Rộng Strategic",
+      title: "Ứng Dụng AI & Kết Nối Trường Học",
+      description: "Phát triển tính năng trợ lý AI tư vấn tâm lý 24/7, co-work & mở rộng hợp tác với các trường học trên toàn quốc, tổ chức các sự kiện & workshop kỹ năng sống trực tiếp.",
+      color: "#f59e0b",
+    },
+  ];
+
   return (
     <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
       style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
@@ -127,15 +160,15 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          {/* Stats Chips Grid */}
+          {/* Dynamic Stats Chips Grid (Queried from DB) */}
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4 max-w-4xl mx-auto">
             {[
-              { label: "Người Dùng Đồng Hành", value: "10,000+" },
-              { label: "Bài Học Chuẩn Y Khoa", value: "50+" },
-              { label: "Mini Games Tương Tác 3D", value: "8+" },
-              { label: "Bảo Mật Quyền Riêng Tư", value: "100%" },
+              { label: "Người Dùng Tiếp Cận", value: totalUsersText },
+              { label: "Bài Học Chuẩn Y Khoa", value: totalLessonsText },
+              { label: "Bài Viết Chia Sẻ", value: totalPostsText },
+              { label: "Khóa Học Trên Nền Tảng", value: totalCoursesText },
             ].map((stat) => (
-              <div key={stat.label} className="rounded-none border border-indigo-400/30 bg-slate-900/60 backdrop-blur-md p-4 text-center shadow-lg">
+              <div key={stat.label} className="rounded-none border border-indigo-400/30 bg-slate-900/60 backdrop-blur-md p-4 text-center shadow-lg hover:border-cyan-400/50 transition-all">
                 <p className="text-2xl md:text-3xl font-black text-cyan-300">{stat.value}</p>
                 <p className="mt-1 text-xs font-extrabold uppercase tracking-wider text-indigo-200">{stat.label}</p>
               </div>
@@ -189,7 +222,7 @@ export default function AboutPage() {
             </div>
             <div className="mt-6 pt-4 border-t border-indigo-500/20 flex items-center gap-2 text-xs font-extrabold text-amber-300 uppercase tracking-wider">
               <Award className="h-4 w-4 text-amber-400" />
-              <span>Tiên phong ứng dụng Gamification</span>
+              <span>Tiên phong ứng dụng Gamification & AI</span>
             </div>
           </motion.div>
         </section>
@@ -224,46 +257,46 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Team Members Section */}
+        {/* Team Members Section (5 Members Horizontal Row) */}
         <section>
           <div className="mb-10 text-center">
             <span className="inline-flex rounded-none border border-indigo-400/30 bg-indigo-950/60 px-4 py-1.5 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-2">
-              <Users className="h-3.5 w-3.5 mr-1.5" /> ĐỘI NGŨ THỰC HIỆN
+              <Users className="h-3.5 w-3.5 mr-1.5" /> ĐỘI NGŨ THỰC HIỆN (5 THÀNH VIÊN)
             </span>
-            <h2 className="font-heading text-3xl font-extrabold text-white md:text-4xl">Những Người Đội Ngũ Phía Sau EDUcare</h2>
+            <h2 className="font-heading text-3xl font-extrabold text-white md:text-4xl">Đội Ngũ Phía Sau Dự Án EDUcare</h2>
             <p className="mt-2 text-sm text-indigo-100/70 max-w-2xl mx-auto font-medium">
-              Sự kết hợp giữa chuyên gia y tế, nhà quản lý sản phẩm, thiết kế trải nghiệm và kỹ sư công nghệ tận tâm.
+              Sự kết hợp giữa điều hành chiến lược, kỹ thuật công nghệ, truyền thông marketing và thu thập phát triển nội dung.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={member.name}
                 initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group rounded-none border border-indigo-500/25 bg-slate-900/60 backdrop-blur-xl p-6 shadow-2xl flex flex-col justify-between hover:border-cyan-400/60 transition-all duration-300"
+                transition={{ delay: index * 0.08 }}
+                className="group rounded-none border border-indigo-500/25 bg-slate-900/60 backdrop-blur-xl p-5 shadow-2xl flex flex-col justify-between hover:border-cyan-400/60 transition-all duration-300"
               >
                 <div>
                   {/* Member Avatar */}
-                  <div className="relative aspect-square w-full overflow-hidden rounded-none border border-slate-700/50 mb-5 bg-slate-950">
+                  <div className="relative aspect-square w-full overflow-hidden rounded-none border border-slate-700/50 mb-4 bg-slate-950">
                     <img
                       src={member.avatar}
                       alt={member.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <span className="absolute bottom-2 left-2 rounded-none border border-cyan-400/40 bg-slate-950/90 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-300 backdrop-blur-md">
+                    <span className="absolute bottom-2 left-2 rounded-none border border-cyan-400/40 bg-slate-950/90 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-cyan-300 backdrop-blur-md">
                       {member.badge}
                     </span>
                   </div>
 
-                  <h3 className="font-heading text-lg font-extrabold text-white group-hover:text-cyan-300 transition-colors">
+                  <h3 className="font-heading text-base font-extrabold text-white group-hover:text-cyan-300 transition-colors leading-tight">
                     {member.name}
                   </h3>
-                  <p className="text-xs font-extrabold text-indigo-300 mt-1 uppercase tracking-wider">{member.role}</p>
-                  <p className="mt-3 text-xs leading-relaxed text-indigo-100/80 font-medium italic">
+                  <p className="text-[11px] font-extrabold text-indigo-300 mt-1 uppercase tracking-wider">{member.role}</p>
+                  <p className="mt-2.5 text-xs leading-relaxed text-indigo-100/80 font-medium italic">
                     "{member.quote}"
                   </p>
                 </div>
@@ -272,19 +305,26 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Project Roadmap Timeline */}
+        {/* Project Roadmap Timeline (3 Stages) */}
         <section className="rounded-none border border-indigo-500/25 bg-slate-900/60 backdrop-blur-xl p-8 md:p-12 shadow-2xl">
           <div className="mb-8 text-center">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-cyan-300">HÀNH TRÌNH PHÁT TRIỂN</span>
-            <h2 className="mt-2 font-heading text-3xl font-extrabold text-white">Cột Mốc & Lộ Trình Dự Án</h2>
+            <span className="text-xs font-extrabold uppercase tracking-widest text-cyan-300">HÀNH TRÌNH DỰ ÁN</span>
+            <h2 className="mt-2 font-heading text-3xl font-extrabold text-white">Cột Mốc & Kế Hoạch Phát Triển</h2>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {milestones.map((item, i) => (
-              <div key={item.year} className="relative rounded-none border border-indigo-400/20 bg-indigo-950/40 p-6 backdrop-blur-md">
-                <span className="text-3xl font-black text-cyan-400">{item.year}</span>
-                <h3 className="mt-2 font-heading text-lg font-extrabold text-white">{item.title}</h3>
-                <p className="mt-2 text-xs md:text-sm text-indigo-100/80 font-medium leading-relaxed">{item.description}</p>
+            {milestones.map((item) => (
+              <div key={item.stage} className="relative rounded-none border border-indigo-400/20 bg-indigo-950/40 p-6 backdrop-blur-md flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl font-black text-cyan-400">{item.stage}</span>
+                    <span className="rounded-none border border-cyan-400/30 bg-cyan-950/80 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-cyan-300">
+                      {item.badge}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-lg font-extrabold text-white">{item.title}</h3>
+                  <p className="mt-3 text-xs md:text-sm text-indigo-100/80 font-medium leading-relaxed">{item.description}</p>
+                </div>
               </div>
             ))}
           </div>

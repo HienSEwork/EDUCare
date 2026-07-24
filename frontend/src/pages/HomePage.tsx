@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { apiRequest } from "@/lib/api/client";
 import type { Course, BlogPost, LeaderboardResponse } from "@/types/api";
 import MoodTracker from "@/components/MoodTracker";
@@ -112,6 +113,8 @@ const testimonials = [
 
 export default function HomePage() {
   const { user } = useAuth();
+  const { theme } = useTheme();
+  const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const heroImgY = useTransform(scrollY, [0, 600], [0, 50]);
@@ -143,7 +146,6 @@ export default function HomePage() {
         if (p.category) categoriesSet.add(p.category);
       });
 
-      // Calculate total website views & traffic (comparing total views vs members)
       const calculatedViews = (fetchedPosts.length * 180) + (fetchedCourses.length * 420) + (members * 65);
 
       setCommunityStats({
@@ -165,7 +167,7 @@ export default function HomePage() {
   const bannerStatSubtitle = isViewsHigher ? "đã ghé thăm và học tập trên website" : "đang tham gia và học tập mỗi ngày";
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 font-body">
+    <div className={theme === "light" ? "min-h-screen w-full max-w-full overflow-x-hidden bg-[#fdf6f9] text-slate-800 font-body" : "min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 font-body"}>
 
       {/* ════════════════════════════════════
           1. HERO SECTION
@@ -173,12 +175,16 @@ export default function HomePage() {
       <section
         ref={heroRef}
         className="relative -mt-24 overflow-hidden pb-12 pt-36 md:-mt-28 md:pt-44"
-        style={{ background: "linear-gradient(160deg, #0e0a29 0%, #171047 45%, #2a186d 100%)" }}
+        style={{
+          background: theme === "light"
+            ? "linear-gradient(180deg, #fff0f5 0%, #ffffff 55%, #fdf6f9 100%)"
+            : "linear-gradient(160deg, #0e0a29 0%, #171047 45%, #2a186d 100%)"
+        }}
       >
         {/* Ambient Glow & Sparkles */}
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -left-32 top-0 h-[600px] w-[600px] rounded-full bg-purple-600/25 blur-[130px]" />
-          <div className="absolute -right-24 top-8 h-[500px] w-[500px] rounded-full bg-cyan-500/20 blur-[110px]" />
+          <div className={theme === "light" ? "absolute -left-32 top-0 h-[600px] w-[600px] rounded-full bg-pink-300/30 blur-[130px]" : "absolute -left-32 top-0 h-[600px] w-[600px] rounded-full bg-purple-600/25 blur-[130px]"} />
+          <div className={theme === "light" ? "absolute -right-24 top-8 h-[500px] w-[500px] rounded-full bg-purple-300/20 blur-[110px]" : "absolute -right-24 top-8 h-[500px] w-[500px] rounded-full bg-cyan-500/20 blur-[110px]"} />
         </div>
 
         <div className="container mx-auto px-4">
@@ -188,16 +194,19 @@ export default function HomePage() {
             <motion.div variants={fadeUp} initial="hidden" animate="show" className="z-10">
 
               {/* Eyebrow Label */}
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-400/40 bg-indigo-900/60 px-4 py-1.5 backdrop-blur-md">
-                <Sparkles className="h-4 w-4 text-amber-300 animate-spin" style={{ animationDuration: '8s' }} />
-                <span className="font-heading text-xs font-extrabold uppercase tracking-widest text-cyan-300">
-                  KHÁM PHÁ THẾ GIỚI EDUCARE ✨
+              <div className={theme === "light"
+                ? "mb-4 inline-flex items-center gap-2 rounded-full border border-pink-200 bg-pink-100/70 px-4 py-1.5 backdrop-blur-md shadow-xs"
+                : "mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-400/40 bg-indigo-900/60 px-4 py-1.5 backdrop-blur-md"
+              }>
+                <Sparkles className={theme === "light" ? "h-4 w-4 text-pink-600 animate-spin" : "h-4 w-4 text-amber-300 animate-spin"} style={{ animationDuration: '8s' }} />
+                <span className={theme === "light" ? "font-heading text-xs font-extrabold uppercase tracking-widest text-pink-600" : "font-heading text-xs font-extrabold uppercase tracking-widest text-cyan-300"}>
+                  NỀN TẢNG HỌC TẬP & GIẢI TRÍ EDUCARE ✨
                 </span>
               </div>
 
               {/* H1 — Giant 3D Title */}
               <motion.h1 variants={fadeUp} custom={1} className="font-heading leading-[1.08]">
-                <span className="block text-xl font-bold uppercase tracking-widest text-amber-300 mb-1">
+                <span className={theme === "light" ? "block text-xl font-bold uppercase tracking-widest text-pink-600 mb-1" : "block text-xl font-bold uppercase tracking-widest text-amber-300 mb-1"}>
                   Khám phá
                 </span>
                 <span className="text-title-3d text-5xl md:text-[62px] lg:text-[70px]">
@@ -206,8 +215,8 @@ export default function HomePage() {
               </motion.h1>
 
               {/* Subtitle */}
-              <motion.p variants={fadeUp} custom={1.5} className="mt-5 text-base font-medium leading-relaxed text-indigo-100/85 max-w-xl">
-                Học hỏi, sưu tầm và chinh phục thế giới tri thức cùng hàng ngàn bạn trẻ đam mê mỗi ngày!
+              <motion.p variants={fadeUp} custom={1.5} className={theme === "light" ? "mt-5 text-base font-medium leading-relaxed text-slate-600 max-w-xl" : "mt-5 text-base font-medium leading-relaxed text-indigo-100/85 max-w-xl"}>
+                Học hỏi, giải trí và kết nối — Nền tảng giúp bạn phát triển mỗi ngày!
               </motion.p>
 
               {/* Action Buttons */}
@@ -218,7 +227,7 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Link to="/courses">
-                  <Button size="lg" className="magic-btn-secondary h-14 rounded-full px-8 text-base font-bold">
+                  <Button size="lg" className={theme === "light" ? "h-14 rounded-full px-8 text-base font-bold border border-pink-300 bg-white text-slate-700 hover:bg-pink-50 shadow-sm transition-all" : "magic-btn-secondary h-14 rounded-full px-8 text-base font-bold"}>
                     Khám phá ngay
                   </Button>
                 </Link>
@@ -228,21 +237,21 @@ export default function HomePage() {
               <motion.div variants={fadeUp} custom={2.5} className="mt-10 flex items-center gap-4">
                 <div className="flex -space-x-3">
                   {[imgAvatarGirl1, imgAvatarBoy1, imgAvatarGirl2, imgAvatarBoy2].map((src, i) => (
-                    <img key={i} src={src} alt="" className="h-10 w-10 rounded-full border-2 border-indigo-300 object-cover shadow-md" />
+                    <img key={i} src={src} alt="" className={theme === "light" ? "h-10 w-10 rounded-full border-2 border-pink-200 object-cover shadow-md" : "h-10 w-10 rounded-full border-2 border-indigo-300 object-cover shadow-md"} />
                   ))}
                 </div>
                 <div>
-                  <p className="font-heading text-sm font-extrabold text-white">{bannerStatTitle}</p>
-                  <p className="text-xs text-indigo-200/70">{bannerStatSubtitle}</p>
+                  <p className={theme === "light" ? "font-heading text-sm font-extrabold text-slate-800" : "font-heading text-sm font-extrabold text-white"}>{bannerStatTitle}</p>
+                  <p className={theme === "light" ? "text-xs text-slate-500" : "text-xs text-indigo-200/70"}>{bannerStatSubtitle}</p>
                 </div>
               </motion.div>
             </motion.div>
 
             {/* Right Hero Graphic */}
             <div className="relative flex justify-center lg:justify-end w-full">
-              <div className="absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-purple-500/30 via-cyan-400/20 to-amber-400/20 blur-[100px]" />
+              <div className={theme === "light" ? "absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-pink-400/20 via-rose-300/20 to-amber-300/20 blur-[90px]" : "absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-purple-500/30 via-cyan-400/20 to-amber-400/20 blur-[100px]"} />
               <motion.div style={{ y: heroImgY }} className="relative z-10 w-full max-w-[540px] lg:max-w-[640px]">
-                <div className="rounded-[2.5rem] p-1.5 bg-gradient-to-br from-cyan-400/70 via-purple-500/50 to-amber-300/70 shadow-[0_25px_60px_rgba(0,0,0,0.7)]">
+                <div className={theme === "light" ? "rounded-[2.5rem] p-1.5 bg-gradient-to-br from-pink-400 via-rose-300 to-amber-300 shadow-[0_20px_50px_rgba(236,72,153,0.18)]" : "rounded-[2.5rem] p-1.5 bg-gradient-to-br from-cyan-400/70 via-purple-500/50 to-amber-300/70 shadow-[0_25px_60px_rgba(0,0,0,0.7)]"}>
                   <img
                     src={imgFptHero}
                     alt="EDUcare Learning"
@@ -256,9 +265,9 @@ export default function HomePage() {
       </section>
 
       {/* ════════════════════════════════════
-          2. ANONYMOUS QUESTION BOX SECTION (ĐẶT LÊN ĐẦU, NGAY DƯỚI HERO)
+          2. ANONYMOUS QUESTION BOX SECTION
       ════════════════════════════════════ */}
-      <section className="bg-[#0e092d] py-12 border-y border-indigo-900/50">
+      <section className={theme === "light" ? "bg-white py-12 border-y border-pink-100" : "bg-[#0e092d] py-12 border-y border-indigo-900/50"}>
         <div className="container mx-auto px-4">
           <AnonymousQuestionBox variant="standalone" />
         </div>
@@ -267,7 +276,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           3. GOLDEN HIGHLIGHT FEATURE ROW
       ════════════════════════════════════ */}
-      <section className="bg-[#100b33] py-10">
+      <section className={theme === "light" ? "bg-[#fdf6f9] py-10" : "bg-[#100b33] py-10"}>
         <div className="container mx-auto px-4">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
@@ -289,48 +298,81 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           4. CATEGORY CARDS CAROUSEL — CHỌN HÀNH TRÌNH CỦA BẠN
       ════════════════════════════════════ */}
-      <section className="bg-[#120c38] py-20 border-t border-indigo-900/40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <p className="text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1">Khám phá chủ đề</p>
-              <h2 className="font-heading text-3xl md:text-4xl font-extrabold text-white">
-                Chọn hành trình của bạn <span className="text-amber-300">✨</span>
+      <section className={theme === "light"
+        ? "relative overflow-hidden border-y border-pink-100 bg-[radial-gradient(circle_at_15%_15%,rgba(251,207,232,0.45),transparent_28%),linear-gradient(180deg,#fff_0%,#fff8fb_100%)] py-16 md:py-20"
+        : "relative overflow-hidden border-y border-amber-300/10 bg-[radial-gradient(circle_at_15%_15%,rgba(245,158,11,0.12),transparent_28%),linear-gradient(180deg,#120c38_0%,#0d0929_100%)] py-16 md:py-20"
+      }>
+        <div className={theme === "light" ? "absolute -right-24 top-10 h-64 w-64 rounded-full bg-pink-200/30 blur-3xl" : "absolute -right-24 top-10 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl"} />
+        <div className="container relative mx-auto px-4">
+          <div className="mb-9 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <div className={theme === "light"
+                ? "mb-3 inline-flex items-center gap-2 rounded-full border border-pink-200 bg-white/80 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-pink-600 shadow-sm"
+                : "mb-3 inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-amber-300"
+              }>
+                <Sparkles className="h-3.5 w-3.5" /> Khám phá chủ đề
+              </div>
+              <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold leading-tight text-slate-900 md:text-4xl" : "font-heading text-3xl font-extrabold leading-tight text-white md:text-4xl"}>
+                Chọn hành trình phù hợp với bạn
               </h2>
+              <p className={theme === "light" ? "mt-2 max-w-xl text-sm leading-6 text-slate-600" : "mt-2 max-w-xl text-sm leading-6 text-indigo-100/70"}>
+                Học theo mục tiêu, phát triển từng kỹ năng và theo dõi tiến bộ theo cách riêng của bạn.
+              </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <button className="carousel-nav-btn h-10 w-10 rounded-full flex items-center justify-center">
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button className="carousel-nav-btn h-10 w-10 rounded-full flex items-center justify-center">
-                <ChevronRight className="h-5 w-5" />
-              </button>
-              <Link to="/courses" className="hidden sm:inline-flex magic-btn-secondary px-5 py-2 rounded-full text-xs font-bold">
-                Xem tất cả
-              </Link>
-            </div>
+            <Link to="/courses" className={theme === "light"
+              ? "inline-flex w-fit items-center gap-2 rounded-full bg-pink-600 px-5 py-2.5 text-xs font-bold text-white shadow-[0_8px_24px_rgba(219,39,119,0.22)] transition-all hover:-translate-y-0.5 hover:bg-pink-700"
+              : "inline-flex w-fit items-center gap-2 rounded-full border border-amber-300/40 bg-amber-300/10 px-5 py-2.5 text-xs font-bold text-amber-200 transition-all hover:-translate-y-0.5 hover:bg-amber-300/20"
+            }>
+              Xem tất cả <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          {/* 5 Vertical 3D Category Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
-            {categoryCards.map((card, i) => (
-              <motion.div
-                key={card.title}
-                variants={fadeUp} custom={i * 0.15}
-                initial="hidden" whileInView="show" viewport={{ once: true }}
-                whileHover={{ scale: 1.06, y: -8 }}
-                className={`${card.theme} relative cursor-pointer overflow-hidden rounded-3xl p-5 flex flex-col justify-between min-h-[260px] transition-all`}
-              >
-                <div className="flex justify-center my-6">
-                  <card.icon className="h-12 w-12 text-white stroke-[1.75] filter drop-shadow-[0_4px_10px_rgba(255,255,255,0.4)]" />
-                </div>
-                <div>
-                  <h3 className="font-heading font-extrabold text-base text-white leading-snug">{card.title}</h3>
-                  <p className="text-xs font-medium text-indigo-100/80 mt-1">{card.count}</p>
-                </div>
-              </motion.div>
-            ))}
+          {/* 5 Category Cards */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {categoryCards.map((card, i) => {
+              const lightCardStyles = [
+                "border-rose-200/80 bg-gradient-to-br from-white to-rose-50 text-rose-600 hover:border-rose-300 hover:shadow-[0_18px_45px_rgba(244,63,94,0.16)]",
+                "border-orange-200/80 bg-gradient-to-br from-white to-orange-50 text-orange-500 hover:border-orange-300 hover:shadow-[0_18px_45px_rgba(249,115,22,0.16)]",
+                "border-amber-200/80 bg-gradient-to-br from-white to-amber-50 text-amber-500 hover:border-amber-300 hover:shadow-[0_18px_45px_rgba(245,158,11,0.16)]",
+                "border-violet-200/80 bg-gradient-to-br from-white to-violet-50 text-violet-600 hover:border-violet-300 hover:shadow-[0_18px_45px_rgba(139,92,246,0.16)]",
+                "border-sky-200/80 bg-gradient-to-br from-white to-sky-50 text-sky-600 hover:border-sky-300 hover:shadow-[0_18px_45px_rgba(14,165,233,0.16)]"
+              ];
+              const darkCardStyles = [
+                "border-rose-400/25 bg-rose-400/[0.08] text-rose-300 hover:border-rose-300/50 hover:shadow-[0_18px_45px_rgba(244,63,94,0.14)]",
+                "border-orange-400/25 bg-orange-400/[0.08] text-orange-300 hover:border-orange-300/50 hover:shadow-[0_18px_45px_rgba(249,115,22,0.14)]",
+                "border-amber-400/25 bg-amber-400/[0.08] text-amber-300 hover:border-amber-300/50 hover:shadow-[0_18px_45px_rgba(245,158,11,0.14)]",
+                "border-violet-400/25 bg-violet-400/[0.08] text-violet-300 hover:border-violet-300/50 hover:shadow-[0_18px_45px_rgba(139,92,246,0.14)]",
+                "border-sky-400/25 bg-sky-400/[0.08] text-sky-300 hover:border-sky-300/50 hover:shadow-[0_18px_45px_rgba(14,165,233,0.14)]"
+              ];
+              const cardStyle = theme === "light" ? lightCardStyles[i] : darkCardStyles[i];
+
+              return (
+                <motion.div
+                  key={card.title}
+                  variants={fadeUp} custom={i * 0.15}
+                  initial="hidden" whileInView="show" viewport={{ once: true }}
+                  whileHover={{ y: -6 }}
+                  className={`${cardStyle} group relative overflow-hidden rounded-[1.75rem] border backdrop-blur-sm transition-all duration-300`}
+                >
+                  <Link to="/courses" aria-label={`Khám phá ${card.title}`} className="flex min-h-[220px] flex-col justify-between p-5">
+                    <div className="flex items-start justify-between">
+                      <span className={theme === "light" ? "text-[11px] font-extrabold tracking-widest text-slate-400" : "text-[11px] font-extrabold tracking-widest text-white/35"}>
+                        0{i + 1}
+                      </span>
+                      <ArrowRight className="h-4 w-4 -rotate-45 opacity-50 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                    </div>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-current/10 ring-1 ring-current/15">
+                      <card.icon className="h-8 w-8 stroke-[1.8]" />
+                    </div>
+                    <div>
+                      <h3 className={theme === "light" ? "font-heading text-base font-extrabold leading-snug text-slate-900" : "font-heading text-base font-extrabold leading-snug text-white"}>{card.title}</h3>
+                      <p className={theme === "light" ? "mt-1 text-xs font-medium text-slate-500" : "mt-1 text-xs font-medium text-indigo-100/60"}>{card.count}</p>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -338,11 +380,11 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           5. 5-STEP ROADMAP TRAIL — 5 BƯỚC CHINH PHỤC
       ════════════════════════════════════ */}
-      <section className="bg-[#160e42] py-20 border-t border-indigo-900/50">
+      <section className={theme === "light" ? "bg-[#fdf6f9] py-20 border-t border-pink-100" : "bg-[#160e42] py-20 border-t border-indigo-900/50"}>
         <div className="container mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-14">
-            <p className="text-xs font-heading font-extrabold uppercase tracking-widest text-amber-300 mb-1">Hành trình học tập đơn giản</p>
-            <h2 className="font-heading text-3xl md:text-4xl font-extrabold text-white">
+            <p className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1" : "text-xs font-heading font-extrabold uppercase tracking-widest text-amber-300 mb-1"}>Hành trình học tập đơn giản</p>
+            <h2 className={theme === "light" ? "font-heading text-3xl md:text-4xl font-extrabold text-slate-800" : "font-heading text-3xl md:text-4xl font-extrabold text-white"}>
               <span className="text-title-gold-3d">5 bước</span> chinh phục ✨
             </h2>
           </div>
@@ -355,17 +397,20 @@ export default function HomePage() {
                 variants={fadeUp} custom={i * 0.15}
                 initial="hidden" whileInView="show" viewport={{ once: true }}
                 whileHover={{ scale: 1.06, y: -6 }}
-                className="magic-card relative flex flex-col items-center p-6 rounded-3xl text-center border border-indigo-400/30 hover:border-amber-300 transition-all"
+                className={theme === "light"
+                  ? "magic-card relative flex flex-col items-center p-6 rounded-3xl text-center border border-pink-200 bg-white shadow-sm hover:border-pink-500 transition-all"
+                  : "magic-card relative flex flex-col items-center p-6 rounded-3xl text-center border border-indigo-400/30 hover:border-amber-300 transition-all"
+                }
               >
                 {/* Step badge */}
                 <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${step.color} border border-white/30 text-white shadow-lg mb-4`}>
                   <step.icon className="h-8 w-8 stroke-[2]" />
                 </div>
 
-                <div className="font-heading font-extrabold text-sm text-white mb-1">
-                  <span className="text-amber-300 mr-1">{step.num}</span> {step.title}
+                <div className={theme === "light" ? "font-heading font-extrabold text-sm text-slate-800 mb-1" : "font-heading font-extrabold text-sm text-white mb-1"}>
+                  <span className={theme === "light" ? "text-pink-600 mr-1" : "text-amber-300 mr-1"}>{step.num}.</span> {step.title}
                 </div>
-                <p className="text-xs text-indigo-200/70 leading-relaxed">{step.desc}</p>
+                <p className={theme === "light" ? "text-xs text-slate-500 leading-relaxed" : "text-xs text-indigo-200/70 leading-relaxed"}>{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -375,15 +420,15 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           6. SIDE-BY-SIDE GRID — KHÓA HỌC NỔI BẬT + CỘNG ĐỒNG SÔI ĐỘNG
       ════════════════════════════════════ */}
-      <section className="bg-[#100930] py-20 border-t border-indigo-900/50">
+      <section className={theme === "light" ? "bg-white py-20 border-t border-pink-100" : "bg-[#100930] py-20 border-t border-indigo-900/50"}>
         <div className="container mx-auto px-4">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
 
             {/* Left: Khóa học nổi bật */}
-            <div className="magic-card p-6 md:p-8 rounded-[2rem]">
+            <div className={theme === "light" ? "magic-card p-6 md:p-8 rounded-[2rem] border border-pink-200 bg-white shadow-sm" : "magic-card p-6 md:p-8 rounded-[2rem]"}>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-heading text-2xl font-extrabold text-white">Khóa học nổi bật</h3>
-                <Link to="/courses" className="magic-btn-secondary px-4 py-1.5 rounded-full text-xs font-bold">
+                <h3 className={theme === "light" ? "font-heading text-2xl font-extrabold text-slate-800" : "font-heading text-2xl font-extrabold text-white"}>Khóa học nổi bật</h3>
+                <Link to="/courses" className={theme === "light" ? "border border-pink-300 bg-white text-pink-600 hover:bg-pink-50 px-4 py-1.5 rounded-full text-xs font-bold shadow-xs" : "magic-btn-secondary px-4 py-1.5 rounded-full text-xs font-bold"}>
                   Xem tất cả
                 </Link>
               </div>
@@ -401,10 +446,10 @@ export default function HomePage() {
             </div>
 
             {/* Right: Cộng đồng sôi động */}
-            <div className="magic-card p-6 md:p-8 rounded-[2rem]">
-              <h3 className="font-heading text-2xl font-extrabold text-white mb-6">Cộng đồng sôi động</h3>
+            <div className={theme === "light" ? "magic-card p-6 md:p-8 rounded-[2rem] border border-pink-200 bg-white shadow-sm" : "magic-card p-6 md:p-8 rounded-[2rem]"}>
+              <h3 className={theme === "light" ? "font-heading text-2xl font-extrabold text-slate-800 mb-6" : "font-heading text-2xl font-extrabold text-white mb-6"}>Cộng đồng sôi động</h3>
 
-              {/* 4 Stat Boxes Grid (Real Dynamic Counts From Backend Data) */}
+              {/* 4 Stat Boxes Grid */}
               <div className="grid grid-cols-4 gap-2 mb-6">
                 {[
                   { val: communityStats.membersCount > 0 ? `${communityStats.membersCount}+` : "20+", lbl: "Thành viên" },
@@ -412,34 +457,34 @@ export default function HomePage() {
                   { val: communityStats.postsCount > 0 ? `${communityStats.postsCount}+` : "12+", lbl: "Bài viết" },
                   { val: communityStats.coursesCount > 0 ? `${communityStats.coursesCount}+` : "6+", lbl: "Khóa học" },
                 ].map((s) => (
-                  <div key={s.lbl} className="bg-indigo-950/70 border border-indigo-400/20 rounded-xl p-2.5 text-center">
-                    <p className="font-heading font-extrabold text-lg text-amber-300">{s.val}</p>
-                    <p className="text-[10px] text-indigo-200/70 font-medium">{s.lbl}</p>
+                  <div key={s.lbl} className={theme === "light" ? "bg-pink-50/70 border border-pink-200/80 rounded-xl p-2.5 text-center" : "bg-indigo-950/70 border border-indigo-400/20 rounded-xl p-2.5 text-center"}>
+                    <p className={theme === "light" ? "font-heading font-extrabold text-lg text-pink-600" : "font-heading font-extrabold text-lg text-amber-300"}>{s.val}</p>
+                    <p className={theme === "light" ? "text-[10px] text-slate-500 font-medium" : "text-[10px] text-indigo-200/70 font-medium"}>{s.lbl}</p>
                   </div>
                 ))}
               </div>
 
               {/* Hot Discussions Feed */}
-              <p className="text-xs font-heading font-bold text-amber-300 uppercase tracking-wider mb-3">Thảo luận nổi bật</p>
+              <p className={theme === "light" ? "text-xs font-heading font-bold text-pink-600 uppercase tracking-wider mb-3" : "text-xs font-heading font-bold text-amber-300 uppercase tracking-wider mb-3"}>Thảo luận nổi bật</p>
               <div className="space-y-3">
                 {hotDiscussions.map((d, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/20 hover:border-indigo-400/40 transition-colors">
+                  <div key={i} className={theme === "light" ? "flex items-center justify-between p-3 rounded-xl bg-pink-50/50 border border-pink-200/60 hover:border-pink-300 transition-colors" : "flex items-center justify-between p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/20 hover:border-indigo-400/40 transition-colors"}>
                     <div className="flex items-center gap-3">
-                      <img src={d.avatar} alt="" className="h-9 w-9 rounded-full object-cover border border-cyan-400/50" />
+                      <img src={d.avatar} alt="" className="h-9 w-9 rounded-full object-cover border border-pink-300" />
                       <div>
-                        <p className="font-heading text-xs font-bold text-white line-clamp-1">{d.title}</p>
-                        <p className="text-[10px] text-indigo-200/60">{d.author} • {d.time}</p>
+                        <p className={theme === "light" ? "font-heading text-xs font-bold text-slate-800 line-clamp-1" : "font-heading text-xs font-bold text-white line-clamp-1"}>{d.title}</p>
+                        <p className={theme === "light" ? "text-[10px] text-slate-500" : "text-[10px] text-indigo-200/60"}>{d.author} • {d.time}</p>
                       </div>
                     </div>
-                    <span className="flex items-center gap-1 text-[11px] font-bold text-indigo-200/70">
-                      <MessageSquare className="h-3 w-3 text-cyan-300" /> {d.comments}
+                    <span className={theme === "light" ? "flex items-center gap-1 text-[11px] font-bold text-slate-500" : "flex items-center gap-1 text-[11px] font-bold text-indigo-200/70"}>
+                      <MessageSquare className={theme === "light" ? "h-3 w-3 text-pink-500" : "h-3 w-3 text-cyan-300"} /> {d.comments}
                     </span>
                   </div>
                 ))}
               </div>
 
               <div className="mt-5 text-right">
-                <Link to="/community" className="inline-flex items-center gap-1 font-heading text-xs font-bold text-cyan-300 hover:text-amber-300">
+                <Link to="/community" className={theme === "light" ? "inline-flex items-center gap-1 font-heading text-xs font-bold text-pink-600 hover:text-pink-700" : "inline-flex items-center gap-1 font-heading text-xs font-bold text-cyan-300 hover:text-amber-300"}>
                   Xem tất cả thảo luận <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -450,16 +495,16 @@ export default function HomePage() {
       </section>
 
       {/* ════════════════════════════════════
-          7. DEDICATED MOOD TRACKER & EMOTIONAL WELLNESS SECTION (TÁCH THÀNH SECTION RIÊNG)
+          7. DEDICATED MOOD TRACKER & EMOTIONAL WELLNESS SECTION
       ════════════════════════════════════ */}
-      <section className="bg-[#0d0726] py-20 border-t border-indigo-900/50">
+      <section className={theme === "light" ? "bg-[#fdf6f9] py-20 border-t border-pink-100" : "bg-[#0d0726] py-20 border-t border-indigo-900/50"}>
         <div className="container mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block">Theo dõi sức khỏe tinh thần</span>
-            <h2 className="font-heading text-3xl font-extrabold text-white md:text-4xl">
-              Nhật ký cảm xúc & Lời khuyên hôm nay <span className="text-amber-300">✨</span>
+            <span className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1 block" : "text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block"}>Theo dõi sức khỏe tinh thần</span>
+            <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold text-slate-800 md:text-4xl" : "font-heading text-3xl font-extrabold text-white md:text-4xl"}>
+              Nhật ký cảm xúc & Lời khuyên hôm nay <span className={theme === "light" ? "text-pink-600" : "text-amber-300"}>✨</span>
             </h2>
-            <p className="mt-2 text-xs md:text-sm text-indigo-100/70 font-medium">Ghi lại cảm xúc mỗi ngày để hiểu rõ bản thân hơn và nhận thông điệp truyền cảm hứng.</p>
+            <p className={theme === "light" ? "mt-2 text-xs md:text-sm text-slate-600 font-medium" : "mt-2 text-xs md:text-sm text-indigo-100/70 font-medium"}>Ghi lại cảm xúc mỗi ngày để hiểu rõ bản thân hơn và nhận thông điệp truyền cảm hứng.</p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] max-w-6xl mx-auto">
@@ -472,17 +517,17 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           8. TESTIMONIALS — HỌC VIÊN NÓI GÌ VỀ CHÚNG TÔI??
       ════════════════════════════════════ */}
-      <section className="bg-[#140b3a] py-20 border-t border-indigo-900/50">
+      <section className={theme === "light" ? "bg-white py-20 border-t border-pink-100" : "bg-[#140b3a] py-20 border-t border-indigo-900/50"}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="font-heading text-2xl md:text-3xl font-extrabold text-white">
-              <span className="text-amber-300">✨</span> Học viên nói gì về chúng tôi?? <span className="text-amber-300">✨</span>
+            <h2 className={theme === "light" ? "font-heading text-2xl md:text-3xl font-extrabold text-slate-800" : "font-heading text-2xl md:text-3xl font-extrabold text-white"}>
+              <span className={theme === "light" ? "text-pink-600" : "text-amber-300"}>✨</span> Học viên nói gì về chúng tôi? <span className={theme === "light" ? "text-pink-600" : "text-amber-300"}>✨</span>
             </h2>
             <div className="flex items-center gap-3">
-              <button className="carousel-nav-btn h-10 w-10 rounded-full flex items-center justify-center">
+              <button className={theme === "light" ? "h-10 w-10 rounded-full flex items-center justify-center border border-pink-200 bg-white text-slate-700 hover:bg-pink-50 shadow-xs" : "carousel-nav-btn h-10 w-10 rounded-full flex items-center justify-center"}>
                 <ChevronLeft className="h-5 w-5" />
               </button>
-              <button className="carousel-nav-btn h-10 w-10 rounded-full flex items-center justify-center">
+              <button className={theme === "light" ? "h-10 w-10 rounded-full flex items-center justify-center border border-pink-200 bg-white text-slate-700 hover:bg-pink-50 shadow-xs" : "carousel-nav-btn h-10 w-10 rounded-full flex items-center justify-center"}>
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>
@@ -493,21 +538,21 @@ export default function HomePage() {
               <motion.div
                 key={t.name}
                 whileHover={{ y: -6 }}
-                className="magic-card p-6 rounded-3xl flex flex-col justify-between border border-indigo-400/30"
+                className={theme === "light" ? "magic-card p-6 rounded-3xl flex flex-col justify-between border border-pink-200 bg-white shadow-sm" : "magic-card p-6 rounded-3xl flex flex-col justify-between border border-indigo-400/30"}
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <img src={t.avatar} alt={t.name} className="h-12 w-12 rounded-full object-cover border-2 border-cyan-400" />
+                  <img src={t.avatar} alt={t.name} className="h-12 w-12 rounded-full object-cover border-2 border-pink-300" />
                   <div>
-                    <h4 className="font-heading font-extrabold text-sm text-white">{t.name}</h4>
-                    <p className="text-xs text-indigo-200/70">{t.role}</p>
+                    <h4 className={theme === "light" ? "font-heading font-extrabold text-sm text-slate-800" : "font-heading font-extrabold text-sm text-white"}>{t.name}</h4>
+                    <p className={theme === "light" ? "text-xs text-slate-500" : "text-xs text-indigo-200/70"}>{t.role}</p>
                   </div>
                   <div className="ml-auto flex gap-0.5">
                     {[...Array(t.stars)].map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-white text-white opacity-90" />
+                      <Star key={i} className={theme === "light" ? "h-3.5 w-3.5 fill-amber-400 text-amber-400" : "h-3.5 w-3.5 fill-white text-white opacity-90"} />
                     ))}
                   </div>
                 </div>
-                <p className="text-xs font-medium text-indigo-100/80 leading-relaxed">{t.text}</p>
+                <p className={theme === "light" ? "text-xs font-medium text-slate-600 leading-relaxed" : "text-xs font-medium text-indigo-100/80 leading-relaxed"}>{t.text}</p>
               </motion.div>
             ))}
           </div>
@@ -517,28 +562,28 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           9. INTERACTIVE GAMES SECTION
       ════════════════════════════════════ */}
-      <section className="bg-[#0b0724] py-20 border-t border-indigo-900/50">
+      <section className={theme === "light" ? "bg-[#fdf6f9] py-20 border-t border-pink-100" : "bg-[#0b0724] py-20 border-t border-indigo-900/50"}>
         <div className="container mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block">Góc trải nghiệm & tương tác</span>
-            <h2 className="font-heading text-3xl font-extrabold text-white">Học giới tính qua trò chơi ✨</h2>
+            <span className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1 block" : "text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block"}>Góc giải trí qua trò chơi</span>
+            <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold text-slate-800" : "font-heading text-3xl font-extrabold text-white"}>Học giải trí qua trò chơi ✨</h2>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
             {[
-              { title: "Vuốt chạm an toàn", desc: "Nhận diện ranh giới và sự đồng thuận bằng thao tác vuốt chạm thú vị.", img: imgGameSafeSwipe },
-              { title: "Săn cờ đỏ ranh giới", desc: "Săn tìm các dấu hiệu độc hại (red flags) ẩn giấu trong tình bạn.", img: imgGameRedFlag },
-              { title: "Thám tử trò chuyện", desc: "Giải mã tin nhắn nhạy cảm và tự bảo vệ mình trên mạng xã hội.", img: imgGameChatDetective },
+              { title: "Sàn đấu & vượt giới", desc: "Sàn đấu rèn luyện qua các câu hỏi thử thách cực mê.", img: imgGameSafeSwipe },
+              { title: "Vườn hạnh phúc", desc: "Xây dựng thư giãn cùng bạn bè và hoàn thiện bản thân.", img: imgGameRedFlag },
+              { title: "Thám tử trí tuệ", desc: "Thám tử trí tuệ thử thách qua các câu chuyện rèn tư duy.", img: imgGameChatDetective },
             ].map((g) => (
-              <div key={g.title} className="magic-card-glow rounded-3xl p-5 flex flex-col justify-between">
+              <div key={g.title} className={theme === "light" ? "magic-card-glow rounded-3xl p-5 flex flex-col justify-between border border-pink-200 bg-white shadow-sm" : "magic-card-glow rounded-3xl p-5 flex flex-col justify-between"}>
                 <div>
                   <img src={g.img} alt="" className="h-36 w-full object-contain mb-3" />
-                  <h3 className="font-heading font-extrabold text-sm text-white">{g.title}</h3>
-                  <p className="text-xs text-indigo-200/70 mt-1">{g.desc}</p>
+                  <h3 className={theme === "light" ? "font-heading font-extrabold text-sm text-slate-800" : "font-heading font-extrabold text-sm text-white"}>{g.title}</h3>
+                  <p className={theme === "light" ? "text-xs text-slate-500 mt-1" : "text-xs text-indigo-200/70 mt-1"}>{g.desc}</p>
                 </div>
                 <Link to="/games" className="mt-4">
                   <Button size="sm" className="magic-btn-primary w-full h-9 rounded-full text-xs font-bold">
-                    Chơi ngay thôi! ➔
+                    Chơi ngay ➔
                   </Button>
                 </Link>
               </div>
@@ -550,23 +595,30 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           10. BOTTOM CTA BANNER — SẴN SÀNG BẮT ĐẦU HÀNH TRÌNH MỚI?
       ════════════════════════════════════ */}
-      <section className="bg-[#07041a] py-20">
+      <section className={theme === "light" ? "bg-white py-20" : "bg-[#07041a] py-20"}>
         <div className="container mx-auto px-4">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-            className="relative overflow-hidden rounded-[2.5rem] px-8 py-16 text-center border-2 border-amber-400/50 shadow-[0_20px_60px_rgba(245,158,11,0.3)]"
-            style={{ background: "linear-gradient(135deg, #31186e 0%, #4c1d95 50%, #0c4a6e 100%)" }}
+            className={theme === "light"
+              ? "relative overflow-hidden rounded-[2.5rem] px-8 py-16 text-center border-2 border-pink-300 shadow-[0_20px_50px_rgba(236,72,153,0.22)]"
+              : "relative overflow-hidden rounded-[2.5rem] px-8 py-16 text-center border-2 border-amber-400/50 shadow-[0_20px_60px_rgba(245,158,11,0.3)]"
+            }
+            style={{
+              background: theme === "light"
+                ? "linear-gradient(135deg, #ff6b9d 0%, #ec4899 50%, #f43f5e 100%)"
+                : "linear-gradient(135deg, #31186e 0%, #4c1d95 50%, #0c4a6e 100%)"
+            }}
           >
             <h2 className="font-heading text-3xl font-extrabold text-white md:text-[44px] leading-tight">
-              Sẵn sàng bắt đầu <span className="text-title-gold-3d">hành trình mới?</span>
+              Sẵn sàng bắt đầu <span className={theme === "light" ? "text-amber-200" : "text-title-gold-3d"}>hành trình mới?</span>
             </h2>
-            <p className="mt-3 text-sm md:text-base text-indigo-100/90 max-w-xl mx-auto font-medium">
+            <p className="mt-3 text-sm md:text-base text-white/95 max-w-xl mx-auto font-medium">
               Tham gia ngay hôm nay và khám phá tiềm năng vô hạn của bạn!
             </p>
 
             <div className="mt-8 flex justify-center">
               <Link to={user ? "/dashboard" : "/register"}>
-                <Button className="magic-btn-primary h-14 rounded-full px-10 text-lg font-extrabold">
+                <Button className={theme === "light" ? "bg-white text-pink-600 hover:bg-pink-50 h-14 rounded-full px-10 text-lg font-extrabold shadow-lg transition-all hover:scale-105" : "magic-btn-primary h-14 rounded-full px-10 text-lg font-extrabold"}>
                   Bắt đầu miễn phí ➔
                 </Button>
               </Link>

@@ -125,7 +125,12 @@ public record CourseResponse(
       String category,
       String date,
       String readTime,
-      String emoji) {
+      String emoji,
+      String author,
+      String authorTitle,
+      String sourceUrl,
+      String sourceName,
+      String videoUrl) {
   }
 
   public record QuizQuestionResponse(
@@ -459,7 +464,12 @@ public record CourseResponse(
       @NotBlank String category,
       @NotBlank String date,
       Integer readTimeMinutes,
-      @NotBlank String emoji) {
+      @NotBlank String emoji,
+      String author,
+      String authorTitle,
+      String sourceUrl,
+      String sourceName,
+      String videoUrl) {
   }
 
   public record QuizQuestionUpsertRequest(
@@ -556,5 +566,15 @@ public record CourseResponse(
 
   public record ReorderRequest(
       List<Long> blockIds
+  ) {}
+
+  public record PublicStatsResponse(
+      long totalUsers,
+      long totalLessons,
+      long totalBlogPosts,
+      long totalCourses,
+      long totalGames,
+      long totalCompletions,
+      long totalInteractions
   ) {}
 }

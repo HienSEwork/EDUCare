@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpen, CheckCircle2, Lock, PlayCircle, ShieldCheck, Spark
 import { toast } from "sonner";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import type { Course } from "@/types/api";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,8 @@ export default function CourseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { theme } = useTheme();
+  const isLight = theme === "light";
 
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -99,7 +102,10 @@ export default function CourseDetailPage() {
   const progressPercent = lessonsCount > 0 ? Math.round((completedLessonsCount / lessonsCount) * 100) : 0;
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
+    <div className={isLight
+      ? "course-detail-page min-h-screen bg-[radial-gradient(circle_at_12%_8%,rgba(251,207,232,0.48),transparent_28%),linear-gradient(180deg,#fff8fb_0%,#fff_45%,#faf5ff_100%)] pb-16 pt-6 text-slate-800 sm:pt-8"
+      : "course-detail-page min-h-screen bg-[radial-gradient(circle_at_12%_8%,rgba(245,158,11,0.1),transparent_28%),linear-gradient(180deg,#0d0929_0%,#120c38_55%,#09061f_100%)] pb-16 pt-6 text-slate-100 sm:pt-8"
+    }>
       <div className="container mx-auto max-w-5xl px-4">
         <button
           onClick={() => navigate("/courses")}
@@ -110,24 +116,27 @@ export default function CourseDetailPage() {
         </button>
 
         {/* Hero Section */}
-        <section className="relative overflow-hidden rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,230,240,0.88)_0%,rgba(246,241,255,0.96)_48%,rgba(227,245,255,0.88)_100%)] p-6 shadow-card md:p-8">
+        <section className={isLight
+          ? "relative overflow-hidden rounded-[1.75rem] border border-pink-100 bg-[linear-gradient(135deg,rgba(255,255,255,0.94)_0%,rgba(253,242,248,0.96)_52%,rgba(245,243,255,0.94)_100%)] p-5 shadow-[0_22px_70px_rgba(219,39,119,0.1)] sm:rounded-[2.4rem] sm:p-7 md:p-8"
+          : "relative overflow-hidden rounded-[1.75rem] border border-amber-300/15 bg-[linear-gradient(135deg,rgba(24,16,67,0.96)_0%,rgba(34,22,85,0.96)_52%,rgba(15,31,65,0.92)_100%)] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.3)] sm:rounded-[2.4rem] sm:p-7 md:p-8"
+        }>
           <div className="grid gap-8 md:grid-cols-[2fr_1fr] md:items-center relative z-10">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <span className="inline-flex rounded-full bg-white/88 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary shadow-soft">
+              <span className={isLight ? "inline-flex rounded-full border border-pink-100 bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-pink-600 shadow-sm" : "inline-flex rounded-full border border-amber-300/25 bg-amber-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300"}>
                 Khóa học
               </span>
-              <h1 className="mt-5 font-heading text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl">
+              <h1 className="mt-5 break-words font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl">
                 {course.title}
               </h1>
               <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">
                 {course.description}
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-4">
-                <span className="rounded-full bg-background/70 px-4 py-2 text-xs font-semibold text-foreground/70">
+              <div className="mt-6 flex flex-wrap gap-2 sm:gap-3">
+                <span className="rounded-full border border-border/60 bg-background/70 px-3 py-2 text-xs font-semibold text-foreground/70 sm:px-4">
                   {lessonsCount} bài học
                 </span>
-                <span className="rounded-full bg-background/70 px-4 py-2 text-xs font-semibold text-foreground/70">
+                <span className="rounded-full border border-border/60 bg-background/70 px-3 py-2 text-xs font-semibold text-foreground/70 sm:px-4">
                   {lessonsCount * 10} phút học
                 </span>
                 {course.enrolled && (
@@ -142,7 +151,7 @@ export default function CourseDetailPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center justify-center bg-white/70 rounded-[2rem] border border-white/80 p-6 shadow-soft"
+              className={isLight ? "flex flex-col items-center justify-center rounded-[1.5rem] border border-pink-100 bg-white/80 p-5 shadow-soft sm:rounded-[2rem] sm:p-6" : "flex flex-col items-center justify-center rounded-[1.5rem] border border-amber-300/15 bg-white/[0.05] p-5 shadow-soft backdrop-blur-sm sm:rounded-[2rem] sm:p-6"}
             >
               {course.enrolled ? (
                 <div className="w-full text-center space-y-4">
@@ -206,11 +215,11 @@ export default function CourseDetailPage() {
 
               return (
                 <>
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="mb-5 flex items-center gap-3 sm:mb-6">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl transition-colors duration-300" style={{ backgroundColor: `${themeColor}18` }}>
                       <BookOpen className="h-5 w-5" style={{ color: themeColor }} />
                     </span>
-                    <h2 className="font-heading text-2xl font-bold text-foreground">Nội dung khóa học (Syllabus)</h2>
+                    <h2 className="font-heading text-xl font-bold text-foreground sm:text-2xl">Nội dung khóa học</h2>
                   </div>
 
                   <div className="space-y-4">
@@ -230,7 +239,7 @@ export default function CourseDetailPage() {
 
                       if (isLocked) {
                         cardStyle = {
-                          backgroundColor: "rgba(243, 244, 246, 0.45)",
+                          backgroundColor: isLight ? "rgba(243, 244, 246, 0.65)" : "rgba(255, 255, 255, 0.035)",
                           borderColor: "rgba(156, 163, 175, 0.25)",
                           borderStyle: "dashed",
                           opacity: 0.65,
@@ -241,9 +250,9 @@ export default function CourseDetailPage() {
                           backgroundColor: "#94A3B8",
                         };
                         iconStyle = {
-                          backgroundColor: "rgba(0, 0, 0, 0.04)",
-                          color: "rgba(0, 0, 0, 0.35)",
-                          border: "1px solid rgba(0, 0, 0, 0.08)",
+                          backgroundColor: isLight ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.06)",
+                          color: isLight ? "rgba(0, 0, 0, 0.35)" : "rgba(255, 255, 255, 0.45)",
+                          border: isLight ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid rgba(255, 255, 255, 0.1)",
                         };
                         iconElement = <Lock className="h-4 w-4 shrink-0 text-slate-400" />;
                         badgeElement = (
@@ -254,7 +263,7 @@ export default function CourseDetailPage() {
                         );
                       } else if (completed) {
                         cardStyle = {
-                          background: "linear-gradient(135deg, rgba(240, 253, 250, 0.85) 0%, rgba(244, 252, 249, 0.55) 100%)",
+                          background: isLight ? "linear-gradient(135deg, rgba(240, 253, 250, 0.9), rgba(255,255,255,0.8))" : "linear-gradient(135deg, rgba(6,78,59,0.3), rgba(16,185,129,0.08))",
                           borderColor: "rgba(16, 185, 129, 0.22)",
                         };
                         accentBarStyle = {
@@ -274,12 +283,12 @@ export default function CourseDetailPage() {
                           </span>
                         );
                         titleColorStyle = {
-                          color: "#064e3b",
+                          color: isLight ? "#064e3b" : "#a7f3d0",
                           opacity: 0.85,
                         };
                       } else if (isActivePlayable) {
                         cardStyle = {
-                          background: `linear-gradient(135deg, rgba(255, 255, 255, 0.99), ${themeColor}08)`,
+                          background: isLight ? `linear-gradient(135deg, rgba(255, 255, 255, 0.99), ${themeColor}08)` : `linear-gradient(135deg, rgba(30,22,70,0.96), ${themeColor}18)`,
                           borderColor: themeColor,
                           borderWidth: "2px",
                           boxShadow: `0 16px 36px -12px ${themeColor}2e, 0 8px 20px -8px ${themeColor}1a`,
@@ -310,7 +319,7 @@ export default function CourseDetailPage() {
                         };
                       } else {
                         cardStyle = {
-                          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)",
+                          background: isLight ? "linear-gradient(135deg, rgba(255,255,255,0.96), rgba(255,248,251,0.86))" : "linear-gradient(135deg, rgba(27,18,70,0.92), rgba(18,12,56,0.82))",
                           borderColor: "rgba(229, 231, 235, 0.75)",
                         };
                         accentBarStyle = {
@@ -342,7 +351,7 @@ export default function CourseDetailPage() {
                       }
 
                       const cardContent = (
-                        <div className="flex items-start gap-4 w-full">
+                        <div className="flex w-full items-start gap-3 sm:gap-4">
                           {/* Left Accent Bar */}
                           <div
                             className="absolute left-0 top-0 bottom-0 transition-all duration-300 rounded-l-[1.6rem]"
@@ -351,7 +360,7 @@ export default function CourseDetailPage() {
 
                           {/* Icon container */}
                           <div
-                            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-bold transition-all duration-300 ${
+                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold transition-all duration-300 sm:h-12 sm:w-12 ${
                               isActivePlayable ? "ring-4 ring-primary/10" : ""
                             }`}
                             style={iconStyle}
@@ -363,14 +372,14 @@ export default function CourseDetailPage() {
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
                               <h3
-                                className="font-heading text-lg transition-colors group-hover:text-primary"
+                                className="font-heading text-base transition-colors group-hover:text-primary sm:text-lg"
                                 style={titleColorStyle}
                               >
                                 {lesson.title}
                               </h3>
                               {badgeElement}
                             </div>
-                            <p className="mt-1.5 text-sm text-slate-600/90 leading-relaxed font-medium">
+                            <p className="mt-1.5 text-sm font-medium leading-relaxed text-muted-foreground">
                               {lesson.summary}
                             </p>
                             <p className="mt-2 text-[11px] text-muted-foreground/80 font-semibold tracking-wide uppercase">
@@ -386,7 +395,7 @@ export default function CourseDetailPage() {
                           <div
                             key={lesson.slug}
                             onClick={() => toast.info("Vui lòng bấm 'Đăng ký học' ở trên để mở khóa các bài học nâng cao!")}
-                            className="relative overflow-hidden rounded-[1.6rem] border p-5 pl-8 shadow-soft transition-all duration-300 hover:shadow-md cursor-pointer"
+                            className="relative cursor-pointer overflow-hidden rounded-[1.35rem] border p-4 pl-6 shadow-soft transition-all duration-300 hover:shadow-md sm:rounded-[1.6rem] sm:p-5 sm:pl-8"
                             style={cardStyle}
                           >
                             {cardContent}
@@ -400,7 +409,7 @@ export default function CourseDetailPage() {
                           <div
                             key={lesson.slug}
                             onClick={() => toast.warning("Bài học này thuộc gói nâng cao, vui lòng nâng cấp tài khoản!")}
-                            className="relative overflow-hidden rounded-[1.6rem] border p-5 pl-8 shadow-soft transition-all duration-300 hover:shadow-md cursor-not-allowed"
+                            className="relative cursor-not-allowed overflow-hidden rounded-[1.35rem] border p-4 pl-6 shadow-soft transition-all duration-300 hover:shadow-md sm:rounded-[1.6rem] sm:p-5 sm:pl-8"
                             style={cardStyle}
                           >
                             {cardContent}
@@ -412,7 +421,7 @@ export default function CourseDetailPage() {
                         <Link
                           key={lesson.slug}
                           to={`/lesson/${lesson.slug}`}
-                          className={`relative overflow-hidden block rounded-[1.6rem] border p-5 pl-8 shadow-soft transition-all duration-300 group hover:-translate-y-0.5 ${
+                          className={`group relative block overflow-hidden rounded-[1.35rem] border p-4 pl-6 shadow-soft transition-all duration-300 hover:-translate-y-0.5 sm:rounded-[1.6rem] sm:p-5 sm:pl-8 ${
                             isActivePlayable
                               ? "hover:scale-[1.025] hover:[box-shadow:var(--hover-shadow)]"
                               : "hover:scale-[1.015] hover:shadow-hover"
@@ -431,7 +440,7 @@ export default function CourseDetailPage() {
 
           {/* Right sidebar */}
           <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-[2rem] gradient-card p-6 shadow-card space-y-4">
+            <div className="space-y-4 rounded-[1.5rem] border border-border/70 bg-card/85 p-5 shadow-card backdrop-blur-sm sm:rounded-[2rem] sm:p-6">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
                 <h3 className="font-heading text-lg font-bold text-foreground">Bạn sẽ học được gì?</h3>
@@ -452,7 +461,7 @@ export default function CourseDetailPage() {
               </ul>
             </div>
 
-            <div className="rounded-[2rem] gradient-card p-6 shadow-card space-y-4">
+            <div className="space-y-4 rounded-[1.5rem] border border-border/70 bg-card/85 p-5 shadow-card backdrop-blur-sm sm:rounded-[2rem] sm:p-6">
               <div className="flex items-center gap-2">
                 <PlayCircle className="h-5 w-5 text-primary" />
                 <h3 className="font-heading text-lg font-bold text-foreground">Thông tin bổ sung</h3>

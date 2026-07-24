@@ -7,8 +7,10 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Moon,
   Settings,
   Shield,
+  Sun,
   User,
   X,
 } from "lucide-react";
@@ -24,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import { getAvatarTone, getInitials } from "@/lib/avatarTheme";
 import { cn } from "@/lib/utils";
@@ -61,6 +64,7 @@ const navGroups = [
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const closeTimerRef = useRef<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -68,7 +72,10 @@ export default function Navbar() {
   const [notificationCount, setNotificationCount] = useState(0);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
-  const dashboardPath = user?.isAdmin ? "/admin/dashboard" : "/dashboard";
+  const dashboardPath = user?.isAdmin ? "/domain/dashboard" : "/dashboard";
+  const dropdownThemeClass = theme === "light"
+    ? "border-pink-200/90 bg-[linear-gradient(150deg,rgba(255,255,255,0.99)_0%,rgba(253,232,240,0.99)_52%,rgba(255,247,250,0.99)_100%)] shadow-[0_20px_60px_rgba(219,39,119,0.16)]"
+    : "border-amber-400/40 bg-[linear-gradient(150deg,rgba(30,22,5,0.99)_0%,rgba(73,50,7,0.99)_52%,rgba(38,27,5,0.99)_100%)] text-amber-50 shadow-[0_20px_60px_rgba(245,158,11,0.2)] [&_.text-foreground]:text-amber-50 [&_.text-muted-foreground]:text-amber-100/70";
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
 
   useEffect(() => {
@@ -150,7 +157,10 @@ export default function Navbar() {
       <div
         data-ui="floating-header-shell"
         className={cn(
-          "mx-auto flex w-full items-center rounded-full border border-indigo-400/30 bg-[#161038]/85 px-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl lg:px-5",
+          "mx-auto flex w-full items-center rounded-full border px-4 backdrop-blur-xl transition-all duration-300 lg:px-5",
+          theme === "light"
+            ? "border-pink-200/80 bg-white/95 text-slate-800 shadow-[0_10px_35px_rgba(236,72,153,0.12)]"
+            : "border-indigo-400/30 bg-[#161038]/85 text-white shadow-[0_12px_40px_rgba(0,0,0,0.5)]",
           DEFAULT_HEADER_SHELL_WIDTH,
         )}
       >
@@ -159,14 +169,22 @@ export default function Navbar() {
             <Link
               to="/"
               aria-label="EDUcare — Giáo dục giới tính"
-              className="group inline-flex items-center gap-2.5 rounded-full border border-indigo-300/40 bg-[#251a59]/90 p-1.5 pr-4 shadow-[0_6px_20px_rgba(129,140,248,0.25)] backdrop-blur-md transition-all hover:scale-105"
+              className={cn(
+                "group inline-flex items-center gap-2.5 rounded-full border p-1.5 pr-4 backdrop-blur-md transition-all hover:scale-105",
+                theme === "light"
+                  ? "border-pink-300/60 bg-pink-50/80 shadow-[0_4px_16px_rgba(236,72,153,0.15)]"
+                  : "border-indigo-300/40 bg-[#251a59]/90 shadow-[0_6px_20px_rgba(129,140,248,0.25)]"
+              )}
             >
               <img
                 src={imgLogo}
                 alt="EDUcare Logo"
                 className="h-11 w-11 shrink-0 rounded-full object-cover shadow-sm border border-amber-300/60 contrast-[1.12] saturate-[1.3]"
               />
-              <span className="font-heading text-lg font-bold tracking-wide text-white group-hover:text-amber-300 transition-colors">
+              <span className={cn(
+                "font-heading text-lg font-bold tracking-wide transition-colors",
+                theme === "light" ? "text-pink-600 group-hover:text-pink-700" : "text-white group-hover:text-amber-300"
+              )}>
                 EDUcare
               </span>
             </Link>
@@ -198,7 +216,9 @@ export default function Navbar() {
                     }}
                     className={cn(
                       "flex items-center gap-1 rounded-full px-4 py-2 font-heading text-[14px] font-semibold tracking-wide transition-colors",
-                      openDropdown === group.label ? "text-amber-300 bg-white/10" : "text-indigo-100/90 hover:text-white hover:bg-white/10",
+                      theme === "light"
+                        ? openDropdown === group.label ? "text-pink-600 bg-pink-100/70" : "text-slate-700 hover:text-pink-600 hover:bg-pink-50"
+                        : openDropdown === group.label ? "text-amber-300 bg-white/10" : "text-indigo-100/90 hover:text-white hover:bg-white/10",
                     )}
                   >
                     {group.label}
@@ -206,14 +226,21 @@ export default function Navbar() {
                   </button>
 
                   {openDropdown === group.label ? (
-                    <div className="absolute left-0 top-full z-20 mt-3 min-w-[220px] rounded-[1.2rem] border border-indigo-400/40 bg-[#1a1344]/95 p-2.5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+                    <div className={cn(
+                      "absolute left-0 top-full z-20 mt-3 min-w-[220px] rounded-[1.2rem] border p-2.5 shadow-[0_20px_60px_rgba(0,0,0,0.15)] backdrop-blur-xl",
+                      theme === "light"
+                        ? "border-pink-200 bg-[linear-gradient(150deg,rgba(255,255,255,0.99),rgba(253,232,240,0.99))] text-slate-800"
+                        : "border-amber-400/40 bg-[linear-gradient(150deg,rgba(30,22,5,0.99),rgba(73,50,7,0.99))] text-amber-50"
+                    )}>
                       {group.items.map((item) => (
                         <Link
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "block rounded-[0.9rem] px-4 py-2.5 font-heading text-[14px] font-semibold transition-colors hover:bg-indigo-500/30 hover:text-amber-300",
-                            location.pathname === item.to ? "bg-indigo-600/40 text-amber-300 font-bold" : "text-indigo-100/80",
+                            "block rounded-[0.9rem] px-4 py-2.5 font-heading text-[14px] font-semibold transition-colors",
+                            theme === "light"
+                              ? location.pathname === item.to ? "bg-pink-100/80 text-pink-600 font-bold" : "text-slate-700 hover:bg-pink-50 hover:text-pink-600"
+                              : location.pathname === item.to ? "bg-amber-400/20 text-amber-300 font-bold" : "text-amber-50/90 hover:bg-amber-400/15 hover:text-amber-300"
                           )}
                           onClick={() => setOpenDropdown(null)}
                         >
@@ -229,7 +256,9 @@ export default function Navbar() {
                   to={group.to}
                   className={cn(
                     "rounded-full px-4 py-2 font-heading text-[14px] font-semibold tracking-wide transition-colors",
-                    location.pathname === group.to ? "text-amber-300 bg-white/10 font-bold" : "text-indigo-100/90 hover:text-white hover:bg-white/10",
+                    theme === "light"
+                      ? location.pathname === group.to ? "text-pink-600 bg-pink-100/70 font-bold" : "text-slate-700 hover:text-pink-600 hover:bg-pink-50"
+                      : location.pathname === group.to ? "text-amber-300 bg-white/10 font-bold" : "text-indigo-100/90 hover:text-white hover:bg-white/10"
                   )}
                 >
                   {group.label}
@@ -239,6 +268,21 @@ export default function Navbar() {
           </div>
 
           <div className="ml-auto flex items-center gap-2">
+            {/* Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className={cn(
+                "relative flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300",
+                theme === "light"
+                  ? "bg-pink-100/80 text-pink-600 hover:bg-pink-200 hover:scale-110 shadow-sm"
+                  : "bg-indigo-900/60 text-amber-300 hover:bg-indigo-800 hover:scale-110 shadow-sm"
+              )}
+              title={theme === "light" ? "Chuyển sang Giao diện Tối (Dark)" : "Chuyển sang Giao diện Sáng (Light)"}
+              aria-label="Toggle Theme"
+            >
+              {theme === "light" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
             {user ? (
               <>
                 {!user.isAdmin ? (
@@ -258,7 +302,7 @@ export default function Navbar() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                       align="end"
-                      className="w-[360px] rounded-[1.35rem] border-sky-100/70 bg-[linear-gradient(150deg,rgba(240,249,255,0.98)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.98)_100%)] p-2 shadow-[0_20px_60px_rgba(14,116,144,0.14)] backdrop-blur-md"
+                      className={cn("w-[360px] rounded-[1.35rem] p-2 backdrop-blur-md", dropdownThemeClass)}
                     >
                       <DropdownMenuLabel className="px-3 py-3">
                         <div className="flex items-center justify-between gap-3">
@@ -332,7 +376,7 @@ export default function Navbar() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-64 rounded-[1.2rem] border-sky-100/70 bg-[linear-gradient(150deg,rgba(240,249,255,0.98)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.98)_100%)] p-2 shadow-[0_20px_60px_rgba(14,116,144,0.14)] backdrop-blur-md"
+                    className={cn("w-64 rounded-[1.2rem] p-2 backdrop-blur-md", dropdownThemeClass)}
                   >
                     <DropdownMenuLabel className="px-3 py-2">
                       <div className="flex items-center gap-3">

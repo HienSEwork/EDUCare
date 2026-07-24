@@ -7,8 +7,8 @@ import {
 } from "recharts";
 import {
   BookOpen, FileText, Gamepad2, LogOut, Plus, Shield, Sparkles, Trash2, Users,
-  Home, MessageSquare, BarChart2, Settings, Bell, Search,
-  Trophy, HelpCircle, Database, TrendingUp, ArrowUpRight, Menu,
+  Home, MessageSquare, BarChart2, Settings, Search,
+  Trophy, HelpCircle, Database, TrendingUp, ArrowUpRight,
   HardDrive, ChevronDown, ChevronLeft, ChevronRight, AlertTriangle, X, Smile, FolderClosed,
   Compass, Lock, Heart, ShieldCheck, Award, Flame, EyeOff, Handshake,
   HeartHandshake, Phone, Lightbulb, Frown, Brain, LifeBuoy, Key,
@@ -783,7 +783,7 @@ export default function AdminDashboardPage() {
         apiRequest<CommunityReport[]>("/community/admin/reports"),
         apiRequest<AnonymousQuestion[]>("/community/admin/questions"),
         apiRequest<ChatStickerResponse[]>("/community/stickers"),
-        apiRequest<Course[]>("/admin/courses"),
+        apiRequest<Course[]>("/admin/courses").catch(() => []),
         apiRequest<any[]>("/admin/categories").catch(() => []),
       ]);
       setDashboard(d);
@@ -3528,12 +3528,12 @@ export default function AdminDashboardPage() {
   const pageTitle = sidebarTab === "overview" ? "Dashboard" : sidebarTab === "students" ? "Học viên" : sidebarTab === "plans" ? "Quản lý gói VIP" : sidebarTab === "discussions" ? "Thảo luận" : sidebarTab === "reports" ? "Báo cáo" : sidebarTab === "settings" ? "Cài đặt" : crudTitle[activeTab];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f5f6fa]">
+    <div className="flex h-screen overflow-hidden bg-[#f7f7fb]">
 
       {/* ══ SIDEBAR ══ */}
-      <aside className="flex w-[220px] shrink-0 flex-col bg-white shadow-[2px_0_12px_rgba(0,0,0,0.06)]">
+      <aside className="flex w-[208px] shrink-0 flex-col border-r border-gray-100 bg-white">
         {/* Logo */}
-        <div className="flex items-center gap-2.5 px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-2.5 border-b border-gray-100 px-4 py-3.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-600">
             <Shield className="h-4 w-4 text-white" />
           </div>
@@ -3541,7 +3541,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-2.5 py-3">
           {SIDEBAR_NAV.map(({ id, label, Icon }) => {
             const active = sidebarTab === id;
             const count = id === "lessons" ? content.metrics.lessons
@@ -3555,7 +3555,7 @@ export default function AdminDashboardPage() {
                             : undefined;
             return (
               <button key={id} onClick={() => handleNav(id)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${active ? "bg-purple-600 font-semibold text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}>
+                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13px] transition-colors ${active ? "bg-purple-600 font-semibold text-white" : "text-gray-600 hover:bg-purple-50 hover:text-purple-700"}`}>
                 <Icon className="h-4 w-4 shrink-0" />
                 <span className="flex-1">{label}</span>
                 {count !== undefined && (
@@ -3566,23 +3566,9 @@ export default function AdminDashboardPage() {
           })}
         </nav>
 
-        {/* Admin user info + logout */}
-        <div className="mx-3 mb-4 space-y-2">
-          <div className="rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-600 text-sm font-bold text-white">
-                {(user?.fullName ?? "A").charAt(0).toUpperCase()}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-[13px] font-semibold text-gray-800">{user?.fullName ?? "Admin"}</p>
-                <p className="truncate text-[11px] text-gray-500">{user?.email}</p>
-              </div>
-            </div>
-            <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-0.5 text-[11px] font-semibold text-purple-700">
-              <Shield className="h-3 w-3" /> Quản trị viên
-            </div>
-          </div>
-          <button onClick={handleLogout} className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+        {/* Logout */}
+        <div className="mx-2.5 mb-3 border-t border-gray-100 pt-3">
+          <button onClick={handleLogout} className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600">
             <LogOut className="h-3.5 w-3.5" /> Đăng xuất
           </button>
         </div>
@@ -3592,44 +3578,18 @@ export default function AdminDashboardPage() {
       <div className="flex flex-1 flex-col overflow-hidden">
 
         {/* Header */}
-        <header className="flex items-center gap-4 border-b border-gray-100 bg-white px-6 py-3">
-          <div className="flex items-center gap-2">
-            <button className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 transition-colors">
-              <Menu className="h-5 w-5" />
-            </button>
-            <span className="text-base font-bold text-gray-800">{pageTitle}</span>
+        <header className="flex min-h-14 items-center gap-4 border-b border-gray-100 bg-white px-5 py-2.5">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-purple-500">EDUCare Admin</p>
+            <h1 className="text-base font-bold text-gray-800">{pageTitle}</h1>
           </div>
-
-          {/* Search */}
-          <div className="ml-4 flex max-w-xs flex-1 items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3.5 py-2">
-            <Search className="h-4 w-4 shrink-0 text-gray-400" />
-            <input className="flex-1 bg-transparent text-sm text-gray-600 outline-none placeholder:text-gray-400" placeholder="Tìm kiếm nhanh..." readOnly />
-            <span className="rounded-md border border-gray-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-gray-400">⌘ K</span>
-          </div>
-
-          <div className="ml-auto flex items-center gap-3">
-            {/* Bell */}
-            <button className="relative rounded-xl border border-gray-100 bg-white p-2 text-gray-500 hover:bg-gray-50 transition-colors">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-purple-600 text-[9px] font-bold text-white">3</span>
-            </button>
-
-            {/* User */}
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-600 text-sm font-bold text-white">
-                {(user?.fullName ?? "A").charAt(0).toUpperCase()}
-              </div>
-              <div className="hidden md:block">
-                <p className="text-sm font-semibold text-gray-800 leading-tight">{user?.fullName ?? "EDUCare Admin"}</p>
-                <p className="text-xs text-gray-500 leading-tight">{user?.email ?? "admin@educare.vn"}</p>
-              </div>
-            </div>
-
-          </div>
+          <button onClick={() => navigate("/")} className="ml-auto flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition-colors hover:border-purple-200 hover:bg-purple-50 hover:text-purple-700">
+            <Home className="h-3.5 w-3.5" /> Trang chủ
+          </button>
         </header>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-5">
 
           {/* ── OVERVIEW ── */}
           {sidebarTab === "overview" && (

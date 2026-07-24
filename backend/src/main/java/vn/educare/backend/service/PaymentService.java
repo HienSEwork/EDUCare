@@ -1,6 +1,10 @@
 package vn.educare.backend.service;
 
+import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -17,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import vn.educare.backend.api.ApiException;
 import vn.educare.backend.model.PaymentTransactionEntity;
 import vn.educare.backend.model.SubscriptionPlanEntity;
 import vn.educare.backend.model.UserEntity;
@@ -49,16 +54,40 @@ public class PaymentService {
   @Value("${app.payos.checksum-key}")
   private String payosChecksumKey;
 
+  @PostConstruct
+  void logGatewayReadiness() {
+    if (isPayOSConfigured()) {
+      log.info("PayOS/VietQR payment gateway configuration: ready");
+    } else {
+      log.warn("PayOS/VietQR payment gateway configuration: missing credentials");
+    }
+  }
+
   @Transactional
   public String createPaymentLink(String userId, String planId, String cancelUrl, String returnUrl) {
+    requirePayOSConfiguration();
+
     UserEntity user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        .orElseThrow(() -> new ApiException(404, "Không tìm thấy tài khoản."));
 
     SubscriptionPlanEntity plan = planRepository.findById(planId)
-        .orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planId));
+        .orElseThrow(() -> new ApiException(404, "Gói đăng ký không tồn tại."));
+
+    if (!plan.getActive() || plan.getPrice() == null || plan.getPrice().signum() <= 0) {
+      throw new ApiException(400, "Gói đăng ký hiện không thể thanh toán.");
+    }
+    validateRedirectUrl(cancelUrl);
+    validateRedirectUrl(returnUrl);
+
+    final int amount;
+    try {
+      amount = plan.getPrice().intValueExact();
+    } catch (ArithmeticException exception) {
+      throw new ApiException(400, "Giá gói đăng ký không hợp lệ.");
+    }
 
     // Generate unique numeric transaction ID for PayOS (orderCode must be numeric)
-    String transactionId = String.valueOf(System.currentTimeMillis() * 10 + (int) (Math.random() * 10));
+    String transactionId = String.valueOf(System.currentTimeMillis() * 1000 + (int) (Math.random() * 1000));
 
     PaymentTransactionEntity transaction = new PaymentTransactionEntity();
     transaction.setId(transactionId);
@@ -71,11 +100,7 @@ public class PaymentService {
     // Call PayOS to get Checkout URL
     try {
       long orderCode = Long.parseLong(transactionId);
-      int amount = plan.getPrice().intValue();
-      String description = "EDUcare VIP " + planId; // Max 25 chars
-      if (description.length() > 25) {
-        description = description.substring(0, 25);
-      }
+      String description = "EDU" + transactionId.substring(transactionId.length() - 6);
 
       // Calculate Signature for creation
       Map<String, Object> signData = new HashMap<>();
@@ -115,25 +140,50 @@ public class PaymentService {
         String code = (String) responseBody.get("code");
         if ("00".equals(code)) {
           Map data = (Map) responseBody.get("data");
-          return (String) data.get("checkoutUrl");
+          Object checkoutUrl = data == null ? null : data.get("checkoutUrl");
+          if (checkoutUrl instanceof String url && url.startsWith("https://")) {
+            return url;
+          }
+          throw new ApiException(502, "Cổng thanh toán không trả về liên kết hợp lệ.");
         } else {
           String desc = (String) responseBody.get("desc");
           log.error("PayOS API returned failure code: {}, description: {}", code, desc);
-          throw new RuntimeException("Cổng thanh toán phản hồi lỗi: " + desc);
+          throw new ApiException(502, "Cổng thanh toán phản hồi lỗi: " + (desc == null ? "Không xác định" : desc));
         }
       } else {
         log.error("PayOS status code error: {}", response.getStatusCode());
-        throw new RuntimeException("Không thể kết nối cổng thanh toán.");
+        throw new ApiException(502, "Không thể kết nối cổng thanh toán.");
       }
+    } catch (ApiException exception) {
+      throw exception;
     } catch (Exception e) {
       log.error("Error creating payment link for transaction: {}", transactionId, e);
-      throw new RuntimeException("Tạo liên kết thanh toán thất bại: " + e.getMessage(), e);
+      throw new ApiException(502, "Tạo liên kết thanh toán thất bại. Vui lòng thử lại.");
+    }
+  }
+
+  private void validateRedirectUrl(String value) {
+    try {
+      URI uri = URI.create(value);
+      String scheme = uri.getScheme();
+      if (uri.getHost() == null || !("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))) {
+        throw new IllegalArgumentException("Invalid redirect URL");
+      }
+    } catch (IllegalArgumentException exception) {
+      throw new ApiException(400, "Địa chỉ quay lại sau thanh toán không hợp lệ.");
     }
   }
 
   @Transactional
   public boolean processWebhook(Map<String, Object> webhookBody) {
-    if (webhookBody == null || !webhookBody.containsKey("data") || !webhookBody.containsKey("signature")) {
+    if (!hasText(payosChecksumKey)) {
+      log.error("PayOS webhook rejected because the checksum key is not configured");
+      return false;
+    }
+
+    if (webhookBody == null || !Boolean.TRUE.equals(webhookBody.get("success"))
+        || !"00".equals(String.valueOf(webhookBody.get("code")))
+        || !(webhookBody.get("data") instanceof Map) || !(webhookBody.get("signature") instanceof String)) {
       log.warn("Invalid webhook body received");
       return false;
     }
@@ -143,8 +193,15 @@ public class PaymentService {
 
     // Verify webhook signature
     String computedSignature = PayOSCryptoUtils.generateSignature(data, payosChecksumKey);
-    if (!computedSignature.equalsIgnoreCase(signature)) {
-      log.error("Webhook signature verification failed! Computed: {}, Received: {}", computedSignature, signature);
+    if (!MessageDigest.isEqual(
+        computedSignature.toLowerCase().getBytes(StandardCharsets.UTF_8),
+        signature.toLowerCase().getBytes(StandardCharsets.UTF_8))) {
+      log.error("Webhook signature verification failed");
+      return false;
+    }
+
+    if (!"00".equals(String.valueOf(data.get("code")))) {
+      log.warn("Ignoring unsuccessful PayOS webhook event");
       return false;
     }
 
@@ -166,6 +223,18 @@ public class PaymentService {
     if ("SUCCESS".equals(transaction.getStatus())) {
       log.info("Transaction {} already processed", transactionId);
       return true; // Already processed (idempotent)
+    }
+
+    BigDecimal receivedAmount;
+    try {
+      receivedAmount = new BigDecimal(String.valueOf(data.get("amount")));
+    } catch (RuntimeException exception) {
+      log.warn("Webhook amount is missing or invalid for transaction {}", transactionId);
+      return false;
+    }
+    if (transaction.getAmount().compareTo(receivedAmount) != 0) {
+      log.error("Webhook amount mismatch for transaction {}", transactionId);
+      return false;
     }
 
     String gatewayRef = data.containsKey("reference") ? data.get("reference").toString() : null;
@@ -200,6 +269,12 @@ public class PaymentService {
 
     // Create or update subscription record
     Instant now = Instant.now();
+    subscriptionRepository.findByUserIdAndStatus(user.getId(), "ACTIVE").forEach(activeSubscription -> {
+      activeSubscription.setStatus("EXPIRED");
+      activeSubscription.setEndDate(now);
+      subscriptionRepository.save(activeSubscription);
+    });
+
     UserSubscriptionEntity subscription = new UserSubscriptionEntity();
     subscription.setUser(user);
     subscription.setPlan(plan);
@@ -213,6 +288,11 @@ public class PaymentService {
   }
 
   private void syncStatusFromPayOS(PaymentTransactionEntity transaction) {
+    if (!isPayOSConfigured()) {
+      log.warn("Skipping PayOS status sync because payment credentials are not configured");
+      return;
+    }
+
     try {
       String url = "https://api-merchant.payos.vn/v2/payment-requests/" + transaction.getId();
 
@@ -237,6 +317,17 @@ public class PaymentService {
           String payosStatus = (String) data.get("status");
 
           if ("PAID".equals(payosStatus)) {
+            BigDecimal confirmedAmount;
+            try {
+              confirmedAmount = new BigDecimal(String.valueOf(data.get("amount")));
+            } catch (RuntimeException exception) {
+              log.warn("PayOS status amount is invalid for transaction {}", transaction.getId());
+              return;
+            }
+            if (transaction.getAmount().compareTo(confirmedAmount) != 0) {
+              log.error("PayOS status amount mismatch for transaction {}", transaction.getId());
+              return;
+            }
             String gatewayRef = null;
             java.util.List txs = (java.util.List) data.get("transactions");
             if (txs != null && !txs.isEmpty()) {
@@ -259,13 +350,16 @@ public class PaymentService {
   }
 
   @Transactional
-  public String getTransactionStatus(String transactionId) {
+  public String getTransactionStatus(String userId, String transactionId) {
     Optional<PaymentTransactionEntity> transactionOpt = transactionRepository.findById(transactionId);
     if (transactionOpt.isEmpty()) {
       return "NOT_FOUND";
     }
 
     PaymentTransactionEntity transaction = transactionOpt.get();
+    if (!transaction.getUser().getId().equals(userId)) {
+      throw new ApiException(404, "Không tìm thấy giao dịch.");
+    }
     if ("PENDING".equals(transaction.getStatus())) {
       syncStatusFromPayOS(transaction);
     }
@@ -273,10 +367,13 @@ public class PaymentService {
   }
 
   @Transactional
-  public boolean cancelTransaction(String transactionId) {
+  public boolean cancelTransaction(String userId, String transactionId) {
     Optional<PaymentTransactionEntity> transactionOpt = transactionRepository.findById(transactionId);
     if (transactionOpt.isPresent()) {
       PaymentTransactionEntity transaction = transactionOpt.get();
+      if (!transaction.getUser().getId().equals(userId)) {
+        throw new ApiException(404, "Không tìm thấy giao dịch.");
+      }
       if ("PENDING".equals(transaction.getStatus())) {
         transaction.setStatus("CANCELLED");
         transactionRepository.save(transaction);
@@ -290,5 +387,19 @@ public class PaymentService {
   @Transactional(readOnly = true)
   public java.util.List<SubscriptionPlanEntity> getAllPlans() {
     return planRepository.findByActiveTrue();
+  }
+
+  private void requirePayOSConfiguration() {
+    if (!isPayOSConfigured()) {
+      throw new ApiException(503, "Cổng thanh toán chưa được cấu hình. Vui lòng liên hệ quản trị viên.");
+    }
+  }
+
+  private boolean isPayOSConfigured() {
+    return hasText(payosClientId) && hasText(payosApiKey) && hasText(payosChecksumKey);
+  }
+
+  private boolean hasText(String value) {
+    return value != null && !value.isBlank();
   }
 }

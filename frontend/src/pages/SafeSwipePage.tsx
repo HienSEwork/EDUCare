@@ -190,7 +190,7 @@ export default function SafeSwipePage() {
       : { text: "Hãy ôn lại các tình huống để tự bảo vệ tốt hơn!", color: "#ef4444" };
 
     return (
-      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      <div className="game-page min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
         style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
       >
         {/* Background Ambient Glowing Orbs */}
@@ -266,7 +266,7 @@ export default function SafeSwipePage() {
   const progress = ((ALL_SWIPE_CARDS.length - deck.length) / ALL_SWIPE_CARDS.length) * 100;
 
   return (
-    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+    <div className="game-page min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
       style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
     >
       {/* Background Ambient Glowing Orbs */}

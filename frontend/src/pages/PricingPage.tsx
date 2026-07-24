@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { apiRequest, ApiError } from "@/lib/api/client";
-import { SubscriptionPlan } from "@/types/api";
+import type { CheckoutResponse, SubscriptionPlan } from "@/types/api";
 
 interface PlanItem {
   id: string;
@@ -257,12 +257,12 @@ export default function PricingPage() {
     setError(null);
 
     try {
-      const response = await apiRequest<{ checkoutUrl: string }>("/payments/checkout", {
+      const response = await apiRequest<CheckoutResponse>("/payments/checkout", {
         method: "POST",
         body: JSON.stringify({
           planId: plan.id,
-          cancelUrl: window.location.origin + `/payment/callback?status=cancel&planId=${plan.id}`,
-          returnUrl: window.location.origin + `/payment/callback?status=success&planId=${plan.id}`
+          cancelUrl: window.location.origin + `/payment/callback?result=cancel&planId=${encodeURIComponent(plan.id)}`,
+          returnUrl: window.location.origin + `/payment/callback?result=return&planId=${encodeURIComponent(plan.id)}`
         })
       });
 

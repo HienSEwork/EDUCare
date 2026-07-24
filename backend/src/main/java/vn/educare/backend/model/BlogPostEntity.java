@@ -45,6 +45,21 @@ public class BlogPostEntity {
   @Column(nullable = false)
   private String emoji;
 
+  @Column
+  private String author;
+
+  @Column(name = "author_title")
+  private String authorTitle;
+
+  @Column(name = "source_url", length = 512)
+  private String sourceUrl;
+
+  @Column(name = "source_name")
+  private String sourceName;
+
+  @Column(name = "video_url", length = 512)
+  private String videoUrl;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 

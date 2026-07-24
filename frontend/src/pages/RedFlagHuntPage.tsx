@@ -274,7 +274,7 @@ export default function RedFlagHuntPage() {
       : { text: "Cần luyện thêm kỹ năng quan sát!", color: "#f97316" };
 
     return (
-      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      <div className="game-page min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
         style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
       >
         {/* Background Ambient Glowing Orbs */}
@@ -313,7 +313,7 @@ export default function RedFlagHuntPage() {
 
   // ── PLAYING ────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+    <div className="game-page min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
       style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
     >
       {/* Background Ambient Glowing Orbs */}

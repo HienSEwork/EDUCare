@@ -38,6 +38,12 @@ import vn.educare.backend.repository.CourseRepository;
 import vn.educare.backend.repository.LessonSourceRepository;
 import vn.educare.backend.repository.MicroLessonProgressRepository;
 import vn.educare.backend.repository.CourseEnrollmentRepository;
+import vn.educare.backend.repository.UserRepository;
+import vn.educare.backend.repository.LessonProgressRepository;
+import vn.educare.backend.repository.QuizAttemptRepository;
+import vn.educare.backend.repository.CommunityPostRepository;
+import vn.educare.backend.repository.AnonymousQuestionRepository;
+import vn.educare.backend.api.AuthDtos.PublicStatsResponse;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -59,6 +65,11 @@ public class ContentService {
   private final LessonSourceRepository lessonSourceRepository;
   private final CourseEnrollmentRepository courseEnrollmentRepository;
   private final RecommendQuestionRepository recommendQuestionRepository;
+  private final UserRepository userRepository;
+  private final LessonProgressRepository lessonProgressRepository;
+  private final QuizAttemptRepository quizAttemptRepository;
+  private final CommunityPostRepository communityPostRepository;
+  private final AnonymousQuestionRepository anonymousQuestionRepository;
 
 
   private final ObjectMapper objectMapper;
@@ -245,7 +256,12 @@ public CourseResponse course(Long id) {
         post.getCategory(),
         post.getPublishedAt().toString(),
         post.getReadTimeMinutes() + " phut",
-        post.getEmoji());
+        post.getEmoji(),
+        post.getAuthor(),
+        post.getAuthorTitle(),
+        post.getSourceUrl(),
+        post.getSourceName(),
+        post.getVideoUrl());
   }
 
   public QuizQuestionResponse toQuizResponse(QuizQuestionEntity question) {
@@ -320,6 +336,25 @@ public CourseResponse course(Long id) {
         entity.getQuestion(),
         entity.getReason(),
         targetTag
+    );
+  }
+
+  public PublicStatsResponse publicStats() {
+    long userCount = userRepository.count();
+    long lessonCount = lessonRepository.count() + microLessonRepository.count();
+    long blogCount = blogPostRepository.count();
+    long courseCount = courseRepository.count();
+    long gameCount = gameRepository.count();
+    long completions = lessonProgressRepository.count() + quizAttemptRepository.totalAttempts();
+    long interactions = completions + communityPostRepository.count() + anonymousQuestionRepository.count();
+    return new PublicStatsResponse(
+        userCount,
+        lessonCount,
+        blogCount,
+        courseCount,
+        gameCount,
+        completions,
+        interactions
     );
   }
 }

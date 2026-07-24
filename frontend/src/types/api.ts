@@ -114,6 +114,11 @@ export interface BlogPost {
   date: string;
   readTime: string;
   emoji: string;
+  author?: string | null;
+  authorTitle?: string | null;
+  sourceUrl?: string | null;
+  sourceName?: string | null;
+  videoUrl?: string | null;
 }
 
 export interface Game {
@@ -490,6 +495,10 @@ export interface CheckoutResponse {
   checkoutUrl: string;
 }
 
+export interface PaymentStatusResponse {
+  status: "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED" | "NOT_FOUND";
+}
+
 export interface ChatStickerResponse {
   id: number;
   name: string;
@@ -532,5 +541,15 @@ export interface AdminUserListResponse {
 export interface AdminUserUpdateRequest {
   plan?: string;
   role?: string;
+}
+
+export interface PublicStatsResponse {
+  totalUsers: number;
+  totalLessons: number;
+  totalBlogPosts: number;
+  totalCourses: number;
+  totalGames: number;
+  totalCompletions: number;
+  totalInteractions: number;
 }
 

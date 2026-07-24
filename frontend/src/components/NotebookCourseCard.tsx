@@ -153,7 +153,7 @@ export default function NotebookCourseCard({ course, index = 0, onClick }: Noteb
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
       onClick={onClick}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-2xl p-5 shadow-[0_16px_32px_rgba(0,0,0,0.45)] border border-white/20 cursor-pointer select-none min-h-[310px]"
+      className="theme-preserve-contrast group relative flex flex-col justify-between overflow-hidden rounded-2xl p-5 shadow-[0_16px_32px_rgba(0,0,0,0.45)] border border-white/20 cursor-pointer select-none min-h-[330px]"
     >
       {/* Background Gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${theme.bg} z-0`} />
@@ -185,6 +185,11 @@ export default function NotebookCourseCard({ course, index = 0, onClick }: Noteb
           <h3 className="mt-2 text-center font-heading text-base font-extrabold text-white leading-snug drop-shadow-sm min-h-[44px] flex items-center justify-center line-clamp-2">
             {course.title}
           </h3>
+          {course.description ? (
+            <p className="mt-1 text-center text-[11px] leading-4 text-white/85 line-clamp-2">
+              {course.description}
+            </p>
+          ) : null}
         </div>
 
         {/* Center Illustration (Matching 2D/3D Cover Image Card) */}

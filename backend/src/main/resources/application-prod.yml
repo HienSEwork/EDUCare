@@ -2,11 +2,14 @@ server:
   forward-headers-strategy: framework
 
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    properties:
-      hibernate:
-        jdbc:
-          time_zone: UTC
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none
+      jdbc:
+        time_zone: UTC
 
 management:
   endpoint:

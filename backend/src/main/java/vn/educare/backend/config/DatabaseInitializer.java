@@ -7,6 +7,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
 import vn.educare.backend.repository.UserRepository;
+import vn.educare.backend.repository.BlogPostRepository;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -21,11 +22,13 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     private final DataSource dataSource;
     private final UserRepository userRepository;
+    private final BlogPostRepository blogPostRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        if (userRepository.count() > 0) {
-            log.info("Database already initialized with {} users. Skipping initial SQL seed.", userRepository.count());
+        boolean hasOldDummyPosts = blogPostRepository.findAll().stream().anyMatch(p -> p.getSourceUrl() == null && p.getVideoUrl() == null);
+        if (userRepository.count() > 0 && !hasOldDummyPosts && blogPostRepository.count() >= 15) {
+            log.info("Database already initialized with fresh blog posts. Skipping initial SQL seed.");
             return;
         }
 
@@ -42,9 +45,11 @@ public class DatabaseInitializer implements CommandLineRunner {
         addIfExists(sqlFiles, "../data/init.sql");
         addIfExists(sqlFiles, "../data/seed_users.sql");
         addIfExists(sqlFiles, "../data/insert_game.sql");
+        addIfExists(sqlFiles, "../data/seed_bonus.sql");
         addIfExists(sqlFiles, "data/init.sql");
         addIfExists(sqlFiles, "data/seed_users.sql");
         addIfExists(sqlFiles, "data/insert_game.sql");
+        addIfExists(sqlFiles, "data/seed_bonus.sql");
 
         // Add CourseSQL files
         File courseDir1 = new File("../data/CourseSQL");

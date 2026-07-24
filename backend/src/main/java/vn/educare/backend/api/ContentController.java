@@ -16,6 +16,7 @@ import vn.educare.backend.repository.UserRepository;
 import vn.educare.backend.service.ContentService;
 import vn.educare.backend.api.AuthDtos.CourseResponse;
 import vn.educare.backend.api.AuthDtos.RecommendQuestionResponse;
+import vn.educare.backend.api.AuthDtos.PublicStatsResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +24,11 @@ public class ContentController {
 
   private final ContentService contentService;
   private final UserRepository userRepository;
+
+  @GetMapping("/api/public/stats")
+  public PublicStatsResponse publicStats() {
+    return contentService.publicStats();
+  }
 
 @GetMapping("/api/courses/questions")
 public List<RecommendQuestionResponse> recommendQuestions() {

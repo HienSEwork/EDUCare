@@ -83,6 +83,11 @@ public class AdminContentService {
     post.setPublishedAt(LocalDate.parse(request.date()));
     post.setReadTimeMinutes(request.readTimeMinutes() == null ? 5 : request.readTimeMinutes());
     post.setEmoji(request.emoji());
+    post.setAuthor(request.author());
+    post.setAuthorTitle(request.authorTitle());
+    post.setSourceUrl(request.sourceUrl());
+    post.setSourceName(request.sourceName());
+    post.setVideoUrl(request.videoUrl());
     return contentService.toBlogResponse(blogPostRepository.save(post));
   }
 
@@ -141,20 +146,28 @@ public class AdminContentService {
   }
 
   private AdminQuizQuestionResponse toAdminQuizQuestion(QuizQuestionEntity question) {
+    List<String> options = List.of();
     try {
-      return new AdminQuizQuestionResponse(
-          question.getId(),
-          question.getSlug(),
-          question.getPrompt(),
-          objectMapper.readValue(question.getOptionsJson(), objectMapper.getTypeFactory().constructCollectionType(List.class, String.class)),
-          question.getCorrectIndex(),
-          question.getExplanation(),
-          question.getCategory(),
-          question.getDifficulty(),
-          Boolean.TRUE.equals(question.getIsActive()));
-    } catch (Exception exception) {
-      throw new ApiException(500, "Quiz question configuration is invalid");
+      if (question.getOptionsJson() != null && question.getOptionsJson().trim().startsWith("[")) {
+        options = objectMapper.readValue(question.getOptionsJson(), objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+      } else if (question.getOptionsJson() != null && !question.getOptionsJson().isBlank()) {
+        options = List.of(question.getOptionsJson().split(",\\s*"));
+      }
+    } catch (Exception ignored) {
+      if (question.getOptionsJson() != null) {
+        options = List.of(question.getOptionsJson().split(",\\s*"));
+      }
     }
+    return new AdminQuizQuestionResponse(
+        question.getId(),
+        question.getSlug(),
+        question.getPrompt(),
+        options,
+        question.getCorrectIndex() != null ? question.getCorrectIndex() : 0,
+        question.getExplanation(),
+        question.getCategory(),
+        question.getDifficulty(),
+        Boolean.TRUE.equals(question.getIsActive()));
   }
 
   private String toOptionsJson(List<String> options) {

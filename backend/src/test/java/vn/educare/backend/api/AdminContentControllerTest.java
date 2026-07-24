@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import vn.educare.backend.model.UserRole;
+import vn.educare.backend.model.UserEntity;
 import vn.educare.backend.repository.UserRepository;
 
 @SpringBootTest
@@ -36,32 +37,24 @@ class AdminContentControllerTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    // Register a user
-    MvcResult reg = mockMvc.perform(post("/api/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""
-                {
-                  "fullName": "Admin Content Test",
-                  "email": "admin_content_test@educare.vn",
-                  "username": "admin_content_test",
-                  "password": "Admin@123",
-                  "age": 18
-                }
-                """))
-        .andReturn();
-
-    JsonNode regJson = objectMapper.readTree(reg.getResponse().getContentAsString());
-    String userId = regJson.path("user").path("id").asText("");
-
-    // Promote to ADMIN directly via repository
-    if (!userId.isBlank()) {
-      userRepository.findById(userId).ifPresent(u -> {
-        u.setRole(UserRole.ADMIN);
-        userRepository.save(u);
-      });
+    UserEntity adminUser = userRepository.findByEmail("admin_content_test@educare.vn").orElse(null);
+    if (adminUser == null) {
+      mockMvc.perform(post("/api/auth/register")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content("""
+                  {
+                    "fullName": "Admin Content Test",
+                    "email": "admin_content_test@educare.vn",
+                    "username": "admin_content_test",
+                    "password": "Admin@123",
+                    "age": 18
+                  }
+                  """));
+      adminUser = userRepository.findByEmail("admin_content_test@educare.vn").orElseThrow();
     }
+    adminUser.setRole(UserRole.ADMIN);
+    userRepository.save(adminUser);
 
-    // Login to get token
     MvcResult login = mockMvc.perform(post("/api/auth/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""

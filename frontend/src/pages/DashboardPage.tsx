@@ -87,7 +87,7 @@ export default function DashboardPage() {
   }
 
   if (user.isAdmin) {
-    return <Navigate to="/admin/dashboard" replace />;
+    return <Navigate to="/domain/dashboard" replace />;
   }
 
   if (error) {

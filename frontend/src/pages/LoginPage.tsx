@@ -28,7 +28,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (result.success) {
-      navigate(result.user?.isAdmin ? "/admin/dashboard" : "/dashboard");
+      navigate(result.user?.isAdmin ? "/domain/dashboard" : "/dashboard");
       return;
     }
 

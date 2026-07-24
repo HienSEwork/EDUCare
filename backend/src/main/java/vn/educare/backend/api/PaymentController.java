@@ -49,16 +49,18 @@ public class PaymentController {
   }
 
   @GetMapping("/api/payments/status/{transactionId}")
-  public Map<String, String> getStatus(@PathVariable String transactionId) {
-    String status = paymentService.getTransactionStatus(transactionId);
+  public Map<String, String> getStatus(Authentication authentication, @PathVariable String transactionId) {
+    String userId = requireUserId(authentication);
+    String status = paymentService.getTransactionStatus(userId, transactionId);
     Map<String, String> response = new HashMap<>();
     response.put("status", status);
     return response;
   }
 
   @PostMapping("/api/payments/cancel/{transactionId}")
-  public Map<String, Object> cancelTransaction(@PathVariable String transactionId) {
-    boolean cancelled = paymentService.cancelTransaction(transactionId);
+  public Map<String, Object> cancelTransaction(Authentication authentication, @PathVariable String transactionId) {
+    String userId = requireUserId(authentication);
+    boolean cancelled = paymentService.cancelTransaction(userId, transactionId);
     Map<String, Object> response = new HashMap<>();
     response.put("success", cancelled);
     return response;
@@ -92,5 +94,13 @@ public class PaymentController {
       return null;
     }
     return details.user().getId();
+  }
+
+  private String requireUserId(Authentication authentication) {
+    String userId = getUserId(authentication);
+    if (userId == null) {
+      throw new ApiException(401, "Bạn cần đăng nhập để kiểm tra giao dịch.");
+    }
+    return userId;
   }
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle2, XCircle, ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, Loader2, Sparkles, Clock3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiRequest } from "@/lib/api/client";
+import type { PaymentStatusResponse } from "@/types/api";
 
 export default function PaymentCallbackPage() {
   const [searchParams] = useSearchParams();
@@ -13,19 +14,25 @@ export default function PaymentCallbackPage() {
   
   const [isVerifying, setIsVerifying] = useState(true);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isPending, setIsPending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const status = searchParams.get("status");
   const cancel = searchParams.get("cancel");
+  const result = searchParams.get("result");
   const orderCode = searchParams.get("orderCode");
   const planId = searchParams.get("planId");
 
   const pollCount = useRef(0);
-  const maxPolls = 6; // Poll up to 6 times (9 seconds total)
+  const maxPolls = 10;
 
   useEffect(() => {
     // Check if the user cancelled or if transaction is marked as cancel
-    if (status === "cancel" || cancel === "true" || status === "CANCELLED") {
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    pollCount.current = 0;
+
+    if (result === "cancel" || cancel === "true" || status?.toUpperCase() === "CANCELLED") {
       if (orderCode) {
         void apiRequest(`/payments/cancel/${orderCode}`, { method: "POST" }).catch((err) => {
           console.error("Error cancelling transaction:", err);
@@ -34,7 +41,7 @@ export default function PaymentCallbackPage() {
       setIsVerifying(false);
       setIsSuccess(false);
       setErrorMessage("Bạn đã hủy giao dịch thanh toán.");
-      return;
+      return () => { stopped = true; };
     }
 
     // Must have orderCode to verify
@@ -42,28 +49,37 @@ export default function PaymentCallbackPage() {
       setIsVerifying(false);
       setIsSuccess(false);
       setErrorMessage("Mã đơn hàng không hợp lệ.");
-      return;
+      return () => { stopped = true; };
     }
 
     // Start polling backend to wait for webhook processing completion
     const pollStatus = async () => {
       try {
-        const response = await apiRequest<{ status: string }>(`/payments/status/${orderCode}`);
+        const response = await apiRequest<PaymentStatusResponse>(`/payments/status/${orderCode}`);
         
-        if (response && response.status === "SUCCESS") {
+        if (stopped) return;
+        const transactionStatus = response?.status?.toUpperCase();
+        if (transactionStatus === "SUCCESS") {
           // Upgrade completed! Refresh user session to get new VIP role
           await refreshUser();
           setIsSuccess(true);
           setIsVerifying(false);
+        } else if (transactionStatus === "CANCELLED" || transactionStatus === "FAILED" || transactionStatus === "NOT_FOUND") {
+          setIsVerifying(false);
+          setErrorMessage(
+            transactionStatus === "CANCELLED"
+              ? "Giao dịch đã bị hủy."
+              : transactionStatus === "NOT_FOUND"
+                ? "Không tìm thấy giao dịch này."
+                : "Giao dịch không thể hoàn tất."
+          );
         } else {
           // Not completed yet, check again after delay
           pollCount.current += 1;
           if (pollCount.current < maxPolls) {
-            setTimeout(pollStatus, 1500);
+            timer = setTimeout(pollStatus, 2000);
           } else {
-            // Reached maximum attempts, showing pending state
-            await refreshUser();
-            setIsSuccess(true); // Allow success view since bank transfer went through, backend will catch up via webhook anyway
+            setIsPending(true);
             setIsVerifying(false);
           }
         }
@@ -71,16 +87,21 @@ export default function PaymentCallbackPage() {
         console.error("Error polling transaction status:", err);
         pollCount.current += 1;
         if (pollCount.current < maxPolls) {
-          setTimeout(pollStatus, 1500);
+          timer = setTimeout(pollStatus, 2000);
         } else {
           setIsVerifying(false);
+          setIsPending(true);
           setErrorMessage("Giao dịch đang được hệ thống xử lý. Vui lòng kiểm tra lại hồ sơ của bạn sau ít phút.");
         }
       }
     };
 
     void pollStatus();
-  }, [status, cancel, orderCode, refreshUser]);
+    return () => {
+      stopped = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [status, cancel, result, orderCode, refreshUser]);
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-[linear-gradient(135deg,rgba(253,244,255,0.4)_0%,rgba(239,246,255,0.4)_100%)]">
@@ -138,6 +159,24 @@ export default function PaymentCallbackPage() {
               </Button>
               <Button onClick={() => navigate("/courses")} variant="outline" className="w-full rounded-2xl h-11 border-slate-200 bg-white/40 font-semibold">
                 Xem danh mục khóa học
+              </Button>
+            </div>
+          </div>
+        ) : isPending ? (
+          <div className="flex flex-col items-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-50">
+              <Clock3 className="h-11 w-11 text-amber-500" />
+            </div>
+            <h2 className="mt-6 font-heading text-xl font-bold text-foreground">Giao dịch đang được xử lý</h2>
+            <p className="mt-2 text-sm text-muted-foreground max-w-xs leading-relaxed">
+              {errorMessage || "EDUcare chưa nhận được xác nhận cuối cùng từ cổng thanh toán. Tài khoản chỉ được nâng cấp sau khi giao dịch được xác nhận."}
+            </p>
+            <div className="mt-8 w-full space-y-3">
+              <Button onClick={() => window.location.reload()} className="w-full rounded-2xl h-11 font-bold">
+                Kiểm tra lại trạng thái
+              </Button>
+              <Button onClick={() => navigate("/dashboard")} variant="outline" className="w-full rounded-2xl h-11 font-semibold">
+                Về Dashboard
               </Button>
             </div>
           </div>

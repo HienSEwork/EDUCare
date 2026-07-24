@@ -35,7 +35,7 @@ public class PayOSCryptoUtils {
     
     // Join as key1=value1&key2=value2...
     String signData = sortedMap.entrySet().stream()
-        .map(entry -> entry.getKey() + "=" + entry.getValue().toString())
+        .map(entry -> entry.getKey() + "=" + (entry.getValue() == null ? "" : entry.getValue().toString()))
         .collect(Collectors.joining("&"));
         
     return hmacSha256(signData, checksumKey);

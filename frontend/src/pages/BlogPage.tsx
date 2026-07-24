@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpenText } from "lucide-react";
+import { ArrowRight, BookOpenText, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 
 import heroIllustration from "@/assets/hero-illustration.png";
 import { BLOG_DISPLAY_BY_SLUG, BLOG_PAGE_COPY } from "@/content/pageCopy";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import { getBlogPhoto } from "@/lib/contentMedia";
 import type { BlogPost } from "@/types/api";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const ALL_CATEGORY = BLOG_PAGE_COPY.allCategory;
 
@@ -18,6 +19,8 @@ const categoryLabels: Record<string, string> = {
   "ky nang song": "Kỹ năng sống",
   "suc khoe": "Sức khỏe",
   "ho tro": "Hỗ trợ",
+  "chuyen gia chia se": "Chuyên gia chia sẻ",
+  "video chia se": "Video chia sẻ",
 };
 
 function normalizeText(value: string) {
@@ -43,9 +46,13 @@ function getDisplayPost(post: BlogPost) {
 }
 
 export default function BlogPage() {
+  const { theme } = useTheme();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sliderRef = useRef<HTMLDivElement>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>(ALL_CATEGORY);
   const [error, setError] = useState<string | null>(null);
+  const selectedCategory = searchParams.get("category") || ALL_CATEGORY;
+  const searchQuery = searchParams.get("q") || "";
 
   useEffect(() => {
     void apiRequest<BlogPost[]>("/blog-posts")
@@ -66,25 +73,44 @@ export default function BlogPage() {
   );
 
   const filteredPosts = useMemo(
-    () =>
-      selectedCategory === ALL_CATEGORY
-        ? displayPosts
-        : displayPosts.filter((post) => post.category === selectedCategory),
-    [displayPosts, selectedCategory],
+    () => displayPosts.filter((post) => {
+      const matchesCategory = selectedCategory === ALL_CATEGORY || post.category === selectedCategory;
+      const normalizedQuery = normalizeText(searchQuery.trim());
+      const matchesQuery = !normalizedQuery || normalizeText(`${post.title} ${post.excerpt} ${post.category}`).includes(normalizedQuery);
+      return matchesCategory && matchesQuery;
+    }),
+    [displayPosts, searchQuery, selectedCategory],
   );
 
-  const featuredPost = filteredPosts[0];
-  const otherPosts = filteredPosts.slice(1);
+  const setFilter = (key: "category" | "q", value: string) => {
+    const next = new URLSearchParams(searchParams);
+    if (!value || (key === "category" && value === ALL_CATEGORY)) next.delete(key);
+    else next.set(key, value);
+    setSearchParams(next, { replace: true });
+  };
+
+  const moveSlider = (direction: -1 | 1) => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+    slider.scrollBy({ left: direction * Math.max(280, slider.clientWidth * 0.75), behavior: "smooth" });
+  };
 
   return (
-    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
-      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    <div
+      className={theme === "light"
+        ? "min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 bg-[#fdf6f9] text-slate-800 font-body"
+        : "min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      }
+      style={{
+        background: theme === "light"
+          ? "linear-gradient(180deg, #fff0f5 0%, #ffffff 50%, #fdf6f9 100%)"
+          : "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)"
+      }}
     >
       {/* Background Ambient Glowing Orbs */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
-        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
-        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+        <div className={theme === "light" ? "absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-pink-300/25 blur-[140px]" : "absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]"} />
+        <div className={theme === "light" ? "absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-purple-300/20 blur-[150px]" : "absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]"} />
       </div>
 
       {/* Header Banner Section */}
@@ -92,45 +118,34 @@ export default function BlogPage() {
         <div className="container mx-auto px-4 relative z-10 max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(420px,0.9fr)] lg:items-center lg:gap-10">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-[640px]">
-              <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+              <span className={theme === "light"
+                ? "inline-flex rounded-full border border-pink-200 bg-pink-100/70 px-5 py-2 text-xs font-extrabold tracking-widest text-pink-600 uppercase backdrop-blur-md mb-4 shadow-xs"
+                : "inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
+              }>
                 {BLOG_PAGE_COPY.eyebrow}
               </span>
-              <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white">
+              <h1 className={theme === "light" ? "mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-slate-800" : "mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white"}>
                 <span className="block">{BLOG_PAGE_COPY.titleLine1}</span>
-                <span className="mt-1 block bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent">{BLOG_PAGE_COPY.titleLine2}</span>
+                <span className={theme === "light" ? "mt-1 block bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 bg-clip-text text-transparent" : "mt-1 block bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent"}>
+                  {BLOG_PAGE_COPY.titleLine2}
+                </span>
               </h1>
-              <p className="mt-4 max-w-[600px] text-base leading-relaxed text-indigo-100/80 md:text-lg">
+              <p className={theme === "light" ? "mt-4 max-w-[600px] text-base leading-relaxed text-slate-600 md:text-lg" : "mt-4 max-w-[600px] text-base leading-relaxed text-indigo-100/80 md:text-lg"}>
                 {BLOG_PAGE_COPY.description}
               </p>
 
-              {/* Dynamic Statistics Querying Real Data */}
-              <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-slate-700/50 pt-4 mb-6">
+              {/* Dynamic Statistics */}
+              <div className={theme === "light" ? "mt-6 flex flex-wrap items-center gap-6 border-t border-pink-100 pt-4 mb-6" : "mt-6 flex flex-wrap items-center gap-6 border-t border-slate-700/50 pt-4 mb-6"}>
                 <div>
-                  <div className="text-xl font-extrabold text-cyan-300 md:text-2xl">{posts.length}</div>
-                  <div className="text-xs text-indigo-200/70 font-semibold">Bài viết chia sẻ</div>
+                  <div className={theme === "light" ? "text-xl font-extrabold text-pink-600 md:text-2xl" : "text-xl font-extrabold text-cyan-300 md:text-2xl"}>{posts.length}</div>
+                  <div className={theme === "light" ? "text-xs text-slate-500 font-semibold" : "text-xs text-indigo-200/70 font-semibold"}>Bài viết chia sẻ</div>
                 </div>
                 <div>
-                  <div className="text-xl font-extrabold text-white md:text-2xl">{Math.max(1, categories.length - 1)}</div>
-                  <div className="text-xs text-indigo-200/70 font-semibold">Chủ đề bài viết</div>
+                  <div className={theme === "light" ? "text-xl font-extrabold text-slate-800 md:text-2xl" : "text-xl font-extrabold text-white md:text-2xl"}>{Math.max(1, categories.length - 1)}</div>
+                  <div className={theme === "light" ? "text-xs text-slate-500 font-semibold" : "text-xs text-indigo-200/70 font-semibold"}>Chủ đề bài viết</div>
                 </div>
               </div>
 
-              {/* Square Text-Only Category Filter Tabs (Radius=0) */}
-              <div className="flex flex-wrap gap-2.5">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-5 py-2.5 rounded-none text-xs font-extrabold tracking-wide uppercase transition-all duration-200 shrink-0 ${
-                      selectedCategory === category
-                        ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
-                        : "border border-slate-700/70 bg-slate-900/60 backdrop-blur-md text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
             </motion.div>
 
             <motion.div
@@ -142,7 +157,7 @@ export default function BlogPage() {
               <img
                 src={heroIllustration}
                 alt={BLOG_PAGE_COPY.imageAlt}
-                className="mx-auto max-h-[340px] w-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)]"
+                className="mx-auto max-h-[340px] w-full object-contain drop-shadow-md"
               />
             </motion.div>
           </div>
@@ -153,100 +168,121 @@ export default function BlogPage() {
 
         {error ? <div className="mt-6 rounded-2xl bg-destructive/10 p-4 text-sm text-destructive">{error}</div> : null}
 
-        {featuredPost ? (
-          <section className="mt-8">
-            <Link to={`/blog/${featuredPost.slug}`}>
-              <article className="group overflow-hidden rounded-[2.2rem] border border-white/70 bg-card/86 shadow-card transition-[transform,box-shadow] hover:-translate-y-1 hover:shadow-hover">
-                <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
-                  <div className="p-6 md:p-8">
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                      <span className="rounded-full bg-lavender/30 px-3 py-1 font-semibold text-lavender-foreground">
-                        {featuredPost.category}
-                      </span>
-                      <span>{featuredPost.date}</span>
-                      <span>{featuredPost.readTime}</span>
-                    </div>
-                    <h2 className="mt-4 font-heading text-3xl font-bold leading-tight">{featuredPost.title}</h2>
-                    <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{featuredPost.excerpt}</p>
-                    <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                      {BLOG_PAGE_COPY.readAction}
-                      <ArrowRight className="h-4 w-4" />
-                    </span>
-                  </div>
-
-                  <div className="relative min-h-[280px] overflow-hidden bg-[linear-gradient(135deg,rgba(255,231,239,0.92)_0%,rgba(234,244,255,0.92)_100%)] lg:min-h-full">
-                    <img
-                      src={getBlogPhoto(featuredPost)}
-                      alt={`Ảnh minh họa cho bài viết ${featuredPost.title}`}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white/36 via-white/10 to-transparent" />
-                  </div>
-                </div>
-              </article>
-            </Link>
-          </section>
-        ) : null}
-
-        <section className="mt-8">
-          <div className="mb-5 flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-primary/10">
-              <BookOpenText className="h-5 w-5 text-primary" />
-            </span>
+        {/* Featured posts slider */}
+        <section className="mt-8" aria-labelledby="featured-posts-title">
+          <div className="mb-5 flex flex-col items-start gap-4 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
             <div>
-              <h2 className="font-heading text-2xl font-bold">{BLOG_PAGE_COPY.listTitle}</h2>
-              <p className="text-sm text-muted-foreground">{BLOG_PAGE_COPY.listDescription}</p>
+              <p className={theme === "light" ? "text-xs font-extrabold uppercase tracking-[0.16em] text-pink-600" : "text-xs font-extrabold uppercase tracking-[0.16em] text-amber-300"}>Nổi bật tuần này</p>
+              <h2 id="featured-posts-title" className={theme === "light" ? "mt-1 font-heading text-2xl font-bold text-slate-900 sm:text-3xl" : "mt-1 font-heading text-2xl font-bold text-white sm:text-3xl"}>Bài viết dành cho bạn</h2>
+            </div>
+            <div className="flex self-end gap-2 min-[420px]:self-auto">
+              {([-1, 1] as const).map((direction) => (
+                <button
+                  key={direction}
+                  type="button"
+                  onClick={() => moveSlider(direction)}
+                  aria-label={direction === -1 ? "Bài viết trước" : "Bài viết tiếp theo"}
+                  className={theme === "light" ? "flex h-11 w-11 items-center justify-center rounded-full border border-pink-200 bg-white text-slate-700 shadow-sm transition-all hover:border-pink-400 hover:bg-pink-50 hover:text-pink-600" : "flex h-11 w-11 items-center justify-center rounded-full border border-amber-300/25 bg-white/[0.06] text-amber-200 transition-all hover:bg-amber-300/15"}
+                >
+                  {direction === -1 ? <ChevronLeft className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                </button>
+              ))}
             </div>
           </div>
 
-          {otherPosts.length > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {otherPosts.map((post, index) => (
-                <motion.div
-                  key={post.slug}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.04 }}
-                >
-                  <Link to={`/blog/${post.slug}`}>
-                    <article className="group h-full overflow-hidden rounded-[2rem] border border-white/70 bg-card/86 shadow-card transition-[transform,box-shadow] hover:-translate-y-1 hover:shadow-hover">
-                      <div className="relative aspect-[16/10] overflow-hidden bg-[linear-gradient(135deg,rgba(255,231,239,0.92)_0%,rgba(234,244,255,0.92)_100%)]">
-                        <img
-                          src={getBlogPhoto(post)}
-                          alt={`Ảnh minh họa cho bài viết ${post.title}`}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                        />
-                        <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-4">
-                          <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary shadow-soft">
-                            {post.category}
-                          </span>
-                          <span className="rounded-full bg-foreground/82 px-3 py-1 text-[11px] font-semibold text-background shadow-soft">
-                            {post.readTime}
-                          </span>
-                        </div>
-                        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background/32 to-transparent" />
-                      </div>
+          <div ref={sliderRef} className="scrollbar-none flex snap-x snap-mandatory gap-4 overflow-x-auto pb-5">
+            {displayPosts.map((post) => (
+              <Link key={post.slug} to={`/blog/${post.slug}`} className="group w-[calc(100%-24px)] shrink-0 snap-start sm:w-[calc(50%-8px)] lg:w-[calc(33.333%-11px)] xl:w-[calc(25%-12px)]">
+                <article className={theme === "light" ? "h-full overflow-hidden rounded-[1.6rem] border border-pink-100 bg-white shadow-[0_10px_30px_rgba(219,39,119,0.08)] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-pink-200 group-hover:shadow-[0_18px_42px_rgba(219,39,119,0.14)]" : "h-full overflow-hidden rounded-[1.6rem] border border-indigo-300/15 bg-white/[0.055] shadow-xl backdrop-blur-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:border-amber-300/30"}>
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img src={getBlogPhoto(post)} alt={`Ảnh minh họa cho ${post.title}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <span className={theme === "light" ? "absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-pink-600 shadow-sm" : "absolute left-3 top-3 rounded-full bg-[#120c38]/90 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-300"}>{post.category}</span>
+                  </div>
+                  <div className="p-5">
+                    <div className={theme === "light" ? "flex items-center justify-between text-[11px] font-semibold text-slate-400" : "flex items-center justify-between text-[11px] font-semibold text-indigo-100/55"}>
+                      <span>{post.date}</span><span>{post.readTime}</span>
+                    </div>
+                    <h3 className={theme === "light" ? "mt-3 line-clamp-2 font-heading text-lg font-bold leading-snug text-slate-900" : "mt-3 line-clamp-2 font-heading text-lg font-bold leading-snug text-white"}>Nổi bật · {post.title}</h3>
+                    <span className={theme === "light" ? "mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-pink-600" : "mt-4 inline-flex items-center gap-1.5 text-xs font-extrabold text-amber-300"}>{BLOG_PAGE_COPY.readAction}<ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" /></span>
+                  </div>
+                </article>
+              </Link>
+            ))}
+          </div>
+        </section>
 
-                      <div className="p-6">
-                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{post.date}</p>
-                        <h3 className="mt-3 font-heading text-xl font-bold leading-snug line-clamp-2">{post.title}</h3>
-                        <p className="mt-3 text-sm leading-6 text-muted-foreground line-clamp-3">{post.excerpt}</p>
-                        <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                          {BLOG_PAGE_COPY.readAction}
-                          <ArrowRight className="h-4 w-4" />
-                        </span>
-                      </div>
-                    </article>
-                  </Link>
-                </motion.div>
-              ))}
+        {/* Category sidebar + filtered list */}
+        <section className="mt-10 grid items-start gap-7 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-9">
+          <aside className={theme === "light" ? "rounded-[1.4rem] border border-pink-100 bg-white/90 p-3 shadow-[0_12px_36px_rgba(219,39,119,0.07)] lg:sticky lg:top-28 lg:rounded-[1.6rem]" : "rounded-[1.4rem] border border-indigo-300/15 bg-white/[0.05] p-3 backdrop-blur-sm lg:sticky lg:top-28 lg:rounded-[1.6rem]"}>
+            <div className="px-3 pb-3 pt-2">
+              <p className={theme === "light" ? "text-[11px] font-extrabold uppercase tracking-[0.16em] text-pink-600" : "text-[11px] font-extrabold uppercase tracking-[0.16em] text-amber-300"}>Danh mục</p>
+              <h2 className={theme === "light" ? "mt-1 font-heading text-lg font-bold text-slate-900" : "mt-1 font-heading text-lg font-bold text-white"}>Khám phá chủ đề</h2>
             </div>
-          ) : (
-            <div className="rounded-[2rem] bg-card/82 p-8 text-center text-muted-foreground shadow-card">
-              {BLOG_PAGE_COPY.empty}
+            <div className="relative lg:hidden">
+              <select
+                aria-label="Chọn danh mục bài viết"
+                value={selectedCategory}
+                onChange={(event) => setFilter("category", event.target.value)}
+                className={theme === "light" ? "h-12 w-full appearance-none rounded-xl border border-pink-200 bg-pink-50/70 px-4 pr-10 text-sm font-semibold text-slate-700 outline-none focus:border-pink-400" : "h-12 w-full appearance-none rounded-xl border border-amber-300/20 bg-[#17103f] px-4 pr-10 text-sm font-semibold text-white outline-none focus:border-amber-300/50"}
+              >
+                {categories.map((category) => {
+                  const count = category === ALL_CATEGORY ? displayPosts.length : displayPosts.filter((post) => post.category === category).length;
+                  return <option key={category} value={category}>{category} ({count})</option>;
+                })}
+              </select>
+              <ChevronRight className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 rotate-90 text-muted-foreground" />
             </div>
-          )}
+            <div className="hidden lg:block lg:space-y-1">
+              {categories.map((category) => {
+                const count = category === ALL_CATEGORY ? displayPosts.length : displayPosts.filter((post) => post.category === category).length;
+                const active = selectedCategory === category;
+                return (
+                  <button key={category} type="button" onClick={() => setFilter("category", category)} className={`flex shrink-0 items-center justify-between gap-4 rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition-colors lg:w-full ${active ? (theme === "light" ? "bg-pink-600 text-white shadow-sm" : "bg-amber-300 text-slate-950") : (theme === "light" ? "bg-pink-50/50 text-slate-600 hover:bg-pink-50 hover:text-pink-600" : "bg-white/[0.025] text-indigo-100/75 hover:bg-white/[0.07] hover:text-white")}`}>
+                    <span>{category}</span><span className={`rounded-full px-2 py-0.5 text-[10px] ${active ? "bg-white/20" : "bg-black/[0.05] dark:bg-white/10"}`}>{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          <div className="min-w-0">
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="flex items-center gap-3">
+                <span className={theme === "light" ? "flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-100 text-pink-600" : "flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-300/10 text-amber-300"}><BookOpenText className="h-5 w-5" /></span>
+                <div>
+                  <h2 className={theme === "light" ? "font-heading text-2xl font-bold text-slate-900" : "font-heading text-2xl font-bold text-white"}>{selectedCategory === ALL_CATEGORY ? BLOG_PAGE_COPY.listTitle : selectedCategory}</h2>
+                  <p className={theme === "light" ? "text-sm text-slate-500" : "text-sm text-indigo-100/60"}>{filteredPosts.length} bài viết được tìm thấy</p>
+                </div>
+              </div>
+              <div className={theme === "light" ? "flex h-11 w-full items-center gap-2 rounded-full border border-pink-200 bg-white px-4 focus-within:border-pink-400 sm:max-w-xs" : "flex h-11 w-full items-center gap-2 rounded-full border border-indigo-300/20 bg-white/[0.05] px-4 focus-within:border-amber-300/50 sm:max-w-xs"}>
+                <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <input value={searchQuery} onChange={(event) => setFilter("q", event.target.value)} placeholder="Tìm bài viết..." className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground" />
+                {searchQuery && <button type="button" onClick={() => setFilter("q", "")} aria-label="Xóa tìm kiếm" className="rounded-full p-1 text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>}
+              </div>
+            </div>
+
+            {filteredPosts.length > 0 ? (
+              <div className="grid gap-3 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {filteredPosts.map((post, index) => (
+                  <motion.div key={post.slug} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: Math.min(index * 0.035, 0.2) }}>
+                    <Link to={`/blog/${post.slug}`} className="group block h-full">
+                      <article className={theme === "light" ? "flex h-full overflow-hidden rounded-[1.25rem] border border-pink-100 bg-white shadow-[0_8px_28px_rgba(219,39,119,0.07)] transition-all duration-300 group-hover:border-pink-200 sm:flex-col sm:rounded-[1.6rem] sm:group-hover:-translate-y-1 sm:group-hover:shadow-[0_16px_40px_rgba(219,39,119,0.12)]" : "flex h-full overflow-hidden rounded-[1.25rem] border border-indigo-300/15 bg-white/[0.05] backdrop-blur-sm transition-all duration-300 group-hover:border-amber-300/25 sm:flex-col sm:rounded-[1.6rem] sm:group-hover:-translate-y-1"}>
+                        <div className="relative w-[116px] shrink-0 overflow-hidden sm:aspect-[16/9] sm:w-full"><img src={getBlogPhoto(post)} alt={`Ảnh minh họa cho ${post.title}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" /><span className={theme === "light" ? "absolute left-2 top-2 max-w-[100px] truncate rounded-full bg-white/95 px-2 py-1 text-[8px] font-extrabold uppercase tracking-wide text-pink-600 shadow-sm sm:left-4 sm:top-4 sm:max-w-none sm:px-3 sm:text-[10px]" : "absolute left-2 top-2 max-w-[100px] truncate rounded-full bg-[#120c38]/90 px-2 py-1 text-[8px] font-extrabold uppercase tracking-wide text-amber-300 sm:left-4 sm:top-4 sm:max-w-none sm:px-3 sm:text-[10px]"}>{post.category}</span></div>
+                        <div className="flex min-w-0 flex-1 flex-col p-3.5 sm:p-6">
+                          <div className={theme === "light" ? "flex flex-wrap justify-between gap-1 text-[9px] font-semibold text-slate-400 sm:text-[11px]" : "flex flex-wrap justify-between gap-1 text-[9px] font-semibold text-indigo-100/55 sm:text-[11px]"}><span>{post.date}</span><span>{post.readTime}</span></div>
+                          <h3 className={theme === "light" ? "mt-2 line-clamp-2 font-heading text-base font-bold leading-snug text-slate-900 sm:mt-3 sm:text-xl" : "mt-2 line-clamp-2 font-heading text-base font-bold leading-snug text-white sm:mt-3 sm:text-xl"}>{post.title}</h3>
+                          <p className={theme === "light" ? "mt-3 hidden line-clamp-3 text-sm leading-6 text-slate-600 sm:block" : "mt-3 hidden line-clamp-3 text-sm leading-6 text-indigo-100/65 sm:block"}>{post.excerpt}</p>
+                          <span className={theme === "light" ? "mt-auto inline-flex items-center gap-1 pt-2 text-xs font-extrabold text-pink-600 sm:mt-5 sm:gap-2 sm:pt-0 sm:text-sm" : "mt-auto inline-flex items-center gap-1 pt-2 text-xs font-extrabold text-amber-300 sm:mt-5 sm:gap-2 sm:pt-0 sm:text-sm"}>{BLOG_PAGE_COPY.readAction}<ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 sm:h-4 sm:w-4" /></span>
+                        </div>
+                      </article>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className={theme === "light" ? "rounded-[1.6rem] border border-pink-100 bg-white p-10 text-center text-slate-500 shadow-sm" : "rounded-[1.6rem] border border-indigo-300/15 bg-white/[0.05] p-10 text-center text-indigo-100/60"}>{BLOG_PAGE_COPY.empty}</div>
+            )}
+          </div>
         </section>
       </div>
     </div>

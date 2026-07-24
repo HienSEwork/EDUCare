@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { ANONYMOUS_INBOX_COPY } from "@/content/experienceCopy";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ApiError, apiRequest } from "@/lib/api/client";
 
 interface AnonymousQuestionBoxProps {
@@ -155,6 +156,7 @@ function MailboxGraphic({ flagUp, isReceiving }: { flagUp: boolean; isReceiving:
 
 export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQuestionBoxProps) {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [question, setQuestion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -175,23 +177,19 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
       setIsSubmitting(true);
       setIsAnimating(true);
 
-      // Trigger HTTP request in parallel with animation
       const apiPromise = apiRequest("/community/questions", {
         method: "POST",
         body: JSON.stringify({ question: trimmedQuestion }),
       });
 
-      // Wait for flying letter animation (1.1s)
       await new Promise((res) => setTimeout(res, 1100));
       await apiPromise;
 
-      // Raise mailbox flag & clear input
       setQuestion("");
       setFlagUp(true);
       setSubmitted(true);
       toast.success("Lá thư của bạn đã bay thẳng vào Hòm Thư Bí Mật thành công! 📬✨");
 
-      // Auto drop flag after 8 seconds
       setTimeout(() => setFlagUp(false), 8000);
     } catch (requestError) {
       toast.error(requestError instanceof ApiError ? requestError.message : ANONYMOUS_INBOX_COPY.sendError);
@@ -210,36 +208,38 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
         initial={{ opacity: 0, y: 25 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="magic-card-glow relative overflow-hidden rounded-[2.5rem] p-6 md:p-10 border border-indigo-400/40 shadow-2xl"
+        className={theme === "light"
+          ? "relative overflow-hidden rounded-[2.5rem] p-6 md:p-10 border border-pink-200 bg-white shadow-[0_12px_40px_rgba(236,72,153,0.12)] text-slate-800"
+          : "magic-card-glow relative overflow-hidden rounded-[2.5rem] p-6 md:p-10 border border-indigo-400/40 shadow-2xl text-white"
+        }
       >
         {/* Header Title Banner */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-indigo-400/20 pb-5">
+        <div className={theme === "light" ? "mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-pink-100 pb-5" : "mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-indigo-400/20 pb-5"}>
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-900/80 border border-indigo-400/40 text-amber-300 shadow-md">
+            <div className={theme === "light" ? "flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-100 border border-pink-200 text-pink-600 shadow-sm" : "flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-900/80 border border-indigo-400/40 text-amber-300 shadow-md"}>
               <Mail className="h-5 w-5" strokeWidth={2.2} />
             </div>
             <div>
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/60 px-3 py-0.5 text-[10px] font-heading font-extrabold text-cyan-300 uppercase">
+              <div className={theme === "light" ? "inline-flex items-center gap-1.5 rounded-full border border-pink-200 bg-pink-50 px-3 py-0.5 text-[10px] font-heading font-extrabold text-pink-600 uppercase" : "inline-flex items-center gap-1.5 rounded-full border border-cyan-400/40 bg-cyan-950/60 px-3 py-0.5 text-[10px] font-heading font-extrabold text-cyan-300 uppercase"}>
                 <ShieldCheck className="h-3.5 w-3.5" />
                 <span>100% ẨN DANH • KHÔNG LƯU NICKNAME</span>
               </div>
-              <h2 className="font-heading text-xl md:text-2xl font-extrabold text-white">
-                Hòm Thư Ẩn Danh & <span className="text-amber-300">Gỡ Rối Thầm Kín ✨</span>
+              <h2 className={theme === "light" ? "font-heading text-xl md:text-2xl font-extrabold text-slate-800" : "font-heading text-xl md:text-2xl font-extrabold text-white"}>
+                Hòm Thư Ẩn Danh & <span className={theme === "light" ? "text-pink-600" : "text-amber-300"}>Gỡ Rối Thầm Kín ✨</span>
               </h2>
             </div>
           </div>
 
-          <p className="text-xs text-indigo-200/70 max-w-md">
+          <p className={theme === "light" ? "text-xs text-slate-500 max-w-md" : "text-xs text-indigo-200/70 max-w-md"}>
             Những thắc mắc nhạy cảm về dậy thì, giới tính hay tình cảm? Viết lá thư và thả ngay vào Hòm Thư — đội ngũ EDUcare sẽ tư vấn riêng cho bạn!
           </p>
         </div>
 
         {/* Main 2-Column Content: Left Input Form + Right 3D Mailbox */}
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
-          {/* Left Column — Textarea Form & Flying Letter Container */}
-          <div ref={inputAreaRef} className="relative space-y-4 bg-indigo-950/60 p-5 md:p-6 rounded-3xl border border-indigo-400/30 backdrop-blur-md">
+          {/* Left Column — Textarea Form */}
+          <div ref={inputAreaRef} className={theme === "light" ? "relative space-y-4 bg-pink-50/60 p-5 md:p-6 rounded-3xl border border-pink-200/70" : "relative space-y-4 bg-indigo-950/60 p-5 md:p-6 rounded-3xl border border-indigo-400/30 backdrop-blur-md"}>
             
-            {/* Flying Letter Animation Element */}
             <AnimatePresence>
               {isAnimating && (
                 <motion.div
@@ -276,16 +276,19 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
                 placeholder={user ? "Nhập thắc mắc hoặc bí mật bạn cần tư vấn ẩn danh..." : "Vui lòng đăng nhập để thả thư vào Hòm Thư BÍ MẬT..."}
                 disabled={!user || isSubmitting || isAnimating}
                 rows={5}
-                className="w-full resize-none rounded-2xl bg-indigo-900/50 border border-indigo-400/30 p-4 text-sm text-white placeholder:text-indigo-300/40 focus-visible:ring-1 focus-visible:ring-amber-300 transition-all"
+                className={theme === "light"
+                  ? "w-full resize-none rounded-2xl bg-white border border-pink-200 p-4 text-sm text-slate-800 placeholder:text-slate-400 focus-visible:ring-1 focus-visible:ring-pink-500 transition-all"
+                  : "w-full resize-none rounded-2xl bg-indigo-900/50 border border-indigo-400/30 p-4 text-sm text-white placeholder:text-indigo-300/40 focus-visible:ring-1 focus-visible:ring-amber-300 transition-all"
+                }
               />
-              <span className="absolute bottom-3 right-4 text-[10px] font-bold text-indigo-300/60">
+              <span className={theme === "light" ? "absolute bottom-3 right-4 text-[10px] font-bold text-slate-400" : "absolute bottom-3 right-4 text-[10px] font-bold text-indigo-300/60"}>
                 {charCount}/{charLimit}
               </span>
             </div>
 
             {/* Quick Prompts */}
             <div>
-              <p className="text-[11px] font-heading font-extrabold text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-1">
+              <p className={theme === "light" ? "text-[11px] font-heading font-extrabold text-pink-600 uppercase tracking-wider mb-2 flex items-center gap-1" : "text-[11px] font-heading font-extrabold text-amber-300 uppercase tracking-wider mb-2 flex items-center gap-1"}>
                 <Sparkles className="h-3.5 w-3.5" /> Gợi ý câu hỏi nhanh:
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -295,7 +298,10 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
                     type="button"
                     onClick={() => setQuestion(prompt)}
                     disabled={!user || isSubmitting || isAnimating}
-                    className="rounded-full border border-indigo-400/30 bg-indigo-900/40 px-3 py-1 text-[11px] text-indigo-200 hover:border-amber-300 hover:text-white hover:bg-indigo-800/60 transition-all text-left"
+                    className={theme === "light"
+                      ? "rounded-full border border-pink-200 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-pink-500 hover:text-pink-600 hover:bg-pink-100/60 transition-all text-left shadow-xs"
+                      : "rounded-full border border-indigo-400/30 bg-indigo-900/40 px-3 py-1 text-[11px] text-indigo-200 hover:border-amber-300 hover:text-white hover:bg-indigo-800/60 transition-all text-left"
+                    }
                   >
                     "{prompt}"
                   </button>
@@ -311,14 +317,14 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
                 disabled={!user || !question.trim() || isSubmitting || isAnimating}
                 whileHover={{ scale: !user || !question.trim() || isSubmitting || isAnimating ? 1 : 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="magic-btn-primary flex items-center gap-2.5 rounded-full px-7 py-3 text-sm font-extrabold text-slate-950 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg"
+                className="magic-btn-primary flex items-center gap-2.5 rounded-full px-7 py-3 text-sm font-extrabold disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg"
               >
                 <Send className="h-4 w-4" />
                 {isAnimating ? "Đang thả thư vào hòm..." : isSubmitting ? "Đang gửi..." : "Thả thư vào Hòm Ẩn Danh 📬"}
               </motion.button>
 
               {!user && (
-                <Link to="/login" className="text-xs font-bold text-amber-300 hover:underline">
+                <Link to="/login" className={theme === "light" ? "text-xs font-bold text-pink-600 hover:underline" : "text-xs font-bold text-amber-300 hover:underline"}>
                   Đăng nhập ngay để gửi →
                 </Link>
               )}
@@ -355,7 +361,7 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
           </div>
 
           {/* Right Column — 3D Mailbox Visual Container */}
-          <div ref={mailboxContainerRef} className="flex flex-col items-center justify-center p-4 bg-indigo-950/40 rounded-3xl border border-indigo-400/20">
+          <div ref={mailboxContainerRef} className={theme === "light" ? "flex flex-col items-center justify-center p-4 bg-pink-50/50 rounded-3xl border border-pink-200/60" : "flex flex-col items-center justify-center p-4 bg-indigo-950/40 rounded-3xl border border-indigo-400/20"}>
             <MailboxGraphic flagUp={flagUp} isReceiving={isAnimating} />
           </div>
         </div>
