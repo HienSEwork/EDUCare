@@ -350,30 +350,30 @@ export default function VideoGalleryPage() {
   // Định nghĩa Card "Xem toàn bộ bài học (View All)" ở cuối hàng Carousel (Bỏ - không dùng nữa)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90 py-8">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <div className="min-h-screen pb-16 pt-8">
+      {/* Full Width Hero Banner - Nền Glass, không bọc border */}
+      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
+          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
+        </div>
 
-        {/* Banner Section - Glassmorphism Premium Hero */}
-        <section className="rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(253,244,255,0.85)_0%,rgba(255,241,242,0.85)_50%,rgba(239,246,255,0.85)_100%)] p-6 shadow-card md:p-8 relative overflow-hidden mb-8">
-          <div className="absolute top-0 right-0 h-40 w-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 text-center max-w-3xl mx-auto py-4">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <span className="inline-flex rounded-full bg-white/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-primary shadow-soft mb-4">
-                Tóm tắt bài học
-              </span>
-              <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-4 text-foreground">
-                Thư viện <span className="text-gradient">Video</span> - Góc Xem Thử
-              </h1>
-              <p className="text-foreground/80 text-base md:text-lg mb-6 leading-relaxed">
-                Nắm bắt nhanh kiến thức cốt lõi dưới 2 phút. Hãy chọn bài giảng, xem thử video để mở khóa thử thách và nhận trọn vẹn điểm XP!
-              </p>
-            </motion.div>
-          </div>
-        </section>
+        <div className="container mx-auto px-4 relative z-10 text-center max-w-3xl">
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300 mb-4">
+              TÓM TẮT BÀI HỌC
+            </span>
+            <h1 className="font-heading text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+              Thư viện <span className="text-amber-300">Video</span> - Góc Xem Thử
+            </h1>
+            <p className="text-indigo-100/80 text-base md:text-lg leading-relaxed">
+              Nắm bắt nhanh kiến thức cốt lõi dưới 2 phút. Hãy chọn bài giảng, xem thử video để mở khóa thử thách và nhận trọn vẹn điểm XP!
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 max-w-6xl">
 
         {/* Search & Tabs Filter Section */}
         <div className="flex flex-col gap-5 rounded-[1.8rem] border border-white/60 bg-white/60 p-5 shadow-card backdrop-blur-md mb-8">
@@ -767,11 +767,11 @@ export default function VideoGalleryPage() {
                 {/* Modal Footer Info */}
                 <div className="p-4 bg-slate-900/80 border-t border-white/10 text-xs text-slate-300 flex flex-col sm:flex-row gap-3 justify-between items-center">
                   <span className="flex items-center gap-1.5 font-medium">
-                    <Trophy className="h-4 w-4 text-yellow-500 animate-bounce" />
-                    Hoàn thành xem video để nhận thưởng khích lệ <strong className="text-yellow-400">+5 XP</strong>
+                    <Trophy className="h-4 w-4 text-white animate-bounce" />
+                    Hoàn thành xem video để nhận thưởng khích lệ <strong className="text-white">+5 XP</strong>
                   </span>
                   <span className="flex items-center gap-1.5 text-slate-400">
-                    <Film className="h-4 w-4 text-primary" />
+                    <Film className="h-4 w-4 text-white" />
                     Thời lượng xem thử: <strong className="text-white font-bold">{videoDuration}</strong>
                   </span>
                 </div>

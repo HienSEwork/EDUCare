@@ -112,10 +112,10 @@ public class AuthService {
     Instant now = Instant.now();
 
     for (UserSubscriptionEntity sub : activeSubs) {
-      if (sub.getEndDate().isBefore(now)) {
+      if (sub.getEndDate() != null && sub.getEndDate().isBefore(now)) {
         sub.setStatus("EXPIRED");
         userSubscriptionRepository.save(sub);
-      } else {
+      } else if (sub.getEndDate() != null) {
         hasActive = true;
       }
     }
@@ -136,7 +136,10 @@ public class AuthService {
 
     List<String> completedSlugs = lessonRepository.findAllById(completedLessonIds)
         .stream()
-        .sorted((a, b) -> Integer.compare(a.getLessonOrder(), b.getLessonOrder()))
+        .sorted((a, b) -> Integer.compare(
+            a.getLessonOrder() != null ? a.getLessonOrder() : 0,
+            b.getLessonOrder() != null ? b.getLessonOrder() : 0
+        ))
         .map(vn.educare.backend.model.LessonEntity::getSlug)
         .toList();
 

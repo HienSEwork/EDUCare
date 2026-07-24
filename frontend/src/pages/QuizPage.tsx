@@ -195,15 +195,21 @@ export default function QuizPage() {
 
   return (
     <div className="min-h-screen pb-16 pt-8">
-      <div className="container mx-auto max-w-6xl px-4">
-        <section className="rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,230,240,0.88)_0%,rgba(246,241,255,0.96)_48%,rgba(227,245,255,0.88)_100%)] p-6 shadow-card md:p-8">
+      {/* Full Width Hero Banner - Nền Glass, không bọc border */}
+      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
+          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
+        </div>
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
-              <span className="inline-flex rounded-full bg-white/88 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary shadow-soft">
+              <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300">
                 {QUIZ_COPY.currentRound}
               </span>
-              <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">{modeLabel(mode)}</h1>
-              <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">{modeDescription(mode)}</p>
+              <h1 className="mt-4 font-heading text-4xl font-extrabold leading-tight md:text-5xl text-white">{modeLabel(mode)}</h1>
+              <p className="mt-4 text-base leading-relaxed text-indigo-100/80 md:text-lg">{modeDescription(mode)}</p>
             </motion.div>
 
             <div className="grid gap-4 sm:grid-cols-3">
@@ -212,14 +218,17 @@ export default function QuizPage() {
                 { label: QUIZ_COPY.answered, value: `${answeredCount}/${session.totalQuestions}` },
                 { label: QUIZ_COPY.mode, value: mode === "long" ? QUIZ_COPY.deepPractice : QUIZ_COPY.quickCompact },
               ].map((item) => (
-                <div key={item.label} className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
-                  <p className="mt-2 text-sm font-semibold text-foreground">{item.value}</p>
+                <div key={item.label} className="rounded-[1.6rem] border border-indigo-400/30 bg-indigo-950/70 backdrop-blur-md p-4 shadow-xl">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">{item.label}</p>
+                  <p className="mt-1.5 text-sm font-bold text-white">{item.value}</p>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 max-w-6xl">
 
         {result ? (
           <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">

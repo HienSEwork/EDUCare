@@ -23,11 +23,12 @@ public class UserMapper {
     if (!activeSubs.isEmpty()) {
       // Find the subscription that expires last
       UserSubscriptionEntity latestSub = activeSubs.stream()
+          .filter(s -> s.getEndDate() != null)
           .max((s1, s2) -> s1.getEndDate().compareTo(s2.getEndDate()))
           .orElse(null);
       if (latestSub != null) {
-        subPlanId = latestSub.getPlan().getId();
-        subEndDate = latestSub.getEndDate().toString();
+        subPlanId = (latestSub.getPlan() != null && latestSub.getPlan().getId() != null) ? latestSub.getPlan().getId() : "FREE";
+        subEndDate = latestSub.getEndDate() != null ? latestSub.getEndDate().toString() : null;
       }
     }
 

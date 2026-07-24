@@ -1006,22 +1006,27 @@ export default function CommunityPage() {
 
   return (
     <div className="min-h-screen pb-16 pt-8">
-      <div className="container mx-auto px-4">
-        {/* Banner Section */}
-        <section className="rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,230,240,0.88)_0%,rgba(246,241,255,0.96)_48%,rgba(227,245,255,0.88)_100%)] px-6 py-8 shadow-card md:px-8">
+      {/* Full Width Hero Banner - Nền Glass, không bọc border */}
+      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
+          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)] lg:items-end">
             <div>
-              <span className="inline-flex rounded-full bg-white/88 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary shadow-soft">
-                Cộng đồng thảo luận
+              <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300">
+                CỘNG ĐỒNG THẢO LUẬN
               </span>
-              <h1 className="mt-5 font-heading text-3xl font-bold leading-tight md:text-4xl">
+              <h1 className="mt-4 font-heading text-3xl font-extrabold leading-tight md:text-4xl text-white">
                 {activePost 
                   ? "Xem chi tiết bài thảo luận" 
                   : activeCategory 
                     ? `Chuyên mục: ${activeCategory.name}` 
                     : "Cùng chia sẻ, lắng nghe và kết nối."}
               </h1>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-foreground/74 md:text-base">
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-indigo-100/80 md:text-base">
                 {activePost 
                   ? "Đóng góp ý kiến và thảo luận một cách văn minh, tôn trọng lẫn nhau."
                   : activeCategory 
@@ -1035,14 +1040,17 @@ export default function CommunityPage() {
                 { label: "Trạng thái", value: activeCategory ? "Chuyên mục con" : "Toàn hệ thống" },
                 { label: "Đi nhanh", value: "Chat, bảng xếp hạng" },
               ].map((item) => (
-                <div key={item.label} className="rounded-[1.5rem] border border-white/70 bg-white/76 p-4 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
-                  <p className="mt-1.5 text-sm font-semibold text-foreground">{item.value}</p>
+                <div key={item.label} className="rounded-[1.5rem] border border-indigo-400/30 bg-indigo-950/70 backdrop-blur-md p-4 shadow-xl">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">{item.label}</p>
+                  <p className="mt-1 text-sm font-bold text-white">{item.value}</p>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4">
 
         {/* Categories Landing Grid */}
         {activeCategory === null && activePost === null ? (

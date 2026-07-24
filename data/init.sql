@@ -107,12 +107,12 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `slug`, `name`, `icon`, `color_theme`) VALUES
-(1, 'day-thi', '🌸 Cơ thể & Dậy thì', 'Compass', '#f77f00'),
-(2, 'ranh-gioi', '🛑 Đồng thuận & Ranh giới', 'ShieldCheck', '#4361ee'),
-(3, 'cam-xuc', '🧠 Cảm xúc & Stress', 'HelpCircle', '#06d6a0'),
-(4, 'an-toan', '🛡️ An toàn số & MXH', 'Lock', '#7209b7'),
-(5, 'moi-quan-he', '💬 Mối quan hệ lành mạnh', 'Heart', '#ff5d8f'),
-(6, 'vui', '🌸 Vui', 'Compass', '#f77f00');
+(1, 'day-thi', 'Cơ thể & Dậy thì', 'Compass', '#f77f00'),
+(2, 'ranh-gioi', 'Đồng thuận & Ranh giới', 'ShieldCheck', '#4361ee'),
+(3, 'cam-xuc', 'Cảm xúc & Stress', 'HelpCircle', '#06d6a0'),
+(4, 'an-toan', 'An toàn số & MXH', 'Lock', '#7209b7'),
+(5, 'moi-quan-he', 'Mối quan hệ lành mạnh', 'Heart', '#ff5d8f'),
+(6, 'vui', 'Vui', 'Compass', '#f77f00');
 
 -- --------------------------------------------------------
 
@@ -5376,11 +5376,11 @@ CREATE TABLE `recommend_questions` (
 --
 
 INSERT INTO `recommend_questions` (`id`, `emoji`, `question`, `reason`, `category_id`, `question_order`) VALUES
-(1, '🌸', 'Cơ thể tớ dạo này thay đổi lạ lẫm quá...', 'Tuổi dậy thì đem tới rất nhiều thay đổi thú vị về cả cơ thể và tâm lý. Đừng lo lắng, khóa học này sẽ đồng hành cùng bạn tìm hiểu chi tiết và yêu thương cơ thể mình hơn nhé!', 1, 10),
-(2, '🛑', 'Làm sao để nói Không và bảo vệ ranh giới?', 'Biết cách check-in sự đồng thuận và dũng cảm từ chối những điều mình không thoải mái là kỹ năng cực kỳ ngầu. Xem ngay lộ trình ranh giới dưới đây nhé.', 2, 20),
-(3, '🧠', 'Dạo này tớ hay bị stress, dễ nhạy cảm và buồn...', 'Cảm xúc thay đổi thất thường là chuyện siêu bình thường tuổi teen. Khóa học dưới đây sẽ giúp bạn học cách lắng nghe bản thân và điều hòa áp lực học tập hiệu quả.', 3, 30),
-(4, '🛡️', 'Có nên đưa mật khẩu tài khoản cho người yêu không?', 'Ranh giới cá nhân trên mạng xã hội là cực kỳ quan trọng để bảo vệ bản thân. Cùng khám phá các quy tắc an toàn số dưới đây để không bị kiểm soát hay lo sợ nha.', 4, 40),
-(5, '💬', 'Tình bạn/tình yêu của tụi mình có thực sự lành mạnh?', 'Hiểu rõ các dấu hiệu Green Flag và cách giao tiếp tự tin sẽ giúp bạn xây dựng những kết nối bền vững, tôn trọng lẫn nhau. Tham khảo lộ trình này nha.', 5, 50);
+(1, '', 'Cơ thể tớ dạo này thay đổi lạ lẫm quá...', 'Tuổi dậy thì đem tới rất nhiều thay đổi thú vị về cả cơ thể và tâm lý. Đừng lo lắng, khóa học này sẽ đồng hành cùng bạn tìm hiểu chi tiết và yêu thương cơ thể mình hơn nhé!', 1, 10),
+(2, '', 'Làm sao để nói Không và bảo vệ ranh giới?', 'Biết cách check-in sự đồng thuận và dũng cảm từ chối những điều mình không thoải mái là kỹ năng cực kỳ ngầu. Xem ngay lộ trình ranh giới dưới đây nhé.', 2, 20),
+(3, '', 'Dạo này tớ hay bị stress, dễ nhạy cảm và buồn...', 'Cảm xúc thay đổi thất thường là chuyện siêu bình thường tuổi teen. Khóa học dưới đây sẽ giúp bạn học cách lắng nghe bản thân và điều hòa áp lực học tập hiệu quả.', 3, 30),
+(4, '', 'Có nên đưa mật khẩu tài khoản cho người yêu không?', 'Ranh giới cá nhân trên mạng xã hội là cực kỳ quan trọng để bảo vệ bản thân. Cùng khám phá các quy tắc an toàn số dưới đây để không bị kiểm soát hay lo sợ nha.', 4, 40),
+(5, '', 'Tình bạn/tình yêu của tụi mình có thực sự lành mạnh?', 'Hiểu rõ các dấu hiệu Green Flag và cách giao tiếp tự tin sẽ giúp bạn xây dựng những kết nối bền vững, tôn trọng lẫn nhau. Tham khảo lộ trình này nha.', 5, 50);
 
 -- --------------------------------------------------------
 
@@ -5442,7 +5442,7 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `username`, `password_hash`, `a
 ('16c162c8-91b4-4de0-b228-5f3a4e14ba2f', 'khoaaa', 'khoa@gmail.com', 'kkk', '$2a$12$XtNVhHt/jnx5knbCYkyQTu892UIp69uV1cEfiRKh8UvS3.VNatAvm', 12, 'FREE', 1005, 58, 0, NULL, 'STUDENT', '2026-05-28 05:15:53', '2026-07-07 08:44:13'),
 ('251e9195-13ef-42ad-938f-b0019c1a043e', 'Khoaaaaa', 'khoanda.work@gmail.com', 'haahah', '$2a$12$XtNVhHt/jnx5knbCYkyQTu892UIp69uV1cEfiRKh8UvS3.VNatAvm', 10, 'FREE', 710, 13, 0, NULL, 'STUDENT', '2026-06-08 02:44:51', '2026-06-26 11:24:38'),
 ('73de86a9-8662-49be-bb39-78588d6c4e91', 'Nguyễn Khoa', 'khoado123@gmail.com', 'khoaaa', '$2a$10$ZnfiMDqf7vFkbfNXTsEUmua7sV0/PSrkAhSqGURTbbBuotSoIXoMe', 10, 'FREE', 50, 7, 0, NULL, 'STUDENT', '2026-05-20 00:32:07', '2026-05-20 00:40:52'),
-('9f3fbf44-16f2-4f88-9cf5-3f6c2d2b0011', 'EDUcare Admin', 'admin@educare.vn', 'educare_admin', '$2a$12$CRRZsUc/NKs0ggh3.xw/F.ogcGowT2qNbpnMlphEUmXC7.ET7oGPi', 18, 'FREE', 0, 0, 0, NULL, 'ADMIN', '2026-05-20 06:53:29', '2026-06-26 17:29:29'),
+('9f3fbf44-16f2-4f88-9cf5-3f6c2d2b0011', 'EDUcare Admin', 'admin@educare.vn', 'educare_admin', '$2b$12$A.J3wR4mun00FTYZZ7t3HOndRS24dtKjfNyt2i36xJelsI4T.aUbW', 18, 'PREMIUM', 0, 0, 0, NULL, 'ADMIN', '2026-05-20 06:53:29', '2026-06-26 17:29:29'),
 ('9f3fbf44-16f2-4f88-9cf5-3f6c2d2b0012', 'EDUcare Admin', 'adminKhoa@educare.vn', 'educare_admin_khoa', '$2a$12$8Uuqv21g2YzA4paZ7EAgRenwM6CjNKSL2ZLWpDFcarvEtRaM5KcOa', 18, 'PREMIUM', 0, 0, 0, NULL, 'ADMIN', '2026-05-28 13:24:35', '2026-05-28 13:24:35'),
 ('a8d9d888-22f7-46b5-919b-3df25a590021', 'Minh Anh', 'minhanh@educare.vn', 'minhanh', '$2b$10$2PZ0ZSIK6XXvnRprYDgBI.l9EwT3TF.hnrSRBKbpLbhf7w52IXnCe', 16, 'FREE', 0, 10, 0, NULL, 'STUDENT', '2026-05-20 06:53:29', '2026-05-20 06:53:29');
 
@@ -6097,3 +6097,59 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO `users` (`id`, `full_name`, `email`, `username`, `password_hash`, `age`, `plan`, `xp`, `streak`, `quiz_score_total`, `avatar_url`, `role`, `created_at`, `updated_at`) VALUES
+('c96174ab-3fb6-4986-8590-a4c0d0705928', 'Tran Anh', 'anh935@gmail.com', 'anh935', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 167, 24, 0, NULL, 'STUDENT', '2026-06-25 15:27:39', '2026-06-25 15:27:39'),
+('167f407c-e494-4f85-a157-c0818730f630', 'Ho Hung', 'hung506@gmail.com', 'hung506', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 493, 9, 0, NULL, 'STUDENT', '2026-07-02 12:19:16', '2026-07-02 12:19:16'),
+('d7c2be10-d857-42c7-9744-e72ed47c2e7b', 'Vu Anh', 'anh505@gmail.com', 'anh505', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 594, 22, 0, NULL, 'STUDENT', '2026-06-06 14:53:18', '2026-06-06 14:53:18'),
+('1d19b899-63ff-48b8-804b-5ae50d76ddd0', 'Pham Linh', 'linh922@gmail.com', 'linh922', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 53, 9, 0, NULL, 'STUDENT', '2026-07-02 23:37:56', '2026-07-02 23:37:56'),
+('6add3179-0024-4c66-bafb-e66040621609', 'Ho Bao', 'bao107@gmail.com', 'bao107', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 440, 16, 0, NULL, 'STUDENT', '2026-06-16 16:31:12', '2026-06-16 16:31:12'),
+('c7c811c8-a4c1-4971-9057-6a73697be785', 'Phan Minh', 'minh712@gmail.com', 'minh712', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 841, 29, 0, NULL, 'STUDENT', '2026-06-15 05:56:17', '2026-06-15 05:56:17'),
+('ae4829d7-bcd5-4379-bf02-9cad93be1193', 'Tran Binh', 'binh609@gmail.com', 'binh609', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 122, 7, 0, NULL, 'STUDENT', '2026-06-20 01:55:35', '2026-06-20 01:55:35'),
+('372ac05f-cc01-41ea-957f-d84bd8465c26', 'Bui Phong', 'phong630@gmail.com', 'phong630', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 865, 27, 0, NULL, 'STUDENT', '2026-06-03 00:55:49', '2026-06-03 00:55:49'),
+('0ee9971e-09fd-44c4-a7db-59a9fad30f1e', 'Phan Trang', 'trang233@gmail.com', 'trang233', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 15, 'FREE', 464, 10, 0, NULL, 'STUDENT', '2026-06-03 23:59:39', '2026-06-03 23:59:39'),
+('a336f2f4-a95f-4fb9-a3aa-d14ea47bdb81', 'Ho Bao', 'bao849@gmail.com', 'bao849', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 466, 2, 0, NULL, 'STUDENT', '2026-06-21 02:34:30', '2026-06-21 02:34:30'),
+('ef0f8549-31d9-4ce1-8daa-45b1b1179efc', 'Hoang Anh', 'anh948@gmail.com', 'anh948', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 12, 'FREE', 699, 21, 0, NULL, 'STUDENT', '2026-06-29 15:28:20', '2026-06-29 15:28:20'),
+('ec37e7f8-d993-4ec7-b7ae-cdd6abd245a9', 'Vo An', 'an273@gmail.com', 'an273', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 494, 28, 0, NULL, 'STUDENT', '2026-06-18 20:34:20', '2026-06-18 20:34:20'),
+('0381fb18-3ac2-408c-bdfe-db072610a2f6', 'Le Cuong', 'cuong143@gmail.com', 'cuong143', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 15, 'FREE', 785, 23, 0, NULL, 'STUDENT', '2026-06-27 14:43:06', '2026-06-27 14:43:06'),
+('5602d3d3-6872-4df8-9b3e-64305af4b690', 'Ho Cuong', 'cuong590@gmail.com', 'cuong590', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 181, 29, 0, NULL, 'STUDENT', '2026-07-01 16:52:11', '2026-07-01 16:52:11'),
+('0273fc61-2b5b-4b5e-a57c-c773e44a4030', 'Pham Sang', 'sang992@gmail.com', 'sang992', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 15, 'FREE', 904, 29, 0, NULL, 'STUDENT', '2026-06-24 14:54:57', '2026-06-24 14:54:57'),
+('a5ceea6f-6bf2-4070-a886-133c4c4ed00c', 'Huynh An', 'an881@gmail.com', 'an881', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 895, 26, 0, NULL, 'STUDENT', '2026-06-16 02:57:38', '2026-06-16 02:57:38'),
+('e0fd8e69-9d74-4325-9922-3ff0d7cad664', 'Vo Quan', 'quan554@gmail.com', 'quan554', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 940, 22, 0, NULL, 'STUDENT', '2026-06-07 15:13:40', '2026-06-07 15:13:40'),
+('ca65f87e-946f-437d-97e2-87aba1e10316', 'Duong Vinh', 'vinh918@gmail.com', 'vinh918', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 942, 0, 0, NULL, 'STUDENT', '2026-06-25 13:25:01', '2026-06-25 13:25:01'),
+('db121e78-4b8f-4e94-ad97-feed4374d082', 'Duong Vinh', 'vinh500@gmail.com', 'vinh500', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 637, 12, 0, NULL, 'STUDENT', '2026-07-09 02:11:08', '2026-07-09 02:11:08'),
+('2b9625d0-42bc-4dd3-b460-563a46952940', 'Vu Dung', 'dung984@gmail.com', 'dung984', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 808, 2, 0, NULL, 'STUDENT', '2026-06-12 06:23:12', '2026-06-12 06:23:12'),
+('5c83caea-a279-4a95-bd2a-c6e257ee0b64', 'Nguyen Bao', 'bao221@gmail.com', 'bao221', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 622, 8, 0, NULL, 'STUDENT', '2026-07-18 05:47:20', '2026-07-18 05:47:20'),
+('64b43623-a386-4274-9730-fb58ae7b9dfe', 'Nguyen Cuong', 'cuong936@gmail.com', 'cuong936', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 943, 13, 0, NULL, 'STUDENT', '2026-06-17 02:13:25', '2026-06-17 02:13:25'),
+('a70f2b75-f65a-41a5-8dc2-56ed91f4f04e', 'Bui Nam', 'nam368@gmail.com', 'nam368', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 12, 'FREE', 50, 19, 0, NULL, 'STUDENT', '2026-06-18 00:03:01', '2026-06-18 00:03:01'),
+('b9a50bf7-91d7-4c58-84d0-73dcf6d4fdcf', 'Vo Xuan', 'xuan662@gmail.com', 'xuan662', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 159, 8, 0, NULL, 'STUDENT', '2026-07-05 11:48:30', '2026-07-05 11:48:30'),
+('7bba3319-d2f9-47f2-988d-e9bb3e3ce80a', 'Huynh Trang', 'trang643@gmail.com', 'trang643', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 992, 7, 0, NULL, 'STUDENT', '2026-06-07 19:59:17', '2026-06-07 19:59:17'),
+('1c31293c-46cf-405f-aa03-69343b6cbe65', 'Hoang Trang', 'trang561@gmail.com', 'trang561', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 689, 11, 0, NULL, 'STUDENT', '2026-06-19 16:11:21', '2026-06-19 16:11:21'),
+('48029289-c029-47fa-a1ae-415737b57a13', 'Huynh Linh', 'linh463@gmail.com', 'linh463', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 452, 3, 0, NULL, 'STUDENT', '2026-06-13 10:28:39', '2026-06-13 10:28:39'),
+('54926e5c-10aa-467f-8c04-12c252d316b6', 'Ho Tuan', 'tuan761@gmail.com', 'tuan761', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 15, 'FREE', 837, 9, 0, NULL, 'STUDENT', '2026-06-11 13:35:21', '2026-06-11 13:35:21'),
+('ea36a427-a391-4899-a386-3c30aae61619', 'Bui An', 'an117@gmail.com', 'an117', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 69, 20, 0, NULL, 'STUDENT', '2026-06-01 05:00:36', '2026-06-01 05:00:36'),
+('e517628c-bdfb-4905-b1c2-b8b46c2ebdcf', 'Dang Trang', 'trang159@gmail.com', 'trang159', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 98, 23, 0, NULL, 'STUDENT', '2026-07-18 23:36:45', '2026-07-18 23:36:45'),
+('6cc3f30b-c156-412f-9426-9d3e6a9029d8', 'Vu Vinh', 'vinh492@gmail.com', 'vinh492', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 429, 8, 0, NULL, 'STUDENT', '2026-06-13 10:50:26', '2026-06-13 10:50:26'),
+('96908afe-9103-454f-83b5-380f16ee36be', 'Le Anh', 'anh509@gmail.com', 'anh509', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 12, 'FREE', 411, 9, 0, NULL, 'STUDENT', '2026-06-12 18:56:28', '2026-06-12 18:56:28'),
+('78da6bb3-2515-462a-8cdc-78e832edd7c4', 'Ngo Hung', 'hung119@gmail.com', 'hung119', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 550, 12, 0, NULL, 'STUDENT', '2026-06-29 08:02:34', '2026-06-29 08:02:34'),
+('aaa65adb-e955-42c2-85d6-9cc2247eeb0b', 'Tran Quan', 'quan977@gmail.com', 'quan977', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 12, 'FREE', 23, 15, 0, NULL, 'STUDENT', '2026-07-13 02:54:41', '2026-07-13 02:54:41'),
+('17f8360e-b70c-43dc-8725-ebd53041a129', 'Nguyen Linh', 'linh274@gmail.com', 'linh274', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 15, 'FREE', 441, 3, 0, NULL, 'STUDENT', '2026-07-16 05:32:19', '2026-07-16 05:32:19'),
+('2a142bdb-71ff-4baa-8d75-721eb329a086', 'Ngo Tuan', 'tuan185@gmail.com', 'tuan185', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 335, 27, 0, NULL, 'STUDENT', '2026-06-17 11:23:19', '2026-06-17 11:23:19'),
+('74738f4a-5bbb-4312-a91e-6f87d03c752a', 'Le Hung', 'hung173@gmail.com', 'hung173', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 521, 4, 0, NULL, 'STUDENT', '2026-07-13 07:46:06', '2026-07-13 07:46:06'),
+('2a709cb7-bdb3-4941-b35f-b4b70a8c1160', 'Huynh Anh', 'anh100@gmail.com', 'anh100', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 13, 'FREE', 407, 22, 0, NULL, 'STUDENT', '2026-06-20 00:09:56', '2026-06-20 00:09:56'),
+('85e955e1-33f8-4d22-b3c5-205e2fa4d449', 'Vu Nam', 'nam554@gmail.com', 'nam554', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 110, 26, 0, NULL, 'STUDENT', '2026-07-18 21:35:10', '2026-07-18 21:35:10'),
+('a1e23e5c-d87d-4d9f-abca-97c1e0aa7473', 'Bui Quan', 'quan201@gmail.com', 'quan201', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 879, 12, 0, NULL, 'STUDENT', '2026-07-03 07:46:35', '2026-07-03 07:46:35'),
+('dfc1fec2-92c6-4a46-ac52-23e4d4ec3e27', 'Bui Minh', 'minh997@gmail.com', 'minh997', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 433, 7, 0, NULL, 'STUDENT', '2026-06-30 23:21:17', '2026-06-30 23:21:17'),
+('d6cead6b-c4c5-41e3-8c6d-08a6463e06cd', 'Dang Xuan', 'xuan156@gmail.com', 'xuan156', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 9, 1, 0, NULL, 'STUDENT', '2026-06-05 11:23:34', '2026-06-05 11:23:34'),
+('c9938143-0146-4b42-93c2-7c722094125d', 'Dang Binh', 'binh536@gmail.com', 'binh536', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 315, 8, 0, NULL, 'STUDENT', '2026-07-01 00:40:24', '2026-07-01 00:40:24'),
+('6e2e0e4a-00e9-4fa7-8d6d-8b36bdf97aaa', 'Ngo An', 'an913@gmail.com', 'an913', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 998, 13, 0, NULL, 'STUDENT', '2026-06-03 02:44:20', '2026-06-03 02:44:20'),
+('7754d6a3-1ee0-401b-9113-83cff3756c6e', 'Le Sang', 'sang906@gmail.com', 'sang906', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 975, 7, 0, NULL, 'STUDENT', '2026-07-07 09:27:22', '2026-07-07 09:27:22'),
+('e1221020-df5a-4872-95fe-e95864fb8316', 'Bui Cuong', 'cuong989@gmail.com', 'cuong989', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 301, 15, 0, NULL, 'STUDENT', '2026-06-12 10:27:23', '2026-06-12 10:27:23'),
+('78463288-91d4-4aec-839b-b3817d1d4bf1', 'Tran Khoa', 'khoa881@gmail.com', 'khoa881', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 75, 0, 0, NULL, 'STUDENT', '2026-06-08 13:45:42', '2026-06-08 13:45:42'),
+('cf585828-9cf7-4255-b395-996a6ea68c60', 'Huynh Anh', 'anh873@gmail.com', 'anh873', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 15, 'FREE', 250, 2, 0, NULL, 'STUDENT', '2026-06-30 21:33:15', '2026-06-30 21:33:15'),
+('b4a081c2-99e2-4f1c-9091-f3ae091a2974', 'Nguyen Vinh', 'vinh271@gmail.com', 'vinh271', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 17, 'FREE', 180, 23, 0, NULL, 'STUDENT', '2026-07-18 15:27:30', '2026-07-18 15:27:30'),
+('eee3bc5b-3915-4760-b0a2-d4fcef02155b', 'Duong Hung', 'hung751@gmail.com', 'hung751', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 966, 14, 0, NULL, 'STUDENT', '2026-06-21 12:17:18', '2026-06-21 12:17:18'),
+('62648e16-696c-46c3-9aa4-d23cbe600b88', 'Bui Hoa', 'hoa206@gmail.com', 'hoa206', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 905, 13, 0, NULL, 'STUDENT', '2026-07-03 02:45:23', '2026-07-03 02:45:23'),
+('8c4c607e-1392-49fd-a438-b0bf6669d90a', 'Do Xuan', 'xuan688@gmail.com', 'xuan688', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 14, 'FREE', 935, 20, 0, NULL, 'STUDENT', '2026-07-16 06:45:29', '2026-07-16 06:45:29'),
+('d80bc488-1386-4bd8-9767-390e4514c0a4', 'Hoang Phong', 'phong424@gmail.com', 'phong424', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 317, 18, 0, NULL, 'STUDENT', '2026-06-26 13:47:23', '2026-06-26 13:47:23'),
+('ff61351b-64ba-4a86-878d-2bac0c492908', 'Ho Dung', 'dung465@gmail.com', 'dung465', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 322, 25, 0, NULL, 'STUDENT', '2026-07-02 20:05:12', '2026-07-02 20:05:12'),
+('89a42c8b-2dfe-415f-8c35-99bf9d635062', 'Bui Khoa', 'khoa971@gmail.com', 'khoa971', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 856, 5, 0, NULL, 'STUDENT', '2026-06-04 21:14:01', '2026-06-04 21:14:01');

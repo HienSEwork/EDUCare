@@ -1,56 +1,96 @@
 import { Link } from "react-router-dom";
+import { Globe, MessageCircle, Send, Share2, Video } from "lucide-react";
+import imgLogo from "@/assets/home/Logo.png";
 
 const footerGroups = {
-  content: [
-    { label: "Khóa học", to: "/courses" },
-    { label: "Bài viết", to: "/blog" },
-    { label: "Trò chơi", to: "/games" },
+  explore: [
+    { label: "Tất cả khóa học", to: "/courses" },
+    { label: "Chủ đề", to: "/courses" },
+    { label: "Kỹ năng", to: "/courses" },
+    { label: "Blog", to: "/blog" },
   ],
   community: [
     { label: "Thảo luận", to: "/community" },
-    { label: "Nhóm chat", to: "/community/chat" },
-    { label: "Bảng xếp hạng", to: "/community/leaderboard" },
+    { label: "Sự kiện", to: "/community" },
+    { label: "Thành viên nổi bật", to: "/community/leaderboard" },
   ],
-  company: [
-    { label: "Giới thiệu", to: "/about" },
+  support: [
+    { label: "Trung tâm trợ giúp", to: "/about" },
     { label: "Liên hệ", to: "/contact" },
+    { label: "Điều khoản sử dụng", to: "/about" },
+    { label: "Chính sách bảo mật", to: "/about" },
   ],
 } as const;
 
 export default function Footer() {
   return (
-    <footer id="contact-footer" className="mt-20 border-t border-gray-100 bg-slate-50 py-16 text-gray-600">
+    <footer id="contact-footer" className="border-t border-indigo-900/60 bg-[#07041a] py-16 text-indigo-200/80">
       <div className="container mx-auto px-4">
-        <div className="grid gap-10 lg:grid-cols-[1.5fr_0.8fr_0.8fr_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_1.2fr]">
+
+          {/* Column 1: Brand & Social */}
           <div>
-            <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-pink-600">EDUcare</p>
-            <h3 className="font-heading text-2xl font-extrabold text-gray-900 leading-tight">
-              Đồng hành cùng tuổi teen theo cách gần gũi hơn.
-            </h3>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-gray-500">
-              Nơi bạn có thể học, đọc, chơi và trò chuyện trong một không gian nhẹ nhàng, an toàn và dễ quay lại mỗi ngày.
+            <div className="flex items-center gap-3 mb-4">
+              <img
+                src={imgLogo}
+                alt="EDUcare Logo"
+                className="h-11 w-11 shrink-0 rounded-full object-cover shadow-md border border-amber-300/80"
+              />
+              <span className="font-heading text-2xl font-extrabold text-white tracking-wide">
+                EDUcare ✨
+              </span>
+            </div>
+            <p className="max-w-xs text-xs leading-relaxed text-indigo-200/70 mb-5">
+              Nền tảng học tập & phát triển toàn diện cho thế hệ trẻ Việt Nam.
             </p>
-          </div>
 
-          <FooterColumn title="Nội dung" items={footerGroups.content} />
-          <FooterColumn title="Cộng đồng" items={footerGroups.community} />
-
-          <div className="rounded-3xl border border-pink-100/80 bg-white p-6 shadow-sm">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-pink-600">Liên hệ</p>
-            <p className="mt-4 text-sm font-bold text-gray-700">hello@educare.vn</p>
-            <p className="mt-1 text-sm font-bold text-gray-700">1900 6868</p>
-            <div className="mt-5 space-y-2 border-t border-gray-100 pt-4">
-              {footerGroups.company.map((item) => (
-                <Link key={item.to} to={item.to} className="block text-sm font-bold text-gray-700 transition-colors hover:text-pink-600">
-                  {item.label}
-                </Link>
+            {/* Social icons (Monochrome Outline Icons) */}
+            <div className="flex items-center gap-3">
+              {[
+                { label: "FB", Icon: Globe },
+                { label: "TT", Icon: Share2 },
+                { label: "YT", Icon: Video },
+                { label: "IG", Icon: MessageCircle },
+              ].map((s) => (
+                <a
+                  key={s.label}
+                  href="#"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-950/80 border border-indigo-400/30 text-indigo-200 transition-all hover:bg-indigo-600 hover:border-cyan-300 hover:text-white hover:scale-110"
+                >
+                  <s.Icon className="h-4 w-4 stroke-[2]" />
+                </a>
               ))}
             </div>
           </div>
+
+          {/* Navigation Link Columns */}
+          <FooterColumn title="Khám phá" items={footerGroups.explore} />
+          <FooterColumn title="Cộng đồng" items={footerGroups.community} />
+          <FooterColumn title="Hỗ trợ" items={footerGroups.support} />
+
+          {/* Newsletter Box */}
+          <div className="magic-card rounded-3xl p-5 border border-indigo-400/30">
+            <p className="text-xs font-heading font-extrabold uppercase tracking-widest text-amber-300 mb-2">Nhận bản tin ✨</p>
+            <p className="text-xs text-indigo-200/70 mb-4">Cập nhật khóa học mới và ưu đãi hấp dẫn mỗi tuần.</p>
+
+            <form onSubmit={(e) => e.preventDefault()} className="relative">
+              <input
+                type="email"
+                placeholder="Email của bạn"
+                className="w-full rounded-2xl bg-indigo-950/90 border border-indigo-400/40 px-4 py-2.5 text-xs text-white placeholder-indigo-300/50 focus:border-amber-300 focus:outline-none pr-10"
+              />
+              <button
+                type="submit"
+                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 font-bold shadow-md hover:scale-105"
+              >
+                <Send className="h-3.5 w-3.5" />
+              </button>
+            </form>
+          </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-gray-200 pt-6 text-xs text-gray-400 md:flex-row md:items-center md:justify-between">
-          <p>© 2026 EDUcare. Thiết kế để đồng hành cùng hành trình lớn lên lành mạnh hơn.</p>
+        <div className="mt-12 flex flex-col gap-4 border-t border-indigo-900/50 pt-6 text-xs text-indigo-300/50 md:flex-row md:items-center md:justify-between">
+          <p>© 2026 EDUcare. Tất cả quyền được bảo lưu.</p>
           <p className="max-w-md md:text-right">
             Khi cần hỗ trợ khẩn cấp, hãy tìm đến người lớn đáng tin cậy hoặc kênh hỗ trợ phù hợp gần bạn.
           </p>
@@ -69,10 +109,10 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h4 className="font-heading text-base font-extrabold text-gray-900">{title}</h4>
-      <div className="mt-4 space-y-3">
+      <h4 className="font-heading text-sm font-extrabold text-white mb-3">{title}</h4>
+      <div className="space-y-2.5">
         {items.map((item) => (
-          <Link key={item.to} to={item.to} className="block text-sm text-gray-500 transition-colors hover:text-pink-600">
+          <Link key={item.label} to={item.to} className="block text-xs font-heading text-indigo-200/70 transition-colors hover:text-cyan-300">
             {item.label}
           </Link>
         ))}

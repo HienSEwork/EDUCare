@@ -66,9 +66,9 @@ function AppShell() {
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col w-full max-w-full overflow-x-hidden">
       {isAdminRoute ? null : <Navbar />}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

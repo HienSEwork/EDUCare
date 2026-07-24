@@ -78,30 +78,49 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen pb-16 pt-8">
-      <div className="container mx-auto px-4">
-        <section className="rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,230,240,0.88)_0%,rgba(246,241,255,0.96)_48%,rgba(227,245,255,0.88)_100%)] p-6 shadow-card md:p-8">
+      {/* Full Width Hero Banner - Nền Glass, không bọc border */}
+      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
+        {/* Ambient Glows */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
+          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(420px,0.9fr)] lg:items-center lg:gap-10">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-[640px]">
-              <span className="inline-flex rounded-full bg-white/88 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary shadow-soft">
+              <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300">
                 {BLOG_PAGE_COPY.eyebrow}
               </span>
-              <h1 className="mt-5 font-heading text-4xl font-bold leading-[1.04] tracking-[-0.03em] md:text-[4.25rem]">
+              <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white">
                 <span className="block">{BLOG_PAGE_COPY.titleLine1}</span>
-                <span className="mt-1 block">{BLOG_PAGE_COPY.titleLine2}</span>
+                <span className="mt-1 block text-amber-300">{BLOG_PAGE_COPY.titleLine2}</span>
               </h1>
-              <p className="mt-5 max-w-[600px] text-base leading-7 text-foreground/74 md:text-lg">
+              <p className="mt-4 max-w-[600px] text-base leading-relaxed text-indigo-100/80 md:text-lg">
                 {BLOG_PAGE_COPY.description}
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              {/* Dynamic Statistics Querying Real Data */}
+              <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-indigo-400/20 pt-4 mb-6">
+                <div>
+                  <div className="text-xl font-extrabold text-amber-300 md:text-2xl">{posts.length}</div>
+                  <div className="text-xs text-indigo-200/70 font-semibold">Bài viết chia sẻ</div>
+                </div>
+                <div>
+                  <div className="text-xl font-extrabold text-white md:text-2xl">{Math.max(1, categories.length - 1)}</div>
+                  <div className="text-xs text-indigo-200/70 font-semibold">Chủ đề bài viết</div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2.5">
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                    className={`rounded-full px-4 py-2 text-xs font-extrabold transition-all ${
                       selectedCategory === category
-                        ? "bg-foreground text-background"
-                        : "bg-white/82 text-foreground/78 shadow-soft hover:text-foreground"
+                        ? "bg-amber-300 text-slate-950 shadow-md scale-105"
+                        : "bg-indigo-900/50 border border-indigo-400/30 text-indigo-200 hover:text-white hover:bg-indigo-800/60"
                     }`}
                   >
                     {category}
@@ -111,19 +130,22 @@ export default function BlogPage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.08 }}
-              className="overflow-hidden rounded-[2rem] border border-white/70 bg-white/72 p-6 shadow-soft lg:ml-auto lg:w-full lg:max-w-[620px]"
+              className="flex items-center justify-center lg:ml-auto lg:w-full lg:max-w-[620px]"
             >
               <img
                 src={heroIllustration}
                 alt={BLOG_PAGE_COPY.imageAlt}
-                className="mx-auto max-h-[340px] w-full object-contain"
+                className="mx-auto max-h-[340px] w-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)]"
               />
             </motion.div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4">
 
         {error ? <div className="mt-6 rounded-2xl bg-destructive/10 p-4 text-sm text-destructive">{error}</div> : null}
 

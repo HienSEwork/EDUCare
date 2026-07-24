@@ -40,15 +40,14 @@ const AUTH_HEADER_SHELL_WIDTH = "max-w-[780px]";
 
 const navGroups = [
   { label: NAV_COPY.home, to: "/" },
-  { label: NAV_COPY.blog, items: [{ label: NAV_COPY.blogPosts, to: "/blog" }, { label: NAV_COPY.courses, to: "/courses" }, { label: "Thư viện Video 🎬", to: "/videos" }] },
-  { label: "Nâng cấp VIP 💎", to: "/pricing" },
+  { label: NAV_COPY.blog, items: [{ label: NAV_COPY.blogPosts, to: "/blog" }, { label: NAV_COPY.courses, to: "/courses" }, { label: "Thư viện Video", to: "/videos" }] },
+  { label: "Nâng cấp VIP", to: "/pricing" },
   {
     label: NAV_COPY.community,
     items: [
       { label: NAV_COPY.games, to: "/games" },
       { label: NAV_COPY.leaderboard, to: "/community/leaderboard" },
       { label: NAV_COPY.discussion, to: "/community" },
-      { label: NAV_COPY.chat, to: "/community/chat" },
     ],
   },
   {
@@ -151,7 +150,7 @@ export default function Navbar() {
       <div
         data-ui="floating-header-shell"
         className={cn(
-          "mx-auto flex w-full items-center rounded-full border border-sky-200/40 bg-[linear-gradient(135deg,rgba(186,230,253,0.18)_0%,rgba(224,242,254,0.22)_52%,rgba(186,230,253,0.16)_100%)] px-4 shadow-[0_8px_32px_rgba(14,116,144,0.08)] backdrop-blur-md lg:px-5",
+          "mx-auto flex w-full items-center rounded-full border border-indigo-400/30 bg-[#161038]/85 px-4 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl lg:px-5",
           DEFAULT_HEADER_SHELL_WIDTH,
         )}
       >
@@ -160,17 +159,20 @@ export default function Navbar() {
             <Link
               to="/"
               aria-label="EDUcare — Giáo dục giới tính"
-              className="group inline-flex items-center rounded-full border border-pink-200/60 bg-white/90 p-1.5 shadow-[0_6px_20px_rgba(244,63,94,0.10)] backdrop-blur-sm transition-transform hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2.5 rounded-full border border-indigo-300/40 bg-[#251a59]/90 p-1.5 pr-4 shadow-[0_6px_20px_rgba(129,140,248,0.25)] backdrop-blur-md transition-all hover:scale-105"
             >
               <img
                 src={imgLogo}
                 alt="EDUcare Logo"
-                className="h-11 w-11 shrink-0 rounded-full object-cover shadow-sm border border-pink-100/90 contrast-[1.12] saturate-[1.3]"
+                className="h-11 w-11 shrink-0 rounded-full object-cover shadow-sm border border-amber-300/60 contrast-[1.12] saturate-[1.3]"
               />
+              <span className="font-heading text-lg font-bold tracking-wide text-white group-hover:text-amber-300 transition-colors">
+                EDUcare
+              </span>
             </Link>
           </div>
 
-          <div className="hidden flex-1 items-center justify-center gap-0.5 pr-8 lg:flex xl:pr-10">
+          <div className="hidden flex-1 items-center justify-center gap-1 pr-6 lg:flex xl:pr-8">
             {navGroups.map((group) =>
               "items" in group ? (
                 <div
@@ -195,8 +197,8 @@ export default function Navbar() {
                       setOpenDropdown((current) => (current === group.label ? null : group.label));
                     }}
                     className={cn(
-                      "flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-bold uppercase tracking-wider transition-colors",
-                      openDropdown === group.label ? "text-foreground" : "text-foreground/75 hover:text-foreground",
+                      "flex items-center gap-1 rounded-full px-4 py-2 font-heading text-[14px] font-semibold tracking-wide transition-colors",
+                      openDropdown === group.label ? "text-amber-300 bg-white/10" : "text-indigo-100/90 hover:text-white hover:bg-white/10",
                     )}
                   >
                     {group.label}
@@ -204,14 +206,14 @@ export default function Navbar() {
                   </button>
 
                   {openDropdown === group.label ? (
-                    <div className="absolute left-0 top-full z-20 mt-3 min-w-[220px] rounded-[1.2rem] border border-sky-100/70 bg-[linear-gradient(150deg,rgba(240,249,255,0.98)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.98)_100%)] p-2.5 shadow-[0_20px_60px_rgba(14,116,144,0.14)] backdrop-blur-md">
+                    <div className="absolute left-0 top-full z-20 mt-3 min-w-[220px] rounded-[1.2rem] border border-indigo-400/40 bg-[#1a1344]/95 p-2.5 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
                       {group.items.map((item) => (
                         <Link
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "block rounded-[0.9rem] px-4 py-3 text-[15px] transition-colors hover:bg-white/55",
-                            location.pathname === item.to ? "bg-white/65 font-semibold text-foreground" : "text-muted-foreground",
+                            "block rounded-[0.9rem] px-4 py-2.5 font-heading text-[14px] font-semibold transition-colors hover:bg-indigo-500/30 hover:text-amber-300",
+                            location.pathname === item.to ? "bg-indigo-600/40 text-amber-300 font-bold" : "text-indigo-100/80",
                           )}
                           onClick={() => setOpenDropdown(null)}
                         >
@@ -226,8 +228,8 @@ export default function Navbar() {
                   key={group.to}
                   to={group.to}
                   className={cn(
-                    "rounded-full px-4 py-2 text-[13px] font-bold uppercase tracking-wider transition-colors",
-                    location.pathname === group.to ? "text-foreground" : "text-foreground/75 hover:text-foreground",
+                    "rounded-full px-4 py-2 font-heading text-[14px] font-semibold tracking-wide transition-colors",
+                    location.pathname === group.to ? "text-amber-300 bg-white/10 font-bold" : "text-indigo-100/90 hover:text-white hover:bg-white/10",
                   )}
                 >
                   {group.label}
@@ -243,12 +245,12 @@ export default function Navbar() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button
-                        className="relative rounded-xl p-2 transition-colors hover:bg-white/55"
+                        className="relative rounded-xl p-2 text-indigo-200 transition-colors hover:bg-white/15 hover:text-white"
                         title={NAV_COPY.notifications}
                       >
-                        <Bell className="h-5 w-5 text-muted-foreground" />
+                        <Bell className="h-5 w-5" />
                         {notificationCount > 0 ? (
-                          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-pink px-1 text-[10px] font-semibold text-white">
+                          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-pink-500 px-1 text-[10px] font-bold text-white shadow-md">
                             {notificationCount > 9 ? "9+" : notificationCount}
                           </span>
                         ) : null}
@@ -403,7 +405,7 @@ export default function Navbar() {
             ) : (
               <div className="hidden items-center sm:flex">
                 <Link to="/login">
-                  <Button variant="ghost" size="sm" className="h-9 rounded-xl px-4 text-sm font-semibold">
+                  <Button size="sm" className="magic-btn-primary h-10 rounded-full px-6 text-sm font-extrabold shadow-[0_4px_16px_rgba(245,158,11,0.4)]">
                     {NAV_COPY.login}
                   </Button>
                 </Link>
