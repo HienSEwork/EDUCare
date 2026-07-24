@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ExternalLink, PlayCircle
 import { toast } from "sonner";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import type { Lesson, MicroLesson, MicroLessonBlock, User } from "@/types/api";
 import { Button } from "@/components/ui/button";
@@ -1147,6 +1148,7 @@ export default function LessonPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, completeLesson, syncUser } = useAuth();
+  const { theme } = useTheme();
 
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [lesson, setLesson] = useState<Lesson | null>(null);
@@ -1380,9 +1382,10 @@ export default function LessonPage() {
         : `#${lesson.courseColorTheme}`
       : "#7C3AED";
 
-  const accentStrong = mix(courseHex, "#000000", 0.35);
-  const accentSoft = mix(courseHex, "#ffffff", 0.82);
-  const accentBorder = mix(courseHex, "#ffffff", 0.55);
+  const isDark = theme === "dark";
+  const accentStrong = isDark ? mix(courseHex, "#ffffff", 0.35) : mix(courseHex, "#000000", 0.35);
+  const accentSoft = isDark ? mix(courseHex, "#120c34", 0.82) : mix(courseHex, "#ffffff", 0.82);
+  const accentBorder = isDark ? mix(courseHex, "#1c144e", 0.55) : mix(courseHex, "#ffffff", 0.55);
 
   const renderCompletedSummary = () => {
     return (
@@ -1661,7 +1664,10 @@ export default function LessonPage() {
               </div>
 
               {isAssessment && (!activeMicro.completed || replayMode) && !testGameOver && (
-                <div className="mt-4 flex items-center justify-between p-4 rounded-[1.2rem] bg-background/60 border border-white/80 shadow-soft">
+                <div
+                  className="mt-4 flex items-center justify-between p-4 rounded-[1.2rem] bg-background/60 border shadow-soft transition-[border-color] duration-300"
+                  style={{ borderColor: accentBorder }}
+                >
                   <span className="text-sm font-bold text-foreground/75 flex items-center gap-1.5">
                     🎮 Thử thách sinh tồn (Đồng bộ 3 mạng):
                   </span>
@@ -1723,7 +1729,10 @@ export default function LessonPage() {
                             </div>
                           </div>
 
-                          <div className="rounded-[1.8rem] border border-white/70 bg-card/90 p-5 shadow-card">
+                          <div
+                            className="rounded-[1.8rem] border bg-card/90 p-5 shadow-card transition-[border-color] duration-300"
+                            style={{ borderColor: accentBorder }}
+                          >
                             <p
                               className="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
                               style={{ backgroundColor: accentSoft, color: accentStrong }}
@@ -1839,8 +1848,8 @@ export default function LessonPage() {
 
                   if (isLocked) {
                     buttonStyle = {
-                      backgroundColor: "rgba(243, 244, 246, 0.5)",
-                      border: "1px dashed rgba(156, 163, 175, 0.5)",
+                      backgroundColor: isDark ? "rgba(18, 12, 52, 0.35)" : "rgba(243, 244, 246, 0.5)",
+                      border: isDark ? "1px dashed rgba(255, 255, 255, 0.15)" : "1px dashed rgba(156, 163, 175, 0.5)",
                       cursor: "not-allowed",
                       opacity: 0.7,
                     };
@@ -1848,16 +1857,16 @@ export default function LessonPage() {
                   } else if (isAssessment) {
                     if (isActive) {
                       buttonStyle = {
-                        background: `linear-gradient(135deg, ${accentStrong}, ${mix(accentStrong, "#000000", 0.2)})`,
+                        background: `linear-gradient(135deg, ${accentStrong}, ${mix(accentStrong, isDark ? "#ffffff" : "#000000", 0.2)})`,
                         border: "2px solid #F59E0B",
                         boxShadow: "0 0 12px rgba(245, 158, 11, 0.35)",
                         color: "white",
                       };
                     } else {
                       buttonStyle = {
-                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        backgroundColor: isDark ? "rgba(18, 12, 52, 0.65)" : "rgba(255, 255, 255, 0.95)",
                         border: `2px dashed ${accentBorder}`,
-                        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.04)",
+                        boxShadow: isDark ? "none" : "0 4px 10px rgba(0, 0, 0, 0.04)",
                         color: "inherit",
                       };
                     }
@@ -1866,12 +1875,13 @@ export default function LessonPage() {
                       buttonStyle = {
                         backgroundColor: accentSoft,
                         border: `1px solid ${accentBorder}`,
-                        color: "inherit",
+                        color: accentStrong,
+                        fontWeight: "bold",
                       };
                     } else {
                       buttonStyle = {
-                        backgroundColor: "rgba(255,255,255,0.72)",
-                        border: "1px solid rgba(255,255,255,0.65)",
+                        backgroundColor: isDark ? "rgba(18, 12, 52, 0.65)" : "rgba(255,255,255,0.72)",
+                        border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(255,255,255,0.65)",
                         color: "inherit",
                       };
                     }

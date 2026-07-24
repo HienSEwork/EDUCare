@@ -206,13 +206,13 @@ export default function CoursesPage() {
                   <div className="text-xs text-indigo-200/70 mt-0.5 font-semibold">Chủ đề bài học</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-white md:text-3xl">
+                  <div className="text-2xl font-extrabold text-slate-100 md:text-3xl">
                     {courses.reduce((sum, c) => sum + (c.lessons?.length || 1), 0)}+
                   </div>
                   <div className="text-xs text-indigo-200/70 mt-0.5 font-semibold">Bài học thực tế</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-white md:text-3xl">
+                  <div className="text-2xl font-extrabold text-slate-100 md:text-3xl">
                     {courses.length > 0 ? courses.length : 0}
                   </div>
                   <div className="text-xs text-indigo-200/70 mt-0.5 font-semibold">Khóa học sẵn có</div>
@@ -233,24 +233,24 @@ export default function CoursesPage() {
               
               {/* Card 1: Góc Tuổi Dậy Thì */}
               <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+                initial={{ x: -20, y: 20, opacity: 0 }}
+                animate={{ x: 0, y: 0, opacity: 1 }}
                 transition={{ delay: 0.1, duration: 0.6 }}
-                className="absolute z-20 w-[240px] rounded-2xl border border-indigo-400/30 bg-indigo-950/80 backdrop-blur-md p-4 shadow-2xl hover:scale-105 transition-all duration-300"
+                className="absolute z-20 w-[240px] rounded-2xl border border-indigo-400/30 bg-indigo-950/80 backdrop-blur-md p-4 shadow-2xl transition-colors duration-300 will-change-transform"
               >
                 <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 border border-white/20">
-                    <Compass className="h-5 w-5 text-white" />
+                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50/50 dark:bg-white/10 border border-indigo-100 dark:border-white/20">
+                    <Compass className="h-5 w-5 text-slate-100" />
                   </span>
                   <div>
-                    <h4 className="font-bold text-[10px] text-amber-300 uppercase tracking-wider">Chủ đề tiêu điểm</h4>
-                    <h3 className="font-bold text-sm text-white">Góc Tuổi Dậy Thì</h3>
+                    <h4 className="font-bold text-[10px] text-amber-500 dark:text-amber-300 uppercase tracking-wider">Chủ đề tiêu điểm</h4>
+                    <h3 className="font-bold text-sm text-slate-100">Góc Tuổi Dậy Thì</h3>
                   </div>
                 </div>
                 <p className="mt-2 text-[11px] text-indigo-200/80">Hiểu rõ sự phát triển cơ thể và tâm sinh lý tự nhiên.</p>
                 <div className="mt-3 flex gap-1.5">
-                  <span className="rounded-full bg-white/10 border border-white/20 px-2 py-0.5 text-[9px] font-semibold text-white">Tuổi Teen</span>
-                  <span className="rounded-full bg-white/10 border border-white/20 px-2 py-0.5 text-[9px] font-semibold text-white">Tự Tin</span>
+                  <span className="rounded-full bg-indigo-50/50 dark:bg-white/10 border border-indigo-100 dark:border-white/20 px-2 py-0.5 text-[9px] font-semibold text-slate-100">Tuổi Teen</span>
+                  <span className="rounded-full bg-indigo-50/50 dark:bg-white/10 border border-indigo-100 dark:border-white/20 px-2 py-0.5 text-[9px] font-semibold text-slate-100">Tự Tin</span>
                 </div>
               </motion.div>
 
@@ -259,13 +259,14 @@ export default function CoursesPage() {
                 initial={{ x: -30, y: -20, opacity: 0, rotate: -6 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotate: -6 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="absolute z-10 left-2 top-12 w-[180px] rounded-xl border border-indigo-400/30 bg-indigo-900/70 backdrop-blur-md p-3 shadow-xl hover:rotate-0 hover:z-30 transition-all duration-300 cursor-pointer"
+                whileHover={{ rotate: 0, zIndex: 30 }}
+                className="absolute z-10 left-2 top-12 w-[180px] rounded-xl border border-indigo-400/30 bg-indigo-900/70 backdrop-blur-md p-3 shadow-xl transition-colors duration-300 cursor-pointer will-change-transform"
               >
                 <div className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 border border-white/20">
-                    <ShieldCheck className="h-4 w-4 text-white" />
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50/50 dark:bg-white/10 border border-indigo-100 dark:border-white/20">
+                    <ShieldCheck className="h-4 w-4 text-slate-100" />
                   </span>
-                  <span className="font-bold text-xs text-white">Đồng thuận F.R.I.E.S</span>
+                  <span className="font-bold text-xs text-slate-100">Đồng thuận F.R.I.E.S</span>
                 </div>
                 <p className="mt-1.5 text-[10px] text-indigo-200/70">Tự nguyện, linh hoạt và tôn trọng ranh giới cơ thể.</p>
               </motion.div>
@@ -275,13 +276,14 @@ export default function CoursesPage() {
                 initial={{ x: 30, y: 30, opacity: 0, rotate: 8 }}
                 animate={{ x: 0, y: 0, opacity: 1, rotate: 8 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="absolute z-10 right-2 bottom-12 w-[180px] rounded-xl border border-indigo-400/30 bg-indigo-900/70 backdrop-blur-md p-3 shadow-xl hover:rotate-0 hover:z-30 transition-all duration-300 cursor-pointer"
+                whileHover={{ rotate: 0, zIndex: 30 }}
+                className="absolute z-10 right-2 bottom-12 w-[180px] rounded-xl border border-indigo-400/30 bg-indigo-900/70 backdrop-blur-md p-3 shadow-xl transition-colors duration-300 cursor-pointer will-change-transform"
               >
                 <div className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 border border-white/20">
-                    <Heart className="h-4 w-4 text-white" />
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50/50 dark:bg-white/10 border border-indigo-100 dark:border-white/20">
+                    <Heart className="h-4 w-4 text-slate-100" />
                   </span>
-                  <span className="font-bold text-xs text-white">Yêu lành mạnh</span>
+                  <span className="font-bold text-xs text-slate-100">Yêu lành mạnh</span>
                 </div>
                 <p className="mt-1.5 text-[10px] text-indigo-200/70">Học cách chia sẻ, đặt giới hạn an toàn trên MXH.</p>
               </motion.div>
@@ -291,10 +293,11 @@ export default function CoursesPage() {
                 initial={{ y: 40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="absolute z-30 left-6 bottom-4 rounded-full border border-indigo-400/40 bg-indigo-950/90 px-3.5 py-1.5 shadow-2xl flex items-center gap-2 hover:scale-105 transition-all duration-300 pointer-events-auto"
+                whileHover={{ scale: 1.05 }}
+                className="absolute z-30 left-6 bottom-4 rounded-full border border-indigo-400/40 bg-indigo-950/90 px-3.5 py-1.5 shadow-2xl flex items-center gap-2 transition-colors duration-300 pointer-events-auto will-change-transform"
               >
-                <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-                <span className="text-[10px] font-bold text-white">Trò chơi tình huống thực tế</span>
+                <span className="h-2 w-2 rounded-full bg-indigo-200 animate-pulse" />
+                <span className="text-[10px] font-bold text-slate-100">Trò chơi tình huống thực tế</span>
               </motion.div>
             </motion.div>
           </div>
@@ -376,7 +379,7 @@ export default function CoursesPage() {
               <div className="flex flex-1 flex-wrap gap-3 items-center">
                 {/* Search Input */}
                 <div className="relative flex-1 min-w-[220px]">
-                  <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-indigo-300" />
+                  <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-indigo-200" />
                   <input
                     type="text"
                     placeholder="Tìm kiếm tên hoặc nội dung khóa học..."
@@ -387,7 +390,7 @@ export default function CoursesPage() {
                         handleSearchSubmit(searchQuery);
                       }
                     }}
-                    className="h-11 w-full rounded-xl border border-indigo-400/30 bg-indigo-900/50 pl-10 pr-10 text-sm text-white placeholder:text-indigo-300/40 shadow-inner outline-none focus:border-amber-300 transition-all"
+                    className="h-11 w-full rounded-xl border border-indigo-400/30 bg-indigo-900/50 pl-10 pr-10 text-sm text-slate-100 placeholder:text-slate-400 dark:placeholder:text-indigo-300/40 shadow-inner outline-none focus:border-amber-300 transition-all"
                   />
                   {searchQuery && (
                     <button
@@ -395,7 +398,7 @@ export default function CoursesPage() {
                         setSearchQuery("");
                         setSearchTerm("");
                       }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-indigo-300 hover:text-white transition-all"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-indigo-200 hover:text-white transition-all"
                       title="Xóa tìm kiếm"
                     >
                       <X className="h-4 w-4" />
@@ -408,13 +411,13 @@ export default function CoursesPage() {
                   <select
                     value={selectedSort}
                     onChange={(e) => setSelectedSort(e.target.value)}
-                    className="h-11 rounded-xl border border-indigo-400/30 bg-indigo-900/50 pl-3 pr-8 py-2 text-sm text-white shadow-inner outline-none appearance-none cursor-pointer focus:border-amber-300 font-semibold"
+                    className="h-11 rounded-xl border border-indigo-400/30 bg-indigo-900/50 pl-3 pr-8 py-2 text-sm text-slate-100 shadow-inner outline-none appearance-none cursor-pointer focus:border-amber-300 font-semibold"
                   >
-                    <option value="newest" className="bg-indigo-950 text-white">Mới nhất</option>
-                    <option value="oldest" className="bg-indigo-950 text-white">Cũ nhất</option>
-                    <option value="alphabetical" className="bg-indigo-950 text-white">Tên (A-Z)</option>
+                    <option value="newest" className="bg-indigo-950 text-slate-100">Mới nhất</option>
+                    <option value="oldest" className="bg-indigo-950 text-slate-100">Cũ nhất</option>
+                    <option value="alphabetical" className="bg-indigo-950 text-slate-100">Tên (A-Z)</option>
                   </select>
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-300">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-200">
                     <Filter className="h-3.5 w-3.5" />
                   </span>
                 </div>
@@ -431,18 +434,18 @@ export default function CoursesPage() {
 
               {/* Right actions */}
               <div className="flex items-center justify-between md:justify-end gap-3 border-t md:border-t-0 pt-3 md:pt-0 border-indigo-400/20">
-                <span className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-900/60 border border-indigo-400/30 px-3.5 py-2 text-xs font-bold text-white">
-                  <BookOpen className="h-3.5 w-3.5 text-white" />
+                <span className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-900/60 border border-indigo-400/30 px-3.5 py-2 text-xs font-bold text-slate-100">
+                  <BookOpen className="h-3.5 w-3.5 text-slate-100" />
                   {sortedCourses.length} khóa học
                 </span>
 
                 <Button
                   onClick={() => navigate("/dashboard")}
                   variant="outline"
-                  className="h-11 rounded-xl px-4 flex items-center gap-2 border-indigo-400/30 bg-indigo-900/40 text-white hover:bg-indigo-800/60 transition-all"
+                  className="h-11 rounded-xl px-4 flex items-center gap-2 border-indigo-400/30 bg-indigo-900/40 text-slate-100 hover:bg-indigo-800/60 transition-all"
                 >
-                  <GraduationCap className="h-4 w-4 text-white" />
-                  <span className="font-bold text-xs md:text-sm text-white">Khóa học của tôi</span>
+                  <GraduationCap className="h-4 w-4 text-slate-100" />
+                  <span className="font-bold text-xs md:text-sm text-slate-100">Khóa học của tôi</span>
                 </Button>
               </div>
             </div>

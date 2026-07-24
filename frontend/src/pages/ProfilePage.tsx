@@ -87,7 +87,7 @@ export default function ProfilePage() {
               <div className="surface-panel rounded-[2rem] p-6">
                 <div className="flex flex-col items-center text-center">
                   <Avatar className="h-28 w-28 border-4 border-white/70 shadow-card">
-                    <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.avatar || user.fullName)} text-3xl font-bold text-foreground`}>
+                    <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.avatar || user.fullName)} text-3xl font-bold text-slate-800`}>
                       {getInitials(user.fullName)}
                     </AvatarFallback>
                   </Avatar>

@@ -288,7 +288,7 @@ function ReplyNode({
     <div className={`mt-3 ${depth > 0 ? "ml-4 border-l border-lavender/30 pl-3 md:pl-4" : "border-t border-white/40 pt-4"}`}>
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-mint/25 text-xs font-bold text-mint-foreground">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-mint/25 text-xs font-bold text-emerald-700 dark:text-mint-foreground">
             {reply.anonymous ? "?" : reply.author.charAt(0)}
           </div>
           <div>
@@ -1104,7 +1104,7 @@ export default function CommunityPage() {
               {user ? (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-[2rem] border border-indigo-500/30 bg-slate-900/70 backdrop-blur-xl p-6 shadow-2xl">
                   <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-500/20 border border-cyan-400/30 font-extrabold text-cyan-300">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-500/20 border border-cyan-400/30 font-extrabold text-cyan-600 dark:text-cyan-300">
                       {anonymous ? "?" : user.fullName.charAt(0)}
                     </div>
                     <div>
@@ -1323,13 +1323,13 @@ export default function CommunityPage() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className={`detail-panel p-6 relative rounded-[2rem] shadow-soft bg-white/95 border border-white/60 hover:shadow-md transition-all ${
+                      className={`detail-panel p-6 relative rounded-[2rem] shadow-soft bg-white/95 dark:bg-slate-900/60 border border-white/60 dark:border-slate-800/60 hover:shadow-md transition-all ${
                         post.pinned ? "border-2 border-mint/45 bg-mint/5" : ""
                       }`}
                     >
                       <div className="mb-4 flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-lavender/30 font-bold text-lavender-foreground">
+                          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-lavender/30 font-bold text-indigo-600 dark:text-lavender-foreground">
                             {post.anonymous ? "?" : post.author.charAt(0)}
                           </div>
                           <div>
@@ -1468,7 +1468,7 @@ export default function CommunityPage() {
 
             {/* Sidebar */}
             <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
-              <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(135deg,rgba(255,232,241,0.96)_0%,rgba(243,240,255,0.96)_52%,rgba(231,246,255,0.96)_100%)] p-6 shadow-card">
+              <div className="overflow-hidden rounded-[2rem] border border-white/70 dark:border-indigo-400/20 bg-[linear-gradient(135deg,rgba(255,232,241,0.96)_0%,rgba(243,240,255,0.96)_52%,rgba(231,246,255,0.96)_100%)] dark:bg-[linear-gradient(135deg,rgba(18,12,52,0.85)_0%,rgba(31,22,88,0.75)_52%,rgba(15,10,48,0.85)_100%)] p-6 shadow-card">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Thống kê chuyên mục</p>
                 <div className="mt-4 space-y-2 text-sm">
                   <div className="flex justify-between py-1 border-b border-white/20">
@@ -1505,14 +1505,14 @@ export default function CommunityPage() {
               <motion.article
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className={`detail-panel p-6 rounded-[2rem] shadow-soft bg-white/95 border border-white/60 relative ${
+                className={`detail-panel p-6 rounded-[2rem] shadow-soft bg-white/95 dark:bg-slate-900/60 border border-white/60 dark:border-slate-800/60 relative ${
                   activePost.pinned ? "border-2 border-mint/45 bg-mint/5" : ""
                 }`}
               >
                 {/* Author Info */}
                 <div className="mb-4 flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-lavender/30 font-bold text-lavender-foreground">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-lavender/30 font-bold text-indigo-600 dark:text-lavender-foreground">
                       {activePost.anonymous ? "?" : activePost.author.charAt(0)}
                     </div>
                     <div>
@@ -1761,7 +1761,7 @@ export default function CommunityPage() {
                 const cat = categories.find(c => c.id === activePost.categoryId)!;
                 const colors = categoryColorMap(cat.colorTheme);
                 return (
-                  <div className={`rounded-[2rem] border p-6 shadow-card bg-white/95 ${colors.bg}`}>
+                  <div className={`rounded-[2rem] border p-6 shadow-card bg-white/95 dark:bg-slate-900/60 border-white/60 dark:border-slate-800/60 ${colors.bg}`}>
                     <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground block">
                       Thuộc chuyên mục
                     </span>
@@ -1798,7 +1798,7 @@ export default function CommunityPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-[2rem] border border-white/70 bg-[linear-gradient(135deg,rgba(255,245,245,0.98)_0%,rgba(253,250,255,0.98)_100%)] p-6 shadow-card"
+              className="w-full max-w-md rounded-[2rem] border border-white/70 dark:border-indigo-400/20 bg-[linear-gradient(135deg,rgba(255,245,245,0.98)_0%,rgba(253,250,255,0.98)_100%)] dark:bg-[linear-gradient(135deg,rgba(18,12,52,0.95)_0%,rgba(31,22,88,0.95)_100%)] p-6 shadow-card"
             >
               <div className="flex items-center gap-2 mb-4">
                 <AlertTriangle className="h-5 w-5 text-amber-500" />

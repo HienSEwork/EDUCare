@@ -318,9 +318,9 @@ export default function HomePage() {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
               {featureHighlights.map((item) => (
                 <div key={item.title} className="flex flex-col items-center text-center p-2">
-                  <item.icon className="h-8 w-8 text-slate-900 mb-2 stroke-[2]" />
-                  <p className="font-heading font-extrabold text-sm text-slate-900 leading-tight">{item.title}</p>
-                  <p className="text-xs text-slate-600 font-medium mt-0.5">{item.subtitle}</p>
+                  <item.icon className={theme === "light" ? "h-8 w-8 text-slate-800 mb-2 stroke-[2]" : "h-8 w-8 text-amber-300 mb-2 stroke-[2]"} />
+                  <p className={theme === "light" ? "font-heading font-extrabold text-sm text-slate-800 leading-tight" : "font-heading font-extrabold text-sm text-white leading-tight"}>{item.title}</p>
+                  <p className={theme === "light" ? "text-xs text-slate-500 font-medium mt-0.5" : "text-xs text-indigo-200/70 font-medium mt-0.5"}>{item.subtitle}</p>
                 </div>
               ))}
             </div>
@@ -336,7 +336,7 @@ export default function HomePage() {
         : "bounded-page-section relative order-[4] overflow-hidden border border-amber-300/10 bg-[radial-gradient(circle_at_15%_15%,rgba(245,158,11,0.1),transparent_28%),linear-gradient(180deg,#160f42_0%,#160f42_100%)] py-16 md:py-20"
       }>
         <div className={theme === "light" ? "absolute -right-24 top-10 h-64 w-64 rounded-full bg-pink-200/30 blur-3xl" : "absolute -right-24 top-10 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl"} />
-        <div className="relative px-4">
+        <div className="site-shell relative px-4">
           <div className="mb-9 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
               <div className={theme === "light"
@@ -386,7 +386,7 @@ export default function HomePage() {
                   variants={fadeUp} custom={i * 0.15}
                   initial="hidden" whileInView="show" viewport={{ once: true }}
                   whileHover={{ y: -6 }}
-                  className={`${cardStyle} group relative overflow-hidden rounded-[1.75rem] border backdrop-blur-sm transition-all duration-300`}
+                  className={`${cardStyle} group relative overflow-hidden rounded-[1.75rem] border backdrop-blur-sm transition-colors duration-300`}
                 >
                   <Link to="/courses" aria-label={`Khám phá ${card.title}`} className="flex min-h-[220px] flex-col justify-between p-5">
                     <div className="flex items-start justify-between">
@@ -429,10 +429,10 @@ export default function HomePage() {
                 key={step.title}
                 variants={fadeUp} custom={i * 0.15}
                 initial="hidden" whileInView="show" viewport={{ once: true }}
-                whileHover={{ scale: 1.06, y: -6 }}
+                whileHover={{ y: -6 }}
                 className={theme === "light"
-                  ? "magic-card relative flex flex-col items-center p-6 rounded-3xl text-center border border-pink-200 bg-white shadow-sm hover:border-pink-500 transition-all"
-                  : "magic-card relative flex flex-col items-center p-6 rounded-3xl text-center border border-indigo-400/30 hover:border-amber-300 transition-all"
+                  ? "magic-card relative flex flex-col items-center p-6 rounded-3xl text-center border border-pink-200 bg-white shadow-sm hover:border-pink-500 transition-colors duration-300 will-change-transform"
+                  : "magic-card relative flex flex-col items-center p-6 rounded-3xl text-center border border-indigo-400/30 hover:border-amber-300 transition-colors duration-300 will-change-transform"
                 }
               >
                 {/* Step badge */}
@@ -455,7 +455,7 @@ export default function HomePage() {
       ════════════════════════════════════ */}
       <section className={theme === "light" ? "bounded-page-section order-[7] border border-pink-100 bg-[#fff5f8] py-20" : "bounded-page-section order-[7] border border-indigo-900/50 bg-[#0d0828] py-20"}>
         <div className="site-shell px-4">
-          <div className="mx-auto max-w-5xl">
+          <div className="w-full">
             <div className={theme === "light" ? "magic-card rounded-[2rem] border border-pink-200 bg-white p-6 shadow-sm md:p-8" : "magic-card rounded-[2rem] p-6 md:p-8"}>
               <h3 className={theme === "light" ? "font-heading text-2xl font-extrabold text-slate-800 mb-6" : "font-heading text-2xl font-extrabold text-white mb-6"}>Cộng đồng sôi động</h3>
 
@@ -548,7 +548,7 @@ export default function HomePage() {
               <motion.div
                 key={t.name}
                 whileHover={{ y: -6 }}
-                className={theme === "light" ? "magic-card p-6 rounded-3xl flex flex-col justify-between border border-pink-200 bg-white shadow-sm" : "magic-card p-6 rounded-3xl flex flex-col justify-between border border-indigo-400/30"}
+                className={theme === "light" ? "magic-card p-6 rounded-3xl flex flex-col justify-between border border-pink-200 bg-white shadow-sm will-change-transform" : "magic-card p-6 rounded-3xl flex flex-col justify-between border border-indigo-400/30 will-change-transform"}
               >
                 <div className="flex items-center gap-3 mb-4">
                   <img src={t.avatar} alt={t.name} width={48} height={48} loading="lazy" decoding="async" className="h-12 w-12 rounded-full object-cover border-2 border-pink-300" />

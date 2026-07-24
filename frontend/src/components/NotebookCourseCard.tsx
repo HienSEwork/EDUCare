@@ -127,7 +127,7 @@ function getCourseCoverPhoto(course: Course, index: number): string {
 
 export default function NotebookCourseCard({ course, index = 0, onClick }: NotebookCourseCardProps) {
   // Determine color theme based on category so cards of the same topic have 1 consistent color
-  const categoryIdentifier = course.category?.id ?? course.categoryId ?? course.category?.slug ?? course.category?.name;
+  const categoryIdentifier = course.category?.id ?? (course as any).categoryId ?? course.category?.slug ?? course.category?.name;
   
   let themeIndex = index;
   if (categoryIdentifier !== undefined && categoryIdentifier !== null) {
@@ -150,10 +150,10 @@ export default function NotebookCourseCard({ course, index = 0, onClick }: Noteb
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ y: -8, scale: 1.02 }}
+      whileHover={{ y: -6 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
       onClick={onClick}
-      className="theme-preserve-contrast group relative flex flex-col justify-between overflow-hidden rounded-2xl p-5 shadow-[0_16px_32px_rgba(0,0,0,0.45)] border border-white/20 cursor-pointer select-none min-h-[330px]"
+      className="theme-preserve-contrast group relative flex flex-col justify-between overflow-hidden rounded-2xl p-5 shadow-[0_12px_24px_rgba(0,0,0,0.22)] border border-white/20 cursor-pointer select-none min-h-[330px] will-change-transform"
     >
       {/* Background Gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${theme.bg} z-0`} />
@@ -168,7 +168,7 @@ export default function NotebookCourseCard({ course, index = 0, onClick }: Noteb
             {/* Metal Ring */}
             <div className="h-3 w-5.5 rounded-full bg-gradient-to-r from-slate-200 via-white to-slate-400 shadow-[0_2px_4px_rgba(0,0,0,0.6)] border border-slate-400/70 transform -rotate-12" />
             {/* Punch Hole shadow */}
-            <div className="absolute left-3 h-2 w-2 rounded-full bg-black/40 blur-[0.5px]" />
+            <div className="absolute left-3 h-2 w-2 rounded-full bg-black/35" />
           </div>
         ))}
       </div>
@@ -194,18 +194,17 @@ export default function NotebookCourseCard({ course, index = 0, onClick }: Noteb
 
         {/* Center Illustration (Matching 2D/3D Cover Image Card) */}
         <div className="my-3 flex justify-center">
-          <motion.div
-            whileHover={{ scale: 1.06, rotate: 1.5 }}
-            className="relative h-28 w-full overflow-hidden rounded-xl border border-white/35 shadow-lg bg-black/30 z-10"
+          <div
+            className="relative h-36 w-full overflow-hidden rounded-xl border border-white/35 shadow-lg bg-black/30 z-10"
           >
             <img
               src={coverPhoto}
               alt={course.title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {/* Subtle Inner Lighting Glow */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-white/10 pointer-events-none" />
-          </motion.div>
+          </div>
         </div>
 
         {/* Bottom Bar: Lesson Tag + Text Badge */}

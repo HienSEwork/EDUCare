@@ -317,7 +317,7 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
                 disabled={!user || !question.trim() || isSubmitting || isAnimating}
                 whileHover={{ scale: !user || !question.trim() || isSubmitting || isAnimating ? 1 : 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="magic-btn-primary flex items-center gap-2.5 rounded-full px-7 py-3 text-sm font-extrabold disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg"
+                className="magic-btn-primary flex items-center gap-2.5 rounded-full px-7 py-3 text-sm font-extrabold disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200 shadow-lg"
               >
                 <Send className="h-4 w-4" />
                 {isAnimating ? "Đang thả thư vào hòm..." : isSubmitting ? "Đang gửi..." : "Thả thư vào Hòm Ẩn Danh 📬"}
@@ -419,7 +419,7 @@ export default function AnonymousQuestionBox({ variant = "default" }: AnonymousQ
             disabled={!user || !question.trim() || isSubmitting || isAnimating}
             whileHover={{ scale: !user || !question.trim() || isSubmitting || isAnimating ? 1 : 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="magic-btn-primary flex items-center gap-2 rounded-full px-5 py-2 text-xs font-bold text-slate-950 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="magic-btn-primary flex items-center gap-2 rounded-full px-5 py-2 text-xs font-bold text-slate-950 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
           >
             <Send className="h-3.5 w-3.5" />
             {isAnimating ? "Đang thả thư..." : isSubmitting ? ANONYMOUS_INBOX_COPY.submitting : ANONYMOUS_INBOX_COPY.submit}

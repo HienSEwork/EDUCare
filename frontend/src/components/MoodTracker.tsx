@@ -153,7 +153,7 @@ export default function MoodTracker() {
       animate={{ background: cardBg }}
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
       style={{ background: cardBg }}
-      className="relative overflow-hidden rounded-[1.75rem] p-6 lg:p-7"
+      className="relative overflow-hidden rounded-[1.75rem] p-6 lg:p-7 theme-preserve-contrast"
     >
       {/* Radial glow that shifts with mood */}
       <AnimatePresence>
@@ -238,7 +238,7 @@ export default function MoodTracker() {
               disabled={!user || isSaving}
               whileHover={{ scale: user ? 1.07 : 1, y: user ? -3 : 0 }}
               whileTap={{ scale: 0.93 }}
-              className="relative flex flex-col items-center gap-2 rounded-2xl py-4 transition-all"
+              className="relative flex flex-col items-center gap-2 rounded-2xl py-4 transition-colors duration-300"
               style={{
                 background: isActive ? moodDef.btnActive : moodDef.btnIdle,
                 boxShadow: isActive ? `0 0 0 1.5px rgba(255,255,255,0.2), 0 8px 24px ${moodDef.glow}` : "none",

@@ -9,6 +9,7 @@ spring:
       # Local run from /backend uses the existing PayOS keys in the repository root.
       # Docker/production continues to prefer real environment variables.
       - optional:file:.env[.properties]
+      - optional:file:backend/.env[.properties]
       - optional:file:.env.production[.properties]
       - optional:file:../.env.production[.properties]
   datasource:
@@ -22,7 +23,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: false

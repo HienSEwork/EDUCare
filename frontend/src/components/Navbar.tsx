@@ -38,7 +38,7 @@ import { toast } from "sonner";
 import imgLogo from "@/assets/home/LOGO.jpg";
 
 const DROPDOWN_CLOSE_DELAY = 800;
-const DEFAULT_HEADER_SHELL_WIDTH = "max-w-[1080px]";
+const DEFAULT_HEADER_SHELL_WIDTH = "max-w-[1200px]";
 const AUTH_HEADER_SHELL_WIDTH = "max-w-[780px]";
 
 const navGroups = [
@@ -314,7 +314,12 @@ export default function Navbar() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button
-                        className="relative rounded-xl p-2 text-indigo-200 transition-colors hover:bg-white/15 hover:text-white"
+                        className={cn(
+                          "relative rounded-xl p-2 transition-all duration-200",
+                          theme === "light"
+                            ? "text-slate-700 hover:bg-pink-50/80 hover:text-pink-600"
+                            : "text-indigo-200 hover:bg-white/15 hover:text-white"
+                        )}
                         title={NAV_COPY.notifications}
                       >
                         <Bell className="h-5 w-5" />
@@ -335,20 +340,42 @@ export default function Navbar() {
                             <p className="font-semibold text-foreground">{NAV_COPY.notifications}</p>
                             <p className="text-xs text-muted-foreground">Cập nhật mới từ bài học, cộng đồng, chat và phản hồi riêng.</p>
                           </div>
-                          <span className="rounded-full bg-white/75 px-3 py-1 text-xs font-semibold text-primary shadow-soft">
+                          <span
+                            className={cn(
+                              "rounded-full px-3 py-1 text-xs font-semibold shadow-soft border transition-all duration-200",
+                              theme === "light"
+                                ? "bg-white text-pink-600 border-pink-100"
+                                : "bg-amber-300/10 text-amber-300 border-amber-300/20"
+                            )}
+                          >
                             {notificationCount > 0 ? `${notificationCount} mới` : "Ổn định"}
                           </span>
                         </div>
                       </DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-white/70" />
+                      <DropdownMenuSeparator className={theme === "light" ? "bg-pink-100/80" : "bg-amber-300/15"} />
                       <div className="max-h-[380px] overflow-y-auto px-1 py-1">
                         {latestNotifications.length === 0 ? (
-                          <div className="rounded-[1rem] bg-white/65 px-4 py-4 text-sm text-muted-foreground">
-                            Hiện chưa có thông báo mới.
-                          </div>
+                          <div
+                             className={cn(
+                               "rounded-[1rem] px-4 py-4 text-sm border text-muted-foreground",
+                               theme === "light"
+                                 ? "bg-white/80 border-pink-100/70"
+                                 : "bg-[#251b0b]/60 border-amber-300/10"
+                             )}
+                           >
+                             Hiện chưa có thông báo mới.
+                           </div>
                         ) : (
                           latestNotifications.map((notification) => (
-                            <div key={notification.id} className="mb-2 rounded-[1rem] bg-white/66 px-4 py-3 shadow-soft last:mb-0">
+                            <div
+                               key={notification.id}
+                               className={cn(
+                                 "mb-2 rounded-[1rem] px-4 py-3 shadow-soft last:mb-0 border transition-all duration-200",
+                                 theme === "light"
+                                   ? "bg-white/80 border-pink-100/70"
+                                   : "bg-[#251b0b]/60 border-amber-300/10"
+                               )}
+                             >
                               <div className="flex items-start justify-between gap-3">
                                 <p className="text-sm font-semibold text-foreground">{notification.title}</p>
                                 {!notification.read ? <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-primary" /> : null}
@@ -384,9 +411,9 @@ export default function Navbar() {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-3 rounded-full border border-white/70 bg-white/70 px-2 py-1.5 shadow-soft transition-colors hover:bg-white/88">
-                      <Avatar className="h-10 w-10 border border-white/70 shadow-soft">
-                        <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.fullName)} text-sm font-bold text-foreground`}>
+                    <button className={theme === "light" ? "flex items-center gap-3 rounded-full border border-pink-200/60 bg-pink-50/20 px-2 py-1.5 shadow-soft transition-all hover:bg-pink-50/60 hover:border-pink-300/80" : "flex items-center gap-3 rounded-full border border-slate-700/60 bg-slate-900/60 px-2 py-1.5 shadow-soft transition-colors hover:bg-slate-800/80"}>
+                      <Avatar className={theme === "light" ? "h-10 w-10 border border-pink-100 shadow-soft" : "h-10 w-10 border border-white/70 shadow-soft"}>
+                        <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.fullName)} text-sm font-bold text-slate-800`}>
                           {getInitials(user.fullName)}
                         </AvatarFallback>
                       </Avatar>
@@ -406,7 +433,7 @@ export default function Navbar() {
                     <DropdownMenuLabel className="px-3 py-2">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-11 w-11 border border-white/70">
-                          <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.fullName)} text-sm font-bold text-foreground`}>
+                          <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.fullName)} text-sm font-bold text-slate-800`}>
                             {getInitials(user.fullName)}
                           </AvatarFallback>
                         </Avatar>
@@ -489,7 +516,7 @@ export default function Navbar() {
       </div>
 
       {mobileOpen ? (
-        <div className="mx-auto mt-3 w-full max-w-[1080px] space-y-4 rounded-[2rem] border border-sky-200/50 bg-[linear-gradient(150deg,rgba(240,249,255,0.97)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.97)_100%)] p-4 shadow-[0_16px_50px_rgba(14,116,144,0.12)] backdrop-blur-md lg:hidden">
+        <div className="mx-auto mt-3 w-full max-w-[1200px] space-y-4 rounded-[2rem] border border-sky-200/50 bg-[linear-gradient(150deg,rgba(240,249,255,0.97)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.97)_100%)] p-4 shadow-[0_16px_50px_rgba(14,116,144,0.12)] backdrop-blur-md lg:hidden">
           {navGroups.map((group) => {
             const groupIsActive = "items" in group
               ? group.items.some((item) => isRouteActive(item.to))

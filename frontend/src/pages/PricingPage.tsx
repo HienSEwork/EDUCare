@@ -350,7 +350,7 @@ export default function PricingPage() {
                     <h3 className="font-heading font-extrabold text-white text-base sm:text-lg">
                       {trialPlan.name}
                     </h3>
-                    <span className="rounded-full bg-pink-500/30 border border-pink-400/50 text-pink-200 text-[10px] font-black px-2.5 py-0.5 uppercase tracking-wider animate-pulse">
+                    <span className="rounded-full bg-pink-100 dark:bg-pink-500/30 border border-pink-200 dark:border-pink-400/50 text-pink-600 dark:text-pink-200 text-[10px] font-black px-2.5 py-0.5 uppercase tracking-wider animate-pulse">
                       Đặc quyền tân thủ
                     </span>
                   </div>
@@ -358,8 +358,8 @@ export default function PricingPage() {
                     {trialPlan.description || `Tất cả tài khoản mới đăng ký đều được tự động kích hoạt dùng thử VIP ${trialPlan.durationDays} ngày miễn phí.`}
                   </p>
                   {(trialPlan.startDate || trialPlan.endDate) && (
-                    <div className="mt-2.5 inline-flex items-center gap-1.5 text-xs text-pink-200 bg-pink-900/40 border border-pink-500/40 rounded-xl py-1 px-3 font-semibold">
-                      <span className="text-pink-400">⏱️ Thời gian áp dụng:</span>
+                    <div className="mt-2.5 inline-flex items-center gap-1.5 text-xs text-pink-700 dark:text-pink-200 bg-pink-50 dark:bg-pink-900/40 border border-pink-200 dark:border-pink-500/40 rounded-xl py-1 px-3 font-semibold">
+                      <span className="text-pink-600 dark:text-pink-400">⏱️ Thời gian áp dụng:</span>
                       <span>
                         {trialPlan.startDate ? `từ ${formatPromoDate(trialPlan.startDate)} ` : ""}
                         {trialPlan.endDate ? `đến ${formatPromoDate(trialPlan.endDate)}` : "vô thời hạn"}

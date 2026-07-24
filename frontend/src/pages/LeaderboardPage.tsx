@@ -147,15 +147,15 @@ export default function LeaderboardPage() {
 
                 <div className="flex flex-wrap justify-center gap-2 text-xs font-bold text-indigo-200 lg:justify-start">
                   <div className="flex items-center gap-1.5 rounded-full border border-indigo-400/20 bg-indigo-900/40 px-3.5 py-2 backdrop-blur-md">
-                    <Flame className="h-4 w-4 text-white" />
+                    <Flame className="h-4 w-4 text-slate-100" />
                     <span>Học đều mỗi ngày</span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-full border border-indigo-400/20 bg-indigo-900/40 px-3.5 py-2 backdrop-blur-md">
-                    <Trophy className="h-4 w-4 text-white" />
+                    <Trophy className="h-4 w-4 text-slate-100" />
                     <span>Vinh danh hàng tuần</span>
                   </div>
                   <div className="flex items-center gap-1.5 rounded-full border border-indigo-400/20 bg-indigo-900/40 px-3.5 py-2 backdrop-blur-md">
-                    <Gift className="h-4 w-4 text-white" />
+                    <Gift className="h-4 w-4 text-slate-100" />
                     <span>Quà tặng hấp dẫn</span>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ export default function LeaderboardPage() {
                   <div className="mt-3 relative flex items-center justify-center w-full my-2">
                     <LaurelWreathLeft className="w-8 h-20 text-indigo-400/80 -mr-2" />
                     <Avatar className="h-20 w-20 border-4 border-slate-300 shadow-xl z-10">
-                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(top2.avatar || top2.name)} text-xl font-bold text-white`}>
+                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(top2.avatar || top2.name)} text-xl font-bold text-slate-800`}>
                         {getInitials(top2.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -284,7 +284,7 @@ export default function LeaderboardPage() {
                     <div className="mt-2 relative flex items-center justify-center w-full my-2">
                       <LaurelWreathLeft className="w-9 h-22 text-amber-600 -mr-2" />
                       <Avatar className="h-24 w-24 border-4 border-amber-400 shadow-2xl z-10">
-                        <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(top1.avatar || top1.name)} text-2xl font-black text-white`}>
+                        <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(top1.avatar || top1.name)} text-2xl font-black text-slate-800`}>
                           {getInitials(top1.name)}
                         </AvatarFallback>
                       </Avatar>
@@ -356,7 +356,7 @@ export default function LeaderboardPage() {
                   <div className="mt-3 relative flex items-center justify-center w-full my-2">
                     <LaurelWreathLeft className="w-8 h-20 text-orange-600/80 -mr-2" />
                     <Avatar className="h-20 w-20 border-4 border-orange-300 shadow-xl z-10">
-                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(top3.avatar || top3.name)} text-xl font-bold text-white`}>
+                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(top3.avatar || top3.name)} text-xl font-bold text-slate-800`}>
                         {getInitials(top3.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -440,7 +440,7 @@ export default function LeaderboardPage() {
             ) : (
               <div className="space-y-2.5">
                 {/* Table Header Row */}
-                <div className="grid grid-cols-[40px_1fr_100px_90px_80px] gap-3 px-4 py-2 text-[11px] font-extrabold uppercase tracking-wider text-indigo-300/80 border-b border-indigo-400/20">
+                <div className="grid grid-cols-[40px_1fr_100px_90px_80px] gap-3 px-4 py-2 text-[11px] font-extrabold uppercase tracking-wider text-indigo-200 border-b border-indigo-400/20">
                   <span>#</span>
                   <span>Học viên</span>
                   <span className="text-center">Streak</span>
@@ -467,13 +467,13 @@ export default function LeaderboardPage() {
                       {/* User Info */}
                       <div className="flex items-center gap-3 overflow-hidden">
                         <Avatar className="h-10 w-10 border border-indigo-400/30 shrink-0">
-                          <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(entry.avatar || entry.name)} text-xs font-bold text-white`}>
+                          <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(entry.avatar || entry.name)} text-xs font-bold text-slate-800`}>
                             {getInitials(entry.name)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="truncate">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-heading text-sm font-bold text-white truncate">{entry.name}</span>
+                            <span className="font-heading text-sm font-bold text-slate-100 truncate">{entry.name}</span>
                             <span className="bg-amber-400/20 text-amber-300 text-[9px] font-extrabold px-1.5 py-0.2 rounded border border-amber-400/30">VIP</span>
                           </div>
                         </div>
@@ -491,7 +491,7 @@ export default function LeaderboardPage() {
                       </div>
 
                       {/* Score & Rank Trend Indicator */}
-                      <div className="text-right font-extrabold text-xs text-white flex items-center justify-end gap-1.5">
+                      <div className="text-right font-extrabold text-xs text-slate-100 flex items-center justify-end gap-1.5">
                         <span>{(entry.quizScore || 1500).toLocaleString()}</span>
                         {idx % 3 === 0 ? (
                           <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-0.5"><TrendingUp className="h-3 w-3" />2</span>
@@ -509,13 +509,13 @@ export default function LeaderboardPage() {
                 <div className="flex items-center justify-between pt-4 border-t border-indigo-400/20 text-xs text-indigo-200/70">
                   <span>Hiển thị 1 – 15 trong 100 học viên</span>
                   <div className="flex items-center gap-1.5">
-                    <button className="p-1.5 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-300 hover:bg-indigo-800/60">
+                    <button className="p-1.5 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-200 hover:bg-indigo-800/60">
                       <ChevronLeft className="h-4 w-4" />
                     </button>
                     <button className="h-7 w-7 rounded-lg bg-indigo-600 text-white font-bold text-xs">1</button>
-                    <button className="h-7 w-7 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-300 hover:bg-indigo-800/60 font-bold text-xs">2</button>
-                    <button className="h-7 w-7 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-300 hover:bg-indigo-800/60 font-bold text-xs">3</button>
-                    <button className="p-1.5 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-300 hover:bg-indigo-800/60">
+                    <button className="h-7 w-7 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-200 hover:bg-indigo-800/60 font-bold text-xs">2</button>
+                    <button className="h-7 w-7 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-200 hover:bg-indigo-800/60 font-bold text-xs">3</button>
+                    <button className="p-1.5 rounded-lg border border-indigo-400/20 bg-indigo-900/40 text-indigo-200 hover:bg-indigo-800/60">
                       <ChevronRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -594,7 +594,7 @@ export default function LeaderboardPage() {
             </div>
 
             {/* SIDEBAR CARD 3: STREAK CỦA BẠN (Current User Entry) */}
-            <div className="bg-gradient-to-br from-indigo-900/90 via-purple-950/90 to-slate-950 border border-indigo-400/30 backdrop-blur-xl rounded-2xl p-6 shadow-2xl">
+            <div className="bg-gradient-to-br from-indigo-900/90 via-purple-950/90 to-slate-950 border border-indigo-400/30 backdrop-blur-xl rounded-2xl p-6 shadow-2xl theme-preserve-contrast">
               <div className="flex items-center gap-2 mb-3">
                 <Flame className="h-5 w-5 text-amber-300 animate-pulse" />
                 <h3 className="font-heading text-base font-extrabold text-white">Streak của bạn</h3>
@@ -604,7 +604,7 @@ export default function LeaderboardPage() {
                 <>
                   <div className="flex items-center gap-3.5 mb-4">
                     <Avatar className="h-14 w-14 border-2 border-amber-300 shadow-lg">
-                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.avatar || user.fullName)} text-lg font-extrabold text-white`}>
+                      <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(user.avatar || user.fullName)} text-lg font-extrabold text-slate-800`}>
                         {getInitials(user.fullName)}
                       </AvatarFallback>
                     </Avatar>

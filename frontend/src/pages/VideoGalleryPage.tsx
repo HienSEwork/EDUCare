@@ -272,8 +272,7 @@ export default function VideoGalleryPage() {
         : `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=800&auto=format&fit=crop`;
 
     return (
-      <motion.div
-        whileHover={{ y: -6, scale: 1.02 }}
+      <div
         role={isLocked ? "link" : undefined}
         tabIndex={isLocked ? 0 : undefined}
         aria-label={isLocked ? `${lesson.title} - Cần đăng ký gói để xem` : undefined}
@@ -284,16 +283,17 @@ export default function VideoGalleryPage() {
             navigate("/pricing");
           }
         } : undefined}
-        className={`gradient-card overflow-hidden rounded-2xl border shadow-md flex flex-col justify-between w-full snap-start transition-all ${
-          isLocked
-            ? "cursor-pointer border-muted-foreground/20"
-            : "border-muted-foreground/10"
-        }`}
+        className="group block w-full snap-start cursor-pointer"
       >
-        <div
-          className="relative aspect-video w-full bg-slate-900 group cursor-pointer"
-          onClick={isLocked ? undefined : () => setSelectedLesson(lesson)}
-        >
+        <div className={`gradient-card overflow-hidden rounded-2xl border shadow-md flex flex-col justify-between w-full h-full transition-all duration-300 transform group-hover:-translate-y-1.5 group-hover:shadow-lg ${
+          isLocked
+            ? "border-muted-foreground/20"
+            : "border-muted-foreground/10"
+        }`}>
+          <div
+            className="relative aspect-video w-full bg-slate-900 cursor-pointer"
+            onClick={isLocked ? undefined : () => setSelectedLesson(lesson)}
+          >
           <img
             src={coverUrl}
             alt={lesson.title}
@@ -370,7 +370,8 @@ export default function VideoGalleryPage() {
             </Button>
           </div>
         </div>
-      </motion.div>
+      </div>
+      </div>
     );
   };
 
@@ -411,7 +412,7 @@ export default function VideoGalleryPage() {
           <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
         </div>
 
-        <div className="container mx-auto px-4 relative z-10 text-center max-w-3xl">
+        <div className="container mx-auto px-4 relative z-10 text-center max-w-5xl">
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300 mb-4">
               TÓM TẮT BÀI HỌC
@@ -819,7 +820,7 @@ export default function VideoGalleryPage() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 20 }}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="fixed bottom-8 right-8 z-40 p-3.5 rounded-full gradient-primary text-primary-foreground shadow-lg hover:shadow-primary/30 hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer flex items-center justify-center border border-primary/20"
+              className="fixed bottom-8 left-8 z-40 p-3.5 rounded-full gradient-primary text-primary-foreground shadow-lg hover:shadow-primary/30 hover:scale-110 active:scale-95 transition-colors duration-200 cursor-pointer flex items-center justify-center border border-primary/20"
               title="Trở về đầu trang"
               whileHover={{ y: -4 }}
             >

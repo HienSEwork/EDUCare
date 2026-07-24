@@ -1753,7 +1753,7 @@ export default function ChatRoomsPage() {
                           <div key={member.userId} className="flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-white/40 transition-colors">
                             <div className="flex items-center gap-3 min-w-0">
                               <Avatar className="h-10 w-10 border border-white/70 shadow-sm flex-shrink-0">
-                                <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(member.username)} text-sm font-bold text-foreground`}>
+                                <AvatarFallback className={`bg-gradient-to-br ${getAvatarTone(member.username)} text-sm font-bold text-slate-800`}>
                                   {getInitials(member.username)}
                                 </AvatarFallback>
                               </Avatar>
