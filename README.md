@@ -85,16 +85,3 @@ npm run build
 npm run test
 ```
 
-## Tai khoan seed
-
-Admin:
-
-- email: `admin@educare.vn`
-- username: `educare_admin`
-- password: `Admin@123`
-
-User:
-
-- email: `minhanh@educare.vn`
-- username: `minhanh`
-- password: `Admin@123`
