@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowRight,
@@ -46,7 +46,6 @@ import imgFptHero from "@/assets/home/ImageBanner3.jpg";
 import imgFptFriends from "@/assets/home/ImageBanner2.png";
 import imgFptDiscuss from "@/assets/home/ImageBanner1.webp";
 import imgFptConsent from "@/assets/home/ImageBanner4.webp";
-import imgLogo from "@/assets/home/Logo.png";
 
 // Game 3D graphics
 import imgGameSafeSwipe from "@/assets/games/safe-swipe-3d.png";
@@ -116,8 +115,6 @@ export default function HomePage() {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll();
-  const heroImgY = useTransform(scrollY, [0, 600], [0, 50]);
 
   // Real Dynamic Community Statistics State
   const [communityStats, setCommunityStats] = useState({
@@ -236,7 +233,7 @@ export default function HomePage() {
               <motion.div variants={fadeUp} custom={2.5} className="mt-9 flex items-center justify-center gap-4 lg:justify-start">
                 <div className="flex -space-x-3">
                   {[imgAvatarGirl1, imgAvatarBoy1, imgAvatarGirl2, imgAvatarBoy2].map((src, i) => (
-                    <img key={i} src={src} alt="" className={theme === "light" ? "h-10 w-10 rounded-full border-2 border-pink-200 object-cover shadow-md" : "h-10 w-10 rounded-full border-2 border-indigo-300 object-cover shadow-md"} />
+                    <img key={i} src={src} alt="" width={40} height={40} decoding="async" className={theme === "light" ? "h-10 w-10 rounded-full border-2 border-pink-200 object-cover shadow-md" : "h-10 w-10 rounded-full border-2 border-indigo-300 object-cover shadow-md"} />
                   ))}
                 </div>
                 <div>
@@ -249,11 +246,16 @@ export default function HomePage() {
             {/* Right Hero Graphic */}
             <div className="relative flex w-full justify-center lg:justify-start">
               <div className={theme === "light" ? "absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-pink-400/20 via-rose-300/20 to-amber-300/20 blur-[90px]" : "absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-purple-500/30 via-cyan-400/20 to-amber-400/20 blur-[100px]"} />
-              <motion.div style={{ y: heroImgY }} className="relative z-10 w-full max-w-[560px] lg:max-w-[620px]">
+              <motion.div className="relative z-10 w-full max-w-[560px] lg:max-w-[620px]">
                 <div className={theme === "light" ? "rounded-[2.5rem] p-1.5 bg-gradient-to-br from-pink-400 via-rose-300 to-amber-300 shadow-[0_20px_50px_rgba(236,72,153,0.18)]" : "rounded-[2.5rem] p-1.5 bg-gradient-to-br from-cyan-400/70 via-purple-500/50 to-amber-300/70 shadow-[0_25px_60px_rgba(0,0,0,0.7)]"}>
                   <img
                     src={imgFptHero}
                     alt="EDUcare Learning"
+                    width={1380}
+                    height={919}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
                     className="w-full rounded-[2.3rem] object-cover"
                   />
                 </div>
@@ -478,7 +480,7 @@ export default function HomePage() {
                 {hotDiscussions.map((d, i) => (
                   <div key={i} className={theme === "light" ? "flex items-center justify-between p-3 rounded-xl bg-pink-50/50 border border-pink-200/60 hover:border-pink-300 transition-colors" : "flex items-center justify-between p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/20 hover:border-indigo-400/40 transition-colors"}>
                     <div className="flex items-center gap-3">
-                      <img src={d.avatar} alt="" className="h-9 w-9 rounded-full object-cover border border-pink-300" />
+                      <img src={d.avatar} alt="" width={36} height={36} loading="lazy" decoding="async" className="h-9 w-9 rounded-full object-cover border border-pink-300" />
                       <div>
                         <p className={theme === "light" ? "font-heading text-xs font-bold text-slate-800 line-clamp-1" : "font-heading text-xs font-bold text-white line-clamp-1"}>{d.title}</p>
                         <p className={theme === "light" ? "text-[10px] text-slate-500" : "text-[10px] text-indigo-200/60"}>{d.author} • {d.time}</p>
@@ -549,7 +551,7 @@ export default function HomePage() {
                 className={theme === "light" ? "magic-card p-6 rounded-3xl flex flex-col justify-between border border-pink-200 bg-white shadow-sm" : "magic-card p-6 rounded-3xl flex flex-col justify-between border border-indigo-400/30"}
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <img src={t.avatar} alt={t.name} className="h-12 w-12 rounded-full object-cover border-2 border-pink-300" />
+                  <img src={t.avatar} alt={t.name} width={48} height={48} loading="lazy" decoding="async" className="h-12 w-12 rounded-full object-cover border-2 border-pink-300" />
                   <div>
                     <h4 className={theme === "light" ? "font-heading font-extrabold text-sm text-slate-800" : "font-heading font-extrabold text-sm text-white"}>{t.name}</h4>
                     <p className={theme === "light" ? "text-xs text-slate-500" : "text-xs text-indigo-200/70"}>{t.role}</p>
@@ -585,7 +587,7 @@ export default function HomePage() {
             ].map((g) => (
               <div key={g.title} className={theme === "light" ? "magic-card-glow rounded-3xl p-5 flex flex-col justify-between border border-pink-200 bg-white shadow-sm" : "magic-card-glow rounded-3xl p-5 flex flex-col justify-between"}>
                 <div>
-                  <img src={g.img} alt="" className="h-36 w-full object-contain mb-3" />
+                  <img src={g.img} alt="" width={512} height={512} loading="lazy" decoding="async" className="h-36 w-full object-contain mb-3" />
                   <h3 className={theme === "light" ? "font-heading font-extrabold text-sm text-slate-800" : "font-heading font-extrabold text-sm text-white"}>{g.title}</h3>
                   <p className={theme === "light" ? "text-xs text-slate-500 mt-1" : "text-xs text-indigo-200/70 mt-1"}>{g.desc}</p>
                 </div>

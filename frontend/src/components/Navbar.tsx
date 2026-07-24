@@ -35,7 +35,7 @@ import type { DashboardResponse, NotificationItem } from "@/types/api";
 import { toast } from "sonner";
 
 // Brand Logo image
-import imgLogo from "@/assets/home/Logo.png";
+import imgLogo from "@/assets/home/LOGO.jpg";
 
 const DROPDOWN_CLOSE_DELAY = 800;
 const DEFAULT_HEADER_SHELL_WIDTH = "max-w-[1080px]";
@@ -185,6 +185,9 @@ export default function Navbar() {
               <img
                 src={imgLogo}
                 alt="EDUcare Logo"
+                width={44}
+                height={44}
+                decoding="async"
                 className="h-11 w-11 shrink-0 rounded-full object-cover shadow-sm border border-amber-300/60 contrast-[1.12] saturate-[1.3]"
               />
               <span className={cn(

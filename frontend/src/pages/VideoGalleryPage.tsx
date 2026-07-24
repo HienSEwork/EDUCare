@@ -66,16 +66,21 @@ export default function VideoGalleryPage() {
 
   // Hiển thị nút "Lên đầu trang" khi cuộn xuống dưới
   useEffect(() => {
+    let frameId: number | null = null;
     const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
-      }
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(() => {
+        setShowBackToTop(window.scrollY > 400);
+        frameId = null;
+      });
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   // Fetch danh sách khóa học để lấy các bài học có video

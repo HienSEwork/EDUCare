@@ -20,7 +20,7 @@ import vn.educare.backend.config.AppProperties;
 @Slf4j
 public class GeminiService {
 
-  private static final String DEFAULT_MODEL = "gemini-2.5-flash";
+  private static final String DEFAULT_MODEL = "gemini-3.1-flash-lite";
   private static final int MAX_HISTORY_TURNS = 12;
   private static final String ASSISTANT_PROMPT = """
       Bạn là EDUcare AI, trợ lý tư vấn thân thiện dành cho học sinh và người dùng website EDUCare.

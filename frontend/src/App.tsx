@@ -11,8 +11,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import GeminiChatWidget from "@/components/GeminiChatWidget";
-import SectionRevealManager from "@/components/SectionRevealManager";
 import PageLoadingShell from "@/components/PageLoadingShell";
+import FastScrollController from "@/components/FastScrollController";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -143,7 +143,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
-            <SectionRevealManager />
+            <FastScrollController />
             <AppShell />
           </BrowserRouter>
         </AuthProvider>

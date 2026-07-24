@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Globe, MessageCircle, Send, Share2, Video } from "lucide-react";
-import imgLogo from "@/assets/home/Logo.png";
+import imgLogo from "@/assets/home/LOGO.jpg";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const footerGroups = {
@@ -37,6 +37,10 @@ export default function Footer() {
               <img
                 src={imgLogo}
                 alt="EDUcare Logo"
+                width={44}
+                height={44}
+                loading="lazy"
+                decoding="async"
                 className="h-11 w-11 shrink-0 rounded-full object-cover shadow-md border border-amber-300/80"
               />
               <span className={theme === "light" ? "font-heading text-2xl font-extrabold text-pink-600 tracking-wide" : "font-heading text-2xl font-extrabold text-white tracking-wide"}>

@@ -22,11 +22,11 @@ import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/api/client";
 import type { PublicStatsResponse } from "@/types/api";
 
-import avatarBoy1 from "@/assets/home/avatar-boy1.jpg";
-import avatarBoy2 from "@/assets/home/avatar-boy2.jpg";
-import avatarBoy3 from "@/assets/home/avatar-boy3.jpg";
-import avatarGirl1 from "@/assets/home/avatar-girl1.jpg";
-import avatarGirl2 from "@/assets/home/avatar-girl2.jpg";
+import memberHusky from "@/assets/about/member-husky.jpg";
+import memberShiba from "@/assets/about/member-shiba.jpg";
+import memberOrangeTabby from "@/assets/about/member-orange-tabby.jpg";
+import memberBritishShorthair from "@/assets/about/member-british-shorthair.jpg";
+import memberGolden from "@/assets/about/member-golden.jpg";
 
 const coreValues = [
   {
@@ -59,35 +59,40 @@ const teamMembers = [
   {
     name: "Nguyễn Đỗ Anh Khoa",
     role: "CEO & Trưởng Dự Án",
-    avatar: avatarBoy1,
+    avatar: memberHusky,
+    animal: "chó Husky",
     quote: "Định hướng chiến lược và quản lý tổng thể dự án EDUcare, mang nguồn tri thức chuẩn y khoa tới thế hệ trẻ.",
     badge: "CEO - Leader",
   },
   {
     name: "Nguyễn Ngọc Hiển",
     role: "Tech Lead",
-    avatar: avatarBoy2,
+    avatar: memberShiba,
+    animal: "chó Shiba",
     quote: "Xây dựng kiến trúc hệ thống mượt mà, bảo mật cao và vận hành toàn bộ hạ tầng kỹ thuật của dự án.",
     badge: "Tech Lead",
   },
   {
     name: "Mai Văn Chí Khanh",
     role: "Marketing & Brand Lead",
-    avatar: avatarGirl1,
+    avatar: memberOrangeTabby,
+    animal: "mèo mướp cam",
     quote: "Phụ trách chiến lược truyền thông, nhận diện thương hiệu và lan tỏa giá trị EDUcare tới cộng đồng tuổi teen.",
     badge: "Marketing Lead",
   },
   {
     name: "Lê Thế Vinh",
     role: "Content & Full-Stack Dev",
-    avatar: avatarBoy3,
+    avatar: memberBritishShorthair,
+    animal: "mèo Anh lông ngắn",
     quote: "Thu thập & biên soạn nội dung y tế chuẩn xác, đồng thời tham gia lập trình phát triển các tính năng nền tảng.",
     badge: "Content & Dev",
   },
   {
     name: "Nguyễn Trường Thịnh",
     role: "Content & System Dev",
-    avatar: avatarGirl2,
+    avatar: memberGolden,
+    animal: "chó Golden Retriever vui vẻ",
     quote: "Nghiên cứu thu thập tư liệu giáo dục giới tính và phát triển tích hợp các mô-đun chức năng hệ thống.",
     badge: "Content & Dev",
   },
@@ -284,7 +289,11 @@ export default function AboutPage() {
                   <div className="relative aspect-square w-full overflow-hidden rounded-none border border-slate-700/50 mb-4 bg-slate-950">
                     <img
                       src={member.avatar}
-                      alt={member.name}
+                      alt={`${member.name} - đại diện ${member.animal}`}
+                      width={720}
+                      height={720}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <span className="absolute bottom-2 left-2 rounded-none border border-cyan-400/40 bg-slate-950/90 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-cyan-300 backdrop-blur-md">

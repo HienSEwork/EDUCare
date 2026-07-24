@@ -38,6 +38,7 @@ public class DatabaseMigrationRunner implements CommandLineRunner {
       connection.setAutoCommit(false);
       try {
         createHistoryTable(connection);
+        ensureBlogPostSchema(connection);
         if (isApplied(connection, VERSION)) {
           log.info("Database migration {} already applied; skipping", VERSION);
         } else {
@@ -89,6 +90,33 @@ public class DatabaseMigrationRunner implements CommandLineRunner {
             installed_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
           )
           """);
+    }
+  }
+
+  private void ensureBlogPostSchema(Connection connection) throws Exception {
+    addColumnIfMissing(connection, "author", "VARCHAR(255) NULL");
+    addColumnIfMissing(connection, "author_title", "VARCHAR(255) NULL");
+    addColumnIfMissing(connection, "source_url", "VARCHAR(512) NULL");
+    addColumnIfMissing(connection, "source_name", "VARCHAR(255) NULL");
+    addColumnIfMissing(connection, "video_url", "VARCHAR(512) NULL");
+  }
+
+  private void addColumnIfMissing(Connection connection, String columnName, String columnDefinition)
+      throws Exception {
+    for (String tableName : new String[] {"blog_posts", "BLOG_POSTS"}) {
+      try (ResultSet columns = connection.getMetaData().getColumns(
+          connection.getCatalog(), null, tableName, null)) {
+        while (columns.next()) {
+          if (columnName.equalsIgnoreCase(columns.getString("COLUMN_NAME"))) {
+            return;
+          }
+        }
+      }
+    }
+
+    log.info("Adding missing additive column blog_posts.{} before migration {}", columnName, VERSION);
+    try (Statement statement = connection.createStatement()) {
+      statement.execute("ALTER TABLE blog_posts ADD COLUMN " + columnName + " " + columnDefinition);
     }
   }
 

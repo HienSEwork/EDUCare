@@ -72,6 +72,11 @@ CREATE TABLE `blog_posts` (
   `published_at` date NOT NULL,
   `read_time_minutes` int(11) NOT NULL,
   `emoji` varchar(20) NOT NULL,
+  `author` varchar(255) DEFAULT NULL,
+  `author_title` varchar(255) DEFAULT NULL,
+  `source_url` varchar(512) DEFAULT NULL,
+  `source_name` varchar(255) DEFAULT NULL,
+  `video_url` varchar(512) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
