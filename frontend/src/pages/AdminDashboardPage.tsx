@@ -27,7 +27,7 @@ type SidebarTab = "overview" | "courses" | "lessons" | "blogPosts" | "quizQuesti
 type CrudTab = "courses" | "lessons" | "blogPosts" | "quizQuestions" | "games" | "stickers" | "reports" | "questions";
 
 type EditableLesson = { id: number; slug: string; title: string; summary: string; content: string; order: number; isFree: boolean };
-type EditableBlogPost = { id: number; slug: string; title: string; excerpt: string; content: string; category: string; date: string; readTime: string; emoji: string };
+type EditableBlogPost = { id: number; slug: string; title: string; excerpt: string; content: string; category: string; date: string; readTime: string; emoji: string; videoUrl?: string | null };
 type EditableQuizQuestion = { id: number; slug: string; question: string; options: string[]; correct: number; explanation: string; category: string; difficulty: string; active: boolean };
 type EditableGame = { id: number; slug: string; title: string; summary: string; description: string; gameType: string; playPath: string; coverImage: string | null; accentColor: string | null; published: boolean };
 
@@ -110,6 +110,7 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<CrudTab>("courses");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [listSearch, setListSearch] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<{ label: string; onConfirm: () => void } | null>(null);
@@ -211,6 +212,22 @@ export default function AdminDashboardPage() {
     order: "",
     categoryId: "1"
   });
+
+  const uploadContentFile = async (file: File, field: string) => {
+    setUploadingField(field);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const result = await apiRequest<{ url: string }>("/media/upload", { method: "POST", body });
+      toast.success("Tải file lên Cloudinary thành công");
+      return result.url;
+    } catch (error) {
+      toast.error(fallbackMessage(error, "Không thể tải file lên Cloudinary"));
+      return null;
+    } finally {
+      setUploadingField(null);
+    }
+  };
 
   const [lessonForm, setLessonForm] = useState({
     id: null as number | null,
@@ -770,7 +787,7 @@ export default function AdminDashboardPage() {
     return (match && match[2].length === 11) ? match[2] : url;
   }
 
-  const [blogForm, setBlogForm] = useState({ id: null as number | null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: ADMIN_COPY.defaults.blogEmoji as string });
+  const [blogForm, setBlogForm] = useState({ id: null as number | null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: "", videoUrl: "" });
   const [quizForm, setQuizForm] = useState({ id: null as number | null, slug: "", question: "", options: ["", "", "", ""], correct: "0", explanation: "", category: ADMIN_COPY.defaults.quizCategory as string, difficulty: ADMIN_COPY.defaults.quizDifficulty as string, active: true });
   const [gameForm, setGameForm] = useState({ id: null as number | null, slug: "", title: "", summary: "", description: "", gameType: "QUIZ", playPath: "", coverImage: "hero-illustration.png", accentColor: "#9b5de5", published: true });
 
@@ -1093,7 +1110,7 @@ export default function AdminDashboardPage() {
     teaserVideoId: "",
     fullVideoId: ""
   });
-  const resetBlogForm = () => setBlogForm({ id: null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: ADMIN_COPY.defaults.blogEmoji });
+  const resetBlogForm = () => setBlogForm({ id: null, slug: "", title: "", excerpt: "", content: "", category: "", date: new Date().toISOString().slice(0, 10), readTimeMinutes: "5", emoji: "", videoUrl: "" });
   const resetQuizForm = () => setQuizForm({ id: null, slug: "", question: "", options: ["", "", "", ""], correct: "0", explanation: "", category: ADMIN_COPY.defaults.quizCategory, difficulty: ADMIN_COPY.defaults.quizDifficulty, active: true });
   const resetGameForm = () => setGameForm({ id: null, slug: "", title: "", summary: "", description: "", gameType: "QUIZ", playPath: "", coverImage: "hero-illustration.png", accentColor: "#9b5de5", published: true });
 
@@ -1246,12 +1263,12 @@ export default function AdminDashboardPage() {
     try {
       const saved = await apiRequest(`/admin/${blogForm.id ? `blog-posts/${blogForm.id}` : "blog-posts"}`, {
         method: blogForm.id ? "PUT" : "POST",
-        body: JSON.stringify({ slug: blogForm.slug, title: blogForm.title, excerpt: blogForm.excerpt, content: blogForm.content, category: blogForm.category, date: blogForm.date, readTimeMinutes: Number(blogForm.readTimeMinutes) || 5, emoji: blogForm.emoji }),
+        body: JSON.stringify({ slug: blogForm.slug, title: blogForm.title, excerpt: blogForm.excerpt, content: blogForm.content, category: blogForm.category, date: blogForm.date, readTimeMinutes: Number(blogForm.readTimeMinutes) || 5, emoji: "", videoUrl: blogForm.videoUrl || null }),
       });
       await loadData(true);
       toast.success(ADMIN_COPY.actions.saveSuccess.blogPost);
       const item = saved as EditableBlogPost;
-      setBlogForm({ id: item.id, slug: item.slug, title: item.title, excerpt: item.excerpt, content: item.content, category: item.category, date: item.date, readTimeMinutes: item.readTime.replace(/\D/g, "") || "5", emoji: item.emoji });
+      setBlogForm({ id: item.id, slug: item.slug, title: item.title, excerpt: item.excerpt, content: item.content, category: item.category, date: item.date, readTimeMinutes: item.readTime.replace(/\D/g, "") || "5", emoji: "", videoUrl: item.videoUrl ?? "" });
     } catch (err) { toast.error(fallbackMessage(err, ADMIN_COPY.errors.saveBlogPost)); }
     finally { setIsSaving(false); }
   };
@@ -1502,11 +1519,11 @@ export default function AdminDashboardPage() {
     if (activeTab === "blogPosts") {
       if (filteredPosts.length === 0) return <p className="py-8 text-center text-xs text-gray-400">{listSearch ? "Không tìm thấy kết quả" : "Chưa có bài viết nào"}</p>;
       return filteredPosts.map(post => (
-        <button key={post.id} onClick={() => setBlogForm({ id: post.id, slug: post.slug, title: post.title, excerpt: post.excerpt, content: post.content, category: post.category, date: post.date, readTimeMinutes: post.readTime.replace(/\D/g, "") || "5", emoji: post.emoji })}
+        <button key={post.id} onClick={() => setBlogForm({ id: post.id, slug: post.slug, title: post.title, excerpt: post.excerpt, content: post.content, category: post.category, date: post.date, readTimeMinutes: post.readTime.replace(/\D/g, "") || "5", emoji: "", videoUrl: post.videoUrl ?? "" })}
           className={`w-full rounded-xl border px-4 py-3 text-left transition-all ${blogForm.id === post.id ? "border-purple-200 bg-purple-50" : "border-gray-100 hover:bg-gray-50"}`}>
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-gray-800">{post.emoji} {post.title}</p>
+              <p className="truncate text-sm font-semibold text-gray-800">{post.title}</p>
               <p className="mt-0.5 text-xs text-gray-500">{post.category} · {formatDate(post.date)}</p>
             </div>
             <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-600">{post.readTime}</span>
@@ -3069,7 +3086,8 @@ export default function AdminDashboardPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <Label>Ảnh Thumbnail</Label>
-                <Input value={courseForm.thumbnail} onChange={e => setCourseForm(p => ({ ...p, thumbnail: e.target.value }))} placeholder="Tên file ảnh (VD: consent-course.png)" />
+                <Input value={courseForm.thumbnail} onChange={e => setCourseForm(p => ({ ...p, thumbnail: e.target.value }))} placeholder="URL ảnh" />
+                <Input className="mt-2" type="file" accept="image/*" disabled={uploadingField === "course-thumbnail"} onChange={async e => { const file = e.target.files?.[0]; if (!file) return; const url = await uploadContentFile(file, "course-thumbnail"); if (url) setCourseForm(p => ({ ...p, thumbnail: url })); }} />
               </div>
               <div>
                 <Label>Màu chủ đạo (Hex)</Label>
@@ -3261,16 +3279,17 @@ export default function AdminDashboardPage() {
             <div><Label>Slug</Label><Input value={blogForm.slug} onChange={e => setBlogForm(p => ({ ...p, slug: e.target.value }))} /></div>
             <div><Label>{ADMIN_COPY.fields.category}</Label><Input value={blogForm.category} onChange={e => setBlogForm(p => ({ ...p, category: e.target.value }))} /></div>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="md:col-span-2"><Label>{ADMIN_COPY.fields.title}</Label><Input value={blogForm.title} onChange={e => setBlogForm(p => ({ ...p, title: e.target.value }))} /></div>
-            <div><Label>{ADMIN_COPY.fields.emoji}</Label><Input value={blogForm.emoji} onChange={e => setBlogForm(p => ({ ...p, emoji: e.target.value }))} /></div>
-          </div>
+          <div><Label>{ADMIN_COPY.fields.title}</Label><Input value={blogForm.title} onChange={e => setBlogForm(p => ({ ...p, title: e.target.value }))} /></div>
           <div className="grid gap-4 md:grid-cols-2">
             <div><Label>{ADMIN_COPY.fields.publishDate}</Label><Input type="date" value={blogForm.date} onChange={e => setBlogForm(p => ({ ...p, date: e.target.value }))} /></div>
             <div><Label>{ADMIN_COPY.fields.readTimeMinutes}</Label><Input type="number" value={blogForm.readTimeMinutes} onChange={e => setBlogForm(p => ({ ...p, readTimeMinutes: e.target.value }))} /></div>
           </div>
           <div><Label>{ADMIN_COPY.fields.shortDescription}</Label><Textarea value={blogForm.excerpt} onChange={e => setBlogForm(p => ({ ...p, excerpt: e.target.value }))} /></div>
           <div><Label>{ADMIN_COPY.fields.content}</Label><Textarea className="min-h-[240px]" value={blogForm.content} onChange={e => setBlogForm(p => ({ ...p, content: e.target.value }))} /></div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div><Label>Chèn ảnh vào nội dung</Label><Input type="file" accept="image/*" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; const url = await uploadContentFile(file, "blog-image"); if (url) setBlogForm(p => ({ ...p, content: `${p.content}\n\n![Ảnh bài viết](${url})` })); }} /></div>
+            <div><Label>Video bài viết</Label><Input value={blogForm.videoUrl} onChange={e => setBlogForm(p => ({ ...p, videoUrl: e.target.value }))} placeholder="URL video" /><Input className="mt-2" type="file" accept="video/*" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; const url = await uploadContentFile(file, "blog-video"); if (url) setBlogForm(p => ({ ...p, videoUrl: url })); }} /></div>
+          </div>
           <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={saveBlog} disabled={isSaving}>{isSaving ? ADMIN_COPY.actions.saving : ADMIN_COPY.actions.save}</Button>
         </div>
       </>
@@ -3354,7 +3373,7 @@ export default function AdminDashboardPage() {
             <div><Label>{ADMIN_COPY.fields.summary}</Label><Textarea value={gameForm.summary} onChange={e => setGameForm(p => ({ ...p, summary: e.target.value }))} /></div>
             <div><Label>{ADMIN_COPY.fields.content}</Label><Textarea className="min-h-[200px]" value={gameForm.description} onChange={e => setGameForm(p => ({ ...p, description: e.target.value }))} /></div>
             <div className="grid gap-4 md:grid-cols-2">
-              <div><Label>{ADMIN_COPY.fields.coverImage}</Label><Input value={gameForm.coverImage} onChange={e => setGameForm(p => ({ ...p, coverImage: e.target.value }))} /></div>
+              <div><Label>{ADMIN_COPY.fields.coverImage}</Label><Input value={gameForm.coverImage} onChange={e => setGameForm(p => ({ ...p, coverImage: e.target.value }))} /><Input className="mt-2" type="file" accept="image/*" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; const url = await uploadContentFile(file, "game-cover"); if (url) setGameForm(p => ({ ...p, coverImage: url })); }} /></div>
               <div><Label>{ADMIN_COPY.fields.accentColor}</Label><Input value={gameForm.accentColor} onChange={e => setGameForm(p => ({ ...p, accentColor: e.target.value }))} /></div>
             </div>
             <label className="flex items-center gap-3 rounded-xl border border-gray-100 px-4 py-3 bg-gray-50"><input type="checkbox" checked={gameForm.published} onChange={e => setGameForm(p => ({ ...p, published: e.target.checked }))} /><span className="text-sm font-semibold">{ADMIN_COPY.fields.publishFrontend}</span></label>
@@ -3385,7 +3404,7 @@ export default function AdminDashboardPage() {
                 </select>
               </div>
             </div>
-            <div><Label>Đường dẫn hình ảnh (URL)</Label><Input value={stickerForm.url} onChange={e => setStickerForm(p => ({ ...p, url: e.target.value }))} /></div>
+            <div><Label>Đường dẫn hình ảnh (URL)</Label><Input value={stickerForm.url} onChange={e => setStickerForm(p => ({ ...p, url: e.target.value }))} /><Input className="mt-2" type="file" accept="image/*" onChange={async e => { const file = e.target.files?.[0]; if (!file) return; const url = await uploadContentFile(file, "sticker"); if (url) setStickerForm(p => ({ ...p, url })); }} /></div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <Label>Chủ đề (Category)</Label>

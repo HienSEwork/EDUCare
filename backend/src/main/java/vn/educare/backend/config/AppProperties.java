@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "app")
-public record AppProperties(Cors cors, Jwt jwt, Admin admin, CloudinaryProperties cloudinary, Gemini gemini) {
+public record AppProperties(Cors cors, Jwt jwt, Admin admin, CloudinaryProperties cloudinary, Gemini gemini, Google google) {
 
   public record Cors(String allowedOrigins) {
     public List<String> asList() {
@@ -25,6 +25,9 @@ public record AppProperties(Cors cors, Jwt jwt, Admin admin, CloudinaryPropertie
   public record CloudinaryProperties(String cloudName, String apiKey, String apiSecret) {
   }
 
-  public record Gemini(String apiKey) {
+  public record Gemini(String apiKey, String model) {
+  }
+
+  public record Google(String clientId) {
   }
 }

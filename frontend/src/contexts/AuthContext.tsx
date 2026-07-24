@@ -14,6 +14,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (login: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
+  googleLogin: (credential: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (data: RegisterData) => Promise<{ success: boolean; error?: string; user?: User }>;
   logout: () => void;
   completeLesson: (lessonId: string) => Promise<void>;
@@ -26,7 +27,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 function getErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
-    return error.message;
+    return error.message === "Internal server error"
+      ? "Máy chủ chưa thể hoàn tất đăng nhập. Vui lòng thử lại hoặc đăng nhập bằng mật khẩu."
+      : error.message;
   }
 
   return "Co loi xay ra. Vui long thu lai.";
@@ -104,6 +107,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const googleLogin = useCallback(async (credential: string) => {
+    try {
+      const response = await apiRequest<AuthResponse>("/auth/google", {
+        method: "POST",
+        body: JSON.stringify({ credential }),
+      });
+
+      setStoredToken(response.token);
+      setUser(response.user);
+      return { success: true, user: response.user };
+    } catch (error) {
+      return { success: false, error: getErrorMessage(error) };
+    }
+  }, []);
+
   const completeLesson = useCallback(
     async (lessonId: string) => {
       if (!user) {
@@ -142,7 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, completeLesson, addXp, refreshUser, syncUser }}>
+    <AuthContext.Provider value={{ user, isLoading, login, googleLogin, register, logout, completeLesson, addXp, refreshUser, syncUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,9 +7,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +36,18 @@ export default function LoginPage() {
     setError(result.error || copy.genericError);
   };
 
+  const handleGoogleLogin = async (credential: string) => {
+    setError("");
+    setLoading(true);
+    const result = await googleLogin(credential);
+    setLoading(false);
+    if (result.success) {
+      navigate(result.user?.isAdmin ? "/domain/dashboard" : "/dashboard");
+    } else {
+      setError(result.error || "Không thể đăng nhập bằng Google. Vui lòng thử lại.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16">
       <motion.div
@@ -50,6 +63,14 @@ export default function LoginPage() {
 
         {error ? <div className="mb-4 rounded-lg bg-destructive/20 p-3 text-sm text-destructive border border-destructive/30">{error}</div> : null}
 
+        <GoogleLoginButton onCredential={(credential) => void handleGoogleLogin(credential)} disabled={loading} />
+
+        <div className="my-5 flex items-center gap-3 text-xs font-medium text-indigo-200/60">
+          <span className="h-px flex-1 bg-indigo-400/25" />
+          Hoặc đăng nhập bằng tài khoản
+          <span className="h-px flex-1 bg-indigo-400/25" />
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label className="font-semibold text-indigo-100">{copy.identityLabel}</Label>
@@ -57,7 +78,12 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <Label className="font-semibold text-indigo-100">{copy.passwordLabel}</Label>
+            <div className="flex items-center justify-between gap-3">
+              <Label className="font-semibold text-indigo-100">{copy.passwordLabel}</Label>
+              <Link to="/forgot-password" className="text-xs font-bold text-amber-300 hover:text-amber-200 hover:underline">
+                Quên mật khẩu?
+              </Link>
+            </div>
             <div className="relative mt-1">
               <Input type={showPassword ? "text" : "password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder={copy.passwordPlaceholder} required className="bg-indigo-900/50 border-indigo-400/30 text-white placeholder:text-indigo-300/40" />
               <button type="button" onClick={() => setShowPassword((current) => !current)} className="absolute right-3 top-1/2 -translate-y-1/2 text-indigo-300">

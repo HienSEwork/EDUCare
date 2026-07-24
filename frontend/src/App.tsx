@@ -10,10 +10,13 @@ import ScrollToTop from "@/components/ScrollToTop";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import GeminiChatWidget from "@/components/GeminiChatWidget";
+import SectionRevealManager from "@/components/SectionRevealManager";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
 const CoursesPage = lazy(() => import("./pages/CoursesPage"));
 const CourseDetailPage = lazy(() => import("./pages/CourseDetailPage"));
 const LessonPage = lazy(() => import("./pages/LessonPage"));
@@ -85,6 +88,7 @@ function AppShell() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/course/:id" element={<CourseDetailPage />} />
           <Route path="/lesson/:id" element={<LessonPage />} />
@@ -118,6 +122,7 @@ function AppShell() {
           </Suspense>
         </ErrorBoundary>
       </main>
+      {isAdminRoute ? null : <GeminiChatWidget />}
       {isAdminRoute ? null : <Footer />}
     </div>
   );
@@ -132,6 +137,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <SectionRevealManager />
             <AppShell />
           </BrowserRouter>
         </AuthProvider>

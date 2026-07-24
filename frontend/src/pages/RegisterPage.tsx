@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 function getPasswordStrength(password: string): { label: string; color: string; width: string } {
   if (password.length < 4) return { label: AUTH_COPY.register.strength.weak, color: "bg-destructive", width: "w-1/4" };
@@ -17,7 +18,7 @@ function getPasswordStrength(password: string): { label: string; color: string; 
 
 export default function RegisterPage() {
   const copy = AUTH_COPY.register;
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     fullName: "",
@@ -67,6 +68,18 @@ export default function RegisterPage() {
     }
 
     setError(result.error || copy.genericError);
+  };
+
+  const handleGoogleLogin = async (credential: string) => {
+    setError("");
+    setLoading(true);
+    const result = await googleLogin(credential);
+    setLoading(false);
+    if (result.success) {
+      navigate(result.user?.isAdmin ? "/domain/dashboard" : "/dashboard");
+    } else {
+      setError(result.error || "Không thể tiếp tục bằng Google. Vui lòng thử lại.");
+    }
   };
 
   return (
@@ -157,6 +170,13 @@ export default function RegisterPage() {
             {loading ? copy.loading : copy.submit}
           </Button>
         </form>
+
+        <div className="my-5 flex items-center gap-3 text-xs font-medium text-indigo-200/60">
+          <span className="h-px flex-1 bg-indigo-400/25" />
+          Hoặc đăng ký nhanh
+          <span className="h-px flex-1 bg-indigo-400/25" />
+        </div>
+        <GoogleLoginButton onCredential={(credential) => void handleGoogleLogin(credential)} disabled={loading} />
 
         <p className="mt-6 text-center text-sm text-indigo-200/70">
           {copy.hasAccount}{" "}

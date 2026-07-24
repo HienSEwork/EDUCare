@@ -83,4 +83,39 @@ class AuthControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.user.username").value("seedtest"));
   }
+
+  @Test
+  void forgotPasswordDoesNotRevealUnknownEmail() throws Exception {
+    mockMvc.perform(post("/api/auth/forgot-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                { "email": "unknown@educare.vn" }
+                """))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Nếu email tồn tại, mã OTP đã được gửi."));
+  }
+
+  @Test
+  void resetPasswordRejectsMissingOtp() throws Exception {
+    mockMvc.perform(post("/api/auth/reset-password")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                {
+                  "email": "unknown@educare.vn",
+                  "otp": "123456",
+                  "newPassword": "NewPassword123"
+                }
+                """))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void googleLoginReportsMissingConfiguration() throws Exception {
+    mockMvc.perform(post("/api/auth/google")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                { "credential": "fake-google-id-token" }
+                """))
+        .andExpect(status().isServiceUnavailable());
+  }
 }

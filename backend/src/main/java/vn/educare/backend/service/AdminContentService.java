@@ -82,7 +82,7 @@ public class AdminContentService {
     post.setCategory(request.category());
     post.setPublishedAt(LocalDate.parse(request.date()));
     post.setReadTimeMinutes(request.readTimeMinutes() == null ? 5 : request.readTimeMinutes());
-    post.setEmoji(request.emoji());
+    post.setEmoji(request.emoji() == null ? "" : request.emoji().trim());
     post.setAuthor(request.author());
     post.setAuthorTitle(request.authorTitle());
     post.setSourceUrl(request.sourceUrl());

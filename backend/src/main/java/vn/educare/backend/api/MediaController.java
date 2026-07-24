@@ -26,15 +26,19 @@ public class MediaController {
     }
 
     String contentType = file.getContentType();
-    if (contentType == null || (!contentType.startsWith("image/") && !contentType.startsWith("audio/"))) {
-      throw new ApiException(400, "Only image and audio file formats are supported");
+    if (file.getSize() > 100L * 1024 * 1024) {
+      throw new ApiException(400, "File vượt quá giới hạn 100 MB");
+    }
+    if (contentType == null || (!contentType.startsWith("image/") && !contentType.startsWith("audio/") && !contentType.startsWith("video/"))) {
+      throw new ApiException(400, "Chỉ hỗ trợ file ảnh, âm thanh và video");
     }
 
     try {
-      String resourceType = contentType.startsWith("audio/") ? "video" : "image";
+      String resourceType = contentType.startsWith("image/") ? "image" : "video";
 
       Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-          "resource_type", resourceType
+          "resource_type", resourceType,
+          "folder", "educare/content"
       ));
 
       String secureUrl = (String) uploadResult.get("secure_url");

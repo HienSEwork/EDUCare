@@ -6153,3 +6153,12 @@ INSERT INTO `users` (`id`, `full_name`, `email`, `username`, `password_hash`, `a
 ('d80bc488-1386-4bd8-9767-390e4514c0a4', 'Hoang Phong', 'phong424@gmail.com', 'phong424', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 317, 18, 0, NULL, 'STUDENT', '2026-06-26 13:47:23', '2026-06-26 13:47:23'),
 ('ff61351b-64ba-4a86-878d-2bac0c492908', 'Ho Dung', 'dung465@gmail.com', 'dung465', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 16, 'FREE', 322, 25, 0, NULL, 'STUDENT', '2026-07-02 20:05:12', '2026-07-02 20:05:12'),
 ('89a42c8b-2dfe-415f-8c35-99bf9d635062', 'Bui Khoa', 'khoa971@gmail.com', 'khoa971', '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGTRSyvxzDZWclXU6', 18, 'FREE', 856, 5, 0, NULL, 'STUDENT', '2026-06-04 21:14:01', '2026-06-04 21:14:01');
+
+CREATE TABLE IF NOT EXISTS `password_reset_otps` (
+  `email` varchar(255) NOT NULL,
+  `code_hash` varchar(100) NOT NULL,
+  `expires_at` timestamp NOT NULL,
+  `sent_at` timestamp NOT NULL,
+  `attempts` int NOT NULL DEFAULT 0,
+  PRIMARY KEY (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

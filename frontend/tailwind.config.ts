@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Quicksand', 'Segoe UI', 'system-ui', 'sans-serif'],
+        heading: ['Plus Jakarta Sans', 'Segoe UI', 'system-ui', 'sans-serif'],
         body: ['Nunito', 'Segoe UI', 'system-ui', 'sans-serif'],
       },
       colors: {

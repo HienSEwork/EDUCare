@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiRequest } from "@/lib/api/client";
 import { Lesson, Course } from "@/types/api";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, BookOpen, AlertCircle, Trophy, X, Star, Search, Sparkles, ChevronRight, Film, ChevronLeft, ArrowRight, Shuffle, RefreshCw, ArrowUp } from "lucide-react";
+import { Play, BookOpen, AlertCircle, Trophy, X, Star, Search, Sparkles, ChevronRight, Film, ChevronLeft, ArrowRight, Shuffle, RefreshCw, ArrowUp, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -25,6 +26,7 @@ function extractYoutubeId(url: string | null | undefined): string {
 
 export default function VideoGalleryPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,16 @@ export default function VideoGalleryPage() {
   const [isMoreLoading, setIsMoreLoading] = useState(false);
 
   const playerRef = useRef<any>(null);
+
+  const subscriptionExpiry = user?.subscriptionEndDate
+    ? new Date(user.subscriptionEndDate).getTime()
+    : null;
+  const hasActiveSubscription = Boolean(
+    user?.isAdmin ||
+    (user?.subscriptionPlanId &&
+      user.plan !== "free" &&
+      (subscriptionExpiry === null || (!Number.isNaN(subscriptionExpiry) && subscriptionExpiry > Date.now())))
+  );
 
   // Hiển thị nút "Lên đầu trang" khi cuộn xuống dưới
   useEffect(() => {
@@ -246,6 +258,7 @@ export default function VideoGalleryPage() {
 
   // Định nghĩa Card Component hiển thị bài học có video (YouTube Style)
   const VideoCard = ({ lesson }: { lesson: ExtendedLesson }) => {
+    const isLocked = !lesson.isFree && !hasActiveSubscription;
     const youtubeId = extractYoutubeId(lesson.teaserVideoId);
     const coverUrl = youtubeId
       ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`
@@ -256,20 +269,48 @@ export default function VideoGalleryPage() {
     return (
       <motion.div
         whileHover={{ y: -6, scale: 1.02 }}
-        className="gradient-card overflow-hidden rounded-2xl border border-muted-foreground/10 shadow-md flex flex-col justify-between w-full snap-start transition-all"
+        role={isLocked ? "link" : undefined}
+        tabIndex={isLocked ? 0 : undefined}
+        aria-label={isLocked ? `${lesson.title} - Cần đăng ký gói để xem` : undefined}
+        onClick={isLocked ? () => navigate("/pricing") : undefined}
+        onKeyDown={isLocked ? (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            navigate("/pricing");
+          }
+        } : undefined}
+        className={`gradient-card overflow-hidden rounded-2xl border shadow-md flex flex-col justify-between w-full snap-start transition-all ${
+          isLocked
+            ? "cursor-pointer border-slate-300/70 bg-slate-100/80 grayscale dark:border-slate-700 dark:bg-slate-900/80"
+            : "border-muted-foreground/10"
+        }`}
       >
-        <div className="relative aspect-video w-full bg-slate-900 group cursor-pointer" onClick={() => setSelectedLesson(lesson)}>
+        <div
+          className="relative aspect-video w-full bg-slate-900 group cursor-pointer"
+          onClick={isLocked ? undefined : () => setSelectedLesson(lesson)}
+        >
           <img
             src={coverUrl}
             alt={lesson.title}
             loading="lazy"
-            className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300"
+            className={`w-full h-full object-cover transition-all duration-300 ${
+              isLocked ? "opacity-35" : "opacity-80 group-hover:scale-105"
+            }`}
           />
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
-            <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg text-primary-foreground group-hover:scale-110 transition-transform">
-              <Play className="h-6 w-6 fill-current translate-x-0.5" />
+          <div className={`absolute inset-0 flex items-center justify-center transition-all ${isLocked ? "bg-slate-950/60" : "bg-black/40 group-hover:bg-black/20"}`}>
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform ${
+              isLocked
+                ? "bg-slate-700 text-white"
+                : "bg-primary text-primary-foreground group-hover:scale-110"
+            }`}>
+              {isLocked ? <Lock className="h-6 w-6" /> : <Play className="h-6 w-6 fill-current translate-x-0.5" />}
             </div>
           </div>
+          {isLocked && (
+            <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-950/85 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
+              Đăng ký gói để xem
+            </span>
+          )}
           {lesson.isFree ? (
             <span className="absolute top-3 left-3 px-2 py-1 rounded-md text-xs font-bold bg-green-500 text-white">
               Miễn phí
@@ -280,13 +321,16 @@ export default function VideoGalleryPage() {
             </span>
           )}
         </div>
-        <div className="p-5 flex-1 flex flex-col justify-between">
+        <div className={`p-5 flex-1 flex flex-col justify-between ${isLocked ? "opacity-65" : ""}`}>
           <div>
             {/* Badge chủ đề khóa học */}
             {lesson.courseTitle && (
               <span
                 className="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3 border cursor-pointer hover:opacity-85 transition-opacity"
-                onClick={() => setSelectedCourseTab(String(lesson.courseId))}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setSelectedCourseTab(String(lesson.courseId));
+                }}
                 style={{
                   backgroundColor: `${lesson.courseColorTheme || "#7C3AED"}15`,
                   borderColor: `${lesson.courseColorTheme || "#7C3AED"}35`,
@@ -296,7 +340,7 @@ export default function VideoGalleryPage() {
                 {lesson.courseTitle}
               </span>
             )}
-            <h3 className="font-heading text-base md:text-lg font-bold line-clamp-2 mb-2 hover:text-primary transition-colors cursor-pointer" onClick={() => setSelectedLesson(lesson)}>
+            <h3 className="font-heading text-base md:text-lg font-bold line-clamp-2 mb-2 hover:text-primary transition-colors cursor-pointer" onClick={isLocked ? undefined : () => setSelectedLesson(lesson)}>
               {lesson.title}
             </h3>
             <p className="text-muted-foreground text-xs md:text-sm line-clamp-2 mb-4">
@@ -311,9 +355,13 @@ export default function VideoGalleryPage() {
               size="sm"
               variant="outline"
               className="rounded-full flex items-center gap-1 text-xs"
-              onClick={() => window.location.href = `/lesson/${lesson.slug}`}
+              onClick={(event) => {
+                event.stopPropagation();
+                navigate(isLocked ? "/pricing" : `/lesson/${lesson.slug}`);
+              }}
             >
-              <BookOpen className="h-3.5 w-3.5" /> Học bài
+              {isLocked ? <Lock className="h-3.5 w-3.5" /> : <BookOpen className="h-3.5 w-3.5" />}
+              {isLocked ? "Đăng ký" : "Học bài"}
             </Button>
           </div>
         </div>

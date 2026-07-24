@@ -38,9 +38,9 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/actuator/health", "/error", "/ws/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/quizzes/submit", "/api/payments/webhook").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/blog-posts/**", "/api/lessons/**", "/api/quizzes/**", "/api/games/**", "/api/community/**", "/api/leaderboard", "/api/courses", "/api/courses/**", "/api/payments/plans", "/api/public/stats").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/google", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/quizzes/submit", "/api/payments/webhook", "/api/assistant/chat").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/blog-posts/**", "/api/lessons/**", "/api/quizzes/**", "/api/games/**", "/api/community/**", "/api/leaderboard", "/api/courses", "/api/courses/**", "/api/payments/plans", "/api/public/**").permitAll()
             .anyRequest().authenticated())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

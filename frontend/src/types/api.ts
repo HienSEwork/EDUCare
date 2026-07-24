@@ -25,6 +25,10 @@ export interface AuthResponse {
   user: User;
 }
 
+export interface MessageResponse {
+  message: string;
+}
+
 export interface MeResponse {
   user: User;
 }
@@ -551,5 +555,14 @@ export interface PublicStatsResponse {
   totalGames: number;
   totalCompletions: number;
   totalInteractions: number;
+}
+
+export interface AssistantChatTurn {
+  role: "user" | "model";
+  content: string;
+}
+
+export interface AssistantChatResponse {
+  reply: string;
 }
 

@@ -25,6 +25,21 @@ public final class AuthDtos {
   public record LoginRequest(@NotBlank String login, @NotBlank String password) {
   }
 
+  public record GoogleLoginRequest(@NotBlank String credential) {
+  }
+
+  public record ForgotPasswordRequest(@NotBlank @Email String email) {
+  }
+
+  public record ResetPasswordRequest(
+      @NotBlank @Email String email,
+      @NotBlank @Size(min = 6, max = 6) String otp,
+      @NotBlank @Size(min = 8, max = 120) String newPassword) {
+  }
+
+  public record MessageResponse(String message) {
+  }
+
   public record AuthResponse(String token, UserResponse user) {
   }
 
@@ -464,7 +479,7 @@ public record CourseResponse(
       @NotBlank String category,
       @NotBlank String date,
       Integer readTimeMinutes,
-      @NotBlank String emoji,
+      String emoji,
       String author,
       String authorTitle,
       String sourceUrl,

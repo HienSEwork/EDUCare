@@ -18,3 +18,8 @@ app:
     password: Admin@123
     full-name: EDUcare Admin
     username: educare_admin
+  google:
+    client-id: ""
+  gemini:
+    api-key: ""
+    model: gemini-2.5-flash

@@ -85,16 +85,26 @@ npm run build
 npm run test
 ```
 
-## Tai khoan seed
+## Deploy VPS
 
-Admin:
+Production nhan source local tai `/opt/educare` va doc bien moi truong tu
+`/root/.env.production`. Script deploy build image moi truoc, khong chay `docker compose down`,
+khong xoa/recreate database volume, va chi cap nhat frontend sau khi backend healthy.
 
-- email: `admin@educare.vn`
-- username: `educare_admin`
-- password: `Admin@123`
+```bash
+cd /opt/educare
+bash deploy/deploy.sh
+curl -fsS https://educareteen.com/health
+```
 
-User:
+Kiem tra truc tiep tren VPS:
 
-- email: `minhanh@educare.vn`
-- username: `minhanh`
-- password: `Admin@123`
+```bash
+docker compose --env-file .env.production ps
+docker inspect educare_backend --format='{{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{end}}'
+docker logs --tail=200 educare_backend
+```
+
+Khong su dung `docker compose down -v`, `docker volume rm` hoac `docker system prune --volumes`
+tren VPS vi cac lenh nay co the xoa database.
+

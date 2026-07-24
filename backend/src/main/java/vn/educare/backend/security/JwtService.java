@@ -19,7 +19,12 @@ public class JwtService {
   private final long expirationHours;
 
   public JwtService(AppProperties appProperties) {
-    this.secretKey = Keys.hmacShaKeyFor(appProperties.jwt().secret().getBytes(StandardCharsets.UTF_8));
+    String secret = appProperties.jwt().secret();
+    byte[] secretBytes = secret == null ? new byte[0] : secret.getBytes(StandardCharsets.UTF_8);
+    if (secretBytes.length < 32) {
+      throw new IllegalStateException("APP_JWT_SECRET must contain at least 32 UTF-8 bytes");
+    }
+    this.secretKey = Keys.hmacShaKeyFor(secretBytes);
     this.expirationHours = appProperties.jwt().expirationHours();
   }
 

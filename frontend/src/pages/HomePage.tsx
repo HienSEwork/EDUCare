@@ -167,14 +167,14 @@ export default function HomePage() {
   const bannerStatSubtitle = isViewsHigher ? "đã ghé thăm và học tập trên website" : "đang tham gia và học tập mỗi ngày";
 
   return (
-    <div className={theme === "light" ? "min-h-screen w-full max-w-full overflow-x-hidden bg-[#fdf6f9] text-slate-800 font-body" : "min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 font-body"}>
+    <div className={theme === "light" ? "flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-[#fdf6f9] text-slate-800 font-body" : "flex min-h-screen w-full max-w-full flex-col overflow-x-hidden text-slate-100 font-body"}>
 
       {/* ════════════════════════════════════
           1. HERO SECTION
       ════════════════════════════════════ */}
       <section
         ref={heroRef}
-        className="relative -mt-24 overflow-hidden pb-12 pt-36 md:-mt-28 md:pt-44"
+        className="relative order-[1] -mt-24 overflow-hidden pb-14 pt-36 md:-mt-28 md:pb-16 md:pt-44 lg:min-h-[720px] lg:flex lg:items-center"
         style={{
           background: theme === "light"
             ? "linear-gradient(180deg, #fff0f5 0%, #ffffff 55%, #fdf6f9 100%)"
@@ -187,11 +187,11 @@ export default function HomePage() {
           <div className={theme === "light" ? "absolute -right-24 top-8 h-[500px] w-[500px] rounded-full bg-purple-300/20 blur-[110px]" : "absolute -right-24 top-8 h-[500px] w-[500px] rounded-full bg-cyan-500/20 blur-[110px]"} />
         </div>
 
-        <div className="container mx-auto px-4">
-          <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-12 xl:px-14">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-14 xl:gap-16">
 
             {/* Left Copy */}
-            <motion.div variants={fadeUp} initial="hidden" animate="show" className="z-10">
+            <motion.div variants={fadeUp} initial="hidden" animate="show" className="z-10 mx-auto w-full max-w-[580px] text-center lg:mx-0 lg:justify-self-end lg:text-left">
 
               {/* Eyebrow Label */}
               <div className={theme === "light"
@@ -205,36 +205,36 @@ export default function HomePage() {
               </div>
 
               {/* H1 — Giant 3D Title */}
-              <motion.h1 variants={fadeUp} custom={1} className="font-heading leading-[1.08]">
-                <span className={theme === "light" ? "block text-xl font-bold uppercase tracking-widest text-pink-600 mb-1" : "block text-xl font-bold uppercase tracking-widest text-amber-300 mb-1"}>
+              <motion.h1 variants={fadeUp} custom={1} className="font-heading leading-[1.08] tracking-[-0.04em]">
+                <span className={theme === "light" ? "mb-2 block text-sm font-extrabold uppercase tracking-[0.18em] text-pink-600 sm:text-base" : "mb-2 block text-sm font-extrabold uppercase tracking-[0.18em] text-amber-300 sm:text-base"}>
                   Khám phá
                 </span>
-                <span className="text-title-3d text-5xl md:text-[62px] lg:text-[70px]">
+                <span className="text-title-3d block pb-[0.08em] text-[clamp(2.65rem,5vw,4.5rem)]">
                   Thế giới EDUcare
                 </span>
               </motion.h1>
 
               {/* Subtitle */}
-              <motion.p variants={fadeUp} custom={1.5} className={theme === "light" ? "mt-5 text-base font-medium leading-relaxed text-slate-600 max-w-xl" : "mt-5 text-base font-medium leading-relaxed text-indigo-100/85 max-w-xl"}>
+              <motion.p variants={fadeUp} custom={1.5} className={theme === "light" ? "mx-auto mt-6 max-w-[540px] text-base font-medium leading-7 text-slate-600 lg:mx-0 sm:text-lg" : "mx-auto mt-6 max-w-[540px] text-base font-medium leading-7 text-indigo-100/85 lg:mx-0 sm:text-lg"}>
                 Học hỏi, giải trí và kết nối — Nền tảng giúp bạn phát triển mỗi ngày!
               </motion.p>
 
               {/* Action Buttons */}
-              <motion.div variants={fadeUp} custom={2} className="mt-8 flex flex-wrap items-center gap-4">
+              <motion.div variants={fadeUp} custom={2} className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4 lg:justify-start">
                 <Link to={user ? "/dashboard" : "/register"}>
-                  <Button size="lg" className="magic-btn-primary h-14 rounded-full px-8 text-base font-extrabold gap-2">
+                  <Button size="lg" className="magic-btn-primary h-14 w-full rounded-full px-8 text-base font-extrabold gap-2 sm:w-auto">
                     Bắt đầu hành trình <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
                 <Link to="/courses">
-                  <Button size="lg" className={theme === "light" ? "h-14 rounded-full px-8 text-base font-bold border border-pink-300 bg-white text-slate-700 hover:bg-pink-50 shadow-sm transition-all" : "magic-btn-secondary h-14 rounded-full px-8 text-base font-bold"}>
+                  <Button size="lg" className={theme === "light" ? "h-14 w-full rounded-full px-8 text-base font-bold border border-pink-300 bg-white text-slate-700 hover:bg-pink-50 shadow-sm transition-all sm:w-auto" : "magic-btn-secondary h-14 w-full rounded-full px-8 text-base font-bold sm:w-auto"}>
                     Khám phá ngay
                   </Button>
                 </Link>
               </motion.div>
 
               {/* Social proof avatar stack */}
-              <motion.div variants={fadeUp} custom={2.5} className="mt-10 flex items-center gap-4">
+              <motion.div variants={fadeUp} custom={2.5} className="mt-9 flex items-center justify-center gap-4 lg:justify-start">
                 <div className="flex -space-x-3">
                   {[imgAvatarGirl1, imgAvatarBoy1, imgAvatarGirl2, imgAvatarBoy2].map((src, i) => (
                     <img key={i} src={src} alt="" className={theme === "light" ? "h-10 w-10 rounded-full border-2 border-pink-200 object-cover shadow-md" : "h-10 w-10 rounded-full border-2 border-indigo-300 object-cover shadow-md"} />
@@ -248,9 +248,9 @@ export default function HomePage() {
             </motion.div>
 
             {/* Right Hero Graphic */}
-            <div className="relative flex justify-center lg:justify-end w-full">
+            <div className="relative flex w-full justify-center lg:justify-start">
               <div className={theme === "light" ? "absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-pink-400/20 via-rose-300/20 to-amber-300/20 blur-[90px]" : "absolute inset-0 w-full h-full rounded-full bg-gradient-to-br from-purple-500/30 via-cyan-400/20 to-amber-400/20 blur-[100px]"} />
-              <motion.div style={{ y: heroImgY }} className="relative z-10 w-full max-w-[540px] lg:max-w-[640px]">
+              <motion.div style={{ y: heroImgY }} className="relative z-10 w-full max-w-[560px] lg:max-w-[620px]">
                 <div className={theme === "light" ? "rounded-[2.5rem] p-1.5 bg-gradient-to-br from-pink-400 via-rose-300 to-amber-300 shadow-[0_20px_50px_rgba(236,72,153,0.18)]" : "rounded-[2.5rem] p-1.5 bg-gradient-to-br from-cyan-400/70 via-purple-500/50 to-amber-300/70 shadow-[0_25px_60px_rgba(0,0,0,0.7)]"}>
                   <img
                     src={imgFptHero}
@@ -264,10 +264,42 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 2. FEATURED COURSES */}
+      <section className={theme === "light"
+        ? "order-[2] border-y border-pink-100 bg-white py-16 md:py-20"
+        : "order-[2] border-y border-indigo-900/50 bg-[#100930] py-16 md:py-20"
+      }>
+        <div className="container mx-auto px-4">
+          <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className={theme === "light" ? "mb-1 text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600" : "mb-1 text-xs font-heading font-extrabold uppercase tracking-widest text-amber-300"}>
+                Học tập theo cách của bạn
+              </p>
+              <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold text-slate-800 md:text-4xl" : "font-heading text-3xl font-extrabold text-white md:text-4xl"}>
+                Khóa học nổi bật
+              </h2>
+            </div>
+            <Link to="/courses" className={theme === "light" ? "inline-flex w-fit items-center gap-2 rounded-full border border-pink-300 bg-white px-5 py-2.5 text-xs font-bold text-pink-600 shadow-xs hover:bg-pink-50" : "magic-btn-secondary inline-flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold"}>
+              Xem tất cả <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {courses.map((course, index) => (
+              <NotebookCourseCard
+                key={course.title}
+                course={{ id: index + 1, title: course.title, lessons: new Array(12) } as any}
+                index={index}
+                onClick={() => navigate("/courses")}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ════════════════════════════════════
           2. ANONYMOUS QUESTION BOX SECTION
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-white py-12 border-y border-pink-100" : "bg-[#0e092d] py-12 border-y border-indigo-900/50"}>
+      <section className={theme === "light" ? "order-[5] border-y border-pink-100 bg-[#fff5f8] py-12" : "order-[5] border-y border-indigo-900/50 bg-[#0d0828] py-12"}>
         <div className="container mx-auto px-4">
           <AnonymousQuestionBox variant="standalone" />
         </div>
@@ -276,7 +308,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           3. GOLDEN HIGHLIGHT FEATURE ROW
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-[#fdf6f9] py-10" : "bg-[#100b33] py-10"}>
+      <section className={theme === "light" ? "order-[3] bg-[#fff5f8] py-10" : "order-[3] bg-[#0d0828] py-10"}>
         <div className="container mx-auto px-4">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
@@ -299,8 +331,8 @@ export default function HomePage() {
           4. CATEGORY CARDS CAROUSEL — CHỌN HÀNH TRÌNH CỦA BẠN
       ════════════════════════════════════ */}
       <section className={theme === "light"
-        ? "relative overflow-hidden border-y border-pink-100 bg-[radial-gradient(circle_at_15%_15%,rgba(251,207,232,0.45),transparent_28%),linear-gradient(180deg,#fff_0%,#fff8fb_100%)] py-16 md:py-20"
-        : "relative overflow-hidden border-y border-amber-300/10 bg-[radial-gradient(circle_at_15%_15%,rgba(245,158,11,0.12),transparent_28%),linear-gradient(180deg,#120c38_0%,#0d0929_100%)] py-16 md:py-20"
+        ? "relative order-[4] overflow-hidden border-y border-pink-100 bg-[radial-gradient(circle_at_15%_15%,rgba(251,207,232,0.35),transparent_28%),linear-gradient(180deg,#fff_0%,#fff_100%)] py-16 md:py-20"
+        : "relative order-[4] overflow-hidden border-y border-amber-300/10 bg-[radial-gradient(circle_at_15%_15%,rgba(245,158,11,0.1),transparent_28%),linear-gradient(180deg,#160f42_0%,#160f42_100%)] py-16 md:py-20"
       }>
         <div className={theme === "light" ? "absolute -right-24 top-10 h-64 w-64 rounded-full bg-pink-200/30 blur-3xl" : "absolute -right-24 top-10 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl"} />
         <div className="container relative mx-auto px-4">
@@ -380,7 +412,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           5. 5-STEP ROADMAP TRAIL — 5 BƯỚC CHINH PHỤC
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-[#fdf6f9] py-20 border-t border-pink-100" : "bg-[#160e42] py-20 border-t border-indigo-900/50"}>
+      <section className={theme === "light" ? "order-[10] border-t border-pink-100 bg-white py-20" : "order-[10] border-t border-indigo-900/50 bg-[#160f42] py-20"}>
         <div className="container mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-14">
             <p className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1" : "text-xs font-heading font-extrabold uppercase tracking-widest text-amber-300 mb-1"}>Hành trình học tập đơn giản</p>
@@ -418,35 +450,12 @@ export default function HomePage() {
       </section>
 
       {/* ════════════════════════════════════
-          6. SIDE-BY-SIDE GRID — KHÓA HỌC NỔI BẬT + CỘNG ĐỒNG SÔI ĐỘNG
+          COMMUNITY NUMBERS
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-white py-20 border-t border-pink-100" : "bg-[#100930] py-20 border-t border-indigo-900/50"}>
+      <section className={theme === "light" ? "order-[7] border-t border-pink-100 bg-[#fff5f8] py-20" : "order-[7] border-t border-indigo-900/50 bg-[#0d0828] py-20"}>
         <div className="container mx-auto px-4">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-
-            {/* Left: Khóa học nổi bật */}
-            <div className={theme === "light" ? "magic-card p-6 md:p-8 rounded-[2rem] border border-pink-200 bg-white shadow-sm" : "magic-card p-6 md:p-8 rounded-[2rem]"}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className={theme === "light" ? "font-heading text-2xl font-extrabold text-slate-800" : "font-heading text-2xl font-extrabold text-white"}>Khóa học nổi bật</h3>
-                <Link to="/courses" className={theme === "light" ? "border border-pink-300 bg-white text-pink-600 hover:bg-pink-50 px-4 py-1.5 rounded-full text-xs font-bold shadow-xs" : "magic-btn-secondary px-4 py-1.5 rounded-full text-xs font-bold"}>
-                  Xem tất cả
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {courses.map((c, idx) => (
-                  <NotebookCourseCard
-                    key={c.title}
-                    course={{ id: idx + 1, title: c.title, lessons: new Array(12) } as any}
-                    index={idx}
-                    onClick={() => navigate("/courses")}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Right: Cộng đồng sôi động */}
-            <div className={theme === "light" ? "magic-card p-6 md:p-8 rounded-[2rem] border border-pink-200 bg-white shadow-sm" : "magic-card p-6 md:p-8 rounded-[2rem]"}>
+          <div className="mx-auto max-w-5xl">
+            <div className={theme === "light" ? "magic-card rounded-[2rem] border border-pink-200 bg-white p-6 shadow-sm md:p-8" : "magic-card rounded-[2rem] p-6 md:p-8"}>
               <h3 className={theme === "light" ? "font-heading text-2xl font-extrabold text-slate-800 mb-6" : "font-heading text-2xl font-extrabold text-white mb-6"}>Cộng đồng sôi động</h3>
 
               {/* 4 Stat Boxes Grid */}
@@ -497,7 +506,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           7. DEDICATED MOOD TRACKER & EMOTIONAL WELLNESS SECTION
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-[#fdf6f9] py-20 border-t border-pink-100" : "bg-[#0d0726] py-20 border-t border-indigo-900/50"}>
+      <section className={theme === "light" ? "order-[9] border-t border-pink-100 bg-[#fff5f8] py-20" : "order-[9] border-t border-indigo-900/50 bg-[#0d0828] py-20"}>
         <div className="container mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1 block" : "text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block"}>Theo dõi sức khỏe tinh thần</span>
@@ -517,7 +526,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           8. TESTIMONIALS — HỌC VIÊN NÓI GÌ VỀ CHÚNG TÔI??
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-white py-20 border-t border-pink-100" : "bg-[#140b3a] py-20 border-t border-indigo-900/50"}>
+      <section className={theme === "light" ? "order-[6] border-t border-pink-100 bg-white py-20" : "order-[6] border-t border-indigo-900/50 bg-[#160f42] py-20"}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
             <h2 className={theme === "light" ? "font-heading text-2xl md:text-3xl font-extrabold text-slate-800" : "font-heading text-2xl md:text-3xl font-extrabold text-white"}>
@@ -562,7 +571,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           9. INTERACTIVE GAMES SECTION
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-[#fdf6f9] py-20 border-t border-pink-100" : "bg-[#0b0724] py-20 border-t border-indigo-900/50"}>
+      <section className={theme === "light" ? "order-[8] border-t border-pink-100 bg-white py-20" : "order-[8] border-t border-indigo-900/50 bg-[#160f42] py-20"}>
         <div className="container mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1 block" : "text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block"}>Góc giải trí qua trò chơi</span>
@@ -595,7 +604,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           10. BOTTOM CTA BANNER — SẴN SÀNG BẮT ĐẦU HÀNH TRÌNH MỚI?
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "bg-white py-20" : "bg-[#07041a] py-20"}>
+      <section className={theme === "light" ? "order-[11] bg-[#fff5f8] py-20" : "order-[11] bg-[#0d0828] py-20"}>
         <div className="container mx-auto px-4">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}

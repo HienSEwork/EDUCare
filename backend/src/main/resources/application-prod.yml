@@ -16,3 +16,8 @@ management:
     health:
       probes:
         enabled: true
+
+app:
+  database:
+    # Dữ liệu production chỉ được cập nhật bằng migration/import có kiểm soát.
+    seed-enabled: false
