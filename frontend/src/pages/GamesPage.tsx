@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Trophy, Zap, Star, Gamepad2, Sparkles, Crown, FlameKindling } from "lucide-react";
+import { ArrowRight, Trophy, Zap, Gamepad2, Sparkles, Search, Crown } from "lucide-react";
 
 import { GAME_DISPLAY_BY_SLUG, GAMES_PAGE_COPY } from "@/content/pageCopy";
 import { getGamePhoto } from "@/lib/contentMedia";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import type { Game } from "@/types/api";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const supportedPlayPaths = new Set([
   "/games/quiz?mode=quick",
@@ -20,73 +21,16 @@ const supportedPlayPaths = new Set([
   "/games/teen-path",
 ]);
 
-/* ── Floating polygon shapes for garden atmosphere ── */
-const POLY_SHAPES = [
-  { id: 1, points: "50,5 95,27 95,73 50,95 5,73 5,27", color: "#818cf8", size: 80, x: "8%", y: "12%", delay: 0, dur: 7 },
-  { id: 2, points: "50,0 100,38 82,100 18,100 0,38", color: "#34d399", size: 60, x: "85%", y: "8%", delay: 1.5, dur: 9 },
-  { id: 3, points: "0,50 50,0 100,50 50,100", color: "#f472b6", size: 50, x: "15%", y: "72%", delay: 0.8, dur: 8 },
-  { id: 4, points: "50,5 95,27 95,73 50,95 5,73 5,27", color: "#38bdf8", size: 44, x: "78%", y: "68%", delay: 2, dur: 11 },
-  { id: 5, points: "0,50 50,0 100,50 50,100", color: "#fbbf24", size: 36, x: "50%", y: "6%", delay: 0.4, dur: 6 },
-  { id: 6, points: "50,0 100,50 50,100 0,50", color: "#a78bfa", size: 28, x: "92%", y: "42%", delay: 3, dur: 10 },
-  { id: 7, points: "50,5 95,27 95,73 50,95 5,73 5,27", color: "#fb7185", size: 22, x: "4%", y: "44%", delay: 1.2, dur: 8.5 },
-];
-
-/* Stars / sparkle dots scattered in bg */
-const STAR_DOTS = Array.from({ length: 18 }, (_, i) => ({
-  id: i,
-  x: `${5 + (i * 83) % 90}%`,
-  y: `${3 + (i * 47) % 88}%`,
-  r: 1.5 + (i % 3) * 1,
-  opacity: 0.15 + (i % 4) * 0.08,
-  dur: 3 + (i % 5),
-  delay: (i * 0.4) % 4,
-}));
-
-function PolyFloat({ shape }: { shape: typeof POLY_SHAPES[0] }) {
-  return (
-    <motion.div
-      className="pointer-events-none absolute"
-      style={{ left: shape.x, top: shape.y, width: shape.size, height: shape.size, opacity: 0.22 }}
-      animate={{ y: [0, -14, 0], rotate: [0, 8, -8, 0] }}
-      transition={{ duration: shape.dur, delay: shape.delay, repeat: Infinity, ease: "easeInOut" }}
-    >
-      <svg viewBox="0 0 100 100" width={shape.size} height={shape.size}>
-        <polygon points={shape.points} fill={shape.color} />
-      </svg>
-    </motion.div>
-  );
-}
-
 function gameBadge(game: Game) {
-  if (game.gameType === "FLASH") return GAMES_PAGE_COPY.flashBadge;
-  if (game.slug.includes("long")) return GAMES_PAGE_COPY.longQuizBadge;
-  return GAMES_PAGE_COPY.quickQuizBadge;
+  if (game.gameType === "FLASH") return "🎮 Game Tình Huống 3D";
+  if (game.slug.includes("long")) return "🏆 Thách Thức Chuyên Sâu";
+  return "⚡ Trắc Nghiệm Nhanh";
 }
 
 function getDisplayGame(game: Game) {
   const display = GAME_DISPLAY_BY_SLUG[game.slug as keyof typeof GAME_DISPLAY_BY_SLUG];
   return { ...game, title: display?.title ?? game.title, summary: display?.summary ?? game.summary };
 }
-
-/* ── Fixed grid span config for 9 games (0-indexed)
-   lg = 6-col grid | md = 4-col grid | sm = 2-col grid
-   Row layout (lg):
-   Rows 1-2:  [0: 2×2] [1: 4×2]
-   Row 3:     [2: 2×1] [3: 2×1] [4: 2×1]
-   Rows 4-5:  [5: 4×2] [6: 2×2]
-   Row 6:     [7: 3×1] [8: 3×1]
-──────────────────────────────────── */
-const GRID_SPANS: string[] = [
-  "col-span-2 row-span-2",                        // 0 hero square
-  "col-span-2 row-span-2 lg:col-span-4",          // 1 wide banner
-  "col-span-1 row-span-1 md:col-span-2",          // 2 small→medium
-  "col-span-1 row-span-1 md:col-span-2",          // 3 small→medium
-  "col-span-2 row-span-1",                        // 4 standard wide
-  "col-span-2 row-span-2 lg:col-span-4",          // 5 wide banner
-  "col-span-2 row-span-2",                        // 6 square
-  "col-span-2 row-span-1 lg:col-span-3",          // 7 half-wide
-  "col-span-2 row-span-1 lg:col-span-3",          // 8 half-wide
-];
 
 /* ── Preferred display order by slug ── */
 const GAME_ORDER = [
@@ -101,17 +45,16 @@ const GAME_ORDER = [
   "quiz-long",
 ];
 
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-
 export default function GamesPage() {
   const [games, setGames] = useState<Game[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   useEffect(() => {
     void apiRequest<Game[]>("/games")
       .then((response) => {
         const published = response.filter((item) => item.published);
-        // Sort by preferred display order
         published.sort((a, b) => {
           const ai = GAME_ORDER.indexOf(a.slug);
           const bi = GAME_ORDER.indexOf(b.slug);
@@ -125,137 +68,234 @@ export default function GamesPage() {
       });
   }, []);
 
+  const displayGames = games.map(getDisplayGame);
+
+  const filteredGames = displayGames.filter((game) => {
+    const matchesSearch =
+      game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      game.summary.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (selectedCategory === "3D") {
+      return matchesSearch && (game.gameType === "FLASH" || game.slug.includes("anh-sang") || game.slug.includes("detective"));
+    }
+    if (selectedCategory === "QUIZ") {
+      return matchesSearch && (game.slug.includes("quiz") || game.slug.includes("myth"));
+    }
+    if (selectedCategory === "ACTION") {
+      return matchesSearch && (game.slug.includes("swipe") || game.slug.includes("emotion") || game.slug.includes("hunt") || game.slug.includes("path"));
+    }
+    return matchesSearch;
+  });
+
   return (
     <ErrorBoundary>
-      <div className="min-h-screen overflow-x-hidden pb-20">
+      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+        style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+      >
+        {/* Background Ambient Glowing Orbs */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+          <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+          <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+        </div>
 
-        {/* ══════════════════════════════
-            GAME CARDS GRID (Poki Style)
-        ══════════════════════════════ */}
-        <div className="container mx-auto px-3 py-6 md:px-6 md:py-8 lg:max-w-[1400px]">
-          {error && <div className="mt-6 rounded-2xl bg-destructive/10 p-4 text-sm text-destructive">{error}</div>}
+        <div className="container mx-auto px-4 max-w-6xl">
+          {/* Header Title Section */}
+          <div className="mb-12 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
+            >
+              <Gamepad2 className="h-4 w-4 text-amber-300" />
+              <span>Đấu Trường Tri Thức – Trải Nghiệm 3D</span>
+            </motion.div>
 
-          <section className="mt-4 pb-4">
-            <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">{GAMES_PAGE_COPY.sectionEyebrow}</p>
-                <h2 className="mt-2 font-heading text-3xl font-bold">{GAMES_PAGE_COPY.sectionTitle}</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{GAMES_PAGE_COPY.sectionDescription}</p>
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="font-heading text-3xl font-extrabold tracking-tight text-white md:text-5xl lg:text-6xl"
+            >
+              Góc Trò Chơi Tương Tác <br />
+              <span className="bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent drop-shadow-sm">
+                Học Tập & Tích Lũy Điểm XP
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mx-auto max-w-2xl text-sm md:text-base font-medium text-indigo-100/80 mt-4 leading-relaxed"
+            >
+              Rèn luyện kỹ năng xử lý tình huống thực tế, phân biệt tin đồn chuẩn y khoa và chinh phục bảng xếp hạng cùng cộng đồng EDUcare.
+            </motion.p>
+          </div>
+
+          {/* Search & Category Filter Section (Transparent Background) */}
+          <div className="flex flex-col gap-5 bg-transparent p-0 mb-10">
+            {/* Search Bar Row */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="relative w-full md:max-w-md">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm trò chơi tình huống, trắc nghiệm..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="h-12 w-full rounded-none border border-indigo-400/30 bg-slate-900/60 backdrop-blur-md pl-11 pr-10 text-sm shadow-inner transition-all focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none text-slate-100 placeholder:text-slate-400"
+                />
               </div>
-              <Link to="/community/leaderboard" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
-                <Trophy className="h-4 w-4" />
-                {GAMES_PAGE_COPY.openLeaderboard}
+
+              <Link
+                to="/community/leaderboard"
+                className="inline-flex items-center gap-2 rounded-none border border-amber-400/40 bg-amber-950/40 px-5 py-3 text-xs font-black uppercase tracking-wider text-amber-300 hover:bg-amber-900/60 transition-all backdrop-blur-md shrink-0 shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+              >
+                <Trophy className="h-4 w-4 text-amber-400" />
+                <span>Xem Bảng Xếp Hạng</span>
               </Link>
             </div>
 
-            {/* Poki-style dense grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 lg:gap-4 auto-rows-[160px] md:auto-rows-[180px]">
-              {games.map(getDisplayGame).map((game, index) => {
-                const isImplemented = supportedPlayPaths.has(game.playPath);
-                const spanClass = GRID_SPANS[index] ?? "col-span-2 row-span-1";
-
-                return (
-                  <Link
-                    to={isImplemented ? game.playPath : "#"}
-                    key={game.id}
-                    className={`group relative overflow-hidden rounded-[1.2rem] md:rounded-[1.6rem] bg-black shadow-card transition-transform duration-300 hover:scale-[1.02] hover:z-10 hover:shadow-hover ${spanClass} ${!isImplemented ? "opacity-60 cursor-not-allowed" : ""}`}
+            {/* Square Text-Only Category Filter Tabs (Radius=0, Transparent Glass) */}
+            <div className="flex flex-col gap-2.5 border-t border-slate-700/50 pt-4">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Danh mục trò chơi:</span>
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 flex-nowrap w-full scroll-smooth">
+                {[
+                  { id: "ALL", label: "Tất cả trò chơi" },
+                  { id: "3D", label: "Chuyên sâu 3D" },
+                  { id: "QUIZ", label: "Trắc nghiệm XP" },
+                  { id: "ACTION", label: "Tình huống phản xạ" }
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`px-5 py-2.5 rounded-none text-xs font-extrabold tracking-wide uppercase transition-all duration-200 shrink-0 ${
+                      selectedCategory === cat.id
+                        ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                        : "border border-slate-700/70 bg-slate-900/60 backdrop-blur-md text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
+                    }`}
                   >
-                    <img
-                      src={getGamePhoto(game)}
-                      alt={`Ảnh trò chơi ${game.title}`}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
-                    />
-
-                    {/* Always-visible title badge at bottom for context */}
-                    <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
-                    <p className="absolute bottom-2 left-3 right-3 text-xs font-bold text-white/90 drop-shadow leading-tight line-clamp-1">
-                      {game.title}
-                    </p>
-
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <span className="rounded-full bg-white/90 self-start mb-2 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary shadow-soft">
-                        {gameBadge(game)}
-                      </span>
-                      <h3 className="font-heading text-base font-bold text-white leading-tight drop-shadow-md md:text-lg">
-                        {game.title}
-                      </h3>
-                      {isImplemented ? (
-                        <span className="mt-1 inline-flex items-center text-xs font-semibold text-white/90">
-                          {GAMES_PAGE_COPY.playAction} <ArrowRight className="ml-1 h-3 w-3" />
-                        </span>
-                      ) : (
-                        <span className="mt-1 text-xs font-semibold text-white/70">
-                          {GAMES_PAGE_COPY.developingAction}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* ── Garden CTA banner ── */}
-          <section className="mt-8 overflow-hidden rounded-[2rem] border border-indigo-200/40"
-            style={{ background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #1d4ed8 100%)" }}>
-            <div className="relative px-8 py-12 text-center">
-              {/* Poly deco */}
-              <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                {POLY_SHAPES.slice(0, 4).map((s) => (
-                  <motion.div
-                    key={s.id}
-                    className="absolute"
-                    style={{ left: s.x, top: s.y, width: s.size * 0.6, height: s.size * 0.6, opacity: 0.15 }}
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: s.dur * 3, repeat: Infinity, ease: "linear" }}
-                  >
-                    <svg viewBox="0 0 100 100" width={s.size * 0.6} height={s.size * 0.6}>
-                      <polygon points={s.points} fill={s.color} />
-                    </svg>
-                  </motion.div>
+                    {cat.label}
+                  </button>
                 ))}
               </div>
+            </div>
+          </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="relative"
-              >
-                <div className="mb-4 flex justify-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur">
-                    <Crown className="h-7 w-7 text-yellow-300" />
+          {error && (
+            <div className="mx-auto max-w-md mb-8 rounded-none bg-rose-950/80 border border-rose-500/40 p-4 text-center text-sm font-semibold text-rose-200 backdrop-blur-md shadow-lg">
+              {error}
+            </div>
+          )}
+
+          {/* Modern 3D Game Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 items-stretch">
+            {filteredGames.map((game, index) => {
+              const isImplemented = supportedPlayPaths.has(game.playPath);
+
+              return (
+                <motion.div
+                  key={game.id}
+                  initial={{ opacity: 0, y: 25 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.08, duration: 0.4 }}
+                  className={`group relative rounded-none border border-indigo-500/25 bg-slate-900/60 backdrop-blur-xl p-5 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400/60 hover:shadow-[0_0_35px_rgba(6,182,212,0.25)] ${
+                    !isImplemented ? "opacity-70" : ""
+                  }`}
+                >
+                  <div>
+                    {/* Game Cover 2D Art Thumbnail with Overlay Badges */}
+                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-none bg-slate-950/80 border border-slate-700/50 mb-5 p-2">
+                      <img
+                        src={getGamePhoto(game)}
+                        alt={`Ảnh trò chơi ${game.title}`}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+
+                      {/* Top-Left EXP Bonus Label Badge */}
+                      <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-none border border-amber-400/50 bg-slate-950/90 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-amber-300 backdrop-blur-md shadow-md">
+                        <Zap className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
+                        <span>+100 XP</span>
+                      </span>
+
+                      {/* Top-Right Category Badge Tag */}
+                      <span className="absolute top-3 right-3 rounded-none border border-cyan-400/40 bg-slate-950/90 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-cyan-300 backdrop-blur-md shadow-md">
+                        {gameBadge(game)}
+                      </span>
+                    </div>
+
+                    {/* Game Title & Summary */}
+                    <div className="text-center">
+                      <h3 className="font-heading text-lg md:text-xl font-extrabold text-white leading-snug group-hover:text-cyan-300 transition-colors">
+                        {game.title}
+                      </h3>
+                      <p className="text-xs md:text-sm font-medium text-indigo-100/80 mt-2 line-clamp-2 leading-relaxed">
+                        {game.summary}
+                      </p>
+                    </div>
                   </div>
+
+                  {/* Centered Action Button */}
+                  <div className="mt-6 pt-4 border-t border-indigo-500/20 flex justify-center">
+                    {isImplemented ? (
+                      <Link
+                        to={game.playPath}
+                        className="w-full inline-flex items-center justify-center gap-2 rounded-none bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 py-3 text-xs font-black text-white uppercase tracking-wider shadow-lg shadow-cyan-500/20 hover:brightness-110 active:scale-95 transition-all text-center"
+                      >
+                        <Gamepad2 className="h-4 w-4" />
+                        <span>Chơi ngay</span>
+                      </Link>
+                    ) : (
+                      <span className="w-full text-center rounded-none border border-slate-700/60 bg-slate-800/40 py-2.5 text-[11px] font-bold text-slate-400">
+                        Đang phát triển
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Garden Leaderboard CTA Banner */}
+          <div className="mt-16 text-center">
+            <div className="mx-auto max-w-4xl rounded-none border border-indigo-500/30 bg-slate-900/60 p-8 backdrop-blur-xl shadow-2xl">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="text-left max-w-lg">
+                  <div className="flex items-center gap-2 text-cyan-300 font-extrabold text-xs uppercase tracking-widest mb-1.5">
+                    <Crown className="h-4 w-4 text-amber-400" />
+                    <span>Sẵn sàng chinh phục bảng xếp hạng</span>
+                  </div>
+                  <h4 className="font-heading font-extrabold text-white text-lg sm:text-xl">
+                    Leo Top XP & Nhận Huy Hiệu Vinh Danh
+                  </h4>
+                  <p className="text-xs sm:text-sm text-indigo-100/70 font-medium mt-1">
+                    Hoàn thành các thử thách tình huống hàng ngày để duy trì chuỗi Streak và nhận phần thưởng đặc quyền.
+                  </p>
                 </div>
-                <h2 className="font-heading text-2xl font-bold text-white md:text-3xl">
-                  Sẵn sàng chinh phục bảng xếp hạng?
-                </h2>
-                <p className="mt-3 text-sky-200/80">
-                  Chơi đều mỗi ngày, giữ streak và leo top cùng cộng đồng EDUcare.
-                </p>
-                <div className="mt-7 flex flex-wrap justify-center gap-3">
+
+                <div className="flex flex-wrap gap-3 justify-center">
                   <Link
                     to="/games/quiz?mode=quick"
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-indigo-700 shadow-[0_6px_24px_rgba(255,255,255,0.2)] transition-all hover:-translate-y-0.5"
+                    className="inline-flex items-center gap-2 rounded-none bg-gradient-to-r from-cyan-400 to-blue-500 px-6 py-3 text-xs font-black uppercase tracking-wider text-slate-950 shadow-lg shadow-cyan-500/20 hover:brightness-110 transition-all"
                   >
                     <Zap className="h-4 w-4" />
-                    Chơi ngay
+                    <span>Thử thách nhanh</span>
                   </Link>
                   <Link
                     to="/community/leaderboard"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                    className="inline-flex items-center gap-2 rounded-none border border-indigo-400/30 bg-indigo-950/50 px-6 py-3 text-xs font-black uppercase tracking-wider text-indigo-200 hover:bg-indigo-900/80 transition-all"
                   >
-                    <Trophy className="h-4 w-4" />
-                    Xem bảng xếp hạng
+                    <Trophy className="h-4 w-4 text-amber-400" />
+                    <span>Xem Bảng Xếp Hạng</span>
                   </Link>
                 </div>
-              </motion.div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       </div>
     </ErrorBoundary>
   );
 }
+

@@ -77,33 +77,36 @@ export default function BlogPage() {
   const otherPosts = filteredPosts.slice(1);
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
-      {/* Full Width Hero Banner - Nền Glass, không bọc border */}
-      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
-        {/* Ambient Glows */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
-          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
-        </div>
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
 
-        <div className="container mx-auto px-4 relative z-10">
+      {/* Header Banner Section */}
+      <section className="w-full relative overflow-hidden mb-8">
+        <div className="container mx-auto px-4 relative z-10 max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(420px,0.9fr)] lg:items-center lg:gap-10">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-[640px]">
-              <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300">
+              <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                 {BLOG_PAGE_COPY.eyebrow}
               </span>
               <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white">
                 <span className="block">{BLOG_PAGE_COPY.titleLine1}</span>
-                <span className="mt-1 block text-amber-300">{BLOG_PAGE_COPY.titleLine2}</span>
+                <span className="mt-1 block bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent">{BLOG_PAGE_COPY.titleLine2}</span>
               </h1>
               <p className="mt-4 max-w-[600px] text-base leading-relaxed text-indigo-100/80 md:text-lg">
                 {BLOG_PAGE_COPY.description}
               </p>
 
               {/* Dynamic Statistics Querying Real Data */}
-              <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-indigo-400/20 pt-4 mb-6">
+              <div className="mt-6 flex flex-wrap items-center gap-6 border-t border-slate-700/50 pt-4 mb-6">
                 <div>
-                  <div className="text-xl font-extrabold text-amber-300 md:text-2xl">{posts.length}</div>
+                  <div className="text-xl font-extrabold text-cyan-300 md:text-2xl">{posts.length}</div>
                   <div className="text-xs text-indigo-200/70 font-semibold">Bài viết chia sẻ</div>
                 </div>
                 <div>
@@ -112,15 +115,16 @@ export default function BlogPage() {
                 </div>
               </div>
 
+              {/* Square Text-Only Category Filter Tabs (Radius=0) */}
               <div className="flex flex-wrap gap-2.5">
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`rounded-full px-4 py-2 text-xs font-extrabold transition-all ${
+                    className={`px-5 py-2.5 rounded-none text-xs font-extrabold tracking-wide uppercase transition-all duration-200 shrink-0 ${
                       selectedCategory === category
-                        ? "bg-amber-300 text-slate-950 shadow-md scale-105"
-                        : "bg-indigo-900/50 border border-indigo-400/30 text-indigo-200 hover:text-white hover:bg-indigo-800/60"
+                        ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                        : "border border-slate-700/70 bg-slate-900/60 backdrop-blur-md text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
                     }`}
                   >
                     {category}

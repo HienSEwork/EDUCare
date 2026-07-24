@@ -82,12 +82,12 @@ function SwipeCardUI({ card, onSwipe, isTop }: { card: SwipeCard; onSwipe: (dir:
       </motion.div>
 
       <div
-        className="flex h-full flex-col overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-card"
+        className="flex h-full flex-col overflow-hidden rounded-[2rem] border border-indigo-500/30 bg-slate-900/95 backdrop-blur-2xl shadow-2xl text-white"
       >
         {/* Top bar */}
         <div className="px-6 pt-6 pb-4">
           <span
-            className="inline-block rounded-full px-3 py-1 text-xs font-bold text-white"
+            className="inline-block rounded-full px-3.5 py-1 text-xs font-black text-slate-950"
             style={{ background: catColor }}
           >
             {card.icon} {card.category}
@@ -96,14 +96,14 @@ function SwipeCardUI({ card, onSwipe, isTop }: { card: SwipeCard; onSwipe: (dir:
 
         {/* Scenario */}
         <div className="flex flex-1 items-center px-8">
-          <p className="font-heading text-xl font-bold leading-snug text-foreground md:text-2xl">
+          <p className="font-heading text-xl font-extrabold leading-relaxed text-white md:text-2xl">
             {card.scenario}
           </p>
         </div>
 
         {/* Hint */}
         <div className="px-6 pb-6 pt-4">
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-center text-xs font-bold text-slate-400">
             ← Kéo trái = Nguy hiểm &nbsp;|&nbsp; Kéo phải = An toàn →
           </p>
         </div>
@@ -174,8 +174,8 @@ export default function SafeSwipePage() {
         ]}
         startLabel="Bắt đầu ngay!"
         onStart={startGame}
-        bgGradient="linear-gradient(135deg,#0d1117 0%,#1a1f2e 50%,#0f1923 100%)"
-        accentColor="#9b5de5"
+        bgGradient="linear-gradient(160deg, #1f071a 0%, #380c2e 45%, #1f1254 100%)"
+        accentColor="#ec4899"
         buttonIcon={<Shield className="h-5 w-5" />}
       />
     );
@@ -190,56 +190,65 @@ export default function SafeSwipePage() {
       : { text: "Hãy ôn lại các tình huống để tự bảo vệ tốt hơn!", color: "#ef4444" };
 
     return (
-      <div className="min-h-screen pb-16 pt-8">
+      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+        style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+      >
+        {/* Background Ambient Glowing Orbs */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+          <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+          <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+        </div>
+
         <div className="container mx-auto max-w-4xl px-4">
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
-            <section className="rounded-[2.4rem] border border-white/70 bg-[linear-gradient(135deg,rgba(240,230,255,0.9)_0%,rgba(246,241,255,0.96)_50%,rgba(220,255,245,0.9)_100%)] p-8 shadow-card text-center md:p-12">
+            <section className="rounded-[2.4rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl p-8 shadow-2xl text-center md:p-12">
               <div className="text-5xl">{pct >= 80 ? "🏆" : pct >= 60 ? "🛡️" : "📚"}</div>
-              <h1 className="mt-4 font-heading text-3xl font-bold md:text-4xl" style={{ color: label.color }}>{label.text}</h1>
-              <p className="mt-2 text-muted-foreground">Bạn đúng <strong>{correctCount}/{totalPlayed}</strong> thẻ ({pct}%)</p>
+              <h1 className="mt-4 font-heading text-3xl font-extrabold md:text-4xl text-white" style={{ color: label.color }}>{label.text}</h1>
+              <p className="mt-2 text-indigo-100/80">Bạn đúng <strong className="text-cyan-300">{correctCount}/{totalPlayed}</strong> thẻ ({pct}%)</p>
 
               <div
-                className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-card"
-                style={{ background: `conic-gradient(${label.color} ${pct}%, #e5e7eb ${pct}%)` }}
+                className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-2xl"
+                style={{ background: `conic-gradient(${label.color} ${pct}%, #1e1b4b ${pct}%)` }}
               >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background">
-                  <span className="font-heading text-2xl font-bold" style={{ color: label.color }}>{pct}%</span>
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-950">
+                  <span className="font-heading text-2xl font-black" style={{ color: label.color }}>{pct}%</span>
                 </div>
               </div>
 
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Button id="safe-swipe-replay-btn" className="gradient-primary text-primary-foreground" onClick={startGame}>
+                <Button id="safe-swipe-replay-btn" className="rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white font-black hover:brightness-110 shadow-lg shadow-cyan-500/20" onClick={startGame}>
                   <RefreshCw className="mr-2 h-4 w-4" /> Chơi lại
                 </Button>
-                <Button variant="outline" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
+                <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
               </div>
             </section>
 
             {/* Review */}
             <section className="mt-8">
-              <h2 className="mb-4 font-heading text-2xl font-bold">Xem lại kết quả</h2>
+              <h2 className="mb-4 font-heading text-2xl font-extrabold text-white">Xem lại kết quả</h2>
               <div className="grid gap-3 md:grid-cols-2">
                 {played.map((p, idx) => (
                   <div
                     key={p.id}
-                    className={`rounded-[1.6rem] border p-5 ${p.isCorrect ? "border-green-200/70 bg-green-50/80" : "border-red-200/70 bg-red-50/80"}`}
+                    className={`rounded-[1.6rem] border p-5 backdrop-blur-xl ${p.isCorrect ? "border-emerald-500/40 bg-emerald-950/40 text-slate-100" : "border-rose-500/40 bg-rose-950/40 text-slate-100"}`}
                   >
                     <div className="flex items-start gap-3">
-                      <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${p.isCorrect ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}>
+                      <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ${p.isCorrect ? "bg-emerald-500 text-slate-950" : "bg-rose-500 text-slate-950"}`}>
                         {p.isCorrect ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                       </span>
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Thẻ {idx + 1}</span>
-                          <span className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: CATEGORY_COLORS[p.category] ?? "#9b5de5" }}>
+                          <span className="text-xs font-bold text-slate-400">Thẻ {idx + 1}</span>
+                          <span className="rounded-full px-2 py-0.5 text-[10px] font-black text-slate-950" style={{ background: CATEGORY_COLORS[p.category] ?? "#9b5de5" }}>
                             {p.category}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-indigo-200">
                             Đáp án: <strong>{p.isSafe ? "✅ An toàn" : "⚠️ Nguy hiểm"}</strong>
                           </span>
                         </div>
-                        <p className="mt-1 font-semibold text-sm">{p.scenario}</p>
-                        <p className="mt-1 text-xs text-foreground/70">{p.explanation}</p>
+                        <p className="mt-1 font-bold text-sm text-white">{p.scenario}</p>
+                        <p className="mt-1 text-xs text-indigo-100/80">{p.explanation}</p>
                       </div>
                     </div>
                   </div>
@@ -257,25 +266,34 @@ export default function SafeSwipePage() {
   const progress = ((ALL_SWIPE_CARDS.length - deck.length) / ALL_SWIPE_CARDS.length) * 100;
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
+
       <div className="container mx-auto max-w-2xl px-4">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between rounded-[1.6rem] border border-white/65 bg-card/84 px-5 py-3 shadow-soft">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Trophy className="h-4 w-4 text-primary" />
+        <div className="mb-6 flex items-center justify-between rounded-[1.6rem] border border-indigo-400/30 bg-slate-900/70 backdrop-blur-xl px-5 py-3 shadow-xl">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-cyan-300">
+            <Trophy className="h-4 w-4 text-amber-400" />
             {correctCount} đúng
           </div>
-          <span className="text-xs text-muted-foreground">Còn {deck.length} thẻ</span>
+          <span className="text-xs font-extrabold text-indigo-200">Còn {deck.length} thẻ</span>
           <div className="flex items-center gap-2 text-sm">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span className="font-semibold">{totalPlayed}</span>
-            <span className="text-xs text-muted-foreground">đã qua</span>
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            <span className="font-extrabold text-white">{totalPlayed}</span>
+            <span className="text-xs text-indigo-200">đã qua</span>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="mb-6 h-1.5 overflow-hidden rounded-full bg-muted">
-          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress}%`, background: "linear-gradient(90deg,#9b5de5,#06d6a0)" }} />
+        <div className="mb-6 h-2 overflow-hidden rounded-full bg-indigo-950 border border-indigo-500/30">
+          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress}%`, background: "linear-gradient(90deg,#06b6d4,#10b981)" }} />
         </div>
 
         {/* Card stack */}
@@ -284,7 +302,7 @@ export default function SafeSwipePage() {
             <SwipeCardUI key={card.id} card={card} onSwipe={handleSwipe} isTop={i === topTwo.length - 1} />
           ))}
           {topTwo.length === 0 && (
-            <div className="flex h-full items-center justify-center rounded-[2rem] border border-dashed border-muted-foreground/30 text-muted-foreground">
+            <div className="flex h-full items-center justify-center rounded-[2rem] border border-dashed border-indigo-400/30 text-indigo-200">
               Đang xử lý...
             </div>
           )}
@@ -297,13 +315,13 @@ export default function SafeSwipePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className={`mt-4 rounded-[1.4rem] p-5 ${showFeedback.isCorrect ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+              className={`mt-4 rounded-[1.4rem] p-5 border backdrop-blur-xl ${showFeedback.isCorrect ? "border-emerald-500/40 bg-emerald-950/80 text-emerald-200" : "border-rose-500/40 bg-rose-950/80 text-rose-200"}`}
             >
               <div className="flex items-start gap-3">
                 <span className="text-2xl">{showFeedback.isCorrect ? "✅" : "⚠️"}</span>
                 <div>
-                  <p className="font-bold">{showFeedback.isCorrect ? "Chính xác!" : "Chưa đúng!"}</p>
-                  <p className="mt-1 text-sm leading-relaxed">{showFeedback.card.explanation}</p>
+                  <p className="font-extrabold text-white">{showFeedback.isCorrect ? "Chính xác!" : "Chưa đúng!"}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-indigo-100/90">{showFeedback.card.explanation}</p>
                 </div>
               </div>
             </motion.div>
@@ -316,23 +334,23 @@ export default function SafeSwipePage() {
             id="swipe-unsafe-btn"
             onClick={() => handleSwipe("unsafe")}
             disabled={!!showFeedback}
-            className="flex items-center justify-center gap-3 rounded-[1.6rem] border-2 border-red-200 bg-red-50/80 py-5 font-bold text-red-600 transition-all hover:-translate-y-1 hover:border-red-400 hover:shadow-lg disabled:opacity-60"
+            className="flex items-center justify-center gap-3 rounded-[1.6rem] border-2 border-rose-500/40 bg-rose-950/50 py-5 font-extrabold text-rose-300 transition-all hover:-translate-y-1 hover:border-rose-400 hover:bg-rose-900/60 hover:shadow-lg disabled:opacity-60"
           >
             <ArrowLeft className="h-6 w-6" />
             <div>
               <div className="text-lg">⚠️ Nguy hiểm</div>
-              <div className="text-xs font-normal opacity-70">Kéo trái</div>
+              <div className="text-xs font-bold opacity-70">Kéo trái</div>
             </div>
           </button>
           <button
             id="swipe-safe-btn"
             onClick={() => handleSwipe("safe")}
             disabled={!!showFeedback}
-            className="flex items-center justify-center gap-3 rounded-[1.6rem] border-2 border-green-200 bg-green-50/80 py-5 font-bold text-green-700 transition-all hover:-translate-y-1 hover:border-green-400 hover:shadow-lg disabled:opacity-60"
+            className="flex items-center justify-center gap-3 rounded-[1.6rem] border-2 border-emerald-500/40 bg-emerald-950/50 py-5 font-extrabold text-emerald-300 transition-all hover:-translate-y-1 hover:border-emerald-400 hover:bg-emerald-900/60 hover:shadow-lg disabled:opacity-60"
           >
             <div>
               <div className="text-lg">✅ An toàn</div>
-              <div className="text-xs font-normal opacity-70">Kéo phải</div>
+              <div className="text-xs font-bold opacity-70">Kéo phải</div>
             </div>
             <ArrowRight className="h-6 w-6" />
           </button>

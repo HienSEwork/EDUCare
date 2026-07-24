@@ -164,8 +164,8 @@ export default function TeenPathPage() {
         ]}
         startLabel="Bắt đầu hành trình!"
         onStart={startGame}
-        bgGradient="linear-gradient(135deg,#1a0533 0%,#4a1060 50%,#c75000 100%)"
-        accentColor="#9b5de5"
+        bgGradient="linear-gradient(160deg, #18072b 0%, #300c4f 45%, #1f1254 100%)"
+        accentColor="#a855f7"
         buttonIcon={<BookOpen className="h-5 w-5" />}
       />
     );
@@ -177,12 +177,20 @@ export default function TeenPathPage() {
     const color = ENDING_COLORS[endingType] ?? "#9b5de5";
 
     return (
-      <div className="min-h-screen pb-16 pt-8">
+      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+        style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+      >
+        {/* Background Ambient Glowing Orbs */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+          <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+          <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+        </div>
+
         <div className="container mx-auto max-w-2xl px-4">
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
             <section
-              className="rounded-[2.4rem] border p-8 shadow-card text-center md:p-12"
-              style={{ background: bgStyle, borderColor: color + "44" }}
+              className="rounded-[2.4rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl p-8 shadow-2xl text-center md:p-12"
             >
               <motion.div
                 initial={{ scale: 0.5, opacity: 0 }}
@@ -192,26 +200,26 @@ export default function TeenPathPage() {
               >
                 {currentNode.endingEmoji}
               </motion.div>
-              <h1 className="mt-4 font-heading text-3xl font-bold" style={{ color }}>
+              <h1 className="mt-4 font-heading text-3xl font-extrabold" style={{ color }}>
                 {currentNode.endingTitle}
               </h1>
-              <p className="mt-4 text-sm leading-relaxed text-foreground/80 max-w-md mx-auto">
+              <p className="mt-4 text-sm leading-relaxed text-indigo-100/90 max-w-md mx-auto">
                 {currentNode.endingText}
               </p>
 
-              <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold">
-                <Star className="h-4 w-4 text-yellow-500" />
+              <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-indigo-950/80 border border-indigo-400/30 px-4 py-2 text-sm font-extrabold text-white">
+                <Star className="h-4 w-4 text-amber-400 fill-current" />
                 {unlockedEndings.size}/{TEEN_PATH_STORY.endings.length} kết cục đã mở
               </div>
 
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Button id="teen-path-replay-btn" className="gradient-primary text-primary-foreground" onClick={startGame}>
+                <Button id="teen-path-replay-btn" className="rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white font-black hover:brightness-110 shadow-lg shadow-cyan-500/20" onClick={startGame}>
                   <RefreshCw className="mr-2 h-4 w-4" /> Chơi lại
                 </Button>
-                <Button variant="outline" onClick={() => setPhase("intro")}>
+                <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" onClick={() => setPhase("intro")}>
                   Xem kết cục khác
                 </Button>
-                <Button variant="outline" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
+                <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
               </div>
             </section>
           </motion.div>
@@ -224,17 +232,26 @@ export default function TeenPathPage() {
   if (!currentNode) return null;
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
+
       <div className="container mx-auto max-w-2xl px-4">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           {history.length > 0 ? (
-            <button onClick={handleBack} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={handleBack} className="text-xs font-bold text-cyan-300 hover:underline transition-colors">
               ← Quay lại
             </button>
           ) : <div />}
-          <span className="text-xs text-muted-foreground">
-            <Star className="inline h-3 w-3 text-yellow-500 mr-1" />
+          <span className="text-xs font-extrabold text-indigo-200">
+            <Star className="inline h-3 w-3 text-amber-400 fill-current mr-1" />
             {unlockedEndings.size}/{TEEN_PATH_STORY.endings.length} ending
           </span>
         </div>
@@ -250,27 +267,26 @@ export default function TeenPathPage() {
           >
             {/* Visual panel */}
             <div
-              className="relative flex min-h-[200px] items-center justify-center rounded-[2rem] border border-white/70 overflow-hidden shadow-card mb-4"
-              style={{ background: bgStyle }}
+              className="relative flex min-h-[200px] items-center justify-center rounded-[2rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl mb-4"
             >
               <div className="flex flex-col items-center gap-3 p-8">
                 <motion.span
                   key={currentNodeId + "_avatar"}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/80 bg-white/60 text-5xl shadow-card"
+                  className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-indigo-400/40 bg-slate-950/80 text-5xl shadow-xl"
                 >
                   {SPEAKER_EMOJI_MAP[currentNode.speaker] ?? "💬"}
                 </motion.span>
-                <p className="text-sm font-bold" style={{ color: "#4b5563" }}>
+                <p className="text-sm font-extrabold text-cyan-300">
                   {speaker?.name ?? "Người kể chuyện"}
                 </p>
               </div>
             </div>
 
             {/* Dialogue box */}
-            <div className="rounded-[1.8rem] border border-white/70 bg-white/90 p-6 shadow-card min-h-[120px]">
-              <p className="font-heading text-base leading-7 md:text-lg">
+            <div className="rounded-[1.8rem] border border-indigo-500/30 bg-slate-900/70 backdrop-blur-xl p-6 shadow-2xl min-h-[120px]">
+              <p className="font-heading text-base leading-relaxed text-white md:text-lg">
                 <TypewriterText key={currentNodeId} text={currentNode.text} onDone={handleTextDone} />
               </p>
             </div>
@@ -284,7 +300,7 @@ export default function TeenPathPage() {
                   exit={{ opacity: 0 }}
                   className="mt-4 space-y-3"
                 >
-                  <p className="text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-center text-xs font-extrabold uppercase tracking-widest text-slate-400">
                     Bạn sẽ làm gì?
                   </p>
                   {currentNode.choices.map((choice) => (
@@ -292,12 +308,12 @@ export default function TeenPathPage() {
                       key={choice.id}
                       id={`teen-path-choice-${choice.id}`}
                       onClick={() => handleChoice(choice.nextNodeId)}
-                      className="group w-full rounded-[1.4rem] border border-white/65 bg-white/80 px-5 py-4 text-left text-sm font-semibold shadow-soft transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground hover:shadow-card"
+                      className="group w-full rounded-[1.4rem] border border-indigo-400/30 bg-slate-900/80 px-5 py-4 text-left text-sm font-extrabold text-white shadow-xl transition-all hover:border-cyan-400 hover:bg-cyan-500 hover:text-slate-950"
                     >
                       <div className="flex items-center gap-3">
                         {choice.icon && <span className="text-lg">{choice.icon}</span>}
                         <span>{choice.text}</span>
-                        <ChevronRight className="ml-auto h-4 w-4 opacity-40 group-hover:opacity-100" />
+                        <ChevronRight className="ml-auto h-4 w-4 opacity-60 group-hover:opacity-100" />
                       </div>
                     </button>
                   ))}
@@ -308,7 +324,7 @@ export default function TeenPathPage() {
             {/* Skip typewriter */}
             {!textDone && (
               <button
-                className="mt-3 w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="mt-3 w-full text-center text-xs text-slate-400 hover:text-white transition-colors font-bold"
                 onClick={() => {
                   setTextDone(true);
                   textDoneRef.current = true;

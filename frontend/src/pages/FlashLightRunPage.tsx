@@ -191,24 +191,33 @@ export default function FlashLightRunPage() {
         ]}
         startLabel="Bắt đầu chơi!"
         onStart={() => setGamePhase("playing")}
-        bgGradient="linear-gradient(135deg,#0f0a1e 0%,#1a0533 50%,#0f0a1e 100%)"
-        accentColor="#d946ef"
+        bgGradient="linear-gradient(160deg, #0a071e 0%, #170d2b 45%, #241405 100%)"
+        accentColor="#f59e0b"
         buttonIcon={<Sparkles className="h-5 w-5" />}
       />
     );
   }
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
+
       <div className="container mx-auto max-w-6xl px-4">
-        <section className="rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,230,240,0.88)_0%,rgba(246,241,255,0.96)_48%,rgba(227,245,255,0.88)_100%)] p-6 shadow-card md:p-8">
+        <section className="rounded-[2.4rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl p-6 shadow-2xl md:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
-              <span className="inline-flex rounded-full bg-white/88 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary shadow-soft">
+              <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                 {FLASH_GAME_COPY.eyebrow}
               </span>
-              <h1 className="mt-5 font-heading text-4xl font-bold leading-tight md:text-5xl">{FLASH_GAME_COPY.title}</h1>
-              <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">{FLASH_GAME_COPY.description}</p>
+              <h1 className="mt-3 font-heading text-4xl font-extrabold leading-tight text-white md:text-5xl">{FLASH_GAME_COPY.title}</h1>
+              <p className="mt-4 text-base leading-relaxed text-indigo-100/80 md:text-lg">{FLASH_GAME_COPY.description}</p>
             </motion.div>
 
             <div className="grid gap-4 sm:grid-cols-3">
@@ -217,9 +226,9 @@ export default function FlashLightRunPage() {
                 { label: FLASH_GAME_COPY.time, value: `${timeLeft} ${FLASH_GAME_COPY.seconds}` },
                 { label: FLASH_GAME_COPY.score, value: `${score} điểm` },
               ].map((item) => (
-                <div key={item.label} className="rounded-[1.6rem] border border-white/70 bg-white/76 p-4 shadow-soft">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{item.label}</p>
-                  <p className="mt-2 text-sm font-semibold text-foreground">{item.value}</p>
+                <div key={item.label} className="rounded-[1.6rem] border border-indigo-400/30 bg-indigo-950/60 p-4 shadow-xl backdrop-blur-md">
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-cyan-300">{item.label}</p>
+                  <p className="mt-2 text-sm font-extrabold text-white">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -227,67 +236,67 @@ export default function FlashLightRunPage() {
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(300px,1fr)]">
-          <div className="rounded-[2rem] border border-white/70 bg-card/84 p-6 shadow-card">
+          <div className="rounded-[2rem] border border-indigo-500/25 bg-slate-900/60 backdrop-blur-xl p-6 shadow-2xl">
             <div
-              className="relative mx-auto overflow-hidden rounded-[1.8rem] border border-white/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.85),rgba(241,233,255,0.9),rgba(222,241,255,0.86))]"
+              className="relative mx-auto overflow-hidden rounded-[1.8rem] border border-indigo-400/30 bg-slate-950/80"
               style={{ width: BOARD_WIDTH, maxWidth: "100%", height: BOARD_HEIGHT }}
             >
-              <div className="absolute inset-0 bg-[linear-gradient(transparent_0%,rgba(255,255,255,0.12)_100%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.1),transparent_70%)]" />
 
               {orbs.map((orb) => (
                 <div
                   key={orb.id}
-                  className={`absolute flex h-7 w-7 items-center justify-center rounded-full shadow-soft ${
-                    orb.tone === "good" ? "bg-yellow-200/90 text-yellow-700" : "bg-slate-400/65 text-slate-700"
+                  className={`absolute flex h-7 w-7 items-center justify-center rounded-full shadow-lg ${
+                    orb.tone === "good" ? "bg-amber-400/90 text-slate-950 font-bold" : "bg-slate-700/80 text-rose-300"
                   }`}
                   style={{ left: orb.x, top: orb.y, transform: "translate(-50%, -50%)" }}
                 >
-                  {orb.tone === "good" ? <Sparkles className="h-4 w-4" /> : <span className="text-xs">!</span>}
+                  {orb.tone === "good" ? <Sparkles className="h-4 w-4" /> : <span className="text-xs font-bold">!</span>}
                 </div>
               ))}
 
               <div
-                className="absolute flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#9b5de5,#f15bb5)] text-white shadow-[0_10px_30px_rgba(155,93,229,0.35)]"
+                className="absolute flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-[0_0_20px_rgba(6,182,212,0.6)]"
                 style={{ left: playerX, top: playerY, transform: "translate(-50%, -50%)" }}
               >
                 <Sparkles className="h-5 w-5" />
               </div>
 
               {!isRunning ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/78 backdrop-blur">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{FLASH_GAME_COPY.gameOver}</p>
-                  <h2 className="mt-3 font-heading text-4xl font-bold">{score} điểm</h2>
-                  <p className="mt-3 text-sm font-semibold text-foreground/72">{grade}</p>
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md">
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-cyan-300">{FLASH_GAME_COPY.gameOver}</p>
+                  <h2 className="mt-3 font-heading text-4xl font-extrabold text-white">{score} điểm</h2>
+                  <p className="mt-3 text-sm font-extrabold text-amber-300">{grade}</p>
                 </div>
               ) : null}
             </div>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button className="gradient-primary text-primary-foreground" onClick={resetGame}>
+              <Button className="rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white font-black hover:brightness-110 shadow-lg shadow-cyan-500/20" onClick={resetGame}>
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {FLASH_GAME_COPY.playAgain}
               </Button>
-              <Button variant="outline" asChild>
+              <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" asChild>
                 <Link to="/games">{FLASH_GAME_COPY.backToGames}</Link>
               </Button>
             </div>
           </div>
 
           <aside className="space-y-5">
-            <div className="rounded-[2rem] border border-white/70 bg-card/84 p-6 shadow-card">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{FLASH_GAME_COPY.objective}</p>
-              <h2 className="mt-2 font-heading text-2xl font-bold">{FLASH_GAME_COPY.objectiveTitle}</h2>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">{FLASH_GAME_COPY.objectiveDescription}</p>
+            <div className="rounded-[2rem] border border-indigo-500/25 bg-slate-900/60 backdrop-blur-xl p-6 shadow-xl">
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-cyan-300">{FLASH_GAME_COPY.objective}</p>
+              <h2 className="mt-2 font-heading text-2xl font-extrabold text-white">{FLASH_GAME_COPY.objectiveTitle}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-indigo-100/80">{FLASH_GAME_COPY.objectiveDescription}</p>
             </div>
 
-            <div className="rounded-[2rem] border border-white/70 bg-card/84 p-6 shadow-card">
+            <div className="rounded-[2rem] border border-indigo-500/25 bg-slate-900/60 backdrop-blur-xl p-6 shadow-xl">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-primary/10">
-                  <Trophy className="h-5 w-5 text-primary" />
+                <span className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-indigo-950/80 border border-indigo-400/30">
+                  <Trophy className="h-5 w-5 text-amber-400" />
                 </span>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{FLASH_GAME_COPY.quickRating}</p>
-                  <h2 className="font-heading text-xl font-bold">{grade}</h2>
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-cyan-300">{FLASH_GAME_COPY.quickRating}</p>
+                  <h2 className="font-heading text-xl font-extrabold text-white">{grade}</h2>
                 </div>
               </div>
 
@@ -297,9 +306,9 @@ export default function FlashLightRunPage() {
                   { label: FLASH_GAME_COPY.timeRemaining, value: `${timeLeft} ${FLASH_GAME_COPY.seconds}` },
                   { label: FLASH_GAME_COPY.status, value: isRunning ? FLASH_GAME_COPY.playing : FLASH_GAME_COPY.ended },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-[1.3rem] bg-background/78 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">{item.label}</p>
-                    <p className="mt-2 text-lg font-bold">{item.value}</p>
+                  <div key={item.label} className="rounded-[1.3rem] border border-indigo-400/20 bg-indigo-950/50 p-4">
+                    <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-cyan-300">{item.label}</p>
+                    <p className="mt-2 text-lg font-extrabold text-white">{item.value}</p>
                   </div>
                 ))}
               </div>

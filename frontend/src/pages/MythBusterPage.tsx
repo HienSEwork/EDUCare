@@ -172,8 +172,8 @@ export default function MythBusterPage() {
         ]}
         startLabel="Bắt đầu thử thách!"
         onStart={startGame}
-        bgGradient="linear-gradient(135deg,#1a0a00 0%,#2d1200 50%,#0a1a2d 100%)"
-        accentColor="#f77f00"
+        bgGradient="linear-gradient(160deg, #071e16 0%, #0c382b 45%, #0f1254 100%)"
+        accentColor="#10b981"
         buttonIcon={<Zap className="h-5 w-5" />}
       />
     );
@@ -185,22 +185,31 @@ export default function MythBusterPage() {
     const pct = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
 
     return (
-      <div className="min-h-screen pb-16 pt-8">
+      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+        style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+      >
+        {/* Background Ambient Glowing Orbs */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+          <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+          <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+        </div>
+
         <div className="container mx-auto max-w-4xl px-4">
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
-            <section className="rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,230,240,0.88)_0%,rgba(246,241,255,0.96)_48%,rgba(227,245,255,0.88)_100%)] p-8 shadow-card text-center md:p-12">
+            <section className="rounded-[2.4rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl p-8 shadow-2xl text-center md:p-12">
               <div className="text-5xl">{scoreInfo.emoji}</div>
-              <h1 className="mt-4 font-heading text-3xl font-bold md:text-4xl">{scoreInfo.label}</h1>
-              <p className="mt-2 text-muted-foreground">
-                Bạn trả lời đúng <strong>{correctCount}/{TOTAL_QUESTIONS}</strong> câu ({pct}%)
+              <h1 className="mt-4 font-heading text-3xl font-extrabold text-white md:text-4xl">{scoreInfo.label}</h1>
+              <p className="mt-2 text-indigo-100/80">
+                Bạn trả lời đúng <strong className="text-cyan-300">{correctCount}/{TOTAL_QUESTIONS}</strong> câu ({pct}%)
               </p>
 
               {/* Progress ring */}
-              <div className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-card"
-                style={{ background: `conic-gradient(${scoreInfo.color} ${pct}%, #e5e7eb ${pct}%)` }}
+              <div className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-2xl"
+                style={{ background: `conic-gradient(${scoreInfo.color} ${pct}%, #1e1b4b ${pct}%)` }}
               >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background">
-                  <span className="font-heading text-2xl font-bold" style={{ color: scoreInfo.color }}>
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-950">
+                  <span className="font-heading text-2xl font-black" style={{ color: scoreInfo.color }}>
                     {pct}%
                   </span>
                 </div>
@@ -210,17 +219,17 @@ export default function MythBusterPage() {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Button
                   id="myth-buster-replay-btn"
-                  className="gradient-primary text-primary-foreground"
+                  className="rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white font-black hover:brightness-110 shadow-lg shadow-cyan-500/20"
                   onClick={startGame}
                 >
                   <RotateCcw className="mr-2 h-4 w-4" /> Chơi lại
                 </Button>
-                <Button variant="outline" asChild>
+                <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" asChild>
                   <Link to="/games">
                     <ArrowRight className="mr-2 h-4 w-4" /> Chơi game khác
                   </Link>
                 </Button>
-                <Button variant="outline" asChild>
+                <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" asChild>
                   <Link to="/courses">
                     <BookOpen className="mr-2 h-4 w-4" /> Xem bài học
                   </Link>
@@ -230,40 +239,40 @@ export default function MythBusterPage() {
 
             {/* Review section */}
             <section className="mt-8">
-              <h2 className="mb-4 font-heading text-2xl font-bold">Xem lại kết quả</h2>
+              <h2 className="mb-4 font-heading text-2xl font-extrabold text-white">Xem lại kết quả</h2>
               <div className="grid gap-3">
                 {questions.map((q, idx) => (
                   <div
                     key={q.id}
-                    className={`rounded-[1.6rem] border p-5 ${
+                    className={`rounded-[1.6rem] border p-5 backdrop-blur-xl ${
                       q.isCorrect
-                        ? "border-green-200/70 bg-green-50/80"
-                        : "border-red-200/70 bg-red-50/80"
+                        ? "border-emerald-500/40 bg-emerald-950/40 text-slate-100"
+                        : "border-rose-500/40 bg-rose-950/40 text-slate-100"
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <span
-                        className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                          q.isCorrect ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"
+                        className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ${
+                          q.isCorrect ? "bg-emerald-500 text-slate-950" : "bg-rose-500 text-slate-950"
                         }`}
                       >
                         {q.isCorrect ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                       </span>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground">Câu {idx + 1}</span>
+                          <span className="text-xs font-bold text-slate-400">Câu {idx + 1}</span>
                           <span
-                            className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                            className="rounded-full px-2 py-0.5 text-[10px] font-black text-slate-950"
                             style={{ background: CATEGORY_COLORS[q.category] ?? "#9b5de5" }}
                           >
                             {q.category}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-indigo-200">
                             Đáp án: <strong>{q.isTrue ? "✅ Đúng" : "❌ Sai"}</strong>
                           </span>
                         </div>
-                        <p className="mt-1 font-semibold">{q.statement}</p>
-                        <p className="mt-1 text-sm text-foreground/70">{q.explanation}</p>
+                        <p className="mt-1 font-bold text-white">{q.statement}</p>
+                        <p className="mt-1 text-sm text-indigo-100/80">{q.explanation}</p>
                       </div>
                     </div>
                   </div>
@@ -278,34 +287,43 @@ export default function MythBusterPage() {
 
   // ─── PLAYING ─────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen pb-16 pt-8">
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
+
       <div className="container mx-auto max-w-3xl px-4">
 
         {/* Header bar */}
-        <div className="mb-6 flex items-center justify-between gap-4 rounded-[1.6rem] border border-white/65 bg-card/84 px-5 py-3 shadow-soft">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Trophy className="h-4 w-4 text-primary" />
+        <div className="mb-6 flex items-center justify-between gap-4 rounded-[1.6rem] border border-indigo-400/30 bg-slate-900/70 backdrop-blur-xl px-5 py-3 shadow-xl">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-cyan-300">
+            <Trophy className="h-4 w-4 text-amber-400" />
             {correctCount} đúng
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs font-extrabold text-indigo-200">
             Câu {currentIndex + 1}/{TOTAL_QUESTIONS}
           </div>
-          <div className="flex items-center gap-2 text-sm font-semibold text-orange-500">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-amber-300">
             <Zap className="h-4 w-4" />
             Streak: {streak}
             {streak > 0 && streak % STREAK_BONUS_AT === 0 && (
-              <span className="text-xs text-green-500">+{STREAK_BONUS_SECONDS}s!</span>
+              <span className="text-xs text-emerald-400">+{STREAK_BONUS_SECONDS}s!</span>
             )}
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-muted">
+        <div className="mb-4 h-2 overflow-hidden rounded-full bg-indigo-950 border border-indigo-500/30">
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
               width: `${((currentIndex) / TOTAL_QUESTIONS) * 100}%`,
-              background: "linear-gradient(90deg,#9b5de5,#ff5d8f)",
+              background: "linear-gradient(90deg,#06b6d4,#8b5cf6)",
             }}
           />
         </div>
@@ -318,12 +336,12 @@ export default function MythBusterPage() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.25 }}
-            className="rounded-[2.4rem] border border-white/65 bg-card/90 p-8 shadow-card"
+            className="rounded-[2.4rem] border border-indigo-500/30 bg-slate-900/70 backdrop-blur-xl p-8 shadow-2xl"
           >
             {/* Category + Timer */}
             <div className="mb-6 flex items-center justify-between">
               <span
-                className="rounded-full px-3 py-1 text-xs font-bold text-white"
+                className="rounded-full px-3.5 py-1 text-xs font-black text-slate-950"
                 style={{ background: categoryColor }}
               >
                 {currentQuestion?.category}
@@ -332,7 +350,7 @@ export default function MythBusterPage() {
               {/* Timer ring */}
               <div className="relative flex h-12 w-12 items-center justify-center">
                 <svg className="absolute inset-0 -rotate-90" viewBox="0 0 44 44">
-                  <circle cx="22" cy="22" r="18" fill="none" stroke="#e5e7eb" strokeWidth="4" />
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#1e1b4b" strokeWidth="4" />
                   <circle
                     cx="22" cy="22" r="18" fill="none"
                     stroke={timeLeft <= 3 ? "#ef4444" : categoryColor}
@@ -344,7 +362,7 @@ export default function MythBusterPage() {
                   />
                 </svg>
                 <span
-                  className={`relative text-sm font-bold ${timeLeft <= 3 ? "text-red-500" : "text-foreground"}`}
+                  className={`relative text-sm font-black ${timeLeft <= 3 ? "text-rose-400" : "text-white"}`}
                 >
                   {timeLeft}
                 </span>
@@ -352,7 +370,7 @@ export default function MythBusterPage() {
             </div>
 
             {/* Statement */}
-            <h2 className="font-heading text-xl font-bold leading-snug md:text-2xl">
+            <h2 className="font-heading text-xl font-extrabold leading-snug text-white md:text-2xl">
               {currentQuestion?.statement}
             </h2>
 
@@ -362,15 +380,15 @@ export default function MythBusterPage() {
                 id="myth-answer-true"
                 disabled={showFeedback}
                 onClick={() => handleAnswer("true")}
-                className={`flex flex-col items-center justify-center gap-2 rounded-[1.6rem] border-2 py-6 font-bold transition-all hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 ${
+                className={`flex flex-col items-center justify-center gap-2 rounded-[1.6rem] border-2 py-6 font-extrabold transition-all hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 ${
                   showFeedback && lastAnswer
                     ? currentQuestion?.isTrue
-                      ? "border-green-400 bg-green-50 text-green-700"
-                      : "border-red-300 bg-red-50 text-red-500"
-                    : "border-green-200 bg-green-50/80 text-green-700 hover:border-green-400 hover:bg-green-100"
+                      ? "border-emerald-400 bg-emerald-950/80 text-emerald-300"
+                      : "border-rose-400 bg-rose-950/80 text-rose-300"
+                    : "border-emerald-500/40 bg-emerald-950/40 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-900/60"
                 }`}
               >
-                <CheckCircle2 className="h-8 w-8" />
+                <CheckCircle2 className="h-8 w-8 text-emerald-400" />
                 <span className="text-lg">✅ Đúng</span>
               </button>
 
@@ -378,15 +396,15 @@ export default function MythBusterPage() {
                 id="myth-answer-false"
                 disabled={showFeedback}
                 onClick={() => handleAnswer("false")}
-                className={`flex flex-col items-center justify-center gap-2 rounded-[1.6rem] border-2 py-6 font-bold transition-all hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 ${
+                className={`flex flex-col items-center justify-center gap-2 rounded-[1.6rem] border-2 py-6 font-extrabold transition-all hover:-translate-y-1 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 ${
                   showFeedback && lastAnswer
                     ? !currentQuestion?.isTrue
-                      ? "border-green-400 bg-green-50 text-green-700"
-                      : "border-red-300 bg-red-50 text-red-500"
-                    : "border-red-200 bg-red-50/80 text-red-600 hover:border-red-400 hover:bg-red-100"
+                      ? "border-emerald-400 bg-emerald-950/80 text-emerald-300"
+                      : "border-rose-400 bg-rose-950/80 text-rose-300"
+                    : "border-rose-500/40 bg-rose-950/40 text-rose-300 hover:border-rose-400 hover:bg-rose-900/60"
                 }`}
               >
-                <XCircle className="h-8 w-8" />
+                <XCircle className="h-8 w-8 text-rose-400" />
                 <span className="text-lg">❌ Sai</span>
               </button>
             </div>
@@ -398,19 +416,19 @@ export default function MythBusterPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className={`mt-6 rounded-[1.4rem] p-5 ${
+                  className={`mt-6 rounded-[1.4rem] p-5 border backdrop-blur-xl ${
                     lastAnswer.correct
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                      ? "border-emerald-500/40 bg-emerald-950/80 text-emerald-200"
+                      : "border-rose-500/40 bg-rose-950/80 text-rose-200"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">{lastAnswer.correct ? "✅" : "❌"}</span>
                     <div>
-                      <p className="font-bold">
+                      <p className="font-extrabold text-white">
                         {lastAnswer.correct ? "Chính xác!" : "Chưa đúng rồi!"}
                       </p>
-                      <p className="mt-1 text-sm leading-relaxed">{lastAnswer.explanation}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-indigo-100/90">{lastAnswer.explanation}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -420,7 +438,7 @@ export default function MythBusterPage() {
         </AnimatePresence>
 
         {/* Bottom hint */}
-        <p className="mt-4 text-center text-xs text-muted-foreground">
+        <p className="mt-4 text-center text-xs text-slate-400">
           Combo {STREAK_BONUS_AT} đúng liên tiếp → thêm {STREAK_BONUS_SECONDS} giây cho câu kế!
         </p>
       </div>

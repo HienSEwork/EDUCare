@@ -375,12 +375,12 @@ export default function VideoGalleryPage() {
 
       <div className="container mx-auto px-4 max-w-6xl">
 
-        {/* Search & Tabs Filter Section */}
-        <div className="flex flex-col gap-5 rounded-[1.8rem] border border-white/60 bg-white/60 p-5 shadow-card backdrop-blur-md mb-8">
+        {/* Search & Tabs Filter Section (Transparent background) */}
+        <div className="flex flex-col gap-5 bg-transparent p-0 mb-8">
 
           {/* Row 1: Search Input */}
           <div className="relative w-full">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Tìm kiếm video xem thử bài giảng..."
@@ -391,12 +391,12 @@ export default function VideoGalleryPage() {
                   setSelectedCourseTab("all");
                 }
               }}
-              className="h-12 w-full rounded-2xl border border-white/80 bg-background/80 pl-11 pr-10 text-sm shadow-inner transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+              className="h-12 w-full rounded-2xl border border-indigo-400/30 bg-slate-900/60 backdrop-blur-md pl-11 pr-10 text-sm shadow-inner transition-all focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none text-slate-100 placeholder:text-slate-400"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-black/5 active:scale-95 transition-all"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all"
                 title="Xóa tìm kiếm"
               >
                 <X className="h-4 w-4" />
@@ -404,41 +404,29 @@ export default function VideoGalleryPage() {
             )}
           </div>
 
-          {/* Row 2: Dynamic Tabs for Courses */}
+          {/* Row 2: Dynamic Square Tabs (Category style: radius=0, text-only, transparent glass) */}
           {!loading && coursesWithVideos.length > 0 && (
-            <div className="flex flex-col gap-2 border-t border-white/30 pt-4">
-              <span className="text-xs font-bold text-muted-foreground">Phân loại theo Khóa học:</span>
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 -my-1 flex-nowrap w-full scroll-smooth">
-                {/* Tab Tất cả */}
+            <div className="flex flex-col gap-2.5 border-t border-slate-700/50 pt-4">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Danh mục bài giảng:</span>
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 flex-nowrap w-full scroll-smooth">
+                {/* Tab Tất cả khóa học */}
                 <button
                   onClick={() => {
                     setSelectedCourseTab("all");
                     setSearchQuery("");
                   }}
-                  onMouseEnter={() => setHoveredTabId("all")}
-                  onMouseLeave={() => setHoveredTabId(null)}
-                  className="px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 hover:scale-105 active:scale-[0.98] duration-200"
-                  style={
+                  className={`px-5 py-2.5 rounded-none text-xs font-extrabold tracking-wide uppercase transition-all duration-200 shrink-0 ${
                     selectedCourseTab === "all"
-                      ? {
-                        backgroundColor: "#7C3AED",
-                        color: "#ffffff",
-                        boxShadow: `0 8px 16px -4px rgba(124, 58, 237, 0.4)`,
-                      }
-                      : {
-                        backgroundColor: hoveredTabId === "all" ? `rgba(124, 58, 237, 0.15)` : `rgba(124, 58, 237, 0.08)`,
-                        color: "#7C3AED",
-                      }
-                  }
+                      ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                      : "border border-slate-700/70 bg-slate-900/60 backdrop-blur-md text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
+                  }`}
                 >
-                  ✨ Tất cả khóa học
+                  Tất cả khóa học
                 </button>
 
                 {/* Tab các Khóa học cụ thể */}
                 {coursesWithVideos.map((course) => {
                   const isActive = selectedCourseTab === String(course.id);
-                  const colorTheme = course.colorTheme || "#7C3AED";
-                  const isHovered = hoveredTabId === String(course.id);
 
                   return (
                     <button
@@ -447,21 +435,11 @@ export default function VideoGalleryPage() {
                         setSelectedCourseTab(String(course.id));
                         setSearchQuery("");
                       }}
-                      onMouseEnter={() => setHoveredTabId(String(course.id))}
-                      onMouseLeave={() => setHoveredTabId(null)}
-                      className="px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 hover:scale-105 active:scale-[0.98] duration-200"
-                      style={
+                      className={`px-5 py-2.5 rounded-none text-xs font-extrabold tracking-wide transition-all duration-200 shrink-0 ${
                         isActive
-                          ? {
-                            backgroundColor: colorTheme,
-                            color: "#ffffff",
-                            boxShadow: `0 8px 16px -4px ${colorTheme}66`,
-                          }
-                          : {
-                            backgroundColor: isHovered ? `${colorTheme}22` : `${colorTheme}12`,
-                            color: colorTheme,
-                          }
-                      }
+                          ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                          : "border border-slate-700/70 bg-slate-900/60 backdrop-blur-md text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
+                      }`}
                     >
                       {course.title}
                     </button>

@@ -178,23 +178,27 @@ export default function CoursesPage() {
   }
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
-      {/* Full Width Hero Banner - Nền Glass, không bọc border */}
-      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
-          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
-        </div>
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
 
+      {/* Hero Header Section */}
+      <section className="w-full relative overflow-hidden mb-8">
         <div className="container mx-auto px-4 max-w-[1400px] relative z-10">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300">
+              <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                 KHÔNG GIAN AN TOÀN & TIN CÂY
               </span>
               <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white">
                 <span className="block">Giải đáp thắc mắc,</span>
-                <span className="block text-amber-300">tự tin lớn khôn.</span>
+                <span className="block bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent">tự tin lớn khôn.</span>
               </h1>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-indigo-100/80 md:text-lg">
                 Nơi đồng hành cùng thanh thiếu niên Việt Nam khám phá bản thân, hiểu rõ cơ thể, cảm xúc và rèn luyện kỹ năng xây dựng các mối quan hệ an toàn, lành mạnh.
@@ -334,10 +338,10 @@ export default function CoursesPage() {
                 setActiveQuestionId(null);
                 setRecommendationMsg(null);
               }}
-              className={`p-4 rounded-none border text-center font-heading text-xs font-extrabold transition-all flex items-center justify-center h-16 backdrop-blur-md cursor-pointer ${
+              className={`p-4 rounded-none text-center font-heading text-xs font-extrabold uppercase tracking-wide transition-all duration-200 flex items-center justify-center h-14 backdrop-blur-md cursor-pointer ${
                 selectedTag === "all"
-                  ? "bg-amber-300 border-2 border-amber-400 text-slate-950 shadow-lg scale-[1.02]"
-                  : "bg-indigo-950/60 border border-indigo-400/25 text-indigo-200 hover:bg-indigo-900/80 hover:text-white hover:border-indigo-400/50"
+                  ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)] scale-[1.02]"
+                  : "border border-slate-700/70 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
               }`}
             >
               <span>Tất cả chủ đề</span>
@@ -354,10 +358,10 @@ export default function CoursesPage() {
                     setActiveQuestionId(null);
                     setRecommendationMsg(null);
                   }}
-                  className={`p-4 rounded-none border text-center font-heading text-xs font-extrabold transition-all flex items-center justify-center h-16 backdrop-blur-md cursor-pointer ${
+                  className={`p-4 rounded-none text-center font-heading text-xs font-extrabold tracking-wide uppercase transition-all duration-200 flex items-center justify-center h-14 backdrop-blur-md cursor-pointer ${
                     isActive
-                      ? "bg-amber-300 border-2 border-amber-400 text-slate-950 shadow-lg scale-[1.02]"
-                      : "bg-indigo-950/60 border border-indigo-400/25 text-indigo-200 hover:bg-indigo-900/80 hover:text-white hover:border-indigo-400/50"
+                      ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)] scale-[1.02]"
+                      : "border border-slate-700/70 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
                   }`}
                 >
                   <span className="line-clamp-2">{item.name}</span>

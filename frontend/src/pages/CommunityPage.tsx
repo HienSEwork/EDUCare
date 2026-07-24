@@ -1005,21 +1005,25 @@ export default function CommunityPage() {
   }
 
   return (
-    <div className="min-h-screen pb-16 pt-8">
-      {/* Full Width Hero Banner - Nền Glass, không bọc border */}
-      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
-          <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
-        </div>
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
 
-        <div className="container mx-auto px-4 relative z-10">
+      {/* Full Width Hero Banner */}
+      <section className="w-full relative overflow-hidden mb-8">
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)] lg:items-end">
             <div>
-              <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300">
+              <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                 CỘNG ĐỒNG THẢO LUẬN
               </span>
-              <h1 className="mt-4 font-heading text-3xl font-extrabold leading-tight md:text-4xl text-white">
+              <h1 className="mt-4 font-heading text-3xl font-extrabold leading-tight md:text-5xl text-white">
                 {activePost 
                   ? "Xem chi tiết bài thảo luận" 
                   : activeCategory 
@@ -1041,8 +1045,8 @@ export default function CommunityPage() {
                 { label: "Đi nhanh", value: "Chat, bảng xếp hạng" },
               ].map((item) => (
                 <div key={item.label} className="rounded-[1.5rem] border border-indigo-400/30 bg-indigo-950/70 backdrop-blur-md p-4 shadow-xl">
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">{item.label}</p>
-                  <p className="mt-1 text-sm font-bold text-white">{item.value}</p>
+                  <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-cyan-300">{item.label}</p>
+                  <p className="mt-1 text-sm font-extrabold text-white">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -1050,94 +1054,64 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 max-w-6xl">
 
-        {/* Categories Landing Grid */}
-        {activeCategory === null && activePost === null ? (
-          <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-foreground">Chọn chủ đề thảo luận</h2>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                {categories.map((cat) => {
-                  const colors = categoryColorMap(cat.colorTheme);
-                  return (
-                    <motion.div
-                      key={cat.id}
-                      whileHover={{ y: -4, scale: 1.01 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      onClick={() => setActiveCategory(cat)}
-                      className={`cursor-pointer rounded-[2rem] border p-6 flex flex-col justify-between transition-all shadow-soft bg-white/90 hover:bg-white hover:shadow-md ${colors.bg}`}
-                    >
-                      <div className="space-y-3">
-                        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${colors.pill}`}>
-                          {categoryIconMap(cat.icon)}
-                        </div>
-                        <h3 className="text-lg font-bold text-foreground">{cat.name}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                          {cat.description}
-                        </p>
-                      </div>
-                      <div className="mt-4 flex items-center justify-between text-xs font-bold text-primary">
-                        <span>Vào thảo luận</span>
-                        <span>→</span>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Sidebar layout */}
-            <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
-              <div className="overflow-hidden rounded-[2rem] border border-white/70 bg-[linear-gradient(145deg,rgba(255,243,234,0.98)_0%,rgba(246,243,255,0.96)_100%)] p-6 shadow-card">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Phím tắt nhanh</p>
-                <div className="mt-4 space-y-3">
-                  {[
-                    { label: "Nhóm chat cộng đồng", to: "/community/chat" },
-                    { label: "Bảng xếp hạng học giả", to: "/community/leaderboard" },
-                    { label: "Trò chơi giải trí", to: "/games" },
-                  ].map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className="block rounded-[1.3rem] bg-white/82 px-4 py-3 text-sm font-semibold shadow-soft transition-colors hover:bg-white"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </aside>
-          </section>
-        ) : null}
-
-        {/* Category Feed View */}
-        {activeCategory !== null && activePost === null ? (
-          <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
-            <div className="space-y-6">
-              {/* Back to Categories Link */}
+        {/* Square Text-Only Category Filter Bar (Radius=0, Transparent Glass) */}
+        {activePost === null && (
+          <div className="flex flex-col gap-2.5 bg-transparent p-0 mb-8">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Danh mục thảo luận:</span>
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1 flex-nowrap w-full scroll-smooth">
+              {/* Tab Tất cả chủ đề */}
               <button
                 onClick={() => setActiveCategory(null)}
-                className="flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                className={`px-5 py-2.5 rounded-none text-xs font-extrabold tracking-wide uppercase transition-all duration-200 shrink-0 ${
+                  activeCategory === null
+                    ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                    : "border border-slate-700/70 bg-slate-900/60 backdrop-blur-md text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
+                }`}
               >
-                <ArrowLeft className="h-4 w-4" /> Quay lại danh mục thảo luận
+                Tất cả chủ đề
               </button>
 
-              {error ? <div className="rounded-2xl bg-destructive/10 p-4 text-sm text-destructive">{error}</div> : null}
+              {/* Dynamic Categories */}
+              {categories.map((cat) => {
+                const isActive = activeCategory?.id === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-5 py-2.5 rounded-none text-xs font-extrabold tracking-wide uppercase transition-all duration-200 shrink-0 ${
+                      isActive
+                        ? "border-2 border-cyan-400 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                        : "border border-slate-700/70 bg-slate-900/60 backdrop-blur-md text-slate-300 hover:border-slate-500 hover:bg-slate-800/80 hover:text-white"
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Post Feed View (Directly Visible!) */}
+        {activePost === null ? (
+          <section className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
+            <div className="space-y-6">
+              {error ? <div className="rounded-2xl bg-rose-950/80 border border-rose-500/40 p-4 text-sm font-semibold text-rose-200 backdrop-blur-md shadow-lg">{error}</div> : null}
 
               {/* Thread Compose Box */}
               {user ? (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-[2rem] gradient-card p-6 shadow-card border border-white/60">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-[2rem] border border-indigo-500/30 bg-slate-900/70 backdrop-blur-xl p-6 shadow-2xl">
                   <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 font-bold text-primary">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-500/20 border border-cyan-400/30 font-extrabold text-cyan-300">
                       {anonymous ? "?" : user.fullName.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-semibold">{anonymous ? "Ẩn danh" : user.fullName}</p>
-                      <p className="text-xs text-muted-foreground">Chia sẻ một bài viết trong mục **{activeCategory.name}**</p>
+                      <p className="font-extrabold text-white">{anonymous ? "Ẩn danh" : user.fullName}</p>
+                      <p className="text-xs text-indigo-200/70">
+                        {activeCategory ? `Đăng bài trong mục ${activeCategory.name}` : "Đăng bài thảo luận chung"}
+                      </p>
                     </div>
                   </div>
 

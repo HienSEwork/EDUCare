@@ -85,11 +85,11 @@ function EmotionBubble({
           ? {}
           : { duration: 2 + (card.id % 3) * 0.5, repeat: Infinity, ease: "easeInOut", delay: (card.id % 5) * 0.3 }
       }
-      className="relative flex cursor-grab flex-col items-center gap-1 rounded-[1.4rem] border-2 bg-white px-3 py-3 shadow-soft select-none active:cursor-grabbing"
-      style={{ borderColor: card.color + "88", width: 110, touchAction: "none" }}
+      className="relative flex cursor-grab flex-col items-center gap-1 rounded-[1.4rem] border-2 bg-slate-900/90 border-indigo-400/30 text-white px-3.5 py-3 shadow-xl backdrop-blur-md select-none active:cursor-grabbing hover:border-cyan-400"
+      style={{ width: 110, touchAction: "none" }}
     >
       <span className="text-2xl">{card.emoji}</span>
-      <span className="text-center text-xs font-semibold leading-tight">{card.label}</span>
+      <span className="text-center text-xs font-extrabold leading-tight text-white">{card.label}</span>
     </motion.div>
   );
 }
@@ -206,8 +206,8 @@ export default function EmotionSortPage() {
         ]}
         startLabel="Bắt đầu dọn dẹp!"
         onStart={startGame}
-        bgGradient="linear-gradient(135deg,rgba(6,214,160,0.08) 0%,rgba(246,241,255,0.96) 50%,rgba(239,68,68,0.08) 100%)"
-        accentColor="#06d6a0"
+        bgGradient="linear-gradient(160deg, #052418 0%, #0c382b 45%, #1f1254 100%)"
+        accentColor="#10b981"
         buttonIcon={<Heart className="h-5 w-5" />}
       />
     );
@@ -221,48 +221,57 @@ export default function EmotionSortPage() {
       : { text: "Cần học thêm về nhận diện cảm xúc nhé!", color: "#ef4444" };
 
     return (
-      <div className="min-h-screen pb-16 pt-8">
+      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+        style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+      >
+        {/* Background Ambient Glowing Orbs */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+          <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+          <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+        </div>
+
         <div className="container mx-auto max-w-4xl px-4">
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
-            <section className="rounded-[2.4rem] border border-white/70 bg-white/90 p-8 shadow-card text-center md:p-12">
+            <section className="rounded-[2.4rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl p-8 shadow-2xl text-center md:p-12">
               <div className="text-5xl">{pct >= 80 ? "🏆" : pct >= 60 ? "💙" : "📚"}</div>
-              <h1 className="mt-4 font-heading text-3xl font-bold" style={{ color: label.color }}>{label.text}</h1>
-              <p className="mt-2 text-muted-foreground">Đúng <strong>{correctCount}/{played.length}</strong> thẻ ({pct}%)</p>
+              <h1 className="mt-4 font-heading text-3xl font-extrabold md:text-4xl text-white" style={{ color: label.color }}>{label.text}</h1>
+              <p className="mt-2 text-indigo-100/80">Đúng <strong className="text-cyan-300">{correctCount}/{played.length}</strong> thẻ ({pct}%)</p>
               <div
-                className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-card"
-                style={{ background: `conic-gradient(${label.color} ${pct}%, #e5e7eb ${pct}%)` }}
+                className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-2xl"
+                style={{ background: `conic-gradient(${label.color} ${pct}%, #1e1b4b ${pct}%)` }}
               >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background">
-                  <span className="font-heading text-2xl font-bold" style={{ color: label.color }}>{pct}%</span>
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-950">
+                  <span className="font-heading text-2xl font-black" style={{ color: label.color }}>{pct}%</span>
                 </div>
               </div>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Button id="emotion-sort-replay-btn" className="gradient-primary text-primary-foreground" onClick={startGame}>
+                <Button id="emotion-sort-replay-btn" className="rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white font-black hover:brightness-110 shadow-lg shadow-cyan-500/20" onClick={startGame}>
                   <RefreshCw className="mr-2 h-4 w-4" /> Chơi lại
                 </Button>
-                <Button variant="outline" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
+                <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
               </div>
             </section>
 
             {/* Review */}
             <section className="mt-8">
-              <h2 className="mb-4 font-heading text-2xl font-bold">Xem lại kết quả</h2>
+              <h2 className="mb-4 font-heading text-2xl font-extrabold text-white">Xem lại kết quả</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 {played.map((p) => (
                   <div
                     key={p.id}
-                    className={`rounded-[1.6rem] border p-4 ${p.placedCorrectly ? "border-green-200/70 bg-green-50/80" : "border-red-200/70 bg-red-50/80"}`}
+                    className={`rounded-[1.6rem] border p-4 backdrop-blur-xl ${p.placedCorrectly ? "border-emerald-500/40 bg-emerald-950/40 text-slate-100" : "border-rose-500/40 bg-rose-950/40 text-slate-100"}`}
                   >
                     <div className="flex items-start gap-3">
-                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${p.placedCorrectly ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}>
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-black ${p.placedCorrectly ? "bg-emerald-500 text-slate-950" : "bg-rose-500 text-slate-950"}`}>
                         {p.placedCorrectly ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                       </span>
                       <div>
-                        <p className="font-semibold text-sm">{p.emoji} {p.label}</p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
+                        <p className="font-extrabold text-sm text-white">{p.emoji} {p.label}</p>
+                        <p className="mt-0.5 text-xs text-indigo-200">
                           → {p.isHealthy ? "💚 Lành mạnh" : "❌ Độc hại"}
                         </p>
-                        <p className="mt-1 text-xs text-foreground/70">{p.explanation}</p>
+                        <p className="mt-1 text-xs text-indigo-100/80">{p.explanation}</p>
                       </div>
                     </div>
                   </div>
@@ -277,31 +286,40 @@ export default function EmotionSortPage() {
 
   // ── PLAYING ────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen pb-8 pt-8">
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
+
       <div className="container mx-auto max-w-3xl px-4">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between rounded-[1.6rem] border border-white/65 bg-card/84 px-5 py-3 shadow-soft">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Trophy className="h-4 w-4 text-primary" /> {correctCount} đúng
+        <div className="mb-4 flex items-center justify-between rounded-[1.6rem] border border-indigo-400/30 bg-slate-900/70 backdrop-blur-xl px-5 py-3 shadow-xl">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-cyan-300">
+            <Trophy className="h-4 w-4 text-amber-400" /> {correctCount} đúng
           </div>
-          <span className="text-xs text-muted-foreground">Còn {deck.length} thẻ</span>
-          <span className="text-sm font-semibold">{played.length}/{TOTAL_CARDS}</span>
+          <span className="text-xs font-extrabold text-indigo-200">Còn {deck.length} thẻ</span>
+          <span className="text-sm font-extrabold text-white">{played.length}/{TOTAL_CARDS}</span>
         </div>
 
         {/* Progress bar */}
-        <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-muted">
-          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(played.length / TOTAL_CARDS) * 100}%`, background: "linear-gradient(90deg,#06d6a0,#4361ee)" }} />
+        <div className="mb-4 h-2 overflow-hidden rounded-full bg-indigo-950 border border-indigo-500/30">
+          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(played.length / TOTAL_CARDS) * 100}%`, background: "linear-gradient(90deg,#06d6a0,#3b82f6)" }} />
         </div>
 
         {/* Drop zones */}
         <div className="mb-6 grid grid-cols-2 gap-4">
-          <DropZone id="healthy-zone" label="Lành mạnh" emoji="💚" color="#16a34a" bg="#dcfce7" count={healthyCount} isOver={activeZone === "healthy"} />
-          <DropZone id="unhealthy-zone" label="Độc hại" emoji="❌" color="#dc2626" bg="#fee2e2" count={unhealthyCount} isOver={activeZone === "unhealthy"} />
+          <DropZone id="healthy-zone" label="Lành mạnh" emoji="💚" color="#10b981" bg="#064e3b" count={healthyCount} isOver={activeZone === "healthy"} />
+          <DropZone id="unhealthy-zone" label="Độc hại" emoji="❌" color="#f43f5e" bg="#881337" count={unhealthyCount} isOver={activeZone === "unhealthy"} />
         </div>
 
         {/* Cards area */}
-        <div className="relative min-h-[240px] rounded-[1.8rem] border border-white/65 bg-card/40 p-4">
-          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <div className="relative min-h-[240px] rounded-[1.8rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl p-4 shadow-2xl">
+          <p className="mb-3 text-center text-xs font-extrabold uppercase tracking-widest text-slate-400">
             Kéo thẻ vào rổ bên trên 👆
           </p>
           <div className="flex flex-wrap justify-center gap-3">
@@ -316,9 +334,9 @@ export default function EmotionSortPage() {
               />
             ))}
             {deck.length === 0 && !lastFeedback && (
-              <div className="flex flex-col items-center py-8 text-muted-foreground">
+              <div className="flex flex-col items-center py-8 text-indigo-200">
                 <span className="text-4xl">🎉</span>
-                <p className="mt-2 font-semibold">Xong hết rồi!</p>
+                <p className="mt-2 font-extrabold text-white">Xong hết rồi!</p>
               </div>
             )}
           </div>
@@ -331,13 +349,13 @@ export default function EmotionSortPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className={`mt-4 rounded-[1.4rem] p-4 ${lastFeedback.correct ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+              className={`mt-4 rounded-[1.4rem] border backdrop-blur-xl p-4 ${lastFeedback.correct ? "border-emerald-500/40 bg-emerald-950/80 text-emerald-200" : "border-rose-500/40 bg-rose-950/80 text-rose-200"}`}
             >
               <div className="flex items-start gap-3">
                 <span className="text-2xl">{lastFeedback.correct ? "✅" : "❌"}</span>
                 <div>
-                  <p className="font-bold">{lastFeedback.correct ? "Chính xác!" : "Chưa đúng!"} — {lastFeedback.card.emoji} {lastFeedback.card.label}</p>
-                  <p className="mt-1 text-sm">{lastFeedback.card.explanation}</p>
+                  <p className="font-extrabold text-white">{lastFeedback.correct ? "Chính xác!" : "Chưa đúng!"} — {lastFeedback.card.emoji} {lastFeedback.card.label}</p>
+                  <p className="mt-1 text-sm text-indigo-100/90">{lastFeedback.card.explanation}</p>
                 </div>
               </div>
             </motion.div>

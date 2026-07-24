@@ -260,7 +260,7 @@ export default function RedFlagHuntPage() {
         ]}
         startLabel="Bắt đầu điều tra!"
         onStart={startGame}
-        bgGradient="linear-gradient(135deg,#0f1116 0%,#1a0505 50%,#0f1116 100%)"
+        bgGradient="linear-gradient(160deg, #240505 0%, #380c0c 45%, #1f1254 100%)"
         accentColor="#ef4444"
         buttonIcon={<Flag className="h-5 w-5" />}
       />
@@ -274,26 +274,35 @@ export default function RedFlagHuntPage() {
       : { text: "Cần luyện thêm kỹ năng quan sát!", color: "#f97316" };
 
     return (
-      <div className="min-h-screen pb-16 pt-8">
+      <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+        style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+      >
+        {/* Background Ambient Glowing Orbs */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+          <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+          <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+        </div>
+
         <div className="container mx-auto max-w-2xl px-4">
           <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
-            <section className="rounded-[2.4rem] border border-white/70 bg-white/90 p-8 shadow-card text-center">
+            <section className="rounded-[2.4rem] border border-indigo-500/30 bg-slate-900/60 backdrop-blur-xl p-8 shadow-2xl text-center">
               <div className="text-5xl">{pct >= 80 ? "🏆" : pct >= 60 ? "🔍" : "📚"}</div>
-              <h1 className="mt-4 font-heading text-3xl font-bold">{label.text}</h1>
-              <p className="mt-2 text-muted-foreground">Tìm được <strong>{totalFound}/{totalFlags}</strong> red flag ({pct}%)</p>
+              <h1 className="mt-4 font-heading text-3xl font-extrabold text-white">{label.text}</h1>
+              <p className="mt-2 text-indigo-100/80">Tìm được <strong className="text-cyan-300">{totalFound}/{totalFlags}</strong> red flag ({pct}%)</p>
               <div
-                className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-card"
-                style={{ background: `conic-gradient(${label.color} ${pct}%, #e5e7eb ${pct}%)` }}
+                className="mx-auto mt-8 flex h-32 w-32 items-center justify-center rounded-full shadow-2xl"
+                style={{ background: `conic-gradient(${label.color} ${pct}%, #1e1b4b ${pct}%)` }}
               >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background">
-                  <span className="font-heading text-2xl font-bold" style={{ color: label.color }}>{pct}%</span>
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-950">
+                  <span className="font-heading text-2xl font-black" style={{ color: label.color }}>{pct}%</span>
                 </div>
               </div>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Button id="red-flag-replay-btn" className="gradient-primary text-primary-foreground" onClick={startGame}>
+                <Button id="red-flag-replay-btn" className="rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-white font-black hover:brightness-110 shadow-lg shadow-cyan-500/20" onClick={startGame}>
                   <RefreshCw className="mr-2 h-4 w-4" /> Chơi lại
                 </Button>
-                <Button variant="outline" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
+                <Button variant="outline" className="rounded-2xl border-indigo-400/30 bg-indigo-950/50 text-white hover:bg-indigo-900/80" asChild><Link to="/games"><ArrowRight className="mr-2 h-4 w-4" /> Game khác</Link></Button>
               </div>
             </section>
           </motion.div>
@@ -304,33 +313,42 @@ export default function RedFlagHuntPage() {
 
   // ── PLAYING ────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen pb-16 pt-8">
+    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+      style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-40 top-10 h-[500px] w-[500px] rounded-full bg-purple-600/20 blur-[140px]" />
+        <div className="absolute right-0 top-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/15 blur-[150px]" />
+        <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
+      </div>
+
       <div className="container mx-auto max-w-2xl px-4">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between rounded-[1.6rem] border border-white/65 bg-card/84 px-5 py-3 shadow-soft">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Flag className="h-4 w-4 text-red-500" />
-            <span>{found.size}/{currentScene.totalFlags} tìm được</span>
+        <div className="mb-4 flex items-center justify-between rounded-[1.6rem] border border-indigo-400/30 bg-slate-900/70 backdrop-blur-xl px-5 py-3 shadow-xl">
+          <div className="flex items-center gap-2 text-sm font-extrabold text-rose-400">
+            <Flag className="h-4 w-4 text-rose-400 fill-current" />
+            <span className="text-white">{found.size}/{currentScene.totalFlags} tìm được</span>
           </div>
-          <span className="text-xs text-muted-foreground">Màn {sceneIndex + 1}/{RED_FLAG_SCENES.length}</span>
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Timer className={`h-4 w-4 ${timeLeft <= 10 ? "text-red-500" : "text-primary"}`} />
-            <span className={timeLeft <= 10 ? "text-red-500" : ""}>{timeLeft}s</span>
+          <span className="text-xs font-extrabold text-indigo-200">Màn {sceneIndex + 1}/{RED_FLAG_SCENES.length}</span>
+          <div className="flex items-center gap-2 text-sm font-extrabold">
+            <Timer className={`h-4 w-4 ${timeLeft <= 10 ? "text-rose-400" : "text-cyan-300"}`} />
+            <span className={timeLeft <= 10 ? "text-rose-400 font-black animate-pulse" : "text-white"}>{timeLeft}s</span>
           </div>
         </div>
 
         {/* Timer bar */}
-        <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-muted">
+        <div className="mb-4 h-2 overflow-hidden rounded-full bg-indigo-950 border border-indigo-500/30">
           <div
             className="h-full rounded-full transition-all duration-1000"
-            style={{ width: `${timerPct}%`, background: timeLeft <= 10 ? "#ef4444" : "linear-gradient(90deg,#ef4444,#f97316)" }}
+            style={{ width: `${timerPct}%`, background: timeLeft <= 10 ? "#ef4444" : "linear-gradient(90deg,#f43f5e,#fb923c)" }}
           />
         </div>
 
-        <h2 className="mb-3 text-center text-sm font-semibold text-muted-foreground">{currentScene.description}</h2>
+        <h2 className="mb-3 text-center text-sm font-extrabold text-indigo-100/90">{currentScene.description}</h2>
 
         {/* Scene */}
-        <div className="relative h-[460px] overflow-hidden rounded-[1.8rem] shadow-card">
+        <div className="relative h-[460px] overflow-hidden rounded-[1.8rem] border border-indigo-500/30 shadow-2xl">
           <SceneRenderer scene={currentScene} found={found} onFind={handleFind} />
         </div>
 
@@ -341,13 +359,13 @@ export default function RedFlagHuntPage() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mt-4 rounded-[1.4rem] bg-green-100 p-4 text-green-800"
+              className="mt-4 rounded-[1.4rem] border border-emerald-500/40 bg-emerald-950/80 backdrop-blur-xl p-4 text-emerald-200"
             >
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
+                <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5 text-emerald-400" />
                 <div>
-                  <p className="font-bold">🚩 Tìm thấy: {lastFound.label}</p>
-                  <p className="mt-1 text-sm">{lastFound.explanation}</p>
+                  <p className="font-extrabold text-white">🚩 Tìm thấy: {lastFound.label}</p>
+                  <p className="mt-1 text-sm text-indigo-100/80">{lastFound.explanation}</p>
                 </div>
               </div>
             </motion.div>
@@ -357,7 +375,7 @@ export default function RedFlagHuntPage() {
         {/* Next scene button */}
         {found.size === currentScene.totalFlags && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
-            <Button id="red-flag-next-btn" className="w-full gradient-primary py-5 text-base font-bold text-primary-foreground" onClick={advanceScene}>
+            <Button id="red-flag-next-btn" className="w-full rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 py-5 text-base font-black text-white hover:brightness-110 shadow-lg shadow-cyan-500/20" onClick={advanceScene}>
               {isLastScene ? "🏆 Xem kết quả" : "Màn tiếp theo →"}
             </Button>
           </motion.div>

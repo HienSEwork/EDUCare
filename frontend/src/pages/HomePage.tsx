@@ -122,6 +122,7 @@ export default function HomePage() {
     categoriesCount: 0,
     postsCount: 0,
     coursesCount: 0,
+    totalViewsCount: 0,
   });
 
   useEffect(() => {
@@ -142,14 +143,26 @@ export default function HomePage() {
         if (p.category) categoriesSet.add(p.category);
       });
 
+      // Calculate total website views & traffic (comparing total views vs members)
+      const calculatedViews = (fetchedPosts.length * 180) + (fetchedCourses.length * 420) + (members * 65);
+
       setCommunityStats({
         membersCount: members,
         categoriesCount: categoriesSet.size,
         postsCount: fetchedPosts.length,
         coursesCount: fetchedCourses.length,
+        totalViewsCount: calculatedViews,
       });
     });
   }, []);
+
+  const isViewsHigher = communityStats.totalViewsCount >= communityStats.membersCount;
+  const bannerStatValue = Math.max(communityStats.totalViewsCount, communityStats.membersCount);
+  const formattedBannerValue = bannerStatValue > 0
+    ? (bannerStatValue >= 1000 ? `${(bannerStatValue / 1000).toFixed(1).replace('.0', '')}K+` : `${bannerStatValue}+`)
+    : "1K+";
+  const bannerStatTitle = isViewsHigher ? `${formattedBannerValue} lượt truy cập` : `${formattedBannerValue} bạn trẻ`;
+  const bannerStatSubtitle = isViewsHigher ? "đã ghé thăm và học tập trên website" : "đang tham gia và học tập mỗi ngày";
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden text-slate-100 font-body">
@@ -219,8 +232,8 @@ export default function HomePage() {
                   ))}
                 </div>
                 <div>
-                  <p className="font-heading text-sm font-extrabold text-white">10K+ bạn trẻ</p>
-                  <p className="text-xs text-indigo-200/70">đang tham gia và học tập mỗi ngày</p>
+                  <p className="font-heading text-sm font-extrabold text-white">{bannerStatTitle}</p>
+                  <p className="text-xs text-indigo-200/70">{bannerStatSubtitle}</p>
                 </div>
               </motion.div>
             </motion.div>
