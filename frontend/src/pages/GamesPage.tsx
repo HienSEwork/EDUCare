@@ -99,7 +99,7 @@ export default function GamesPage() {
           <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
         </div>
 
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="site-shell px-4">
           {/* Header Title Section */}
           <div className="mb-12 text-center">
             <motion.div
@@ -114,7 +114,7 @@ export default function GamesPage() {
             <motion.h1
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="font-heading text-3xl font-extrabold tracking-tight text-white md:text-5xl lg:text-6xl"
+              className="page-hero-title text-white"
             >
               Góc Trò Chơi Tương Tác <br />
               <span className="bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent drop-shadow-sm">

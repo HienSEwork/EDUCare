@@ -1024,7 +1024,7 @@ export default function ChatRoomsPage() {
 
   return (
     <div className={isMaximized ? "" : "min-h-screen pb-16 pt-8"}>
-      <div className={isMaximized ? "" : "container mx-auto px-4 lg:max-w-[1400px]"}>
+      <div className={isMaximized ? "" : "site-shell px-4"}>
         <section
           className={
             isMaximized

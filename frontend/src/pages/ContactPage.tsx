@@ -16,13 +16,13 @@ export default function ContactPage() {
         <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
       </div>
 
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="site-shell px-4">
         <section className="text-center mb-12">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
               {CONTACT_PAGE_COPY.eyebrow}
             </span>
-            <h1 className="mx-auto max-w-4xl font-heading text-4xl font-extrabold leading-tight text-white md:text-5xl">
+            <h1 className="page-hero-title mx-auto max-w-4xl text-white">
               {CONTACT_PAGE_COPY.title}
             </h1>
             <p className="mx-auto mt-4 max-w-3xl text-base md:text-lg leading-relaxed text-indigo-100/80">

@@ -180,12 +180,61 @@
     font-family: var(--font-heading);
   }
 
+  /* Shared typography scale: pages keep their own colors, while size,
+   * rhythm and wrapping remain consistent across the whole product. */
+  .page-hero-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.25rem, 4.25vw, 3.5rem) !important;
+    font-weight: 800;
+    line-height: 1.18 !important;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .section-heading {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 2.8vw, 2.25rem) !important;
+    font-weight: 800;
+    line-height: 1.24 !important;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .content-heading {
+    font-family: var(--font-heading);
+    font-size: clamp(1.875rem, 3.5vw, 2.75rem) !important;
+    font-weight: 800;
+    line-height: 1.24 !important;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .site-shell {
+    width: 100%;
+    max-width: 1080px;
+    margin-inline: auto;
+  }
+
+  .bounded-page-section {
+    width: calc(100% - 2rem);
+    max-width: 1080px;
+    margin-inline: auto;
+    border-radius: 2rem;
+  }
+
+  @media (max-width: 640px) {
+    .bounded-page-section {
+      width: calc(100% - 1rem);
+      border-radius: 1.5rem;
+    }
+  }
+
   /* 3D Bubble Title Typography */
   .text-title-3d {
     display: inline-block;
     font-family: var(--font-heading);
     font-weight: 800;
-    line-height: 1.15 !important;
+    line-height: inherit !important;
     letter-spacing: -0.055em;
     background: linear-gradient(135deg, #7c3aed 0%, #db2777 48%, #fb7185 72%, #f97316 100%);
     -webkit-background-clip: text;
@@ -500,7 +549,39 @@ html.light .theme-content .theme-preserve-contrast :is(
   will-change: auto;
 }
 
+/* Lightweight compositor-friendly loading state. It keeps the final layout
+ * reserved while API data arrives, preventing content jumps and blank pages. */
+.ui-skeleton {
+  position: relative;
+  overflow: hidden;
+  contain: paint;
+}
+
+.ui-skeleton::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    105deg,
+    transparent 18%,
+    hsl(var(--foreground) / 0.07) 42%,
+    hsl(var(--foreground) / 0.12) 50%,
+    hsl(var(--foreground) / 0.07) 58%,
+    transparent 82%
+  );
+  transform: translate3d(-110%, 0, 0);
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes skeleton-shimmer {
+  to { transform: translate3d(110%, 0, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .ui-skeleton::after {
+    animation: none;
+  }
   .section-lazy-reveal,
   .section-lazy-reveal.section-revealed {
     opacity: 1;

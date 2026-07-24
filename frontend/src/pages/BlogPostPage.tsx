@@ -54,7 +54,7 @@ export default function BlogPostPage() {
 
   return (
     <div className={theme === "light" ? "min-h-screen pb-16 pt-8 bg-[#fdf6f9] text-slate-800 font-body" : "min-h-screen pb-16 pt-8 text-slate-100 font-body"}>
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="site-shell px-4">
         <button
           onClick={() => navigate("/blog")}
           className={theme === "light" ? "mb-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-pink-600 transition-colors" : "mb-6 inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"}
@@ -79,7 +79,7 @@ export default function BlogPostPage() {
                 <span className={theme === "light" ? "text-sm text-slate-500" : "text-sm text-muted-foreground"}>{post.readTime}</span>
               </div>
 
-              <h1 className={theme === "light" ? "mt-6 max-w-4xl font-heading text-3xl font-extrabold leading-tight md:text-[2.5rem] text-slate-800" : "mt-6 max-w-4xl font-heading text-3xl font-extrabold leading-tight md:text-[2.5rem]"}>{post.title}</h1>
+              <h1 className={theme === "light" ? "content-heading mt-6 max-w-4xl text-slate-800" : "content-heading mt-6 max-w-4xl"}>{post.title}</h1>
 
               {/* Author / Expert Info Banner */}
               {isExpertPost && (

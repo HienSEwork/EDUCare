@@ -115,7 +115,7 @@ export default function BlogPage() {
 
       {/* Header Banner Section */}
       <section className="w-full relative overflow-hidden mb-8">
-        <div className="container mx-auto px-4 relative z-10 max-w-6xl">
+        <div className="site-shell relative z-10 px-4">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(420px,0.9fr)] lg:items-center lg:gap-10">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-[640px]">
               <span className={theme === "light"
@@ -124,7 +124,7 @@ export default function BlogPage() {
               }>
                 {BLOG_PAGE_COPY.eyebrow}
               </span>
-              <h1 className={theme === "light" ? "mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-slate-800" : "mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white"}>
+              <h1 className={theme === "light" ? "page-hero-title mt-4 text-slate-800" : "page-hero-title mt-4 text-white"}>
                 <span className="block">{BLOG_PAGE_COPY.titleLine1}</span>
                 <span className={theme === "light" ? "mt-1 block bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 bg-clip-text text-transparent" : "mt-1 block bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent"}>
                   {BLOG_PAGE_COPY.titleLine2}
@@ -164,7 +164,7 @@ export default function BlogPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4">
+      <div className="site-shell px-4">
 
         {error ? <div className="mt-6 rounded-2xl bg-destructive/10 p-4 text-sm text-destructive">{error}</div> : null}
 

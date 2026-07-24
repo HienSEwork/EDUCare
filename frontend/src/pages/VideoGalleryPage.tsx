@@ -234,10 +234,10 @@ export default function VideoGalleryPage() {
   // Hàm tải thêm video bằng nút Xem thêm
   const handleLoadMore = () => {
     setIsMoreLoading(true);
-    setTimeout(() => {
+    window.requestAnimationFrame(() => {
       setVisibleVideosCount((prev) => prev + 6);
       setIsMoreLoading(false);
-    }, 800); // Tạo độ trễ nhẹ để hiển thị hiệu ứng Skeleton mượt mà
+    });
   };
 
   // Nhóm các khóa học có ít nhất 1 bài học video (để làm Tab)
@@ -281,7 +281,7 @@ export default function VideoGalleryPage() {
         } : undefined}
         className={`gradient-card overflow-hidden rounded-2xl border shadow-md flex flex-col justify-between w-full snap-start transition-all ${
           isLocked
-            ? "cursor-pointer border-slate-300/70 bg-slate-100/80 grayscale dark:border-slate-700 dark:bg-slate-900/80"
+            ? "cursor-pointer border-muted-foreground/20"
             : "border-muted-foreground/10"
         }`}
       >
@@ -294,10 +294,10 @@ export default function VideoGalleryPage() {
             alt={lesson.title}
             loading="lazy"
             className={`w-full h-full object-cover transition-all duration-300 ${
-              isLocked ? "opacity-35" : "opacity-80 group-hover:scale-105"
+              isLocked ? "opacity-55 blur-[1px] group-hover:opacity-65 group-hover:scale-[1.02]" : "opacity-80 group-hover:scale-105"
             }`}
           />
-          <div className={`absolute inset-0 flex items-center justify-center transition-all ${isLocked ? "bg-slate-950/60" : "bg-black/40 group-hover:bg-black/20"}`}>
+          <div className={`absolute inset-0 flex items-center justify-center transition-all ${isLocked ? "bg-gradient-to-t from-slate-950/55 via-slate-900/20 to-transparent" : "bg-black/40 group-hover:bg-black/20"}`}>
             <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform ${
               isLocked
                 ? "bg-slate-700 text-white"
@@ -321,7 +321,7 @@ export default function VideoGalleryPage() {
             </span>
           )}
         </div>
-        <div className={`p-5 flex-1 flex flex-col justify-between ${isLocked ? "opacity-65" : ""}`}>
+        <div className="p-5 flex-1 flex flex-col justify-between">
           <div>
             {/* Badge chủ đề khóa học */}
             {lesson.courseTitle && (
@@ -400,7 +400,7 @@ export default function VideoGalleryPage() {
   return (
     <div className="min-h-screen pb-16 pt-8">
       {/* Full Width Hero Banner - Nền Glass, không bọc border */}
-      <section className="w-full relative overflow-hidden bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 backdrop-blur-xl border-b border-indigo-400/20 py-10 md:py-14 -mt-8 mb-8">
+      <section className="bounded-page-section relative -mt-8 mb-8 overflow-hidden border border-indigo-400/20 bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-slate-950/80 py-10 backdrop-blur-xl md:py-14">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -left-20 top-0 h-96 w-96 rounded-full bg-purple-500/20 blur-[100px]" />
           <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-cyan-400/15 blur-[100px]" />
@@ -411,7 +411,7 @@ export default function VideoGalleryPage() {
             <span className="inline-flex rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300 mb-4">
               TÓM TẮT BÀI HỌC
             </span>
-            <h1 className="font-heading text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+            <h1 className="page-hero-title mb-4 text-white">
               Thư viện <span className="text-amber-300">Video</span> - Góc Xem Thử
             </h1>
             <p className="text-indigo-100/80 text-base md:text-lg leading-relaxed">
@@ -421,7 +421,7 @@ export default function VideoGalleryPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="site-shell px-4">
 
         {/* Search & Tabs Filter Section (Transparent background) */}
         <div className="flex flex-col gap-5 bg-transparent p-0 mb-8">

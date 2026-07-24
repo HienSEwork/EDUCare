@@ -167,14 +167,14 @@ export default function HomePage() {
   const bannerStatSubtitle = isViewsHigher ? "đã ghé thăm và học tập trên website" : "đang tham gia và học tập mỗi ngày";
 
   return (
-    <div className={theme === "light" ? "flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-[#fdf6f9] text-slate-800 font-body" : "flex min-h-screen w-full max-w-full flex-col overflow-x-hidden text-slate-100 font-body"}>
+    <div className={theme === "light" ? "flex min-h-screen w-full max-w-full flex-col gap-5 overflow-x-hidden bg-[#fdf6f9] pb-5 text-slate-800 font-body" : "flex min-h-screen w-full max-w-full flex-col gap-5 overflow-x-hidden pb-5 text-slate-100 font-body"}>
 
       {/* ════════════════════════════════════
           1. HERO SECTION
       ════════════════════════════════════ */}
       <section
         ref={heroRef}
-        className="relative order-[1] -mt-24 overflow-hidden pb-14 pt-36 md:-mt-28 md:pb-16 md:pt-44 lg:min-h-[720px] lg:flex lg:items-center"
+        className="bounded-page-section relative order-[1] -mt-24 overflow-hidden pb-14 pt-36 md:-mt-28 md:pb-16 md:pt-44 lg:min-h-[720px] lg:flex lg:items-center"
         style={{
           background: theme === "light"
             ? "linear-gradient(180deg, #fff0f5 0%, #ffffff 55%, #fdf6f9 100%)"
@@ -187,7 +187,7 @@ export default function HomePage() {
           <div className={theme === "light" ? "absolute -right-24 top-8 h-[500px] w-[500px] rounded-full bg-purple-300/20 blur-[110px]" : "absolute -right-24 top-8 h-[500px] w-[500px] rounded-full bg-cyan-500/20 blur-[110px]"} />
         </div>
 
-        <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-12 xl:px-14">
+        <div className="site-shell px-5 sm:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-14 xl:gap-16">
 
             {/* Left Copy */}
@@ -205,18 +205,17 @@ export default function HomePage() {
               </div>
 
               {/* H1 — Giant 3D Title */}
-              <motion.h1 variants={fadeUp} custom={1} className="font-heading leading-[1.08] tracking-[-0.04em]">
+              <motion.h1 variants={fadeUp} custom={1} className="page-hero-title">
                 <span className={theme === "light" ? "mb-2 block text-sm font-extrabold uppercase tracking-[0.18em] text-pink-600 sm:text-base" : "mb-2 block text-sm font-extrabold uppercase tracking-[0.18em] text-amber-300 sm:text-base"}>
-                  Khám phá
+                  Chào mừng bạn đến với EDUcare
                 </span>
-                <span className="text-title-3d block pb-[0.08em] text-[clamp(2.65rem,5vw,4.5rem)]">
-                  Thế giới EDUcare
-                </span>
+                <span className="text-title-3d block pb-[0.08em]">Hiểu mình hơn,</span>
+                <span className="text-title-3d block pb-[0.08em]">Tự tin tỏa sáng</span>
               </motion.h1>
 
               {/* Subtitle */}
               <motion.p variants={fadeUp} custom={1.5} className={theme === "light" ? "mx-auto mt-6 max-w-[540px] text-base font-medium leading-7 text-slate-600 lg:mx-0 sm:text-lg" : "mx-auto mt-6 max-w-[540px] text-base font-medium leading-7 text-indigo-100/85 lg:mx-0 sm:text-lg"}>
-                Học hỏi, giải trí và kết nối — Nền tảng giúp bạn phát triển mỗi ngày!
+                Khám phá kiến thức, thấu hiểu cảm xúc và rèn luyện kỹ năng để trưởng thành an toàn, tích cực mỗi ngày.
               </motion.p>
 
               {/* Action Buttons */}
@@ -266,16 +265,16 @@ export default function HomePage() {
 
       {/* 2. FEATURED COURSES */}
       <section className={theme === "light"
-        ? "order-[2] border-y border-pink-100 bg-white py-16 md:py-20"
-        : "order-[2] border-y border-indigo-900/50 bg-[#100930] py-16 md:py-20"
+        ? "bounded-page-section order-[2] border border-pink-100 bg-white py-16 md:py-20"
+        : "bounded-page-section order-[2] border border-indigo-900/50 bg-[#100930] py-16 md:py-20"
       }>
-        <div className="container mx-auto px-4">
+        <div className="site-shell px-4">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className={theme === "light" ? "mb-1 text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600" : "mb-1 text-xs font-heading font-extrabold uppercase tracking-widest text-amber-300"}>
                 Học tập theo cách của bạn
               </p>
-              <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold text-slate-800 md:text-4xl" : "font-heading text-3xl font-extrabold text-white md:text-4xl"}>
+              <h2 className={theme === "light" ? "section-heading text-slate-800" : "section-heading text-white"}>
                 Khóa học nổi bật
               </h2>
             </div>
@@ -299,8 +298,8 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           2. ANONYMOUS QUESTION BOX SECTION
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[5] border-y border-pink-100 bg-[#fff5f8] py-12" : "order-[5] border-y border-indigo-900/50 bg-[#0d0828] py-12"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[5] border border-pink-100 bg-[#fff5f8] py-12" : "bounded-page-section order-[5] border border-indigo-900/50 bg-[#0d0828] py-12"}>
+        <div className="site-shell px-4">
           <AnonymousQuestionBox variant="standalone" />
         </div>
       </section>
@@ -308,8 +307,8 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           3. GOLDEN HIGHLIGHT FEATURE ROW
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[3] bg-[#fff5f8] py-10" : "order-[3] bg-[#0d0828] py-10"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[3] bg-[#fff5f8] py-10" : "bounded-page-section order-[3] bg-[#0d0828] py-10"}>
+        <div className="site-shell px-4">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
             className="magic-card-feature rounded-3xl p-6 md:p-8"
@@ -331,11 +330,11 @@ export default function HomePage() {
           4. CATEGORY CARDS CAROUSEL — CHỌN HÀNH TRÌNH CỦA BẠN
       ════════════════════════════════════ */}
       <section className={theme === "light"
-        ? "relative order-[4] overflow-hidden border-y border-pink-100 bg-[radial-gradient(circle_at_15%_15%,rgba(251,207,232,0.35),transparent_28%),linear-gradient(180deg,#fff_0%,#fff_100%)] py-16 md:py-20"
-        : "relative order-[4] overflow-hidden border-y border-amber-300/10 bg-[radial-gradient(circle_at_15%_15%,rgba(245,158,11,0.1),transparent_28%),linear-gradient(180deg,#160f42_0%,#160f42_100%)] py-16 md:py-20"
+        ? "bounded-page-section relative order-[4] overflow-hidden border border-pink-100 bg-[radial-gradient(circle_at_15%_15%,rgba(251,207,232,0.35),transparent_28%),linear-gradient(180deg,#fff_0%,#fff_100%)] py-16 md:py-20"
+        : "bounded-page-section relative order-[4] overflow-hidden border border-amber-300/10 bg-[radial-gradient(circle_at_15%_15%,rgba(245,158,11,0.1),transparent_28%),linear-gradient(180deg,#160f42_0%,#160f42_100%)] py-16 md:py-20"
       }>
         <div className={theme === "light" ? "absolute -right-24 top-10 h-64 w-64 rounded-full bg-pink-200/30 blur-3xl" : "absolute -right-24 top-10 h-64 w-64 rounded-full bg-amber-400/10 blur-3xl"} />
-        <div className="container relative mx-auto px-4">
+        <div className="relative px-4">
           <div className="mb-9 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
               <div className={theme === "light"
@@ -344,7 +343,7 @@ export default function HomePage() {
               }>
                 <Sparkles className="h-3.5 w-3.5" /> Khám phá chủ đề
               </div>
-              <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold leading-tight text-slate-900 md:text-4xl" : "font-heading text-3xl font-extrabold leading-tight text-white md:text-4xl"}>
+              <h2 className={theme === "light" ? "section-heading text-slate-900" : "section-heading text-white"}>
                 Chọn hành trình phù hợp với bạn
               </h2>
               <p className={theme === "light" ? "mt-2 max-w-xl text-sm leading-6 text-slate-600" : "mt-2 max-w-xl text-sm leading-6 text-indigo-100/70"}>
@@ -412,11 +411,11 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           5. 5-STEP ROADMAP TRAIL — 5 BƯỚC CHINH PHỤC
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[10] border-t border-pink-100 bg-white py-20" : "order-[10] border-t border-indigo-900/50 bg-[#160f42] py-20"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[10] border border-pink-100 bg-white py-20" : "bounded-page-section order-[10] border border-indigo-900/50 bg-[#160f42] py-20"}>
+        <div className="site-shell px-4">
           <div className="text-center max-w-xl mx-auto mb-14">
             <p className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1" : "text-xs font-heading font-extrabold uppercase tracking-widest text-amber-300 mb-1"}>Hành trình học tập đơn giản</p>
-            <h2 className={theme === "light" ? "font-heading text-3xl md:text-4xl font-extrabold text-slate-800" : "font-heading text-3xl md:text-4xl font-extrabold text-white"}>
+            <h2 className={theme === "light" ? "section-heading text-slate-800" : "section-heading text-white"}>
               <span className="text-title-gold-3d">5 bước</span> chinh phục ✨
             </h2>
           </div>
@@ -452,8 +451,8 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           COMMUNITY NUMBERS
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[7] border-t border-pink-100 bg-[#fff5f8] py-20" : "order-[7] border-t border-indigo-900/50 bg-[#0d0828] py-20"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[7] border border-pink-100 bg-[#fff5f8] py-20" : "bounded-page-section order-[7] border border-indigo-900/50 bg-[#0d0828] py-20"}>
+        <div className="site-shell px-4">
           <div className="mx-auto max-w-5xl">
             <div className={theme === "light" ? "magic-card rounded-[2rem] border border-pink-200 bg-white p-6 shadow-sm md:p-8" : "magic-card rounded-[2rem] p-6 md:p-8"}>
               <h3 className={theme === "light" ? "font-heading text-2xl font-extrabold text-slate-800 mb-6" : "font-heading text-2xl font-extrabold text-white mb-6"}>Cộng đồng sôi động</h3>
@@ -506,11 +505,11 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           7. DEDICATED MOOD TRACKER & EMOTIONAL WELLNESS SECTION
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[9] border-t border-pink-100 bg-[#fff5f8] py-20" : "order-[9] border-t border-indigo-900/50 bg-[#0d0828] py-20"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[9] border border-pink-100 bg-[#fff5f8] py-20" : "bounded-page-section order-[9] border border-indigo-900/50 bg-[#0d0828] py-20"}>
+        <div className="site-shell px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1 block" : "text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block"}>Theo dõi sức khỏe tinh thần</span>
-            <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold text-slate-800 md:text-4xl" : "font-heading text-3xl font-extrabold text-white md:text-4xl"}>
+            <h2 className={theme === "light" ? "section-heading text-slate-800" : "section-heading text-white"}>
               Nhật ký cảm xúc & Lời khuyên hôm nay <span className={theme === "light" ? "text-pink-600" : "text-amber-300"}>✨</span>
             </h2>
             <p className={theme === "light" ? "mt-2 text-xs md:text-sm text-slate-600 font-medium" : "mt-2 text-xs md:text-sm text-indigo-100/70 font-medium"}>Ghi lại cảm xúc mỗi ngày để hiểu rõ bản thân hơn và nhận thông điệp truyền cảm hứng.</p>
@@ -526,10 +525,10 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           8. TESTIMONIALS — HỌC VIÊN NÓI GÌ VỀ CHÚNG TÔI??
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[6] border-t border-pink-100 bg-white py-20" : "order-[6] border-t border-indigo-900/50 bg-[#160f42] py-20"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[6] border border-pink-100 bg-white py-20" : "bounded-page-section order-[6] border border-indigo-900/50 bg-[#160f42] py-20"}>
+        <div className="site-shell px-4">
           <div className="flex items-center justify-between mb-12">
-            <h2 className={theme === "light" ? "font-heading text-2xl md:text-3xl font-extrabold text-slate-800" : "font-heading text-2xl md:text-3xl font-extrabold text-white"}>
+            <h2 className={theme === "light" ? "section-heading text-slate-800" : "section-heading text-white"}>
               <span className={theme === "light" ? "text-pink-600" : "text-amber-300"}>✨</span> Học viên nói gì về chúng tôi? <span className={theme === "light" ? "text-pink-600" : "text-amber-300"}>✨</span>
             </h2>
             <div className="flex items-center gap-3">
@@ -571,11 +570,11 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           9. INTERACTIVE GAMES SECTION
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[8] border-t border-pink-100 bg-white py-20" : "order-[8] border-t border-indigo-900/50 bg-[#160f42] py-20"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[8] border border-pink-100 bg-white py-20" : "bounded-page-section order-[8] border border-indigo-900/50 bg-[#160f42] py-20"}>
+        <div className="site-shell px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className={theme === "light" ? "text-xs font-heading font-extrabold uppercase tracking-widest text-pink-600 mb-1 block" : "text-xs font-heading font-extrabold uppercase tracking-widest text-cyan-300 mb-1 block"}>Góc giải trí qua trò chơi</span>
-            <h2 className={theme === "light" ? "font-heading text-3xl font-extrabold text-slate-800" : "font-heading text-3xl font-extrabold text-white"}>Học giải trí qua trò chơi ✨</h2>
+            <h2 className={theme === "light" ? "section-heading text-slate-800" : "section-heading text-white"}>Học giải trí qua trò chơi ✨</h2>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
@@ -604,8 +603,8 @@ export default function HomePage() {
       {/* ════════════════════════════════════
           10. BOTTOM CTA BANNER — SẴN SÀNG BẮT ĐẦU HÀNH TRÌNH MỚI?
       ════════════════════════════════════ */}
-      <section className={theme === "light" ? "order-[11] bg-[#fff5f8] py-20" : "order-[11] bg-[#0d0828] py-20"}>
-        <div className="container mx-auto px-4">
+      <section className={theme === "light" ? "bounded-page-section order-[11] bg-[#fff5f8] py-20" : "bounded-page-section order-[11] bg-[#0d0828] py-20"}>
+        <div className="site-shell px-4">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
             className={theme === "light"
@@ -618,7 +617,7 @@ export default function HomePage() {
                 : "linear-gradient(135deg, #31186e 0%, #4c1d95 50%, #0c4a6e 100%)"
             }}
           >
-            <h2 className="font-heading text-3xl font-extrabold text-white md:text-[44px] leading-tight">
+            <h2 className="section-heading text-white">
               Sẵn sàng bắt đầu <span className={theme === "light" ? "text-amber-200" : "text-title-gold-3d"}>hành trình mới?</span>
             </h2>
             <p className="mt-3 text-sm md:text-base text-white/95 max-w-xl mx-auto font-medium">

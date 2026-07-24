@@ -284,7 +284,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
+    <div className="pricing-page min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-foreground dark:text-slate-100 font-body"
       style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
     >
       {/* Background Ambient Glowing Orbs */}
@@ -294,7 +294,7 @@ export default function PricingPage() {
         <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
       </div>
 
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="site-shell px-4">
 
         {/* Header Title Section */}
         <div className="mb-14 text-center">
@@ -310,7 +310,7 @@ export default function PricingPage() {
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-heading text-3xl font-extrabold tracking-tight text-white md:text-5xl lg:text-6xl"
+            className="page-hero-title text-white"
           >
             Bảng Giá Đăng Ký Thành Viên <br />
             <span className="bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent drop-shadow-sm">
@@ -441,7 +441,7 @@ export default function PricingPage() {
 
                   {/* Header Title */}
                   <div className="flex items-center justify-between mt-2">
-                    <h3 className="font-heading text-xl md:text-2xl font-extrabold text-white leading-snug">
+                    <h3 className="font-heading text-xl md:text-2xl font-extrabold text-foreground dark:text-white leading-snug">
                       {plan.name}
                     </h3>
                     {isVip && <Crown className="h-6 w-6 text-amber-300 shrink-0" />}
@@ -450,11 +450,11 @@ export default function PricingPage() {
 
                   {/* Price Row */}
                   <div className="mt-5 mb-6 flex items-baseline gap-1.5">
-                    <span className="font-heading text-4xl md:text-5xl font-black tracking-tight text-white leading-none">
+                    <span className="font-heading text-4xl md:text-5xl font-black tracking-tight text-foreground dark:text-white leading-none">
                       {plan.price}
                     </span>
                     {plan.period && (
-                      <span className="text-xs font-bold text-indigo-200/70">
+                      <span className="text-xs font-bold text-muted-foreground dark:text-indigo-200/70">
                         {plan.period}
                       </span>
                     )}

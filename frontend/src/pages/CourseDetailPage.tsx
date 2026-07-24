@@ -125,7 +125,7 @@ export default function CourseDetailPage() {
               <span className={isLight ? "inline-flex rounded-full border border-pink-100 bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-pink-600 shadow-sm" : "inline-flex rounded-full border border-amber-300/25 bg-amber-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-300"}>
                 Khóa học
               </span>
-              <h1 className="mt-5 break-words font-heading text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl">
+              <h1 className="content-heading mt-5 break-words text-foreground">
                 {course.title}
               </h1>
               <p className="mt-4 text-base leading-7 text-foreground/74 md:text-lg">

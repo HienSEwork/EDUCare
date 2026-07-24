@@ -44,11 +44,11 @@ const AUTH_HEADER_SHELL_WIDTH = "max-w-[780px]";
 const navGroups = [
   { label: NAV_COPY.home, to: "/" },
   { label: NAV_COPY.blog, items: [{ label: NAV_COPY.blogPosts, to: "/blog" }, { label: NAV_COPY.courses, to: "/courses" }, { label: "Thư viện Video", to: "/videos" }] },
-  { label: "Nâng cấp VIP", to: "/pricing" },
+  { label: "Gói đăng ký", to: "/pricing" },
   {
     label: NAV_COPY.community,
     items: [
-      { label: NAV_COPY.games, to: "/games" },
+      { label: "Minigame", to: "/games" },
       { label: NAV_COPY.leaderboard, to: "/community/leaderboard" },
       { label: NAV_COPY.discussion, to: "/community" },
     ],
@@ -77,6 +77,12 @@ export default function Navbar() {
     ? "border-pink-200/90 bg-[linear-gradient(150deg,rgba(255,255,255,0.99)_0%,rgba(253,232,240,0.99)_52%,rgba(255,247,250,0.99)_100%)] shadow-[0_20px_60px_rgba(219,39,119,0.16)]"
     : "border-amber-400/40 bg-[linear-gradient(150deg,rgba(30,22,5,0.99)_0%,rgba(73,50,7,0.99)_52%,rgba(38,27,5,0.99)_100%)] text-amber-50 shadow-[0_20px_60px_rgba(245,158,11,0.2)] [&_.text-foreground]:text-amber-50 [&_.text-muted-foreground]:text-amber-100/70";
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+  const isRouteActive = (to: string) => {
+    if (location.pathname === to) return true;
+    if (to === "/" || to === "/community") return false;
+    if (to === "/courses" && location.pathname.startsWith("/course/")) return true;
+    return location.pathname.startsWith(`${to}/`);
+  };
 
   useEffect(() => {
     if (!user || user.isAdmin) {
@@ -191,8 +197,12 @@ export default function Navbar() {
           </div>
 
           <div className="hidden flex-1 items-center justify-center gap-1 pr-6 lg:flex xl:pr-8">
-            {navGroups.map((group) =>
-              "items" in group ? (
+            {navGroups.map((group) => {
+              const groupIsActive = "items" in group
+                ? group.items.some((item) => isRouteActive(item.to))
+                : isRouteActive(group.to);
+
+              return "items" in group ? (
                 <div
                   key={group.label}
                   className="relative"
@@ -217,8 +227,12 @@ export default function Navbar() {
                     className={cn(
                       "flex items-center gap-1 rounded-full px-4 py-2 font-heading text-[14px] font-semibold tracking-wide transition-colors",
                       theme === "light"
-                        ? openDropdown === group.label ? "text-pink-600 bg-pink-100/70" : "text-slate-700 hover:text-pink-600 hover:bg-pink-50"
-                        : openDropdown === group.label ? "text-amber-300 bg-white/10" : "text-indigo-100/90 hover:text-white hover:bg-white/10",
+                        ? openDropdown === group.label || groupIsActive
+                          ? "bg-pink-50/80 text-pink-600 ring-1 ring-inset ring-pink-200/80"
+                          : "text-slate-700 hover:bg-pink-50/80 hover:text-pink-600"
+                        : openDropdown === group.label || groupIsActive
+                          ? "bg-amber-400/10 text-amber-300 ring-1 ring-inset ring-amber-400/25"
+                          : "text-indigo-100/90 hover:bg-amber-400/10 hover:text-amber-300",
                     )}
                   >
                     {group.label}
@@ -237,10 +251,14 @@ export default function Navbar() {
                           key={item.to}
                           to={item.to}
                           className={cn(
-                            "block rounded-[0.9rem] px-4 py-2.5 font-heading text-[14px] font-semibold transition-colors",
+                            "block rounded-[0.9rem] px-4 py-2.5 font-heading text-[14px] font-semibold transition-colors duration-150",
                             theme === "light"
-                              ? location.pathname === item.to ? "bg-pink-100/80 text-pink-600 font-bold" : "text-slate-700 hover:bg-pink-50 hover:text-pink-600"
-                              : location.pathname === item.to ? "bg-amber-400/20 text-amber-300 font-bold" : "text-amber-50/90 hover:bg-amber-400/15 hover:text-amber-300"
+                              ? isRouteActive(item.to)
+                                ? "bg-pink-50/80 text-pink-600 ring-1 ring-inset ring-pink-200/80"
+                                : "text-slate-700 hover:bg-pink-50/80 hover:text-pink-600"
+                              : isRouteActive(item.to)
+                                ? "bg-amber-400/10 text-amber-300 ring-1 ring-inset ring-amber-400/25"
+                                : "text-amber-50/90 hover:bg-amber-400/10 hover:text-amber-300"
                           )}
                           onClick={() => setOpenDropdown(null)}
                         >
@@ -257,14 +275,18 @@ export default function Navbar() {
                   className={cn(
                     "rounded-full px-4 py-2 font-heading text-[14px] font-semibold tracking-wide transition-colors",
                     theme === "light"
-                      ? location.pathname === group.to ? "text-pink-600 bg-pink-100/70 font-bold" : "text-slate-700 hover:text-pink-600 hover:bg-pink-50"
-                      : location.pathname === group.to ? "text-amber-300 bg-white/10 font-bold" : "text-indigo-100/90 hover:text-white hover:bg-white/10"
+                      ? groupIsActive
+                        ? "bg-pink-50/80 text-pink-600 ring-1 ring-inset ring-pink-200/80"
+                        : "text-slate-700 hover:bg-pink-50/80 hover:text-pink-600"
+                      : groupIsActive
+                        ? "bg-amber-400/10 text-amber-300 ring-1 ring-inset ring-amber-400/25"
+                        : "text-indigo-100/90 hover:bg-amber-400/10 hover:text-amber-300"
                   )}
                 >
                   {group.label}
                 </Link>
-              ),
-            )}
+              );
+            })}
           </div>
 
           <div className="ml-auto flex items-center gap-2">
@@ -465,24 +487,47 @@ export default function Navbar() {
 
       {mobileOpen ? (
         <div className="mx-auto mt-3 w-full max-w-[1080px] space-y-4 rounded-[2rem] border border-sky-200/50 bg-[linear-gradient(150deg,rgba(240,249,255,0.97)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.97)_100%)] p-4 shadow-[0_16px_50px_rgba(14,116,144,0.12)] backdrop-blur-md lg:hidden">
-          {navGroups.map((group) =>
-            "items" in group ? (
+          {navGroups.map((group) => {
+            const groupIsActive = "items" in group
+              ? group.items.some((item) => isRouteActive(item.to))
+              : isRouteActive(group.to);
+
+            return "items" in group ? (
               <div key={group.label}>
-                <p className="px-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">{group.label}</p>
+                <p className={cn(
+                  "rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em]",
+                  groupIsActive ? "bg-pink-50 text-pink-600" : "text-muted-foreground",
+                )}>{group.label}</p>
                 <div className="mt-2 space-y-1">
                   {group.items.map((item) => (
-                    <Link key={item.to} to={item.to} onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-2 text-sm font-semibold text-foreground/75 hover:bg-muted hover:text-foreground">
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        "block rounded-xl px-3 py-2 text-sm font-semibold transition-colors",
+                        isRouteActive(item.to) ? "bg-pink-50 text-pink-600" : "text-foreground/75 hover:bg-pink-50 hover:text-pink-600",
+                      )}
+                    >
                       {item.label}
                     </Link>
                   ))}
                 </div>
               </div>
             ) : (
-              <Link key={group.to} to={group.to} onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-2 text-sm font-semibold text-foreground/75 hover:bg-muted hover:text-foreground">
+              <Link
+                key={group.to}
+                to={group.to}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "block rounded-xl px-3 py-2 text-sm font-semibold transition-colors",
+                  groupIsActive ? "bg-pink-50 text-pink-600" : "text-foreground/75 hover:bg-pink-50 hover:text-pink-600",
+                )}
+              >
                 {group.label}
               </Link>
-            ),
-          )}
+            );
+          })}
 
           {user ? (
             <>

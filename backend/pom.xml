@@ -128,6 +128,18 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../data</directory>
+        <includes>
+          <include>seed_bonus.sql</include>
+        </includes>
+        <targetPath>migration-data</targetPath>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

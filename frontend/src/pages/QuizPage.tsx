@@ -206,7 +206,7 @@ export default function QuizPage() {
 
       {/* Full Width Hero Banner */}
       <section className="w-full relative overflow-hidden mb-8">
-        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+        <div className="site-shell relative z-10 px-4">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl">
               <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
@@ -232,7 +232,7 @@ export default function QuizPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="site-shell px-4">
 
         {result ? (
           <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">

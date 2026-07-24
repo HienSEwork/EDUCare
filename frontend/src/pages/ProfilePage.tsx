@@ -80,7 +80,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen pb-16 pt-8">
-      <div className="container mx-auto max-w-6xl px-4">
+      <div className="site-shell px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           <section className="theme-section overflow-hidden rounded-[2.4rem] border border-white/65 bg-[linear-gradient(135deg,rgba(255,230,240,0.9)_0%,rgba(246,241,255,0.97)_50%,rgba(227,245,255,0.9)_100%)] p-6 shadow-card md:p-8">
             <div className="grid gap-8 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-center">

@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import GeminiChatWidget from "@/components/GeminiChatWidget";
 import SectionRevealManager from "@/components/SectionRevealManager";
+import PageLoadingShell from "@/components/PageLoadingShell";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -46,12 +47,21 @@ const EmotionSortPage = lazy(() => import("./pages/EmotionSortPage"));
 const TeenPathPage = lazy(() => import("./pages/TeenPathPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      gcTime: 10 * 60_000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 function UserDashboardRoute() {
   const { user, isLoading } = useAuth();
 
-  if (isLoading) return <div className="min-h-screen" />;
+  if (isLoading) return <PageLoadingShell compact />;
   if (!user) return <Navigate to="/login" replace />;
   if (user.isAdmin) return <Navigate to="/domain/dashboard" replace />;
 
@@ -61,7 +71,7 @@ function UserDashboardRoute() {
 function AdminDashboardRoute() {
   const { user, isLoading } = useAuth();
 
-  if (isLoading) return <div className="min-h-screen" />;
+  if (isLoading) return <PageLoadingShell compact />;
   if (!user) return <Navigate to="/login" replace />;
   if (!user.isAdmin) return <Navigate to="/dashboard" replace />;
 
@@ -78,11 +88,7 @@ function AppShell() {
       <main className="theme-content flex-1 w-full max-w-full overflow-x-hidden">
         <ErrorBoundary resetKey={location.pathname}>
           <Suspense
-            fallback={
-              <div className="flex min-h-[50vh] items-center justify-center text-sm text-muted-foreground" role="status">
-                Đang tải nội dung...
-              </div>
-            }
+            fallback={<PageLoadingShell />}
           >
           <Routes>
           <Route path="/" element={<HomePage />} />

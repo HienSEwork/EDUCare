@@ -6162,3 +6162,9 @@ CREATE TABLE IF NOT EXISTS `password_reset_otps` (
   `attempts` int NOT NULL DEFAULT 0,
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS `app_schema_migrations` (
+  `version` varchar(100) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `installed_on` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

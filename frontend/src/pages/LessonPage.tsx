@@ -1521,7 +1521,7 @@ export default function LessonPage() {
 
   return (
     <div className="min-h-screen pb-16 pt-8">
-      <div className="container mx-auto max-w-6xl px-4">
+      <div className="site-shell px-4">
         <button
           onClick={() => {
             if (lesson.courseId) {

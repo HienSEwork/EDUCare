@@ -108,11 +108,15 @@ export default function LeaderboardPage() {
       </div>
 
       {/* 1. HERO BANNER SECTION */}
-      <section className="w-full relative overflow-hidden mb-10">
-        <div className="container mx-auto px-4 max-w-[1360px] relative z-10">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <section className="relative mb-14 w-full overflow-hidden">
+        <div className="site-shell relative z-10 px-5 sm:px-6">
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.82fr] lg:items-center">
             {/* Left Copy */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+            <motion.div
+              className="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                 <Flame className="h-4 w-4 text-amber-300 animate-pulse" />
                 <span className="font-heading text-xs font-extrabold uppercase tracking-widest text-cyan-300">
@@ -120,17 +124,19 @@ export default function LeaderboardPage() {
                 </span>
               </div>
 
-              <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white">
-                Giữ streak đều, <br />
-                <span className="text-amber-300">vững nhịp tiến bộ</span>
+              <h1 className="page-hero-title mt-3 text-white">
+                <span className="block">Giữ streak đều,</span>
+                <span className="block bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent">
+                  vững nhịp tiến bộ
+                </span>
               </h1>
 
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-indigo-100/80 md:text-lg">
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-indigo-100/80 md:text-lg md:leading-8 lg:mx-0">
                 Học đều mỗi ngày, tiến xa hơn mỗi ngày! Bảng xếp hạng Streak Online vinh danh những học viên chăm chỉ và kiên trì nhất trong cộng đồng EDUcare.
               </p>
 
               {/* Action & Feature Highlights */}
-              <div className="mt-8 flex flex-wrap items-center gap-4">
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
                 <Link
                   to="/courses"
                   className="magic-btn-primary h-12 rounded-full px-7 text-sm font-extrabold text-slate-950 shadow-xl flex items-center gap-2 transition-all hover:scale-105"
@@ -139,7 +145,7 @@ export default function LeaderboardPage() {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
 
-                <div className="flex flex-wrap gap-2 text-xs font-bold text-indigo-200">
+                <div className="flex flex-wrap justify-center gap-2 text-xs font-bold text-indigo-200 lg:justify-start">
                   <div className="flex items-center gap-1.5 rounded-full border border-indigo-400/20 bg-indigo-900/40 px-3.5 py-2 backdrop-blur-md">
                     <Flame className="h-4 w-4 text-white" />
                     <span>Học đều mỗi ngày</span>
@@ -160,9 +166,9 @@ export default function LeaderboardPage() {
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="relative flex items-center justify-center"
+              className="relative mx-auto flex w-full max-w-[420px] items-center justify-center lg:mx-0 lg:justify-self-end"
             >
-              <div className="relative w-full max-w-[420px] aspect-[4/3] rounded-3xl border border-indigo-400/30 bg-gradient-to-br from-indigo-900/50 via-purple-900/40 to-slate-950/80 p-6 backdrop-blur-xl shadow-2xl flex items-center justify-center overflow-hidden">
+              <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-3xl border border-indigo-400/30 bg-gradient-to-br from-indigo-900/50 via-purple-900/40 to-slate-950/80 p-6 shadow-2xl backdrop-blur-xl">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-amber-500/10" />
                 <img 
                   src={quizQuick3d} 
@@ -176,7 +182,7 @@ export default function LeaderboardPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 max-w-[1360px]">
+      <div className="site-shell px-4">
         {error ? (
           <div className="mb-8 rounded-2xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
             {error}

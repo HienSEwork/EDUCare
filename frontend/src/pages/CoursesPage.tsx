@@ -22,6 +22,7 @@ import { ApiError, apiRequest } from "@/lib/api/client";
 import type { Course, Category, RecommendQuestion } from "@/types/api";
 import { Button } from "@/components/ui/button";
 import NotebookCourseCard from "@/components/NotebookCourseCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CoursesPage() {
   const { user } = useAuth();
@@ -169,14 +170,6 @@ export default function CoursesPage() {
     setRecommendationMsg(null);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="detail-panel px-6 py-4">Đang tải danh mục khóa học...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen relative overflow-hidden -mt-24 pt-36 pb-20 md:-mt-28 md:pt-44 text-slate-100 font-body"
       style={{ background: "linear-gradient(160deg, #0a071e 0%, #120c38 45%, #1f1254 100%)" }}
@@ -189,23 +182,23 @@ export default function CoursesPage() {
       </div>
 
       {/* Hero Header Section */}
-      <section className="w-full relative overflow-hidden mb-8">
-        <div className="container mx-auto px-4 max-w-[1400px] relative z-10">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+      <section className="w-full relative overflow-hidden mb-10">
+        <div className="site-shell relative z-10 px-5 sm:px-6">
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.82fr] lg:items-center">
+            <motion.div className="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
               <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                 KHÔNG GIAN AN TOÀN & TIN CÂY
               </span>
-              <h1 className="mt-4 font-heading text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] md:text-5xl text-white">
+              <h1 className="page-hero-title mt-3 text-white">
                 <span className="block">Giải đáp thắc mắc,</span>
                 <span className="block bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent">tự tin lớn khôn.</span>
               </h1>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-indigo-100/80 md:text-lg">
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-indigo-100/80 md:text-lg md:leading-8 lg:mx-0">
                 Nơi đồng hành cùng thanh thiếu niên Việt Nam khám phá bản thân, hiểu rõ cơ thể, cảm xúc và rèn luyện kỹ năng xây dựng các mối quan hệ an toàn, lành mạnh.
               </p>
 
               {/* Dynamic Statistics Querying Real Data */}
-              <div className="mt-8 grid grid-cols-3 gap-4 border-t border-indigo-400/20 pt-6 max-w-lg">
+              <div className="mx-auto mt-8 grid max-w-lg grid-cols-3 gap-3 border-t border-indigo-400/20 pt-6 text-left lg:mx-0">
                 <div>
                   <div className="text-2xl font-extrabold text-amber-300 md:text-3xl">
                     {fetchedCategories.length > 0 ? `${fetchedCategories.length}+` : `${courses.length}+`}
@@ -308,7 +301,7 @@ export default function CoursesPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 max-w-[1400px]">
+      <div className="site-shell px-4">
 
         {error ? <div className="mt-6 rounded-2xl bg-destructive/10 p-4 text-sm text-destructive">{error}</div> : null}
 
@@ -368,6 +361,9 @@ export default function CoursesPage() {
                 </button>
               );
             })}
+            {isLoading && Array.from({ length: 5 }, (_, index) => (
+              <Skeleton key={`category-skeleton-${index}`} className="h-14 rounded-none bg-muted/70" />
+            ))}
           </div>
         </section>
 
@@ -454,10 +450,22 @@ export default function CoursesPage() {
 
           {/* Section Header */}
           <div className="mb-6">
-            <h2 className="font-heading text-2xl font-extrabold text-white">Danh mục khóa học 3D</h2>
+            <h2 className="font-heading text-2xl font-extrabold text-white">Danh mục khóa học</h2>
           </div>
 
-          {sortedCourses.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4" role="status" aria-label="Đang tải khóa học">
+              {Array.from({ length: 6 }, (_, index) => (
+                <div key={`course-skeleton-${index}`} className="rounded-3xl border border-border bg-card p-5 shadow-sm">
+                  <Skeleton className="aspect-[16/9] w-full rounded-2xl" />
+                  <Skeleton className="mt-5 h-6 w-4/5 rounded-lg" />
+                  <Skeleton className="mt-3 h-4 w-full rounded-lg" />
+                  <Skeleton className="mt-2 h-4 w-2/3 rounded-lg" />
+                  <Skeleton className="mt-5 h-10 w-full rounded-xl" />
+                </div>
+              ))}
+            </div>
+          ) : sortedCourses.length === 0 ? (
             <div className="rounded-2xl border border-indigo-400/20 bg-indigo-950/60 p-12 text-center shadow-xl backdrop-blur-md">
               <HelpCircle className="mx-auto h-12 w-12 text-white/60 animate-bounce" />
               <h3 className="mt-4 font-heading text-lg font-bold text-white">Không tìm thấy khóa học nào</h3>
@@ -473,7 +481,7 @@ export default function CoursesPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {sortedCourses.map((course, idx) => (
                 <NotebookCourseCard
                   key={course.id}
@@ -498,6 +506,9 @@ export default function CoursesPage() {
               
               {/* Question list */}
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {isLoading && Array.from({ length: 3 }, (_, index) => (
+                  <Skeleton key={`question-skeleton-${index}`} className="h-16 rounded-xl" />
+                ))}
                 {recommendQuestions.map((item) => {
                   const isActive = activeQuestionId === item.id;
                   return (
@@ -538,4 +549,4 @@ export default function CoursesPage() {
       </div>
     </div>
   );
-}
+}

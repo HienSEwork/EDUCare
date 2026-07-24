@@ -1017,13 +1017,13 @@ export default function CommunityPage() {
 
       {/* Full Width Hero Banner */}
       <section className="w-full relative overflow-hidden mb-8">
-        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+        <div className="site-shell relative z-10 px-4">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)] lg:items-end">
             <div>
               <span className="inline-flex rounded-full border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                 CỘNG ĐỒNG THẢO LUẬN
               </span>
-              <h1 className="mt-4 font-heading text-3xl font-extrabold leading-tight md:text-5xl text-white">
+              <h1 className="page-hero-title mt-4 text-white">
                 {activePost 
                   ? "Xem chi tiết bài thảo luận" 
                   : activeCategory 
@@ -1054,7 +1054,7 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="site-shell px-4">
 
         {/* Square Text-Only Category Filter Bar (Radius=0, Transparent Glass) */}
         {activePost === null && (

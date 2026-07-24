@@ -142,14 +142,14 @@ export default function AboutPage() {
         <div className="absolute left-1/3 bottom-10 h-[450px] w-[450px] rounded-full bg-pink-500/15 blur-[130px]" />
       </div>
 
-      <div className="container mx-auto space-y-14 px-4 max-w-6xl">
+      <div className="site-shell space-y-14 px-4">
         {/* Hero Header Section */}
         <section className="text-center">
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
             <span className="inline-flex rounded-none border border-cyan-400/40 bg-cyan-950/60 px-5 py-2 text-xs font-extrabold tracking-widest text-cyan-300 uppercase backdrop-blur-md mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
               ✨ DỰ ÁN EDUCARE · VỀ CHÚNG TÔI
             </span>
-            <h1 className="mx-auto mt-4 max-w-4xl font-heading text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl">
+            <h1 className="page-hero-title mx-auto mt-4 max-w-4xl text-white">
               Hệ Sinh Thái Giáo Dục Giới Tính <br />
               <span className="bg-gradient-to-r from-cyan-300 via-purple-300 to-amber-200 bg-clip-text text-transparent drop-shadow-sm">
                 & Kỹ Năng Sống Cho Tuổi Teen
