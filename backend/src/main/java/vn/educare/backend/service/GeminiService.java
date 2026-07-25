@@ -8,8 +8,11 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import vn.educare.backend.config.AppProperties;
 public class GeminiService {
 
   private static final String DEFAULT_MODEL = "gemini-3.1-flash-lite";
+  private static final String DEFAULT_FALLBACK_MODEL = "gemini-2.5-flash";
   private static final int MAX_HISTORY_TURNS = 12;
   private static final String ASSISTANT_PROMPT = """
       Bạn là EDUcare AI, trợ lý tư vấn thân thiện dành cho học sinh và người dùng website EDUCare.
@@ -48,6 +52,7 @@ public class GeminiService {
 
   private final AppProperties appProperties;
   private final ObjectMapper objectMapper;
+  private final AtomicReference<String> activeModel = new AtomicReference<>();
   private final HttpClient httpClient = HttpClient.newBuilder()
       .connectTimeout(Duration.ofSeconds(8))
       .build();
@@ -80,29 +85,33 @@ public class GeminiService {
           )
       );
 
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create("https://generativelanguage.googleapis.com/v1beta/models/"
-              + configuredModel() + ":generateContent"))
-          .header("Content-Type", "application/json")
-          .header("x-goog-api-key", apiKey.trim())
-          .POST(HttpRequest.BodyPublishers.ofString(
-              objectMapper.writeValueAsString(requestBody), StandardCharsets.UTF_8))
-          .timeout(Duration.ofSeconds(20))
-          .build();
+      String payload = objectMapper.writeValueAsString(requestBody);
+      for (String model : configuredModels()) {
+        try {
+          HttpResponse<String> response = sendWithRetry(buildRequest(model, apiKey.trim(), payload));
+          if (response != null && response.statusCode() == 200) {
+            String reply = extractReply(response.body());
+            if (reply != null && !reply.isBlank()) {
+              activeModel.set(model);
+              return reply.trim();
+            }
+            log.warn("Gemini model {} returned no usable text; trying fallback", model);
+            continue;
+          }
 
-      HttpResponse<String> response = sendWithRetry(request);
-      if (response == null || response.statusCode() != 200) {
-        if (response != null) {
-          log.warn("Gemini API request failed with status {}", response.statusCode());
+          int status = response == null ? 0 : response.statusCode();
+          log.warn("Gemini model {} failed with status {}", model, status);
+          if (!shouldTryFallback(status)) {
+            return null;
+          }
+        } catch (InterruptedException exception) {
+          throw exception;
+        } catch (Exception exception) {
+          log.warn("Gemini model {} was unavailable; trying fallback: {}",
+              model, exception.getClass().getSimpleName());
         }
-        return null;
       }
-
-      String reply = extractReply(response.body());
-      if (reply == null) {
-        return null;
-      }
-      return reply.trim();
+      return null;
     } catch (InterruptedException exception) {
       Thread.currentThread().interrupt();
       log.warn("Gemini request was interrupted");
@@ -111,6 +120,17 @@ public class GeminiService {
       log.error("Unable to generate a Gemini reply", exception);
       return null;
     }
+  }
+
+  private HttpRequest buildRequest(String model, String apiKey, String payload) {
+    return HttpRequest.newBuilder()
+        .uri(URI.create("https://generativelanguage.googleapis.com/v1beta/models/"
+            + model + ":generateContent"))
+        .header("Content-Type", "application/json")
+        .header("x-goog-api-key", apiKey)
+        .POST(HttpRequest.BodyPublishers.ofString(payload, StandardCharsets.UTF_8))
+        .timeout(Duration.ofSeconds(20))
+        .build();
   }
 
   private List<Map<String, Object>> conversationContents(List<ChatTurn> history, String message) {
@@ -147,10 +167,28 @@ public class GeminiService {
     return response;
   }
 
-  private String configuredModel() {
-    String configured = appProperties.gemini() == null ? null : appProperties.gemini().model();
-    String model = configured == null || configured.isBlank() ? DEFAULT_MODEL : configured.trim();
-    return model.matches("[A-Za-z0-9._-]+") ? model : DEFAULT_MODEL;
+  private List<String> configuredModels() {
+    AppProperties.Gemini config = appProperties.gemini();
+    String primary = safeModel(config == null ? null : config.model(), DEFAULT_MODEL);
+    String fallback = safeModel(config == null ? null : config.fallbackModel(), DEFAULT_FALLBACK_MODEL);
+
+    Set<String> models = new LinkedHashSet<>();
+    String current = activeModel.get();
+    if (primary.equals(current) || fallback.equals(current)) {
+      models.add(current);
+    }
+    models.add(primary);
+    models.add(fallback);
+    return List.copyOf(models);
+  }
+
+  private String safeModel(String configured, String defaultModel) {
+    String model = configured == null || configured.isBlank() ? defaultModel : configured.trim();
+    return model.matches("[A-Za-z0-9._-]+") ? model : defaultModel;
+  }
+
+  private boolean shouldTryFallback(int status) {
+    return status == 0 || status == 404 || status == 408 || status == 429 || status >= 500;
   }
 
   private String extractReply(String responseBody) throws Exception {

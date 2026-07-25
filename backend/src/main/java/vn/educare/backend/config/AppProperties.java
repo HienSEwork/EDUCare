@@ -25,7 +25,7 @@ public record AppProperties(Cors cors, Jwt jwt, Admin admin, CloudinaryPropertie
   public record CloudinaryProperties(String cloudName, String apiKey, String apiSecret) {
   }
 
-  public record Gemini(String apiKey, String model) {
+  public record Gemini(String apiKey, String model, String fallbackModel) {
   }
 
   public record Google(String clientId) {

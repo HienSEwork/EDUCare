@@ -508,7 +508,18 @@ export default function Navbar() {
               </div>
             )}
 
-            <button className="rounded-xl p-2 transition-colors hover:bg-muted lg:hidden" onClick={() => setMobileOpen((value) => !value)}>
+            <button
+              type="button"
+              aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileOpen}
+              className={cn(
+                "rounded-xl p-2 transition-colors lg:hidden",
+                theme === "light"
+                  ? "text-slate-700 hover:bg-pink-50 hover:text-pink-600"
+                  : "text-indigo-50 hover:bg-white/10 hover:text-amber-300",
+              )}
+              onClick={() => setMobileOpen((value) => !value)}
+            >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
@@ -516,7 +527,14 @@ export default function Navbar() {
       </div>
 
       {mobileOpen ? (
-        <div className="mx-auto mt-3 w-full max-w-[1200px] space-y-4 rounded-[2rem] border border-sky-200/50 bg-[linear-gradient(150deg,rgba(240,249,255,0.97)_0%,rgba(224,242,254,0.98)_55%,rgba(240,249,255,0.97)_100%)] p-4 shadow-[0_16px_50px_rgba(14,116,144,0.12)] backdrop-blur-md lg:hidden">
+        <div
+          className={cn(
+            "mx-auto mt-3 w-full max-w-[1200px] space-y-4 rounded-[2rem] border p-4 backdrop-blur-xl transition-colors lg:hidden",
+            theme === "light"
+              ? "border-pink-200/80 bg-[linear-gradient(150deg,rgba(255,255,255,0.98)_0%,rgba(253,232,240,0.97)_55%,rgba(255,247,250,0.98)_100%)] text-slate-800 shadow-[0_16px_50px_rgba(219,39,119,0.14)]"
+              : "border-indigo-300/25 bg-[linear-gradient(150deg,rgba(23,18,64,0.98)_0%,rgba(35,27,86,0.98)_55%,rgba(17,24,61,0.98)_100%)] text-indigo-50 shadow-[0_20px_60px_rgba(8,7,30,0.45)]",
+          )}
+        >
           {navGroups.map((group) => {
             const groupIsActive = "items" in group
               ? group.items.some((item) => isRouteActive(item.to))
@@ -526,7 +544,13 @@ export default function Navbar() {
               <div key={group.label}>
                 <p className={cn(
                   "rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em]",
-                  groupIsActive ? "bg-pink-50 text-pink-600" : "text-muted-foreground",
+                  theme === "light"
+                    ? groupIsActive
+                      ? "bg-pink-50 text-pink-600 ring-1 ring-inset ring-pink-200/80"
+                      : "text-slate-500"
+                    : groupIsActive
+                      ? "bg-amber-300/10 text-amber-300 ring-1 ring-inset ring-amber-300/20"
+                      : "text-indigo-200/65",
                 )}>{group.label}</p>
                 <div className="mt-2 space-y-1">
                   {group.items.map((item) => (
@@ -536,7 +560,13 @@ export default function Navbar() {
                       onClick={() => setMobileOpen(false)}
                       className={cn(
                         "block rounded-xl px-3 py-2 text-sm font-semibold transition-colors",
-                        isRouteActive(item.to) ? "bg-pink-50 text-pink-600" : "text-foreground/75 hover:bg-pink-50 hover:text-pink-600",
+                        theme === "light"
+                          ? isRouteActive(item.to)
+                            ? "bg-pink-50 text-pink-600 ring-1 ring-inset ring-pink-200/80"
+                            : "text-slate-700 hover:bg-pink-50 hover:text-pink-600"
+                          : isRouteActive(item.to)
+                            ? "bg-amber-300/10 text-amber-300 ring-1 ring-inset ring-amber-300/20"
+                            : "text-indigo-50/90 hover:bg-white/10 hover:text-amber-200",
                       )}
                     >
                       {item.label}
@@ -551,7 +581,13 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "block rounded-xl px-3 py-2 text-sm font-semibold transition-colors",
-                  groupIsActive ? "bg-pink-50 text-pink-600" : "text-foreground/75 hover:bg-pink-50 hover:text-pink-600",
+                  theme === "light"
+                    ? groupIsActive
+                      ? "bg-pink-50 text-pink-600 ring-1 ring-inset ring-pink-200/80"
+                      : "text-slate-700 hover:bg-pink-50 hover:text-pink-600"
+                    : groupIsActive
+                      ? "bg-amber-300/10 text-amber-300 ring-1 ring-inset ring-amber-300/20"
+                      : "text-indigo-50/90 hover:bg-white/10 hover:text-amber-200",
                 )}
               >
                 {group.label}
@@ -562,11 +598,29 @@ export default function Navbar() {
           {user ? (
             <>
               {!user.isAdmin ? (
-                <Link to="/profile" onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-2 text-sm font-semibold text-foreground/75 hover:bg-muted">
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "block rounded-xl px-3 py-2 text-sm font-semibold transition-colors",
+                    theme === "light"
+                      ? "text-slate-700 hover:bg-pink-50 hover:text-pink-600"
+                      : "text-indigo-50/90 hover:bg-white/10 hover:text-amber-200",
+                  )}
+                >
                   {NAV_COPY.profile}
                 </Link>
               ) : null}
-              <Link to={dashboardPath} onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-2 text-sm font-semibold text-foreground/75 hover:bg-muted">
+              <Link
+                to={dashboardPath}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "block rounded-xl px-3 py-2 text-sm font-semibold transition-colors",
+                  theme === "light"
+                    ? "text-slate-700 hover:bg-pink-50 hover:text-pink-600"
+                    : "text-indigo-50/90 hover:bg-white/10 hover:text-amber-200",
+                )}
+              >
                 {NAV_COPY.studySpace}
               </Link>
               <button
@@ -574,7 +628,12 @@ export default function Navbar() {
                   logout();
                   setMobileOpen(false);
                 }}
-                className="block w-full rounded-xl px-3 py-2 text-left text-sm font-semibold text-destructive hover:bg-muted"
+                className={cn(
+                  "block w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition-colors",
+                  theme === "light"
+                    ? "text-red-600 hover:bg-red-50"
+                    : "text-red-300 hover:bg-red-400/10 hover:text-red-200",
+                )}
               >
                 {NAV_COPY.logout}
               </button>
@@ -582,7 +641,16 @@ export default function Navbar() {
           ) : (
             <div className="flex gap-2 pt-2">
               <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1">
-                <Button variant="ghost" className="w-full" size="sm">
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "w-full rounded-xl font-semibold",
+                    theme === "light"
+                      ? "text-pink-600 hover:bg-pink-50 hover:text-pink-700"
+                      : "text-amber-300 hover:bg-white/10 hover:text-amber-200",
+                  )}
+                  size="sm"
+                >
                   {NAV_COPY.login}
                 </Button>
               </Link>
