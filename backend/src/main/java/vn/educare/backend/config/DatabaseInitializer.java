@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.core.annotation.Order;
 import vn.educare.backend.repository.UserRepository;
 import vn.educare.backend.repository.BlogPostRepository;
+import vn.educare.backend.repository.CourseRepository;
+import vn.educare.backend.repository.LessonRepository;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -27,12 +29,23 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final DataSource dataSource;
     private final UserRepository userRepository;
     private final BlogPostRepository blogPostRepository;
+    private final CourseRepository courseRepository;
+    private final LessonRepository lessonRepository;
 
     @Override
     public void run(String... args) throws Exception {
         boolean hasOldDummyPosts = blogPostRepository.findAll().stream().anyMatch(p -> p.getSourceUrl() == null && p.getVideoUrl() == null);
-        if (userRepository.count() > 0 && !hasOldDummyPosts && blogPostRepository.count() >= 15) {
-            log.info("Database already initialized with fresh blog posts. Skipping initial SQL seed.");
+        if (userRepository.count() > 0
+                && !hasOldDummyPosts
+                && blogPostRepository.count() >= 15
+                && courseRepository.count() > 0
+                && lessonRepository.count() > 0) {
+            log.info(
+                    "Database already initialized (users={}, blogPosts={}, courses={}, lessons={}). Skipping initial SQL seed.",
+                    userRepository.count(),
+                    blogPostRepository.count(),
+                    courseRepository.count(),
+                    lessonRepository.count());
             return;
         }
 
@@ -45,6 +58,10 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         List<File> sqlFiles = new ArrayList<>();
 
+        // The canonical dump contains the base courses and lessons. Course detail blocks are
+        // restored separately from CourseJSON without creating duplicate course cards.
+        boolean hasCanonicalDump = new File("../data/init.sql").isFile() || new File("data/init.sql").isFile();
+
         // Add root SQL data files
         addIfExists(sqlFiles, "../data/init.sql");
         addIfExists(sqlFiles, "../data/seed_users.sql");
@@ -55,16 +72,18 @@ public class DatabaseInitializer implements CommandLineRunner {
         addIfExists(sqlFiles, "data/insert_game.sql");
         addIfExists(sqlFiles, "data/seed_bonus.sql");
 
-        // Add CourseSQL files
-        File courseDir1 = new File("../data/CourseSQL");
-        File courseDir2 = new File("data/CourseSQL");
-        File courseDir = courseDir1.exists() ? courseDir1 : (courseDir2.exists() ? courseDir2 : null);
+        // CourseSQL is a fallback for environments that do not ship the canonical dump.
+        if (!hasCanonicalDump) {
+            File courseDir1 = new File("../data/CourseSQL");
+            File courseDir2 = new File("data/CourseSQL");
+            File courseDir = courseDir1.exists() ? courseDir1 : (courseDir2.exists() ? courseDir2 : null);
 
-        if (courseDir != null && courseDir.isDirectory()) {
-            File[] files = courseDir.listFiles((dir, name) -> name.endsWith(".sql"));
-            if (files != null) {
-                for (File f : files) {
-                    sqlFiles.add(f);
+            if (courseDir != null && courseDir.isDirectory()) {
+                File[] files = courseDir.listFiles((dir, name) -> name.endsWith(".sql"));
+                if (files != null) {
+                    for (File f : files) {
+                        sqlFiles.add(f);
+                    }
                 }
             }
         }
@@ -81,7 +100,12 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         try {
             populator.execute(dataSource);
-            log.info("Successfully populated local database from SQL data files! Total users count: {}", userRepository.count());
+            log.info(
+                    "Successfully populated local database: users={}, blogPosts={}, courses={}, lessons={}",
+                    userRepository.count(),
+                    blogPostRepository.count(),
+                    courseRepository.count(),
+                    lessonRepository.count());
         } catch (Exception e) {
             log.warn("Notice during database seed execution: {}", e.getMessage());
         }

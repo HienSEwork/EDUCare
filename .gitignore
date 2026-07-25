@@ -16,6 +16,7 @@ backend/node_modules
 frontend/dist
 backend/dist
 backend/target
+data/educare-local*.db
 frontend/.env
 backend/.env
 .env.production

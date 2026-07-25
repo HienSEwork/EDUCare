@@ -3,6 +3,7 @@ package vn.educare.backend.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.educare.backend.api.ApiException;
@@ -50,6 +51,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ContentService {
+  private static final Map<Long, Long> LEGACY_EMPTY_COURSE_ALIASES = Map.of(
+      38L, 37L,
+      39L, 4L,
+      40L, 6L,
+      41L, 11L,
+      42L, 10L,
+      43L, 35L,
+      44L, 5L,
+      45L, 22L);
 
   private final LessonRepository lessonRepository;
   private final BlogPostRepository blogPostRepository;
@@ -91,9 +101,18 @@ public List<CourseResponse> courses() {
 }
 
 public CourseResponse course(Long id) {
-  return courseRepository.findById(id)
-      .map(this::toCourseResponse)
-      .orElseThrow(() -> new ApiException(404, "Course not found"));
+  CourseEntity course = courseRepository.findById(id).orElse(null);
+  Long canonicalId = LEGACY_EMPTY_COURSE_ALIASES.get(id);
+
+  if (canonicalId != null
+      && (course == null || lessonRepository.findAllByCourseIdOrderByLessonOrderAsc(id).isEmpty())) {
+    course = courseRepository.findById(canonicalId).orElse(course);
+  }
+
+  if (course == null) {
+    throw new ApiException(404, "Course not found");
+  }
+  return toCourseResponse(course);
 }
 
   public LessonResponse lesson(String slug) {
